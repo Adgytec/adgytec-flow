@@ -4,8 +4,7 @@
 create or replace function set_updated_columns()
 returns trigger as $$
 begin
-  new.updated_at = now();
-  new.updated_by = auth.uid();
+  new.updated_at = clock_timestamp();
   return new;
 end;
 $$ language plpgsql;
