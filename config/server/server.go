@@ -2,10 +2,11 @@ package server
 
 import (
 	"context"
-	"io"
 	"log"
 	"net/http"
 	"time"
+
+	"github.com/Adgytec/adgytec-flow/config/router"
 )
 
 type IServer interface {
@@ -37,16 +38,11 @@ func (s *httpServer) Shutdown() error {
 }
 
 func CreateHttpServer(port string) IServer {
-	// TODO: will get mux from router package later for now simple mux
-	handle := func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, "working")
-	}
-
-	mux := http.NewServeMux()
-	mux.HandleFunc("/", handle)
+	mux := router.CreateApplicationRouter()
 
 	var protocols http.Protocols
 	protocols.SetUnencryptedHTTP2(true)
+
 	// ongoingCtx, stopOngoingGracefully := context.WithCancel(context.Background())
 	appServer := http.Server{
 		Addr:              ":" + port,
