@@ -10,8 +10,8 @@ type authCognito struct {
 	client *cognitoidentityprovider.Client
 }
 
-func (a *authCognito) CreateUser(username string) error {
-	return nil
+func (a *authCognito) CreateUser(username string) (string, error) {
+	return "", nil
 }
 
 func (a *authCognito) DisableUser(username string) error {
