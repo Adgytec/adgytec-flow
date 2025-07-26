@@ -51,7 +51,6 @@ func createPgxConnPool() *pgxpool.Pool {
 		log.Fatalf("error pinging database: %s", err)
 	}
 
-	log.Println("Connected to the Database!!")
 	return pool
 }
 
