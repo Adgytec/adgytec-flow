@@ -8,6 +8,7 @@ import (
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/interfaces"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -60,6 +61,10 @@ type pgxConnection struct {
 
 func (c *pgxConnection) Queries() *db_actions.Queries {
 	return db_actions.New(c.connPool)
+}
+
+func (c *pgxConnection) NewTransaction() (pgx.Tx, error) {
+	return c.connPool.Begin(context.TODO())
 }
 
 func CreatePgxDbConnectionPool() interfaces.IDatabase {

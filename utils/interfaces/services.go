@@ -7,3 +7,7 @@ type IService interface {
 	BasePath() string
 	Router() *chi.Mux
 }
+
+type IServiceInit interface{}
+
+type IServicePC interface{}
