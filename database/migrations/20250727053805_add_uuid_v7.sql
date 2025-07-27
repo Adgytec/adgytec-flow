@@ -3,8 +3,7 @@
 
 -- https://gist.github.com/kjmph/5bd772b2c2df145aa645b837da7eca74
 create or replace function global.uuid_generate_v7()
-returns uuid
-as $$
+returns uuid as $$
 begin
   -- use random v4 uuid as starting point (which has the same variant we need)
   -- then overlay timestamp
@@ -21,7 +20,7 @@ begin
       53, 1
     ),
     'hex')::uuid;
-end
+end;
 $$
 language plpgsql
 volatile;

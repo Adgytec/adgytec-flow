@@ -5,7 +5,7 @@ create type global.permission_resource_type as enum ('project', 'logcial-partiti
 
 create table management.permissions (
     key text primary key,
-    service_name text not null references global.services(name),
+    service_name text not null references global.services(name) on delete cascade on update cascade,
     description text not null,
     required_resources global.permission_resource_type[] not null,
     created_at timestamptz not null,
@@ -27,11 +27,15 @@ for each row execute procedure global.set_updated_at();
 create or replace trigger on_update_prevent_created_at_update
 before update on management.permissions
 for each row execute procedure global.created_at_update();
+
+create or replace trigger permissions_archive
+before delete on management.permissions
+for each row execute function archive.archive_before_delete(); 
 
 
 create table application.permissions (
     key text primary key,
-    service_name text not null references global.services(name),
+    service_name text not null references global.services(name) on delete cascade on update cascade,
     description text not null,
     required_resources global.permission_resource_type[] not null,
     created_at timestamptz not null,
@@ -54,11 +58,16 @@ create or replace trigger on_update_prevent_created_at_update
 before update on application.permissions
 for each row execute procedure global.created_at_update();
 
+create or replace trigger permissions_archive
+before delete on application.permissions
+for each row execute function archive.archive_before_delete(); 
 
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
+
+drop trigger if exists permission_archive on application.permissions;
 
 drop trigger if exists on_update_set_updated_at on application.permissions;
 
@@ -70,6 +79,8 @@ drop trigger if exists on_update_prevent_created_at_update on application.permis
 
 drop table application.permissions;
 
+
+drop trigger if exists permission_archive on mangement.permissions;
 
 drop trigger if exists on_update_set_updated_at on management.permissions;
 

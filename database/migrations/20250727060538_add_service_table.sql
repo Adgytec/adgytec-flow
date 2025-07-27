@@ -14,27 +14,41 @@ create or replace trigger on_insert_set_created_at
 before insert on global.services
 for each row execute procedure global.set_created_at();
 
+create or replace trigger services_archive
+before delete on global.services
+for each row execute function archive.archive_before_delete();
+
+
 create type global.service_hierarchy_type as enum ('level', 'tree');
 
 create type global.service_hierarchy_result as enum ('hierarchy', 'item');
 
 create table global.service_hierarchy_details (
-    service_name text not null references global.services(name),
+    service_name text not null references global.services(name) on delete cascade on update cascade,
     hierarchy_name text not null,
     hierarchy_type global.service_hierarchy_type not null default 'tree',
     hierarchy_result global.service_hierarchy_result not null default 'item'
 );
+
+create or replace trigger service_hierarchy_details_archive
+before delete on global.service_hierarchy_details
+for each row execute function archive.archive_before_delete();
+
 
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
 
+drop trigger if exists service_hierarchy_details_archive on global.service_hierarchy_details;
+
 drop table global.service_hierarchy_details;
 
 drop type if exists global.service_hierarchy_result;
 
 drop type if exists global.service_hierarchy_type;
+
+drop trigger if exists services_archive on global.services;
 
 drop trigger if exists on_insert_set_created_at on global.services;
 

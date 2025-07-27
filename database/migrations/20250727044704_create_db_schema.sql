@@ -7,10 +7,14 @@ create schema if not exists management;
 
 create schema if not exists application;
 
+create schema if not exists archive;
+
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
+
+drop schema if exists archive;
 
 drop schema if exists application;
 
