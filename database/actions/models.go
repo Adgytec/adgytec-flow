@@ -5,17 +5,209 @@
 package db_actions
 
 import (
+	"database/sql/driver"
+	"fmt"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type Author struct {
-	ID   int64
-	Name string
-	Bio  pgtype.Text
+type GlobalPermissionResourceType string
+
+const (
+	GlobalPermissionResourceTypeProject          GlobalPermissionResourceType = "project"
+	GlobalPermissionResourceTypeLogcialPartition GlobalPermissionResourceType = "logcial-partition"
+	GlobalPermissionResourceTypeServiceItem      GlobalPermissionResourceType = "service-item"
+)
+
+func (e *GlobalPermissionResourceType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalPermissionResourceType(s)
+	case string:
+		*e = GlobalPermissionResourceType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalPermissionResourceType: %T", src)
+	}
+	return nil
 }
 
-type User struct {
-	ID   int64
-	Name string
-	Bio  pgtype.Text
+type NullGlobalPermissionResourceType struct {
+	GlobalPermissionResourceType GlobalPermissionResourceType
+	Valid                        bool // Valid is true if GlobalPermissionResourceType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalPermissionResourceType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalPermissionResourceType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalPermissionResourceType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalPermissionResourceType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalPermissionResourceType), nil
+}
+
+type GlobalServiceHierarchyResult string
+
+const (
+	GlobalServiceHierarchyResultHierarchy GlobalServiceHierarchyResult = "hierarchy"
+	GlobalServiceHierarchyResultItem      GlobalServiceHierarchyResult = "item"
+)
+
+func (e *GlobalServiceHierarchyResult) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalServiceHierarchyResult(s)
+	case string:
+		*e = GlobalServiceHierarchyResult(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalServiceHierarchyResult: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalServiceHierarchyResult struct {
+	GlobalServiceHierarchyResult GlobalServiceHierarchyResult
+	Valid                        bool // Valid is true if GlobalServiceHierarchyResult is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalServiceHierarchyResult) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalServiceHierarchyResult, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalServiceHierarchyResult.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalServiceHierarchyResult) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalServiceHierarchyResult), nil
+}
+
+type GlobalServiceHierarchyType string
+
+const (
+	GlobalServiceHierarchyTypeLevel GlobalServiceHierarchyType = "level"
+	GlobalServiceHierarchyTypeTree  GlobalServiceHierarchyType = "tree"
+)
+
+func (e *GlobalServiceHierarchyType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalServiceHierarchyType(s)
+	case string:
+		*e = GlobalServiceHierarchyType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalServiceHierarchyType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalServiceHierarchyType struct {
+	GlobalServiceHierarchyType GlobalServiceHierarchyType
+	Valid                      bool // Valid is true if GlobalServiceHierarchyType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalServiceHierarchyType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalServiceHierarchyType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalServiceHierarchyType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalServiceHierarchyType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalServiceHierarchyType), nil
+}
+
+type GlobalServiceLogicalPartitionType string
+
+const (
+	GlobalServiceLogicalPartitionTypeHierarchy GlobalServiceLogicalPartitionType = "hierarchy"
+	GlobalServiceLogicalPartitionTypeNone      GlobalServiceLogicalPartitionType = "none"
+)
+
+func (e *GlobalServiceLogicalPartitionType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalServiceLogicalPartitionType(s)
+	case string:
+		*e = GlobalServiceLogicalPartitionType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalServiceLogicalPartitionType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalServiceLogicalPartitionType struct {
+	GlobalServiceLogicalPartitionType GlobalServiceLogicalPartitionType
+	Valid                             bool // Valid is true if GlobalServiceLogicalPartitionType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalServiceLogicalPartitionType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalServiceLogicalPartitionType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalServiceLogicalPartitionType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalServiceLogicalPartitionType), nil
+}
+
+type ApplicationPermission struct {
+	Key               string
+	ServiceName       string
+	Description       string
+	RequiredResources []GlobalPermissionResourceType
+	CreatedAt         pgtype.Timestamptz
+	UpdatedAt         pgtype.Timestamptz
+}
+
+type GlobalService struct {
+	Name             string
+	PermissionOnly   bool
+	LogicalPartition GlobalServiceLogicalPartitionType
+	CreatedAt        pgtype.Timestamptz
+}
+
+type GlobalServiceHierarchyDetail struct {
+	ServiceName     string
+	HierarchyName   string
+	HierarchyType   GlobalServiceHierarchyType
+	HierarchyResult GlobalServiceHierarchyResult
+}
+
+type ManagementPermission struct {
+	Key               string
+	ServiceName       string
+	Description       string
+	RequiredResources []GlobalPermissionResourceType
+	CreatedAt         pgtype.Timestamptz
+	UpdatedAt         pgtype.Timestamptz
 }
