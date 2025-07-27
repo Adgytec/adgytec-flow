@@ -4,16 +4,16 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// IService is used by router mux to init service http rest endpoints
-type IService interface {
+// IServiceInit is used by app before creating IServiceMux or IServicePC to ensure related data initialization
+type IServiceInit interface {
+	InitService() error
+}
+
+// IServiceMux is used by router mux to init service http rest endpoints
+type IServiceMux interface {
 	ServiceName() string
 	BasePath() string
 	Router() *chi.Mux
-}
-
-// IServiceInit is used by app before creating IService or IServicePC to ensure related data initialization
-type IServiceInit interface {
-	InitService() error
 }
 
 // IServicePC is used for inter-service communication

@@ -1,7 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 
-create or replace function uuid_generate_v7()
+-- https://gist.github.com/kjmph/5bd772b2c2df145aa645b837da7eca74
+create or replace function global.uuid_generate_v7()
 returns uuid
 as $$
 begin
@@ -30,6 +31,6 @@ volatile;
 -- +goose Down
 -- +goose StatementBegin
 
-drop function if exists uuid_generate_v7;
+drop function if exists global.uuid_generate_v7();
 
 -- +goose StatementEnd
