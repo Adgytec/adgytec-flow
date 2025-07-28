@@ -6,6 +6,6 @@ import (
 
 var accessManagementDetails = db_actions.AddServiceParams{
 	Name:             "access-management",
-	Assignable:       true,
+	Assignable:       false,
 	LogicalPartition: db_actions.GlobalServiceLogicalPartitionTypeNone,
 }

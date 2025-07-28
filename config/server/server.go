@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/config/router"
 )
 
@@ -38,7 +39,8 @@ func (s *httpServer) Shutdown() error {
 }
 
 func CreateHttpServer(port string) IServer {
-	mux := router.CreateApplicationRouter()
+	appConfig := app.InitApp()
+	mux := router.CreateApplicationRouter(appConfig)
 
 	var protocols http.Protocols
 	protocols.SetUnencryptedHTTP2(true)

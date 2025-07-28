@@ -20,7 +20,7 @@ func (s *externalServices) Database() interfaces.IDatabase {
 	return s.database
 }
 
-func createExternalServices() IAppExternalServices {
+func createExternalServices() iAppExternalServices {
 	awsConfig := configAWS.CreateAWSConfig()
 
 	return &externalServices{

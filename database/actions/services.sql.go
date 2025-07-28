@@ -25,9 +25,9 @@ SET
 `
 
 type AddServiceParams struct {
-	Name             string
-	Assignable       bool
-	LogicalPartition GlobalServiceLogicalPartitionType
+	Name             string                            `json:"name"`
+	Assignable       bool                              `json:"assignable"`
+	LogicalPartition GlobalServiceLogicalPartitionType `json:"logical_partition"`
 }
 
 func (q *Queries) AddService(ctx context.Context, arg AddServiceParams) error {
@@ -53,10 +53,10 @@ SET
 `
 
 type AddServiceHierarchyDetailsParams struct {
-	ServiceName     string
-	HierarchyName   string
-	HierarchyType   GlobalServiceHierarchyType
-	HierarchyResult GlobalServiceHierarchyResult
+	ServiceName     string                       `json:"service_name"`
+	HierarchyName   string                       `json:"hierarchy_name"`
+	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchy_type"`
+	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchy_result"`
 }
 
 func (q *Queries) AddServiceHierarchyDetails(ctx context.Context, arg AddServiceHierarchyDetailsParams) error {

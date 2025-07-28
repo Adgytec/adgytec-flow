@@ -39,6 +39,21 @@ WITH
 			jsonb_array_elements(
 				sqlc.arg (permissions)::JSONB
 			) AS perm
+	),
+	expanded_permissions AS (
+		SELECT
+			perm ->> 'key' AS key,
+			perm ->> 'service_name' AS service_name,
+			perm ->> 'name' AS name,
+			perm ->> 'description' AS description,
+			ARRAY(
+				SELECT
+					jsonb_array_elements_text(
+						perm -> 'required_resources'
+					)::global.permission_resource_type
+			) AS required_resources
+		FROM
+			input_permissions
 	)
 INSERT INTO
 	management.permissions (
@@ -49,15 +64,13 @@ INSERT INTO
 		required_resources
 	)
 SELECT
-	perm ->> 'key',
-	perm ->> 'service_name',
-	perm ->> 'name',
-	perm ->> 'description',
-	(
-		perm -> 'required_resources'
-	)::global.permission_resource_type[]
+	key,
+	service_name,
+	name,
+	description,
+	required_resources
 FROM
-	input_permissions
+	expanded_permissions
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
@@ -71,6 +84,21 @@ WITH
 			jsonb_array_elements(
 				sqlc.arg (permissions)::JSONB
 			) AS perm
+	),
+	expanded_permissions AS (
+		SELECT
+			perm ->> 'key' AS key,
+			perm ->> 'service_name' AS service_name,
+			perm ->> 'name' AS name,
+			perm ->> 'description' AS description,
+			ARRAY(
+				SELECT
+					jsonb_array_elements_text(
+						perm -> 'required_resources'
+					)::global.permission_resource_type
+			) AS required_resources
+		FROM
+			input_permissions
 	)
 INSERT INTO
 	application.permissions (
@@ -81,15 +109,13 @@ INSERT INTO
 		required_resources
 	)
 SELECT
-	perm ->> 'key',
-	perm ->> 'service_name',
-	perm ->> 'name',
-	perm ->> 'description',
-	(
-		perm -> 'required_resources'
-	)::global.permission_resource_type[]
+	key,
+	service_name,
+	name,
+	description,
+	required_resources
 FROM
-	input_permissions
+	expanded_permissions
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,

@@ -32,8 +32,8 @@ func (e *GlobalPermissionResourceType) Scan(src interface{}) error {
 }
 
 type NullGlobalPermissionResourceType struct {
-	GlobalPermissionResourceType GlobalPermissionResourceType
-	Valid                        bool // Valid is true if GlobalPermissionResourceType is not NULL
+	GlobalPermissionResourceType GlobalPermissionResourceType `json:"global_permission_resource_type"`
+	Valid                        bool                         `json:"valid"` // Valid is true if GlobalPermissionResourceType is not NULL
 }
 
 // Scan implements the Scanner interface.
@@ -74,8 +74,8 @@ func (e *GlobalServiceHierarchyResult) Scan(src interface{}) error {
 }
 
 type NullGlobalServiceHierarchyResult struct {
-	GlobalServiceHierarchyResult GlobalServiceHierarchyResult
-	Valid                        bool // Valid is true if GlobalServiceHierarchyResult is not NULL
+	GlobalServiceHierarchyResult GlobalServiceHierarchyResult `json:"global_service_hierarchy_result"`
+	Valid                        bool                         `json:"valid"` // Valid is true if GlobalServiceHierarchyResult is not NULL
 }
 
 // Scan implements the Scanner interface.
@@ -116,8 +116,8 @@ func (e *GlobalServiceHierarchyType) Scan(src interface{}) error {
 }
 
 type NullGlobalServiceHierarchyType struct {
-	GlobalServiceHierarchyType GlobalServiceHierarchyType
-	Valid                      bool // Valid is true if GlobalServiceHierarchyType is not NULL
+	GlobalServiceHierarchyType GlobalServiceHierarchyType `json:"global_service_hierarchy_type"`
+	Valid                      bool                       `json:"valid"` // Valid is true if GlobalServiceHierarchyType is not NULL
 }
 
 // Scan implements the Scanner interface.
@@ -158,8 +158,8 @@ func (e *GlobalServiceLogicalPartitionType) Scan(src interface{}) error {
 }
 
 type NullGlobalServiceLogicalPartitionType struct {
-	GlobalServiceLogicalPartitionType GlobalServiceLogicalPartitionType
-	Valid                             bool // Valid is true if GlobalServiceLogicalPartitionType is not NULL
+	GlobalServiceLogicalPartitionType GlobalServiceLogicalPartitionType `json:"global_service_logical_partition_type"`
+	Valid                             bool                              `json:"valid"` // Valid is true if GlobalServiceLogicalPartitionType is not NULL
 }
 
 // Scan implements the Scanner interface.
@@ -181,41 +181,41 @@ func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
 }
 
 type ApplicationPermission struct {
-	Key               string
-	ServiceName       string
-	Name              string
-	Description       pgtype.Text
-	RequiredResources []GlobalPermissionResourceType
-	CreatedAt         pgtype.Timestamptz
-	UpdatedAt         pgtype.Timestamptz
+	Key               string                         `json:"key"`
+	ServiceName       string                         `json:"service_name"`
+	Name              string                         `json:"name"`
+	Description       pgtype.Text                    `json:"description"`
+	RequiredResources []GlobalPermissionResourceType `json:"required_resources"`
+	CreatedAt         pgtype.Timestamptz             `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz             `json:"updated_at"`
 }
 
 type ArchiveDeletedRecord struct {
-	TableName string
-	Record    []byte
-	DeletedAt pgtype.Timestamptz
+	TableName string             `json:"table_name"`
+	Record    []byte             `json:"record"`
+	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
 }
 
 type GlobalService struct {
-	Name             string
-	Assignable       bool
-	LogicalPartition GlobalServiceLogicalPartitionType
-	CreatedAt        pgtype.Timestamptz
+	Name             string                            `json:"name"`
+	Assignable       bool                              `json:"assignable"`
+	LogicalPartition GlobalServiceLogicalPartitionType `json:"logical_partition"`
+	CreatedAt        pgtype.Timestamptz                `json:"created_at"`
 }
 
 type GlobalServiceHierarchyDetail struct {
-	ServiceName     string
-	HierarchyName   string
-	HierarchyType   GlobalServiceHierarchyType
-	HierarchyResult GlobalServiceHierarchyResult
+	ServiceName     string                       `json:"service_name"`
+	HierarchyName   string                       `json:"hierarchy_name"`
+	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchy_type"`
+	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchy_result"`
 }
 
 type ManagementPermission struct {
-	Key               string
-	ServiceName       string
-	Name              string
-	Description       pgtype.Text
-	RequiredResources []GlobalPermissionResourceType
-	CreatedAt         pgtype.Timestamptz
-	UpdatedAt         pgtype.Timestamptz
+	Key               string                         `json:"key"`
+	ServiceName       string                         `json:"service_name"`
+	Name              string                         `json:"name"`
+	Description       pgtype.Text                    `json:"description"`
+	RequiredResources []GlobalPermissionResourceType `json:"required_resources"`
+	CreatedAt         pgtype.Timestamptz             `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz             `json:"updated_at"`
 }

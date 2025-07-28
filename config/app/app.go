@@ -2,14 +2,14 @@ package app
 
 import "github.com/Adgytec/adgytec-flow/utils/interfaces"
 
-type IAppExternalServices interface {
+type iAppExternalServices interface {
 	Auth() interfaces.IAuth
 	Database() interfaces.IDatabase
 }
 
-type IAppInternalServices interface{}
+type iAppInternalServices interface{}
 
 type IApp interface {
-	IAppExternalServices
-	IAppInternalServices
+	iAppExternalServices
+	iAppInternalServices
 }
