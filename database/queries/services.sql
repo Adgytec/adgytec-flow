@@ -6,7 +6,11 @@ INSERT INTO
 		logical_partition
 	)
 VALUES
-	($1, $2, $3);
+	($1, $2, $3)
+ON CONFLICT (name) DO UPDATE
+SET
+	assignable = excluded.assignable,
+	logical_partition = excluded.logical_partition;
 
 -- name: AddServiceHierarchyDetails :exec
 INSERT INTO
@@ -17,4 +21,9 @@ INSERT INTO
 		hierarchy_result
 	)
 VALUES
-	($1, $2, $3, $4);
+	($1, $2, $3, $4)
+ON CONFLICT (service_name) DO UPDATE
+SET
+	hierarchy_name = excluded.hierarchy_name,
+	hierarchy_type = excluded.hierarchy_type,
+	hierarchy_result = excluded.hierarchy_result;

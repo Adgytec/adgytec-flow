@@ -6,10 +6,30 @@
 package db_actions
 
 import (
+	"context"
+
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type AddApplicationPermissionsParams struct {
+const addApplicationPermission = `-- name: AddApplicationPermission :exec
+INSERT INTO
+	application.permissions (
+		key,
+		service_name,
+		name,
+		description,
+		required_resources
+	)
+VALUES
+	($1, $2, $3, $4, $5)
+ON CONFLICT (key) DO UPDATE
+SET
+	name = excluded.name,
+	description = excluded.description,
+	required_resources = excluded.required_resources
+`
+
+type AddApplicationPermissionParams struct {
 	Key               string
 	ServiceName       string
 	Name              string
@@ -17,10 +37,126 @@ type AddApplicationPermissionsParams struct {
 	RequiredResources []GlobalPermissionResourceType
 }
 
-type AddManagementPermissionsParams struct {
+func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
+	_, err := q.db.Exec(ctx, addApplicationPermission,
+		arg.Key,
+		arg.ServiceName,
+		arg.Name,
+		arg.Description,
+		arg.RequiredResources,
+	)
+	return err
+}
+
+const addManagementPermission = `-- name: AddManagementPermission :exec
+INSERT INTO
+	management.permissions (
+		key,
+		service_name,
+		name,
+		description,
+		required_resources
+	)
+VALUES
+	($1, $2, $3, $4, $5)
+ON CONFLICT (key) DO UPDATE
+SET
+	name = excluded.name,
+	description = excluded.description,
+	required_resources = excluded.required_resources
+`
+
+type AddManagementPermissionParams struct {
 	Key               string
 	ServiceName       string
 	Name              string
 	Description       pgtype.Text
 	RequiredResources []GlobalPermissionResourceType
+}
+
+func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
+	_, err := q.db.Exec(ctx, addManagementPermission,
+		arg.Key,
+		arg.ServiceName,
+		arg.Name,
+		arg.Description,
+		arg.RequiredResources,
+	)
+	return err
+}
+
+const batchAddApplicationPermission = `-- name: BatchAddApplicationPermission :exec
+WITH
+	input_permissions AS (
+		SELECT
+			jsonb_array_elements(
+				$1::JSONB
+			) AS perm
+	)
+INSERT INTO
+	application.permissions (
+		key,
+		service_name,
+		name,
+		description,
+		required_resources
+	)
+SELECT
+	perm ->> 'key',
+	perm ->> 'service_name',
+	perm ->> 'name',
+	perm ->> 'description',
+	(
+		perm -> 'required_resources'
+	)::global.permission_resource_type[]
+FROM
+	input_permissions
+ON CONFLICT (key) DO UPDATE
+SET
+	name = excluded.name,
+	description = excluded.description,
+	required_resources = excluded.required_resources
+`
+
+func (q *Queries) BatchAddApplicationPermission(ctx context.Context, permissions []byte) error {
+	_, err := q.db.Exec(ctx, batchAddApplicationPermission, permissions)
+	return err
+}
+
+const batchAddManagementPermission = `-- name: BatchAddManagementPermission :exec
+WITH
+	input_permissions AS (
+		SELECT
+			jsonb_array_elements(
+				$1::JSONB
+			) AS perm
+	)
+INSERT INTO
+	management.permissions (
+		key,
+		service_name,
+		name,
+		description,
+		required_resources
+	)
+SELECT
+	perm ->> 'key',
+	perm ->> 'service_name',
+	perm ->> 'name',
+	perm ->> 'description',
+	(
+		perm -> 'required_resources'
+	)::global.permission_resource_type[]
+FROM
+	input_permissions
+ON CONFLICT (key) DO UPDATE
+SET
+	name = excluded.name,
+	description = excluded.description,
+	required_resources = excluded.required_resources
+`
+
+func (q *Queries) BatchAddManagementPermission(ctx context.Context, permissions []byte) error {
+	_, err := q.db.Exec(ctx, batchAddManagementPermission, permissions)
+	return err
 }

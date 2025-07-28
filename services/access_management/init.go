@@ -2,6 +2,7 @@ package access_management
 
 import (
 	"context"
+	"encoding/json"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/interfaces"
@@ -12,8 +13,8 @@ type accessMangement struct{}
 type accessManagementInit struct {
 	db                     interfaces.IDatabase
 	serviceDetails         db_actions.AddServiceParams
-	managementPermissions  []db_actions.AddManagementPermissionsParams
-	applicationPermissions []db_actions.AddApplicationPermissionsParams
+	managementPermissions  []db_actions.AddManagementPermissionParams
+	applicationPermissions []db_actions.AddApplicationPermissionParams
 }
 
 func (i *accessManagementInit) InitService() error {
@@ -37,13 +38,21 @@ func (i *accessManagementInit) initServiceDetails() error {
 }
 
 func (i *accessManagementInit) initServiceManagementPermissions() error {
-	_, err := i.db.Queries().AddManagementPermissions(context.TODO(), i.managementPermissions)
-	return err
+	jsonPermissions, err := json.Marshal(i.managementPermissions)
+	if err != nil {
+		return err
+	}
+
+	return i.db.Queries().BatchAddManagementPermission(context.TODO(), jsonPermissions)
 }
 
 func (i *accessManagementInit) initServiceApplicationPermissions() error {
-	_, err := i.db.Queries().AddApplicationPermissions(context.TODO(), i.applicationPermissions)
-	return err
+	jsonPermissions, err := json.Marshal(i.applicationPermissions)
+	if err != nil {
+		return err
+	}
+
+	return i.db.Queries().BatchAddApplicationPermission(context.TODO(), jsonPermissions)
 }
 
 type iAccessManagementInitParams interface {

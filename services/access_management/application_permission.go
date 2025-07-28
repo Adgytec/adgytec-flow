@@ -7,13 +7,13 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-var applicationPermissions = []db_actions.AddApplicationPermissionsParams{
+var applicationPermissions = []db_actions.AddApplicationPermissionParams{
 	assignApplicationPermission,
 	removeApplicationPermission,
 	listApplicationPermission,
 }
 
-var assignApplicationPermission = db_actions.AddApplicationPermissionsParams{
+var assignApplicationPermission = db_actions.AddApplicationPermissionParams{
 	Key:         fmt.Sprintf("%s:assign:permission", accessManagementDetails.Name),
 	ServiceName: accessManagementDetails.Name,
 	Name:        "Assign Permission",
@@ -28,7 +28,7 @@ Grants the ability to assign permissions to any user or group.
 	RequiredResources: []db_actions.GlobalPermissionResourceType{},
 }
 
-var removeApplicationPermission = db_actions.AddApplicationPermissionsParams{
+var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
 	Key:         fmt.Sprintf("%s:remove:permission", accessManagementDetails.Name),
 	ServiceName: accessManagementDetails.Name,
 	Name:        "Remove Permission",
@@ -43,7 +43,7 @@ Grants the ability to remove permissions from any user or group.
 	RequiredResources: []db_actions.GlobalPermissionResourceType{},
 }
 
-var listApplicationPermission = db_actions.AddApplicationPermissionsParams{
+var listApplicationPermission = db_actions.AddApplicationPermissionParams{
 	Key:         fmt.Sprintf("%s:list:permission", accessManagementDetails.Name),
 	ServiceName: accessManagementDetails.Name,
 	Name:        "List Permission",

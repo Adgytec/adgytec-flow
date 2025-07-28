@@ -18,6 +18,10 @@ INSERT INTO
 	)
 VALUES
 	($1, $2, $3)
+ON CONFLICT (name) DO UPDATE
+SET
+	assignable = excluded.assignable,
+	logical_partition = excluded.logical_partition
 `
 
 type AddServiceParams struct {
@@ -41,6 +45,11 @@ INSERT INTO
 	)
 VALUES
 	($1, $2, $3, $4)
+ON CONFLICT (service_name) DO UPDATE
+SET
+	hierarchy_name = excluded.hierarchy_name,
+	hierarchy_type = excluded.hierarchy_type,
+	hierarchy_result = excluded.hierarchy_result
 `
 
 type AddServiceHierarchyDetailsParams struct {
