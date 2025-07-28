@@ -1,4 +1,4 @@
--- name: AddManagementPermission :exec
+-- name: AddManagementPermissions :copyfrom
 INSERT INTO
 	management.permissions (
 		key,
@@ -10,7 +10,7 @@ INSERT INTO
 VALUES
 	($1, $2, $3, $4, $5);
 
--- name: AddApplicationPermission :exec
+-- name: AddApplicationPermissions :copyfrom
 INSERT INTO
 	application.permissions (
 		key,

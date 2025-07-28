@@ -1,11 +1,19 @@
 package access_management
 
 import (
+	"context"
+
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/interfaces"
 )
 
+type accessMangement struct{}
+
 type accessManagementInit struct {
-	db interfaces.IDatabase
+	db                     interfaces.IDatabase
+	serviceDetails         db_actions.AddServiceParams
+	managementPermissions  []db_actions.AddManagementPermissionsParams
+	applicationPermissions []db_actions.AddApplicationPermissionsParams
 }
 
 func (i *accessManagementInit) InitService() error {
@@ -25,15 +33,17 @@ func (i *accessManagementInit) InitService() error {
 }
 
 func (i *accessManagementInit) initServiceDetails() error {
-	return nil
+	return i.db.Queries().AddService(context.TODO(), i.serviceDetails)
 }
 
 func (i *accessManagementInit) initServiceManagementPermissions() error {
-	return nil
+	_, err := i.db.Queries().AddManagementPermissions(context.TODO(), i.managementPermissions)
+	return err
 }
 
 func (i *accessManagementInit) initServiceApplicationPermissions() error {
-	return nil
+	_, err := i.db.Queries().AddApplicationPermissions(context.TODO(), i.applicationPermissions)
+	return err
 }
 
 type iAccessManagementInitParams interface {
@@ -42,6 +52,9 @@ type iAccessManagementInitParams interface {
 
 func InitAccessManagement(params iAccessManagementInitParams) interfaces.IServiceInit {
 	return &accessManagementInit{
-		db: params.Database(),
+		db:                     params.Database(),
+		serviceDetails:         accessManagementDetails,
+		managementPermissions:  managementPermissions,
+		applicationPermissions: applicationPermissions,
 	}
 }
