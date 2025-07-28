@@ -7,6 +7,8 @@ package db_actions
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addApplicationPermission = `-- name: AddApplicationPermission :exec
@@ -14,17 +16,19 @@ INSERT INTO
 	application.permissions (
 		key,
 		service_name,
+		name,
 		description,
 		required_resources
 	)
 VALUES
-	($1, $2, $3, $4)
+	($1, $2, $3, $4, $5)
 `
 
 type AddApplicationPermissionParams struct {
 	Key               string
 	ServiceName       string
-	Description       string
+	Name              string
+	Description       pgtype.Text
 	RequiredResources []GlobalPermissionResourceType
 }
 
@@ -32,6 +36,7 @@ func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicati
 	_, err := q.db.Exec(ctx, addApplicationPermission,
 		arg.Key,
 		arg.ServiceName,
+		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
 	)
@@ -43,17 +48,19 @@ INSERT INTO
 	management.permissions (
 		key,
 		service_name,
+		name,
 		description,
 		required_resources
 	)
 VALUES
-	($1, $2, $3, $4)
+	($1, $2, $3, $4, $5)
 `
 
 type AddManagementPermissionParams struct {
 	Key               string
 	ServiceName       string
-	Description       string
+	Name              string
+	Description       pgtype.Text
 	RequiredResources []GlobalPermissionResourceType
 }
 
@@ -61,6 +68,7 @@ func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagement
 	_, err := q.db.Exec(ctx, addManagementPermission,
 		arg.Key,
 		arg.ServiceName,
+		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
 	)

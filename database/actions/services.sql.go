@@ -13,7 +13,7 @@ const addService = `-- name: AddService :exec
 INSERT INTO
 	global.services (
 		name,
-		permission_only,
+		assignable,
 		logical_partition
 	)
 VALUES
@@ -22,12 +22,12 @@ VALUES
 
 type AddServiceParams struct {
 	Name             string
-	PermissionOnly   bool
+	Assignable       bool
 	LogicalPartition GlobalServiceLogicalPartitionType
 }
 
 func (q *Queries) AddService(ctx context.Context, arg AddServiceParams) error {
-	_, err := q.db.Exec(ctx, addService, arg.Name, arg.PermissionOnly, arg.LogicalPartition)
+	_, err := q.db.Exec(ctx, addService, arg.Name, arg.Assignable, arg.LogicalPartition)
 	return err
 }
 

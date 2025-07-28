@@ -1,6 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TYPE global.permission_resource_type AS ENUM(
+	'organization',
 	'project',
 	'logcial-partition',
 	'service-item'
@@ -9,7 +10,8 @@ CREATE TYPE global.permission_resource_type AS ENUM(
 CREATE TABLE management.permissions (
 	key TEXT PRIMARY KEY,
 	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
-	description TEXT NOT NULL,
+	name TEXT NOT NULL,
+	description TEXT,
 	required_resources global.permission_resource_type[] NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL,
 	updated_at TIMESTAMPTZ NOT NULL
@@ -35,7 +37,8 @@ EXECUTE function archive.archive_before_delete ();
 CREATE TABLE application.permissions (
 	key TEXT PRIMARY KEY,
 	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
-	description TEXT NOT NULL,
+	name TEXT NOT NULL,
+	description TEXT,
 	required_resources global.permission_resource_type[] NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL,
 	updated_at TIMESTAMPTZ NOT NULL

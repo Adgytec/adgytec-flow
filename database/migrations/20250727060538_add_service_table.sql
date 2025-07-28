@@ -2,9 +2,13 @@
 -- +goose StatementBegin
 CREATE TYPE global.service_logical_partition_type AS ENUM('hierarchy', 'none');
 
+/*
+assignble tells if this permission can be assignable to organization
+if the value is false it means it is normal service that all the organizaiton has
+*/
 CREATE TABLE global.services (
 	name TEXT PRIMARY KEY,
-	permission_only BOOL NOT NULL DEFAULT FALSE,
+	assignable BOOL NOT NULL DEFAULT FALSE,
 	logical_partition global.service_logical_partition_type NOT NULL DEFAULT 'none',
 	created_at TIMESTAMPTZ NOT NULL
 );

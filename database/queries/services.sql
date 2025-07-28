@@ -2,7 +2,7 @@
 INSERT INTO
 	global.services (
 		name,
-		permission_only,
+		assignable,
 		logical_partition
 	)
 VALUES

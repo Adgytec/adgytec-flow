@@ -14,6 +14,7 @@ import (
 type GlobalPermissionResourceType string
 
 const (
+	GlobalPermissionResourceTypeOrganization     GlobalPermissionResourceType = "organization"
 	GlobalPermissionResourceTypeProject          GlobalPermissionResourceType = "project"
 	GlobalPermissionResourceTypeLogcialPartition GlobalPermissionResourceType = "logcial-partition"
 	GlobalPermissionResourceTypeServiceItem      GlobalPermissionResourceType = "service-item"
@@ -183,7 +184,8 @@ func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
 type ApplicationPermission struct {
 	Key               string
 	ServiceName       string
-	Description       string
+	Name              string
+	Description       pgtype.Text
 	RequiredResources []GlobalPermissionResourceType
 	CreatedAt         pgtype.Timestamptz
 	UpdatedAt         pgtype.Timestamptz
@@ -197,7 +199,7 @@ type ArchiveDeletedRecord struct {
 
 type GlobalService struct {
 	Name             string
-	PermissionOnly   bool
+	Assignable       bool
 	LogicalPartition GlobalServiceLogicalPartitionType
 	CreatedAt        pgtype.Timestamptz
 }
@@ -212,7 +214,8 @@ type GlobalServiceHierarchyDetail struct {
 type ManagementPermission struct {
 	Key               string
 	ServiceName       string
-	Description       string
+	Name              string
+	Description       pgtype.Text
 	RequiredResources []GlobalPermissionResourceType
 	CreatedAt         pgtype.Timestamptz
 	UpdatedAt         pgtype.Timestamptz
