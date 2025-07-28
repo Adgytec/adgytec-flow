@@ -189,6 +189,12 @@ type ApplicationPermission struct {
 	UpdatedAt         pgtype.Timestamptz
 }
 
+type ArchiveDeletedRecord struct {
+	TableName string
+	Record    []byte
+	DeletedAt pgtype.Timestamptz
+}
+
 type GlobalService struct {
 	Name             string
 	PermissionOnly   bool

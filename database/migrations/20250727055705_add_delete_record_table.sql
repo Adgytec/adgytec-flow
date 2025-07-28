@@ -1,14 +1,12 @@
 -- +goose Up
 -- +goose StatementBegin
-
-create table archive.deleted_records (
-    table_name text not null,
-    record jsonb not null,
-    deleted_at timestamptz not null default clock_timestamp()
+CREATE TABLE archive.deleted_records (
+	table_name TEXT NOT NULL,
+	record JSONB NOT NULL,
+	deleted_at TIMESTAMPTZ NOT NULL DEFAULT CLOCK_TIMESTAMP()
 );
 
-create or replace function archive.archive_before_delete()
-returns trigger as $$
+CREATE OR REPLACE FUNCTION archive.archive_before_delete () returns trigger AS $$
 declare
     table_full_name text;
 begin
@@ -24,12 +22,10 @@ end;
 $$ language plpgsql;
 
 -- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
+DROP FUNCTION if EXISTS archive.archive_before_delete;
 
-drop function if exists archive.archive_before_delete; 
-
-drop table archive.deleted_records;
+DROP TABLE archive.deleted_records;
 
 -- +goose StatementEnd

@@ -1,98 +1,90 @@
 -- +goose Up
 -- +goose StatementBegin
-
-create type global.permission_resource_type as enum ('project', 'logcial-partition', 'service-item');
-
-create table management.permissions (
-    key text primary key,
-    service_name text not null references global.services(name) on delete cascade on update cascade,
-    description text not null,
-    required_resources global.permission_resource_type[] not null,
-    created_at timestamptz not null,
-    updated_at timestamptz not null
+CREATE TYPE global.permission_resource_type AS ENUM(
+	'project',
+	'logcial-partition',
+	'service-item'
 );
 
-create or replace trigger on_insert_set_created_at 
-before insert on management.permissions
-for each row execute procedure global.set_created_at();
-
-create or replace trigger on_insert_set_updated_at 
-before insert on management.permissions
-for each row execute procedure global.set_updated_at();
-
-create or replace trigger on_update_set_updated_at 
-before update on management.permissions
-for each row execute procedure global.set_updated_at();
-
-create or replace trigger on_update_prevent_created_at_update
-before update on management.permissions
-for each row execute procedure global.created_at_update();
-
-create or replace trigger permissions_archive
-before delete on management.permissions
-for each row execute function archive.archive_before_delete(); 
-
-
-create table application.permissions (
-    key text primary key,
-    service_name text not null references global.services(name) on delete cascade on update cascade,
-    description text not null,
-    required_resources global.permission_resource_type[] not null,
-    created_at timestamptz not null,
-    updated_at timestamptz not null
+CREATE TABLE management.permissions (
+	key TEXT PRIMARY KEY,
+	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
+	description TEXT NOT NULL,
+	required_resources global.permission_resource_type[] NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL,
+	updated_at TIMESTAMPTZ NOT NULL
 );
 
-create or replace trigger on_insert_set_created_at 
-before insert on application.permissions
-for each row execute procedure global.set_created_at();
+CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON management.permissions FOR each ROW
+EXECUTE procedure global.set_created_at ();
 
-create or replace trigger on_insert_set_updated_at 
-before insert on application.permissions
-for each row execute procedure global.set_updated_at();
+CREATE OR REPLACE TRIGGER on_insert_set_updated_at before insert ON management.permissions FOR each ROW
+EXECUTE procedure global.set_updated_at ();
 
-create or replace trigger on_update_set_updated_at 
-before update on application.permissions
-for each row execute procedure global.set_updated_at();
+CREATE OR REPLACE TRIGGER on_update_set_updated_at before
+UPDATE ON management.permissions FOR each ROW
+EXECUTE procedure global.set_updated_at ();
 
-create or replace trigger on_update_prevent_created_at_update
-before update on application.permissions
-for each row execute procedure global.created_at_update();
+CREATE OR REPLACE TRIGGER on_update_prevent_created_at_update before
+UPDATE ON management.permissions FOR each ROW
+EXECUTE procedure global.created_at_update ();
 
-create or replace trigger permissions_archive
-before delete on application.permissions
-for each row execute function archive.archive_before_delete(); 
+CREATE OR REPLACE TRIGGER permissions_archive before delete ON management.permissions FOR each ROW
+EXECUTE function archive.archive_before_delete ();
+
+CREATE TABLE application.permissions (
+	key TEXT PRIMARY KEY,
+	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
+	description TEXT NOT NULL,
+	required_resources global.permission_resource_type[] NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL,
+	updated_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON application.permissions FOR each ROW
+EXECUTE procedure global.set_created_at ();
+
+CREATE OR REPLACE TRIGGER on_insert_set_updated_at before insert ON application.permissions FOR each ROW
+EXECUTE procedure global.set_updated_at ();
+
+CREATE OR REPLACE TRIGGER on_update_set_updated_at before
+UPDATE ON application.permissions FOR each ROW
+EXECUTE procedure global.set_updated_at ();
+
+CREATE OR REPLACE TRIGGER on_update_prevent_created_at_update before
+UPDATE ON application.permissions FOR each ROW
+EXECUTE procedure global.created_at_update ();
+
+CREATE OR REPLACE TRIGGER permissions_archive before delete ON application.permissions FOR each ROW
+EXECUTE function archive.archive_before_delete ();
 
 -- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
+DROP TRIGGER if EXISTS permission_archive ON application.permissions;
 
-drop trigger if exists permission_archive on application.permissions;
+DROP TRIGGER if EXISTS on_update_set_updated_at ON application.permissions;
 
-drop trigger if exists on_update_set_updated_at on application.permissions;
+DROP TRIGGER if EXISTS on_insert_set_updated_at ON application.permissons;
 
-drop trigger if exists on_insert_set_updated_at on application.permissons;
+DROP TRIGGER if EXISTS on_insert_set_created_at ON application.permissons;
 
-drop trigger if exists on_insert_set_created_at on application.permissons;
+DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON application.permissions;
 
-drop trigger if exists on_update_prevent_created_at_update on application.permissions;
+DROP TABLE application.permissions;
 
-drop table application.permissions;
+DROP TRIGGER if EXISTS permission_archive ON mangement.permissions;
 
+DROP TRIGGER if EXISTS on_update_set_updated_at ON management.permissions;
 
-drop trigger if exists permission_archive on mangement.permissions;
+DROP TRIGGER if EXISTS on_insert_set_updated_at ON management.permissons;
 
-drop trigger if exists on_update_set_updated_at on management.permissions;
+DROP TRIGGER if EXISTS on_insert_set_created_at ON management.permissons;
 
-drop trigger if exists on_insert_set_updated_at on management.permissons;
+DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON management.permissions;
 
-drop trigger if exists on_insert_set_created_at on management.permissons;
+DROP TABLE management.permissions;
 
-drop trigger if exists on_update_prevent_created_at_update on management.permissions;
-
-drop table management.permissions;
-
-
-drop type if exists global.permission_resource_type;
+DROP TYPE if EXISTS global.permission_resource_type;
 
 -- +goose StatementEnd

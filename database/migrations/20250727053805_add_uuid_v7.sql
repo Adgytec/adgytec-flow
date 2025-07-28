@@ -1,9 +1,7 @@
 -- +goose Up
 -- +goose StatementBegin
-
 -- https://gist.github.com/kjmph/5bd772b2c2df145aa645b837da7eca74
-create or replace function global.uuid_generate_v7()
-returns uuid as $$
+CREATE OR REPLACE FUNCTION global.uuid_generate_v7 () returns UUID AS $$
 begin
   -- use random v4 uuid as starting point (which has the same variant we need)
   -- then overlay timestamp
@@ -21,15 +19,11 @@ begin
     ),
     'hex')::uuid;
 end;
-$$
-language plpgsql
-volatile;
+$$ language plpgsql volatile;
 
 -- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
-
-drop function if exists global.uuid_generate_v7();
+DROP FUNCTION if EXISTS global.uuid_generate_v7 ();
 
 -- +goose StatementEnd

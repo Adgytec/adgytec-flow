@@ -1,16 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
-
-create or replace function global.set_updated_at()
-returns trigger as $$
+CREATE OR REPLACE FUNCTION global.set_updated_at () returns trigger AS $$
 begin
   new.updated_at = clock_timestamp();
   return new;
 end;
 $$ language plpgsql;
 
-create or replace function global.set_created_at()
-returns trigger as $$
+CREATE OR REPLACE FUNCTION global.set_created_at () returns trigger AS $$
 begin
     new.created_at = clock_timestamp();
     return new;
@@ -18,12 +15,10 @@ end;
 $$ language plpgsql;
 
 -- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
+DROP FUNCTION if EXISTS global.set_created_at;
 
-drop function if exists global.set_created_at;
-
-drop function if exists global.set_updated_at;
+DROP FUNCTION if EXISTS global.set_updated_at;
 
 -- +goose StatementEnd

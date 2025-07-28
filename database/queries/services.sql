@@ -1,7 +1,20 @@
 -- name: AddService :exec
-insert into global.services (name, permission_only, logical_partition)
-values ($1, $2, $3);
+INSERT INTO
+	global.services (
+		name,
+		permission_only,
+		logical_partition
+	)
+VALUES
+	($1, $2, $3);
 
 -- name: AddServiceHierarchyDetails :exec
-insert into global.service_hierarchy_details (service_name, hierarchy_name, hierarchy_type, hierarchy_result)
-values ($1, $2, $3, $4);
+INSERT INTO
+	global.service_hierarchy_details (
+		service_name,
+		hierarchy_name,
+		hierarchy_type,
+		hierarchy_result
+	)
+VALUES
+	($1, $2, $3, $4);

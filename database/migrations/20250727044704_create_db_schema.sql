@@ -1,25 +1,22 @@
 -- +goose Up
 -- +goose StatementBegin
+CREATE SCHEMA if NOT EXISTS global;
 
-create schema if not exists global;
+CREATE SCHEMA if NOT EXISTS management;
 
-create schema if not exists management;
+CREATE SCHEMA if NOT EXISTS application;
 
-create schema if not exists application;
-
-create schema if not exists archive;
+CREATE SCHEMA if NOT EXISTS archive;
 
 -- +goose StatementEnd
-
 -- +goose Down
 -- +goose StatementBegin
+DROP SCHEMA if EXISTS archive;
 
-drop schema if exists archive;
+DROP SCHEMA if EXISTS application;
 
-drop schema if exists application;
+DROP SCHEMA if EXISTS management;
 
-drop schema if exists management;
-
-drop schema if exists global;
+DROP SCHEMA if EXISTS global;
 
 -- +goose StatementEnd
