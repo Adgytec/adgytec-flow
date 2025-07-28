@@ -14,7 +14,6 @@ import (
 type GlobalPermissionResourceType string
 
 const (
-	GlobalPermissionResourceTypeOrganization     GlobalPermissionResourceType = "organization"
 	GlobalPermissionResourceTypeProject          GlobalPermissionResourceType = "project"
 	GlobalPermissionResourceTypeLogcialPartition GlobalPermissionResourceType = "logcial-partition"
 	GlobalPermissionResourceTypeServiceItem      GlobalPermissionResourceType = "service-item"

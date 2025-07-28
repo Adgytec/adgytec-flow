@@ -1,7 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TYPE global.permission_resource_type AS ENUM(
-	'organization',
 	'project',
 	'logcial-partition',
 	'service-item'

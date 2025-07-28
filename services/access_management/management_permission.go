@@ -9,12 +9,12 @@ import (
 )
 
 var managementPermissions = []types.Permission{
-	assignMangementPermission,
-	removeMangementPermission,
-	listMangementPermission,
+	assignManagementPermission,
+	removeManagementPermission,
+	listManagementPermission,
 }
 
-var assignMangementPermission = types.Permission{
+var assignManagementPermission = types.Permission{
 	Key:         fmt.Sprintf("%s:assign:management-permission", accessManagementDetails.Name),
 	ServiceName: accessManagementDetails.Name,
 	Name:        "Assign Permission",
@@ -26,12 +26,10 @@ Grants the ability to assign permissions to any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{
-		db_actions.GlobalPermissionResourceTypeOrganization,
-	},
+	RequiredResources: []db_actions.GlobalPermissionResourceType{},
 }
 
-var removeMangementPermission = types.Permission{
+var removeManagementPermission = types.Permission{
 	Key:         fmt.Sprintf("%s:remove:management-permission", accessManagementDetails.Name),
 	ServiceName: accessManagementDetails.Name,
 	Name:        "Remove Permission",
@@ -43,12 +41,10 @@ Grants the ability to remove permissions from any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{
-		db_actions.GlobalPermissionResourceTypeOrganization,
-	},
+	RequiredResources: []db_actions.GlobalPermissionResourceType{},
 }
 
-var listMangementPermission = types.Permission{
+var listManagementPermission = types.Permission{
 	Key:         fmt.Sprintf("%s:list:management-permission", accessManagementDetails.Name),
 	ServiceName: accessManagementDetails.Name,
 	Name:        "List Permission",
@@ -60,7 +56,5 @@ Grants the ability to list permissions to any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{
-		db_actions.GlobalPermissionResourceTypeOrganization,
-	},
+	RequiredResources: []db_actions.GlobalPermissionResourceType{},
 }

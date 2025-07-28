@@ -1,6 +1,8 @@
 package types
 
-import db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+import (
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+)
 
 type ServiceDetails struct {
 	Name             string
