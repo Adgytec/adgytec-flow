@@ -25,7 +25,9 @@ Grants the ability to assign permissions to any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{},
+	RequiredResources: []db_actions.ManagementPermissionResourceType{
+		db_actions.ManagementPermissionResourceTypeOrganization,
+	},
 }
 
 var removeManagementPermission = db_actions.AddManagementPermissionParams{
@@ -40,7 +42,9 @@ Grants the ability to remove permissions from any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{},
+	RequiredResources: []db_actions.ManagementPermissionResourceType{
+		db_actions.ManagementPermissionResourceTypeOrganization,
+	},
 }
 
 var listManagementPermission = db_actions.AddManagementPermissionParams{
@@ -55,5 +59,7 @@ Grants the ability to list permissions to any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{},
+	RequiredResources: []db_actions.ManagementPermissionResourceType{
+		db_actions.ManagementPermissionResourceTypeOrganization,
+	},
 }
