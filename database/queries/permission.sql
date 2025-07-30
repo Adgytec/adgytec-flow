@@ -12,8 +12,7 @@ VALUES
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources;
+	description = excluded.description;
 
 -- name: AddApplicationPermission :exec
 INSERT INTO
@@ -29,8 +28,7 @@ VALUES
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources;
+	description = excluded.description;
 
 -- name: BatchAddManagementPermission :exec
 WITH
@@ -74,8 +72,7 @@ FROM
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources;
+	description = excluded.description;
 
 -- name: BatchAddApplicationPermission :exec
 WITH
@@ -119,5 +116,4 @@ FROM
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources;
+	description = excluded.description;

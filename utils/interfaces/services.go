@@ -11,7 +11,6 @@ type IServiceInit interface {
 
 // IServiceMux is used by router mux to init service http rest endpoints
 type IServiceMux interface {
-	ServiceName() string
 	BasePath() string
 	Router() *chi.Mux
 }

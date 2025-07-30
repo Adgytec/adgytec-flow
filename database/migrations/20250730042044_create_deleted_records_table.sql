@@ -1,9 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE archive.deleted_records (
+CREATE TABLE IF NOT EXISTS archive.deleted_records (
+	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
 	table_name TEXT NOT NULL,
 	record JSONB NOT NULL,
-	deleted_at TIMESTAMPTZ NOT NULL DEFAULT CLOCK_TIMESTAMP()
+	deleted_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
 );
 
 CREATE OR REPLACE FUNCTION archive.archive_before_delete () returns trigger AS $$

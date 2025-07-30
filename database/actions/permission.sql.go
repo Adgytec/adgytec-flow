@@ -25,8 +25,7 @@ VALUES
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources
+	description = excluded.description
 `
 
 type AddApplicationPermissionParams struct {
@@ -62,8 +61,7 @@ VALUES
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources
+	description = excluded.description
 `
 
 type AddManagementPermissionParams struct {
@@ -127,8 +125,7 @@ FROM
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources
+	description = excluded.description
 `
 
 func (q *Queries) BatchAddApplicationPermission(ctx context.Context, permissions []byte) error {
@@ -178,8 +175,7 @@ FROM
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description,
-	required_resources = excluded.required_resources
+	description = excluded.description
 `
 
 func (q *Queries) BatchAddManagementPermission(ctx context.Context, permissions []byte) error {
