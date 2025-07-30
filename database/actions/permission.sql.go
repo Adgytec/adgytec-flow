@@ -29,11 +29,11 @@ SET
 `
 
 type AddApplicationPermissionParams struct {
-	Key               string                         `json:"key"`
-	ServiceName       string                         `json:"service_name"`
-	Name              string                         `json:"name"`
-	Description       pgtype.Text                    `json:"description"`
-	RequiredResources []GlobalPermissionResourceType `json:"required_resources"`
+	Key               string                              `json:"key"`
+	ServiceName       string                              `json:"service_name"`
+	Name              string                              `json:"name"`
+	Description       pgtype.Text                         `json:"description"`
+	RequiredResources []ApplicationPermissionResourceType `json:"required_resources"`
 }
 
 func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
@@ -65,11 +65,11 @@ SET
 `
 
 type AddManagementPermissionParams struct {
-	Key               string                         `json:"key"`
-	ServiceName       string                         `json:"service_name"`
-	Name              string                         `json:"name"`
-	Description       pgtype.Text                    `json:"description"`
-	RequiredResources []GlobalPermissionResourceType `json:"required_resources"`
+	Key               string                             `json:"key"`
+	ServiceName       string                             `json:"service_name"`
+	Name              string                             `json:"name"`
+	Description       pgtype.Text                        `json:"description"`
+	RequiredResources []ManagementPermissionResourceType `json:"required_resources"`
 }
 
 func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
@@ -101,7 +101,7 @@ WITH
 				SELECT
 					jsonb_array_elements_text(
 						perm -> 'required_resources'
-					)::global.permission_resource_type
+					)::application.permission_resource_type
 			) AS required_resources
 		FROM
 			input_permissions
@@ -151,7 +151,7 @@ WITH
 				SELECT
 					jsonb_array_elements_text(
 						perm -> 'required_resources'
-					)::global.permission_resource_type
+					)::management.permission_resource_type
 			) AS required_resources
 		FROM
 			input_permissions

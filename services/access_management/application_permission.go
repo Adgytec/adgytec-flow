@@ -25,7 +25,7 @@ Grants the ability to assign permissions to any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{},
+	RequiredResources: []db_actions.ApplicationPermissionResourceType{},
 }
 
 var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
@@ -40,7 +40,7 @@ Grants the ability to remove permissions from any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{},
+	RequiredResources: []db_actions.ApplicationPermissionResourceType{},
 }
 
 var listApplicationPermission = db_actions.AddApplicationPermissionParams{
@@ -55,5 +55,5 @@ Grants the ability to list permissions to any user or group.
 		`,
 		Valid: true,
 	},
-	RequiredResources: []db_actions.GlobalPermissionResourceType{},
+	RequiredResources: []db_actions.ApplicationPermissionResourceType{},
 }

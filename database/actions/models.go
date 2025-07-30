@@ -11,47 +11,47 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-type GlobalPermissionResourceType string
+type ApplicationPermissionResourceType string
 
 const (
-	GlobalPermissionResourceTypeProject          GlobalPermissionResourceType = "project"
-	GlobalPermissionResourceTypeLogcialPartition GlobalPermissionResourceType = "logcial-partition"
-	GlobalPermissionResourceTypeServiceItem      GlobalPermissionResourceType = "service-item"
+	ApplicationPermissionResourceTypeProject          ApplicationPermissionResourceType = "project"
+	ApplicationPermissionResourceTypeLogcialPartition ApplicationPermissionResourceType = "logcial-partition"
+	ApplicationPermissionResourceTypeServiceItem      ApplicationPermissionResourceType = "service-item"
 )
 
-func (e *GlobalPermissionResourceType) Scan(src interface{}) error {
+func (e *ApplicationPermissionResourceType) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = GlobalPermissionResourceType(s)
+		*e = ApplicationPermissionResourceType(s)
 	case string:
-		*e = GlobalPermissionResourceType(s)
+		*e = ApplicationPermissionResourceType(s)
 	default:
-		return fmt.Errorf("unsupported scan type for GlobalPermissionResourceType: %T", src)
+		return fmt.Errorf("unsupported scan type for ApplicationPermissionResourceType: %T", src)
 	}
 	return nil
 }
 
-type NullGlobalPermissionResourceType struct {
-	GlobalPermissionResourceType GlobalPermissionResourceType `json:"global_permission_resource_type"`
-	Valid                        bool                         `json:"valid"` // Valid is true if GlobalPermissionResourceType is not NULL
+type NullApplicationPermissionResourceType struct {
+	ApplicationPermissionResourceType ApplicationPermissionResourceType `json:"application_permission_resource_type"`
+	Valid                             bool                              `json:"valid"` // Valid is true if ApplicationPermissionResourceType is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullGlobalPermissionResourceType) Scan(value interface{}) error {
+func (ns *NullApplicationPermissionResourceType) Scan(value interface{}) error {
 	if value == nil {
-		ns.GlobalPermissionResourceType, ns.Valid = "", false
+		ns.ApplicationPermissionResourceType, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.GlobalPermissionResourceType.Scan(value)
+	return ns.ApplicationPermissionResourceType.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullGlobalPermissionResourceType) Value() (driver.Value, error) {
+func (ns NullApplicationPermissionResourceType) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.GlobalPermissionResourceType), nil
+	return string(ns.ApplicationPermissionResourceType), nil
 }
 
 type GlobalServiceHierarchyResult string
@@ -180,17 +180,59 @@ func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
 	return string(ns.GlobalServiceLogicalPartitionType), nil
 }
 
+type ManagementPermissionResourceType string
+
+const (
+	ManagementPermissionResourceTypeOrganization ManagementPermissionResourceType = "organization"
+)
+
+func (e *ManagementPermissionResourceType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ManagementPermissionResourceType(s)
+	case string:
+		*e = ManagementPermissionResourceType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ManagementPermissionResourceType: %T", src)
+	}
+	return nil
+}
+
+type NullManagementPermissionResourceType struct {
+	ManagementPermissionResourceType ManagementPermissionResourceType `json:"management_permission_resource_type"`
+	Valid                            bool                             `json:"valid"` // Valid is true if ManagementPermissionResourceType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullManagementPermissionResourceType) Scan(value interface{}) error {
+	if value == nil {
+		ns.ManagementPermissionResourceType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ManagementPermissionResourceType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullManagementPermissionResourceType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ManagementPermissionResourceType), nil
+}
+
 type ApplicationPermission struct {
-	Key               string                         `json:"key"`
-	ServiceName       string                         `json:"service_name"`
-	Name              string                         `json:"name"`
-	Description       pgtype.Text                    `json:"description"`
-	RequiredResources []GlobalPermissionResourceType `json:"required_resources"`
-	CreatedAt         pgtype.Timestamptz             `json:"created_at"`
-	UpdatedAt         pgtype.Timestamptz             `json:"updated_at"`
+	Key               string                              `json:"key"`
+	ServiceName       string                              `json:"service_name"`
+	Name              string                              `json:"name"`
+	Description       pgtype.Text                         `json:"description"`
+	RequiredResources []ApplicationPermissionResourceType `json:"required_resources"`
+	CreatedAt         pgtype.Timestamptz                  `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz                  `json:"updated_at"`
 }
 
 type ArchiveDeletedRecord struct {
+	ID        pgtype.UUID        `json:"id"`
 	TableName string             `json:"table_name"`
 	Record    []byte             `json:"record"`
 	DeletedAt pgtype.Timestamptz `json:"deleted_at"`
@@ -211,11 +253,11 @@ type GlobalServiceHierarchyDetail struct {
 }
 
 type ManagementPermission struct {
-	Key               string                         `json:"key"`
-	ServiceName       string                         `json:"service_name"`
-	Name              string                         `json:"name"`
-	Description       pgtype.Text                    `json:"description"`
-	RequiredResources []GlobalPermissionResourceType `json:"required_resources"`
-	CreatedAt         pgtype.Timestamptz             `json:"created_at"`
-	UpdatedAt         pgtype.Timestamptz             `json:"updated_at"`
+	Key               string                             `json:"key"`
+	ServiceName       string                             `json:"service_name"`
+	Name              string                             `json:"name"`
+	Description       pgtype.Text                        `json:"description"`
+	RequiredResources []ManagementPermissionResourceType `json:"required_resources"`
+	CreatedAt         pgtype.Timestamptz                 `json:"created_at"`
+	UpdatedAt         pgtype.Timestamptz                 `json:"updated_at"`
 }

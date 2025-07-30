@@ -48,7 +48,7 @@ WITH
 				SELECT
 					jsonb_array_elements_text(
 						perm -> 'required_resources'
-					)::global.permission_resource_type
+					)::management.permission_resource_type
 			) AS required_resources
 		FROM
 			input_permissions
@@ -92,7 +92,7 @@ WITH
 				SELECT
 					jsonb_array_elements_text(
 						perm -> 'required_resources'
-					)::global.permission_resource_type
+					)::application.permission_resource_type
 			) AS required_resources
 		FROM
 			input_permissions
