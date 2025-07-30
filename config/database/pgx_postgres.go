@@ -7,7 +7,7 @@ import (
 	"time"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
-	"github.com/Adgytec/adgytec-flow/utils/interfaces"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -67,7 +67,7 @@ func (c *pgxConnection) NewTransaction() (pgx.Tx, error) {
 	return c.connPool.Begin(context.TODO())
 }
 
-func CreatePgxDbConnectionPool() interfaces.IDatabase {
+func CreatePgxDbConnectionPool() core.IDatabase {
 	return &pgxConnection{
 		connPool: createPgxConnPool(),
 	}

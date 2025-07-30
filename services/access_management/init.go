@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
-	"github.com/Adgytec/adgytec-flow/utils/interfaces"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type accessMangement struct{}
 
 type accessManagementInit struct {
-	db                     interfaces.IDatabase
+	db                     core.IDatabase
 	serviceDetails         db_actions.AddServiceParams
 	managementPermissions  []db_actions.AddManagementPermissionParams
 	applicationPermissions []db_actions.AddApplicationPermissionParams
@@ -56,10 +56,10 @@ func (i *accessManagementInit) initServiceApplicationPermissions() error {
 }
 
 type iAccessManagementInitParams interface {
-	Database() interfaces.IDatabase
+	Database() core.IDatabase
 }
 
-func InitAccessManagement(params iAccessManagementInitParams) interfaces.IServiceInit {
+func InitAccessManagement(params iAccessManagementInitParams) core.IServiceInit {
 	return &accessManagementInit{
 		db:                     params.Database(),
 		serviceDetails:         accessManagementDetails,

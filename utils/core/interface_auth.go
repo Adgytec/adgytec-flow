@@ -1,4 +1,4 @@
-package interfaces
+package core
 
 type IAuth interface {
 	CreateUser(string) (string, error)

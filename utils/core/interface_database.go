@@ -1,4 +1,4 @@
-package interfaces
+package core
 
 import (
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"

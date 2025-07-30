@@ -1,12 +1,12 @@
 package access_management
 
 import (
-	"github.com/Adgytec/adgytec-flow/utils/interfaces"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/go-chi/chi/v5"
 )
 
 type accessManagementMux struct {
-	db interfaces.IDatabase
+	db core.IDatabase
 }
 
 func (m *accessManagementMux) BasePath() string {
@@ -19,10 +19,10 @@ func (m *accessManagementMux) Router() *chi.Mux {
 }
 
 type iAccessManagementMuxParams interface {
-	Database() interfaces.IDatabase
+	Database() core.IDatabase
 }
 
-func CreateAccessManagementMux(params iAccessManagementMuxParams) interfaces.IServiceMux {
+func CreateAccessManagementMux(params iAccessManagementMuxParams) core.IServiceMux {
 	return &accessManagementMux{
 		db: params.Database(),
 	}

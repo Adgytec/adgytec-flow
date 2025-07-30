@@ -4,19 +4,19 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	configAWS "github.com/Adgytec/adgytec-flow/config/aws"
 	"github.com/Adgytec/adgytec-flow/config/database"
-	"github.com/Adgytec/adgytec-flow/utils/interfaces"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type externalServices struct {
-	auth     interfaces.IAuth
-	database interfaces.IDatabase
+	auth     core.IAuth
+	database core.IDatabase
 }
 
-func (s *externalServices) Auth() interfaces.IAuth {
+func (s *externalServices) Auth() core.IAuth {
 	return s.auth
 }
 
-func (s *externalServices) Database() interfaces.IDatabase {
+func (s *externalServices) Database() core.IDatabase {
 	return s.database
 }
 
