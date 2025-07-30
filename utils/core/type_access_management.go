@@ -33,6 +33,7 @@ type PermissionRequired struct {
 	management          bool
 	orgId               string
 	requiredResourcesId []string
+	action              string
 }
 
 func (p *PermissionRequired) IsManagement() bool {
@@ -53,4 +54,8 @@ func (p *PermissionRequired) RequiredResourcesType() []PermissionResourceType {
 
 func (p *PermissionRequired) RequiredResourcesId() []string {
 	return p.requiredResourcesId
+}
+
+func (p *PermissionRequired) Action() string {
+	return p.action
 }
