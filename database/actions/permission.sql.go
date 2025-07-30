@@ -30,10 +30,10 @@ SET
 
 type AddApplicationPermissionParams struct {
 	Key               string                              `json:"key"`
-	ServiceName       string                              `json:"service_name"`
+	ServiceName       string                              `json:"serviceName"`
 	Name              string                              `json:"name"`
 	Description       pgtype.Text                         `json:"description"`
-	RequiredResources []ApplicationPermissionResourceType `json:"required_resources"`
+	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
 }
 
 func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
@@ -66,10 +66,10 @@ SET
 
 type AddManagementPermissionParams struct {
 	Key               string                             `json:"key"`
-	ServiceName       string                             `json:"service_name"`
+	ServiceName       string                             `json:"serviceName"`
 	Name              string                             `json:"name"`
 	Description       pgtype.Text                        `json:"description"`
-	RequiredResources []ManagementPermissionResourceType `json:"required_resources"`
+	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
 }
 
 func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
@@ -94,13 +94,13 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'service_name' AS service_name,
+			perm ->> 'serviceName' AS service_name,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
 				SELECT
 					jsonb_array_elements_text(
-						perm -> 'required_resources'
+						perm -> 'requiredResources'
 					)::application.permission_resource_type
 			) AS required_resources
 		FROM
@@ -144,13 +144,13 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'service_name' AS service_name,
+			perm ->> 'serviceName' AS service_name,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
 				SELECT
 					jsonb_array_elements_text(
-						perm -> 'required_resources'
+						perm -> 'requiredResources'
 					)::management.permission_resource_type
 			) AS required_resources
 		FROM

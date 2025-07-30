@@ -41,13 +41,13 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'service_name' AS service_name,
+			perm ->> 'serviceName' AS service_name,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
 				SELECT
 					jsonb_array_elements_text(
-						perm -> 'required_resources'
+						perm -> 'requiredResources'
 					)::management.permission_resource_type
 			) AS required_resources
 		FROM
@@ -85,13 +85,13 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'service_name' AS service_name,
+			perm ->> 'serviceName' AS service_name,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
 				SELECT
 					jsonb_array_elements_text(
-						perm -> 'required_resources'
+						perm -> 'requiredResources'
 					)::application.permission_resource_type
 			) AS required_resources
 		FROM
