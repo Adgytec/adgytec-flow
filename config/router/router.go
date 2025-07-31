@@ -39,5 +39,12 @@ func handle400(mux *chi.Mux) {
 
 func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
 	mux := chi.NewMux()
+	handle400(mux)
+
+	for _, factory := range services {
+		serviceMux := factory(appConfig)
+		mux.Mount(serviceMux.BasePath(), serviceMux.Router())
+	}
+
 	return mux
 }
