@@ -1,6 +1,11 @@
-package core
+package app_errors
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
+)
 
 var (
 	ErrUserExists       = fmt.Errorf("user exists")
@@ -19,10 +24,17 @@ func (e *UserExistsError) Is(target error) bool {
 	return target == ErrUserExists
 }
 
+func (e *UserExistsError) HTTPResponse() ResponseHTTPError {
+	return ResponseHTTPError{
+		ErrorCode: ErrFormAction.Error(),
+		Message:   helpers.StringPtr(e.Error()),
+	}
+}
+
 type AuthActionFailedError struct {
 	username   string
 	reason     string
-	actionType AuthActionType
+	actionType core.AuthActionType
 	cause      error
 }
 
@@ -36,4 +48,10 @@ func (e *AuthActionFailedError) Is(target error) bool {
 
 func (e *AuthActionFailedError) Unwrap() error {
 	return e.cause
+}
+
+func (e *AuthActionFailedError) HTTPResponse() ResponseHTTPError {
+	return ResponseHTTPError{
+		ErrorCode: ErrServer.Error(),
+	}
 }

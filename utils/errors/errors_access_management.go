@@ -1,6 +1,11 @@
-package core
+package app_errors
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
+)
 
 var (
 	ErrPermissionDenied      = fmt.Errorf("permission denied")
@@ -8,7 +13,7 @@ var (
 )
 
 type PermissionDeniedError struct {
-	permission IPermissionRequired
+	permission core.IPermissionRequired
 }
 
 func (e *PermissionDeniedError) Error() string {
@@ -17,6 +22,13 @@ func (e *PermissionDeniedError) Error() string {
 
 func (e *PermissionDeniedError) Is(target error) bool {
 	return target == ErrPermissionDenied
+}
+
+func (e *PermissionDeniedError) HTTPResponse() ResponseHTTPError {
+	return ResponseHTTPError{
+		ErrorCode: ErrAuthorization.Error(),
+		Message:   helpers.StringPtr(e.Error()),
+	}
 }
 
 type PermissionCheckFailedError struct {
@@ -33,4 +45,10 @@ func (e *PermissionCheckFailedError) Is(target error) bool {
 
 func (e *PermissionCheckFailedError) Unwrap() error {
 	return e.cause
+}
+
+func (e *PermissionCheckFailedError) HTTPResponse() ResponseHTTPError {
+	return ResponseHTTPError{
+		ErrorCode: ErrServer.Error(),
+	}
 }

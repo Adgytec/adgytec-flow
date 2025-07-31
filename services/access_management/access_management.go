@@ -9,3 +9,7 @@ type iAccessManagementParams interface {
 type accessManagement struct {
 	db core.IDatabase
 }
+
+func (s *accessManagement) checkPermission(entity core.IPermissionEntity, requiredPermission core.IPermissionRequired) error {
+	return nil
+}
