@@ -6,7 +6,7 @@ import (
 )
 
 type accessManagementMux struct {
-	db core.IDatabase
+	service *accessManagement
 }
 
 func (m *accessManagementMux) BasePath() string {
@@ -18,12 +18,10 @@ func (m *accessManagementMux) Router() *chi.Mux {
 	return mux
 }
 
-type iAccessManagementMuxParams interface {
-	Database() core.IDatabase
-}
-
-func CreateAccessManagementMux(params iAccessManagementMuxParams) core.IServiceMux {
+func CreateAccessManagementMux(params iAccessManagementParams) core.IServiceMux {
 	return &accessManagementMux{
-		db: params.Database(),
+		service: &accessManagement{
+			db: params.Database(),
+		},
 	}
 }

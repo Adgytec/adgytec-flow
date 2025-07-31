@@ -8,8 +8,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type accessMangement struct{}
-
 type accessManagementInit struct {
 	db                     core.IDatabase
 	serviceDetails         db_actions.AddServiceParams
