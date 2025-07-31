@@ -7,7 +7,9 @@ type iAppExternalServices interface {
 	Database() core.IDatabase
 }
 
-type iAppInternalServices interface{}
+type iAppInternalServices interface {
+	AccessManagement() core.IAccessManagementPC
+}
 
 type IApp interface {
 	iAppExternalServices
