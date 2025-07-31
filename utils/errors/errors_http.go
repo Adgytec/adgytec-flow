@@ -1,5 +1,10 @@
 package app_errors
 
+import (
+	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
+)
+
 // var (
 // 	ErrServer           = fmt.Errorf("server-error")
 // 	ErrNetwork          = fmt.Errorf("networ-error")
@@ -20,4 +25,11 @@ type RequestDecodeError struct {
 
 func (e *RequestDecodeError) Error() string {
 	return e.Message
+}
+
+func (e *RequestDecodeError) HTTPResponse() core.ResponseHTTPError {
+	return core.ResponseHTTPError{
+		HTTPStatusCode: e.Status,
+		Message:        helpers.StringPtr(e.Error()),
+	}
 }
