@@ -2,6 +2,7 @@ package app_errors
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
@@ -24,10 +25,10 @@ func (e *PermissionDeniedError) Is(target error) bool {
 	return target == ErrPermissionDenied
 }
 
-func (e *PermissionDeniedError) HTTPResponse() ResponseHTTPError {
-	return ResponseHTTPError{
-		ErrorCode: ErrAuthorization.Error(),
-		Message:   helpers.StringPtr(e.Error()),
+func (e *PermissionDeniedError) HTTPResponse() core.ResponseHTTPError {
+	return core.ResponseHTTPError{
+		HTTPStatusCode: http.StatusForbidden,
+		Message:        helpers.StringPtr(e.Error()),
 	}
 }
 
@@ -47,8 +48,9 @@ func (e *PermissionCheckFailedError) Unwrap() error {
 	return e.cause
 }
 
-func (e *PermissionCheckFailedError) HTTPResponse() ResponseHTTPError {
-	return ResponseHTTPError{
-		ErrorCode: ErrServer.Error(),
+func (e *PermissionCheckFailedError) HTTPResponse() core.ResponseHTTPError {
+	// TODO: handle status code based on e.cause
+	return core.ResponseHTTPError{
+		HTTPStatusCode: http.StatusInternalServerError,
 	}
 }
