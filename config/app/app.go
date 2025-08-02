@@ -7,6 +7,7 @@ type iAppExternalServices interface {
 	Database() core.IDatabase
 	Communication() core.ICommunicaiton
 	Storage() core.IStorage
+	CDN() core.ICDN
 }
 
 type iAppInternalServices interface {
