@@ -68,6 +68,7 @@ func (c *pgxConnection) NewTransaction() (pgx.Tx, error) {
 }
 
 func CreatePgxDbConnectionPool() core.IDatabase {
+	log.Println("init db pgx pool")
 	return &pgxConnection{
 		connPool: createPgxConnPool(),
 	}

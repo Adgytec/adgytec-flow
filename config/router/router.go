@@ -1,6 +1,8 @@
 package router
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 	"os"
 
@@ -41,6 +43,8 @@ func handle400(mux *chi.Mux) {
 }
 
 func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
+	fmt.Println()
+	log.Println("adding application mux")
 	mux := chi.NewMux()
 
 	mux.Use(middleware.Heartbeat("/health"))

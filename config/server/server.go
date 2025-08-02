@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
+	app_init "github.com/Adgytec/adgytec-flow/config/init"
 	"github.com/Adgytec/adgytec-flow/config/router"
 )
 
@@ -40,6 +41,7 @@ func (s *httpServer) Shutdown() error {
 
 func CreateHttpServer(port string) IServer {
 	appConfig := app.InitApp()
+	app_init.EnsureServicesInitialization(appConfig)
 	mux := router.CreateApplicationRouter(appConfig)
 
 	var protocols http.Protocols

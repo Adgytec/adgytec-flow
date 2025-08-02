@@ -5,6 +5,7 @@ import "github.com/Adgytec/adgytec-flow/utils/core"
 type iAppExternalServices interface {
 	Auth() core.IAuth
 	Database() core.IDatabase
+	Communication() core.ICommunicaiton
 }
 
 type iAppInternalServices interface {

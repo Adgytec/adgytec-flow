@@ -18,7 +18,7 @@ func main() {
 		log.Println("error loading .env file")
 	}
 
-	port := os.Getenv("port")
+	port := os.Getenv("PORT")
 
 	rootCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()

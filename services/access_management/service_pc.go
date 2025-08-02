@@ -1,6 +1,10 @@
 package access_management
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"log"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
 
 type accessManagementPC struct {
 	service *accessManagement
@@ -11,6 +15,7 @@ func (b *accessManagementPC) CheckPermission(core.IPermissionEntity, core.IPermi
 }
 
 func CreateAccessManagementPC(params iAccessManagementParams) core.IAccessManagementPC {
+	log.Println("creating access-management PC")
 	return &accessManagementPC{
 		service: &accessManagement{
 			db: params.Database(),
