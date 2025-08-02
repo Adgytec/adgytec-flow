@@ -6,6 +6,7 @@ type iAppExternalServices interface {
 	Auth() core.IAuth
 	Database() core.IDatabase
 	Communication() core.ICommunicaiton
+	Storage() core.IStorage
 }
 
 type iAppInternalServices interface {
