@@ -27,6 +27,10 @@ func (a *authCognito) EnableUser(username string) error {
 	return nil
 }
 
+func (a *authCognito) AddUserToManagement(username string) error {
+	return nil
+}
+
 func CreateCognitoAuthClient(awsConfig aws.Config) core.IAuth {
 	log.Println("init authentication cognito")
 	return &authCognito{
