@@ -8,6 +8,7 @@ type iAppExternalServices interface {
 	Communication() core.ICommunicaiton
 	Storage() core.IStorage
 	CDN() core.ICDN
+	Shutdown()
 }
 
 type iAppInternalServices interface {

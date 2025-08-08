@@ -67,7 +67,11 @@ func (c *pgxConnection) NewTransaction() (pgx.Tx, error) {
 	return c.connPool.Begin(context.TODO())
 }
 
-func CreatePgxDbConnectionPool() core.IDatabase {
+func (c *pgxConnection) Shutdown() {
+	c.connPool.Close()
+}
+
+func CreatePgxDbConnectionPool() core.IDatabaseWithShutdown {
 	log.Println("init db pgx pool")
 	return &pgxConnection{
 		connPool: createPgxConnPool(),

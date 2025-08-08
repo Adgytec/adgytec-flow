@@ -9,3 +9,8 @@ type IDatabase interface {
 	Queries() *db_actions.Queries
 	NewTransaction() (pgx.Tx, error)
 }
+
+type IDatabaseWithShutdown interface {
+	IDatabase
+	Shutdown()
+}

@@ -12,7 +12,7 @@ import (
 
 type externalServices struct {
 	auth          core.IAuth
-	database      core.IDatabase
+	database      core.IDatabaseWithShutdown
 	communicaiton core.ICommunicaiton
 	storage       core.IStorage
 	cdn           core.ICDN
@@ -36,6 +36,10 @@ func (s *externalServices) Storage() core.IStorage {
 
 func (s *externalServices) CDN() core.ICDN {
 	return s.cdn
+}
+
+func (s *externalServices) Shutdown() {
+	s.database.Shutdown()
 }
 
 func createExternalServices() iAppExternalServices {
