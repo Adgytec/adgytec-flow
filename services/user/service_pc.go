@@ -21,8 +21,9 @@ func (b *userServicePC) UpdateLastAccessed(username string) error {
 func CreateUserServicePC(params iUserServiceParams) core.IUserServicePC {
 	return &userServicePC{
 		service: &userService{
-			db:   params.Database(),
-			auth: params.Auth(),
+			db:               params.Database(),
+			auth:             params.Auth(),
+			accessManagement: params.AccessManagement(),
 		},
 	}
 }
