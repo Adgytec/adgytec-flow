@@ -9,10 +9,7 @@ func InitApp() IApp {
 	log.Println("Initializing application services PC.")
 	internalServices := createInternalService(externalServices)
 
-	return struct {
-		iAppExternalServices
-		iAppInternalServices
-	}{
+	return &app{
 		externalServices,
 		internalServices,
 	}

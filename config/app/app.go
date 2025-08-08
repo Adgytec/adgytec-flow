@@ -12,9 +12,15 @@ type iAppExternalServices interface {
 
 type iAppInternalServices interface {
 	AccessManagement() core.IAccessManagementPC
+	UserService() core.IUserServicePC
 }
 
 type IApp interface {
+	iAppExternalServices
+	iAppInternalServices
+}
+
+type app struct {
 	iAppExternalServices
 	iAppInternalServices
 }
