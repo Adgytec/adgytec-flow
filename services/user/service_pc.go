@@ -6,8 +6,8 @@ type userServicePC struct {
 	service *userService
 }
 
-func (b *userServicePC) CreateUser(username string) error {
-	return nil
+func (b *userServicePC) CreateUser(username string) (string, error) {
+	return "", nil
 }
 
 func (b *userServicePC) GetUser(username string) (any, error) {
