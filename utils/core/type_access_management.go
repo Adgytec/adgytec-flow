@@ -9,53 +9,85 @@ const (
 	PermissionEntityTypeToken PermissionEntityType = "token"
 )
 
-type PermissionEntity struct {
+type permissionEntity struct {
 	id         string
 	entityType PermissionEntityType
 }
 
-func (p *PermissionEntity) Id() string {
+func (p *permissionEntity) Id() string {
 	return p.id
 }
 
-func (p *PermissionEntity) EntityType() PermissionEntityType {
+func (p *permissionEntity) EntityType() PermissionEntityType {
 	return p.entityType
 }
 
-type PermissionResourceType struct {
-	db_actions.ManagementPermissionResourceType
-	db_actions.ApplicationPermissionResourceType
+func CreatePermissionEntity(userId string, entityType PermissionEntityType) IPermissionEntity {
+	return &permissionEntity{
+		id:         userId,
+		entityType: entityType,
+	}
 }
 
-type PermissionRequired struct {
+type permissionRequired struct {
 	key                 string
-	requiredResources   []PermissionResourceType
+	requiredResources   []string
 	management          bool
 	orgId               string
 	requiredResourcesId []string
 	action              string
 }
 
-func (p *PermissionRequired) IsManagement() bool {
+func (p *permissionRequired) IsManagement() bool {
 	return p.management
 }
 
-func (p *PermissionRequired) OrgId() string {
+func (p *permissionRequired) OrgId() string {
 	return p.orgId
 }
 
-func (p *PermissionRequired) Key() string {
+func (p *permissionRequired) Key() string {
 	return p.key
 }
 
-func (p *PermissionRequired) RequiredResourcesType() []PermissionResourceType {
+func (p *permissionRequired) RequiredResourcesType() []string {
 	return p.requiredResources
 }
 
-func (p *PermissionRequired) RequiredResourcesId() []string {
+func (p *permissionRequired) RequiredResourcesId() []string {
 	return p.requiredResourcesId
 }
 
-func (p *PermissionRequired) Action() string {
+func (p *permissionRequired) Action() string {
 	return p.action
+}
+
+func CreatePermssionRequiredFromManagementPermission(permission db_actions.AddManagementPermissionParams, orgId string, requiredResourcesId []string) IPermissionRequired {
+	var requiredResources []string
+	for _, resourceType := range permission.RequiredResources {
+		requiredResources = append(requiredResources, string(resourceType))
+	}
+
+	return &permissionRequired{
+		key:                 permission.Key,
+		management:          true,
+		orgId:               orgId,
+		requiredResources:   requiredResources,
+		requiredResourcesId: requiredResourcesId,
+	}
+}
+
+func CreatePermssionRequiredFromApplicationPermission(permission db_actions.AddApplicationPermissionParams, orgId string, requiredResourcesId []string) IPermissionRequired {
+	var requiredResources []string
+	for _, resourceType := range permission.RequiredResources {
+		requiredResources = append(requiredResources, string(resourceType))
+	}
+
+	return &permissionRequired{
+		key:                 permission.Key,
+		management:          true,
+		orgId:               orgId,
+		requiredResources:   requiredResources,
+		requiredResourcesId: requiredResourcesId,
+	}
 }

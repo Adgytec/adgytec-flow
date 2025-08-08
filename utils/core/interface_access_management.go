@@ -9,11 +9,12 @@ type IPermissionRequired interface {
 	IsManagement() bool
 	OrgId() string
 	Key() string
-	RequiredResourcesType() []PermissionResourceType
+	RequiredResourcesType() []string
 	RequiredResourcesId() []string
 	Action() string
 }
 
 type IAccessManagementPC interface {
 	CheckPermission(IPermissionEntity, IPermissionRequired) error
+	CheckSelfPermission(string, string) error
 }
