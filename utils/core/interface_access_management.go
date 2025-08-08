@@ -11,7 +11,7 @@ type IPermissionRequired interface {
 	Key() string
 	RequiredResourcesType() []string
 	RequiredResourcesId() []string
-	Action() string
+	Action() string // used with PermissionDeniedError
 }
 
 type IAccessManagementPC interface {
