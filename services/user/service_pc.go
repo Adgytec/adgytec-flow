@@ -10,10 +10,6 @@ func (b *userServicePC) CreateUser(username string) (string, error) {
 	return "", nil
 }
 
-func (b *userServicePC) GetUser(username string) (any, error) {
-	return nil, nil
-}
-
 func (b *userServicePC) UpdateLastAccessed(username string) error {
 	return nil
 }

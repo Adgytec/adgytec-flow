@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -22,6 +21,10 @@ var services = []serviceFactory{
 	func(appConfig app.IApp) core.IServiceMux {
 		return access_management.CreateAccessManagementMux(appConfig)
 	},
+	func(appConfig app.IApp) core.IServiceMux {
+		return user.CreateUserServiceMux(appConfig)
+	},
+
 }
 
 func handle400(mux *chi.Mux) {
@@ -43,7 +46,6 @@ func handle400(mux *chi.Mux) {
 }
 
 func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
-	fmt.Println()
 	log.Println("adding application mux")
 	mux := chi.NewMux()
 
