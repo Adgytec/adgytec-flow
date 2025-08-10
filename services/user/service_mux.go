@@ -21,7 +21,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 }
 
 func CreateUserServiceMux(params iUserServiceParams) core.IServiceMux {
-	log.Println("adding user service mux")
+	log.Println("adding user-service mux")
 	return &userServiceMux{
 		service: &userService{
 			db:               params.Database(),

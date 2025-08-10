@@ -7,6 +7,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -24,7 +25,6 @@ var services = []serviceFactory{
 	func(appConfig app.IApp) core.IServiceMux {
 		return user.CreateUserServiceMux(appConfig)
 	},
-
 }
 
 func handle400(mux *chi.Mux) {

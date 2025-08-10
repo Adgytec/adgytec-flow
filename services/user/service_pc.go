@@ -1,20 +1,25 @@
 package user
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"log"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
 
 type userServicePC struct {
 	service *userService
 }
 
-func (b *userServicePC) CreateUser(username string) (string, error) {
+func (pc *userServicePC) CreateUser(username string) (string, error) {
 	return "", nil
 }
 
-func (b *userServicePC) UpdateLastAccessed(username string) error {
+func (pc *userServicePC) UpdateLastAccessed(username string) error {
 	return nil
 }
 
 func CreateUserServicePC(params iUserServiceParams) core.IUserServicePC {
+	log.Println("creating user-service PC")
 	return &userServicePC{
 		service: &userService{
 			db:               params.Database(),
