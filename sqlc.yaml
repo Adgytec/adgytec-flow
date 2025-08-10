@@ -10,4 +10,10 @@ sql:
         sql_package: "pgx/v5"
         emit_json_tags: true
         json_tags_case_style: camel
+        emit_interface: true
+        overrides:
+          - column: global.media_image.variants
+            go_type: 
+              import: "github.com/Adgytec/adgytec-flow/database/models"
+              type: "MediaImageVariants"
 

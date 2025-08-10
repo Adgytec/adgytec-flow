@@ -8,6 +8,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -52,6 +53,92 @@ func (ns NullApplicationPermissionResourceType) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return string(ns.ApplicationPermissionResourceType), nil
+}
+
+type GlobalMediaStatus string
+
+const (
+	GlobalMediaStatusPending   GlobalMediaStatus = "pending"
+	GlobalMediaStatusFailed    GlobalMediaStatus = "failed"
+	GlobalMediaStatusCompleted GlobalMediaStatus = "completed"
+)
+
+func (e *GlobalMediaStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalMediaStatus(s)
+	case string:
+		*e = GlobalMediaStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalMediaStatus: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalMediaStatus struct {
+	GlobalMediaStatus GlobalMediaStatus `json:"globalMediaStatus"`
+	Valid             bool              `json:"valid"` // Valid is true if GlobalMediaStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalMediaStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalMediaStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalMediaStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalMediaStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalMediaStatus), nil
+}
+
+type GlobalMediaType string
+
+const (
+	GlobalMediaTypeImage GlobalMediaType = "image"
+	GlobalMediaTypeVideo GlobalMediaType = "video"
+	GlobalMediaTypeOther GlobalMediaType = "other"
+)
+
+func (e *GlobalMediaType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalMediaType(s)
+	case string:
+		*e = GlobalMediaType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalMediaType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalMediaType struct {
+	GlobalMediaType GlobalMediaType `json:"globalMediaType"`
+	Valid           bool            `json:"valid"` // Valid is true if GlobalMediaType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalMediaType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalMediaType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalMediaType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalMediaType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalMediaType), nil
 }
 
 type GlobalServiceHierarchyResult string
@@ -180,6 +267,48 @@ func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
 	return string(ns.GlobalServiceLogicalPartitionType), nil
 }
 
+type GlobalUserStatus string
+
+const (
+	GlobalUserStatusDisabled GlobalUserStatus = "disabled"
+	GlobalUserStatusEnabled  GlobalUserStatus = "enabled"
+)
+
+func (e *GlobalUserStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalUserStatus(s)
+	case string:
+		*e = GlobalUserStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalUserStatus: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalUserStatus struct {
+	GlobalUserStatus GlobalUserStatus `json:"globalUserStatus"`
+	Valid            bool             `json:"valid"` // Valid is true if GlobalUserStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalUserStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalUserStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalUserStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalUserStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalUserStatus), nil
+}
+
 type ManagementPermissionResourceType string
 
 const (
@@ -238,6 +367,29 @@ type ArchiveDeletedRecord struct {
 	DeletedAt pgtype.Timestamptz `json:"deletedAt"`
 }
 
+type GlobalMediaImage struct {
+	MediaID  pgtype.UUID               `json:"mediaId"`
+	Variants models.MediaImageVariants `json:"variants"`
+	Status   GlobalMediaStatus         `json:"status"`
+}
+
+type GlobalMediaVideo struct {
+	MediaID          pgtype.UUID       `json:"mediaId"`
+	Thumbnail        pgtype.Text       `json:"thumbnail"`
+	AdaptiveManifest pgtype.Text       `json:"adaptiveManifest"`
+	Preview          pgtype.Text       `json:"preview"`
+	Status           GlobalMediaStatus `json:"status"`
+}
+
+type GlobalMedium struct {
+	ID          pgtype.UUID        `json:"id"`
+	BucketPath  string             `json:"bucketPath"`
+	Size        int64              `json:"size"`
+	MediaType   GlobalMediaType    `json:"mediaType"`
+	ContentType pgtype.Text        `json:"contentType"`
+	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+}
+
 type GlobalService struct {
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
@@ -250,6 +402,19 @@ type GlobalServiceHierarchyDetail struct {
 	HierarchyName   string                       `json:"hierarchyName"`
 	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
 	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
+}
+
+type GlobalUser struct {
+	ID              pgtype.UUID        `json:"id"`
+	Email           string             `json:"email"`
+	NormalizedEmail string             `json:"normalizedEmail"`
+	Name            string             `json:"name"`
+	NormalizedName  string             `json:"normalizedName"`
+	About           pgtype.Text        `json:"about"`
+	DateOfBirth     pgtype.Date        `json:"dateOfBirth"`
+	Status          GlobalUserStatus   `json:"status"`
+	CreatedAt       pgtype.Timestamptz `json:"createdAt"`
+	LastAccessed    pgtype.Timestamptz `json:"lastAccessed"`
 }
 
 type ManagementPermission struct {

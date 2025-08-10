@@ -59,7 +59,7 @@ type pgxConnection struct {
 	connPool *pgxpool.Pool
 }
 
-func (c *pgxConnection) Queries() *db_actions.Queries {
+func (c *pgxConnection) Queries() db_actions.Querier {
 	return db_actions.New(c.connPool)
 }
 
