@@ -11,14 +11,6 @@ type accessManagementPC struct {
 	service *accessManagement
 }
 
-func (pc *accessManagementPC) CheckPermission(permissionEntity core.IPermissionEntity, permissionRequired core.IPermissionRequired) error {
-	return pc.service.checkPermission(permissionEntity, permissionRequired)
-}
-
-func (pc *accessManagementPC) CheckSelfPermission(currentUserId, userId, action string) error {
-	return pc.service.checkSelfPermission(currentUserId, userId, action)
-}
-
 func CreateAccessManagementPC(params iAccessManagementParams) core.IAccessManagementPC {
 	log.Println("creating access-management PC")
 	return &accessManagementPC{

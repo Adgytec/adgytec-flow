@@ -13,7 +13,3 @@ type accessManagement struct {
 	db              core.IDatabase
 	permissionCache core.ICache[bool]
 }
-
-func (s *accessManagement) checkPermission(entity core.IPermissionEntity, requiredPermission core.IPermissionRequired) error {
-	return nil
-}
