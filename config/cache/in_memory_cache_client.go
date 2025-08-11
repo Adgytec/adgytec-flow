@@ -1,0 +1,35 @@
+package cache
+
+import (
+	"time"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
+	lru "github.com/hashicorp/golang-lru/v2/expirable"
+)
+
+type inMemoryLruCache struct {
+	cache *lru.LRU[string, any]
+}
+
+func (cc *inMemoryLruCache) Get(key string) any {
+	val, ok := cc.cache.Get(key)
+	if !ok {
+		return nil
+	}
+
+	return val
+}
+
+func (cc *inMemoryLruCache) Set(key string, data any) {
+	cc.cache.Add(key, data)
+}
+
+func (cc *inMemoryLruCache) Delete(key string) {
+	cc.cache.Remove(key)
+}
+
+func CreateInMemoryCacheClient() core.ICacheClient {
+	return &inMemoryLruCache{
+		cache: lru.NewLRU[string, any](1<<13, nil, 5*time.Minute),
+	}
+}
