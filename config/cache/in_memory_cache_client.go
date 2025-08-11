@@ -11,13 +11,8 @@ type inMemoryLruCache struct {
 	cache *lru.LRU[string, any]
 }
 
-func (cc *inMemoryLruCache) Get(key string) any {
-	val, ok := cc.cache.Get(key)
-	if !ok {
-		return nil
-	}
-
-	return val
+func (cc *inMemoryLruCache) Get(key string) (any, bool) {
+	return cc.cache.Get(key)
 }
 
 func (cc *inMemoryLruCache) Set(key string, data any) {
