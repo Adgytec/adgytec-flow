@@ -2,12 +2,12 @@ package core
 
 type ICache[T any] interface {
 	Get(string) T
-	Set(string, T) error
+	Set(string, T)
 	Delete(string)
 }
 
 type ICacheClient interface {
 	Get(string) any
-	Set(string, any) error
+	Set(string, any)
 	Delete(string)
 }
