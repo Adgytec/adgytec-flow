@@ -405,16 +405,17 @@ type GlobalServiceHierarchyDetail struct {
 }
 
 type GlobalUser struct {
-	ID              pgtype.UUID        `json:"id"`
-	Email           string             `json:"email"`
-	NormalizedEmail string             `json:"normalizedEmail"`
-	Name            string             `json:"name"`
-	NormalizedName  string             `json:"normalizedName"`
-	About           pgtype.Text        `json:"about"`
-	DateOfBirth     pgtype.Date        `json:"dateOfBirth"`
-	Status          GlobalUserStatus   `json:"status"`
-	CreatedAt       pgtype.Timestamptz `json:"createdAt"`
-	LastAccessed    pgtype.Timestamptz `json:"lastAccessed"`
+	ID               pgtype.UUID        `json:"id"`
+	Email            string             `json:"email"`
+	NormalizedEmail  string             `json:"normalizedEmail"`
+	Name             string             `json:"name"`
+	NormalizedName   string             `json:"normalizedName"`
+	ProfilePictureID pgtype.UUID        `json:"profilePictureId"`
+	About            pgtype.Text        `json:"about"`
+	DateOfBirth      pgtype.Date        `json:"dateOfBirth"`
+	Status           GlobalUserStatus   `json:"status"`
+	CreatedAt        pgtype.Timestamptz `json:"createdAt"`
+	LastAccessed     pgtype.Timestamptz `json:"lastAccessed"`
 }
 
 type ManagementPermission struct {

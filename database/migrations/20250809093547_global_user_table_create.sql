@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS global.users (
 	normalized_email TEXT NOT NULL,
 	name TEXT NOT NULL,
 	normalized_name TEXT NOT NULL,
+	profile_picture_id UUID REFERENCES global.media (id),
 	about TEXT,
 	date_of_birth date,
 	status global.user_status NOT NULL DEFAULT 'enabled',
