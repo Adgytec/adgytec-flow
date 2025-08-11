@@ -7,6 +7,7 @@ import (
 
 type iAccessManagementParams interface {
 	Database() core.IDatabase
+	CacheClient() core.ICacheClient
 }
 
 type accessManagement struct {

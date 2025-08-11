@@ -9,6 +9,7 @@ type iAppExternalServices interface {
 	Storage() core.IStorage
 	CDN() core.ICDN
 	Shutdown()
+	CacheClient() core.ICacheClient
 }
 
 type iAppInternalServices interface {

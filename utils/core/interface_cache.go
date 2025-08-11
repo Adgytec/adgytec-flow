@@ -7,7 +7,7 @@ type ICache[T any] interface {
 }
 
 type ICacheClient interface {
-	Get(string) any
+	Get(string) (any, bool)
 	Set(string, any)
 	Delete(string)
 }

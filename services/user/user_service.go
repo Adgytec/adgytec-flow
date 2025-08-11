@@ -6,6 +6,7 @@ type iUserServiceParams interface {
 	Database() core.IDatabase
 	Auth() core.IAuth
 	AccessManagement() core.IAccessManagementPC
+	CacheClient() core.ICacheClient
 }
 
 type userService struct {
