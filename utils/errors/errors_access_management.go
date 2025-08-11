@@ -14,11 +14,11 @@ var (
 )
 
 type PermissionDeniedError struct {
-	permission core.IPermissionRequired
+	Action string
 }
 
 func (e *PermissionDeniedError) Error() string {
-	return fmt.Sprintf("Permission denied for action: '%s'.", e.permission.Action())
+	return fmt.Sprintf("Permission denied for action: '%s'.", e.Action)
 }
 
 func (e *PermissionDeniedError) Is(target error) bool {
