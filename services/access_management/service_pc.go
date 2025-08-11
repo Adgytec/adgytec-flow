@@ -15,8 +15,8 @@ func (pc *accessManagementPC) CheckPermission(permissionEntity core.IPermissionE
 	return pc.service.checkPermission(permissionEntity, permissionRequired)
 }
 
-func (pc *accessManagementPC) CheckSelfPermission(currentUserId, userId string) error {
-	return pc.service.selfPermissionCheck(currentUserId, userId)
+func (pc *accessManagementPC) CheckSelfPermission(currentUserId, userId, action string) error {
+	return pc.service.checkSelfPermission(currentUserId, userId, action)
 }
 
 func CreateAccessManagementPC(params iAccessManagementParams) core.IAccessManagementPC {

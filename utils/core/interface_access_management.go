@@ -16,5 +16,5 @@ type IPermissionRequired interface {
 
 type IAccessManagementPC interface {
 	CheckPermission(IPermissionEntity, IPermissionRequired) error
-	CheckSelfPermission(string, string) error
+	CheckSelfPermission(currentUserId string, userId string, action string) error
 }
