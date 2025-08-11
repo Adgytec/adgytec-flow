@@ -5,3 +5,9 @@ type ICache[T any] interface {
 	Set(string, T) error
 	Delete(string)
 }
+
+type ICacheClient interface {
+	Get(string) any
+	Set(string, any) error
+	Delete(string)
+}
