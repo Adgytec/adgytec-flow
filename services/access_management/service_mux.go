@@ -3,6 +3,7 @@ package access_management
 import (
 	"log"
 
+	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/go-chi/chi/v5"
 )
@@ -24,7 +25,8 @@ func CreateAccessManagementMux(params iAccessManagementParams) core.IServiceMux 
 	log.Println("adding access-managment mux")
 	return &accessManagementMux{
 		service: &accessManagement{
-			db: params.Database(),
+			db:              params.Database(),
+			permissionCache: cache.CreateNewCache[bool](params.CacheClient(), "access-management"),
 		},
 	}
 }

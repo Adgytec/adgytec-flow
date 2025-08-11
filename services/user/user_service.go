@@ -1,6 +1,9 @@
 package user
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
 
 type iUserServiceParams interface {
 	Database() core.IDatabase
@@ -10,7 +13,10 @@ type iUserServiceParams interface {
 }
 
 type userService struct {
-	db               core.IDatabase
-	auth             core.IAuth
-	accessManagement core.IAccessManagementPC
+	db                    core.IDatabase
+	auth                  core.IAuth
+	accessManagement      core.IAccessManagementPC
+	getUserCache          core.ICache[db_actions.GlobalUser]
+	getUserListCache      core.ICache[[]db_actions.GlobalUser]
+	userLastAccessedCache core.ICache[bool]
 }
