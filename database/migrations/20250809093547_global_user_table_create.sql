@@ -9,7 +9,7 @@ CREATE TYPE global.user_status AS ENUM(
 
 CREATE TABLE IF NOT EXISTS global.users (
 	id UUID PRIMARY KEY,
-	email TEXT NOT NULL UNIQUE,
+	email TEXT NOT NULL,
 	normalized_email TEXT NOT NULL,
 	name TEXT NOT NULL,
 	normalized_name TEXT NOT NULL,
@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS global.users (
 	created_at TIMESTAMPTZ NOT NULL,
 	last_accessed TIMESTAMPTZ NOT NULL
 );
+
+CREATE UNIQUE INDEX global_users_email_unique_idx ON global.users (lower(email));
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON global.users FOR each ROW
 EXECUTE function global.set_created_at ();
@@ -48,6 +50,8 @@ DROP FUNCTION if EXISTS global.normalize_user_fields ();
 DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON global.users;
 
 DROP TRIGGER if EXISTS on_insert_set_created_at ON global.users;
+
+DROP INDEX if EXISTS global_users_email_unique_idx;
 
 DROP TABLE IF EXISTS global.users;
 

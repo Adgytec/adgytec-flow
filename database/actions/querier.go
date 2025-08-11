@@ -6,6 +6,8 @@ package db_actions
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type Querier interface {
@@ -15,6 +17,12 @@ type Querier interface {
 	AddServiceHierarchyDetails(ctx context.Context, arg AddServiceHierarchyDetailsParams) error
 	BatchAddApplicationPermission(ctx context.Context, permissions []byte) error
 	BatchAddManagementPermission(ctx context.Context, permissions []byte) error
+	GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersByQueryParams) ([]GetGlobalUsersByQueryRow, error)
+	GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGlobalUsersFromNextCursorParams) ([]GetGlobalUsersFromNextCursorRow, error)
+	GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromNextCursorOldestFirstParams) ([]GetGlobalUsersFromNextCursorOldestFirstRow, error)
+	GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGlobalUsersFromPrevCursorParams) ([]GetGlobalUsersFromPrevCursorRow, error)
+	GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromPrevCursorOldestFirstParams) ([]GetGlobalUsersFromPrevCursorOldestFirstRow, error)
+	GetUserById(ctx context.Context, userID pgtype.UUID) (GetUserByIdRow, error)
 }
 
 var _ Querier = (*Queries)(nil)
