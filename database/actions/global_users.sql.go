@@ -13,33 +13,18 @@ import (
 
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
-	users.id,
-	users.email,
-	users.name,
-	users.about,
-	users.date_of_birth,
-	users.created_at,
-	jsonb_build_object(
-		'originalProfile',
-		media.bucket_path,
-		'status',
-		image.status,
-		'variants',
-		image.variants
-	) AS profile_picture
+	id, email, name, about, date_of_birth, created_at, profile_picture
 FROM
-	global.users AS users
-	LEFT JOIN global.media AS media ON media.id = users.profile_picture_id
-	LEFT JOIN global.media_image AS image ON media.id = image.media_id
+	global.user_details
 WHERE
-	users.normalized_name ILIKE '%' || unaccent (
+	normalized_name ILIKE '%' || unaccent (
 		$2::TEXT
 	) || '%'
-	OR users.normalized_email ILIKE '%' || unaccent (
+	OR normalized_email ILIKE '%' || unaccent (
 		$2::TEXT
 	) || '%'
 ORDER BY
-	users.created_at DESC
+	created_at DESC
 LIMIT
 	$1
 `
@@ -49,25 +34,15 @@ type GetGlobalUsersByQueryParams struct {
 	Query string `json:"query"`
 }
 
-type GetGlobalUsersByQueryRow struct {
-	ID             pgtype.UUID        `json:"id"`
-	Email          string             `json:"email"`
-	Name           string             `json:"name"`
-	About          pgtype.Text        `json:"about"`
-	DateOfBirth    pgtype.Date        `json:"dateOfBirth"`
-	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
-	ProfilePicture []byte             `json:"profilePicture"`
-}
-
-func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersByQueryParams) ([]GetGlobalUsersByQueryRow, error) {
+func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersByQueryParams) ([]GlobalUserDetail, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersByQuery, arg.Limit, arg.Query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetGlobalUsersByQueryRow
+	var items []GlobalUserDetail
 	for rows.Next() {
-		var i GetGlobalUsersByQueryRow
+		var i GlobalUserDetail
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -89,28 +64,13 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 
 const getGlobalUsersFromNextCursor = `-- name: GetGlobalUsersFromNextCursor :many
 SELECT
-	users.id,
-	users.email,
-	users.name,
-	users.about,
-	users.date_of_birth,
-	users.created_at,
-	jsonb_build_object(
-		'originalProfile',
-		media.bucket_path,
-		'status',
-		image.status,
-		'variants',
-		image.variants
-	) AS profile_picture
+	id, email, name, about, date_of_birth, created_at, profile_picture
 FROM
-	global.users AS users
-	LEFT JOIN global.media AS media ON media.id = users.profile_picture_id
-	LEFT JOIN global.media_image AS image ON media.id = image.media_id
+	global.user_details
 WHERE
-	users.created_at < $2::TIMESTAMPTZ
+	created_at < $2::TIMESTAMPTZ
 ORDER BY
-	users.created_at DESC
+	created_at DESC
 LIMIT
 	$1
 `
@@ -120,25 +80,15 @@ type GetGlobalUsersFromNextCursorParams struct {
 	NextCursor pgtype.Timestamptz `json:"nextCursor"`
 }
 
-type GetGlobalUsersFromNextCursorRow struct {
-	ID             pgtype.UUID        `json:"id"`
-	Email          string             `json:"email"`
-	Name           string             `json:"name"`
-	About          pgtype.Text        `json:"about"`
-	DateOfBirth    pgtype.Date        `json:"dateOfBirth"`
-	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
-	ProfilePicture []byte             `json:"profilePicture"`
-}
-
-func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGlobalUsersFromNextCursorParams) ([]GetGlobalUsersFromNextCursorRow, error) {
+func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGlobalUsersFromNextCursorParams) ([]GlobalUserDetail, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersFromNextCursor, arg.Limit, arg.NextCursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetGlobalUsersFromNextCursorRow
+	var items []GlobalUserDetail
 	for rows.Next() {
-		var i GetGlobalUsersFromNextCursorRow
+		var i GlobalUserDetail
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -160,28 +110,13 @@ func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGloba
 
 const getGlobalUsersFromNextCursorOldestFirst = `-- name: GetGlobalUsersFromNextCursorOldestFirst :many
 SELECT
-	users.id,
-	users.email,
-	users.name,
-	users.about,
-	users.date_of_birth,
-	users.created_at,
-	jsonb_build_object(
-		'originalProfile',
-		media.bucket_path,
-		'status',
-		image.status,
-		'variants',
-		image.variants
-	) AS profile_picture
+	id, email, name, about, date_of_birth, created_at, profile_picture
 FROM
-	global.users AS users
-	LEFT JOIN global.media AS media ON media.id = users.profile_picture_id
-	LEFT JOIN global.media_image AS image ON media.id = image.media_id
+	global.user_details
 WHERE
-	users.created_at > $2::TIMESTAMPTZ
+	created_at > $2::TIMESTAMPTZ
 ORDER BY
-	users.created_at ASC
+	created_at ASC
 LIMIT
 	$1
 `
@@ -191,25 +126,15 @@ type GetGlobalUsersFromNextCursorOldestFirstParams struct {
 	NextCursor pgtype.Timestamptz `json:"nextCursor"`
 }
 
-type GetGlobalUsersFromNextCursorOldestFirstRow struct {
-	ID             pgtype.UUID        `json:"id"`
-	Email          string             `json:"email"`
-	Name           string             `json:"name"`
-	About          pgtype.Text        `json:"about"`
-	DateOfBirth    pgtype.Date        `json:"dateOfBirth"`
-	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
-	ProfilePicture []byte             `json:"profilePicture"`
-}
-
-func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromNextCursorOldestFirstParams) ([]GetGlobalUsersFromNextCursorOldestFirstRow, error) {
+func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromNextCursorOldestFirstParams) ([]GlobalUserDetail, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersFromNextCursorOldestFirst, arg.Limit, arg.NextCursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetGlobalUsersFromNextCursorOldestFirstRow
+	var items []GlobalUserDetail
 	for rows.Next() {
-		var i GetGlobalUsersFromNextCursorOldestFirstRow
+		var i GlobalUserDetail
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -231,28 +156,13 @@ func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, a
 
 const getGlobalUsersFromPrevCursor = `-- name: GetGlobalUsersFromPrevCursor :many
 SELECT
-	users.id,
-	users.email,
-	users.name,
-	users.about,
-	users.date_of_birth,
-	users.created_at,
-	jsonb_build_object(
-		'originalProfile',
-		media.bucket_path,
-		'status',
-		image.status,
-		'variants',
-		image.variants
-	) AS profile_picture
+	id, email, name, about, date_of_birth, created_at, profile_picture
 FROM
-	global.users AS users
-	LEFT JOIN global.media AS media ON media.id = users.profile_picture_id
-	LEFT JOIN global.media_image AS image ON media.id = image.media_id
+	global.user_details
 WHERE
-	users.created_at > $2::TIMESTAMPTZ
+	created_at > $2::TIMESTAMPTZ
 ORDER BY
-	users.created_at DESC
+	created_at DESC
 LIMIT
 	$1
 `
@@ -262,25 +172,15 @@ type GetGlobalUsersFromPrevCursorParams struct {
 	PrevCursor pgtype.Timestamptz `json:"prevCursor"`
 }
 
-type GetGlobalUsersFromPrevCursorRow struct {
-	ID             pgtype.UUID        `json:"id"`
-	Email          string             `json:"email"`
-	Name           string             `json:"name"`
-	About          pgtype.Text        `json:"about"`
-	DateOfBirth    pgtype.Date        `json:"dateOfBirth"`
-	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
-	ProfilePicture []byte             `json:"profilePicture"`
-}
-
-func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGlobalUsersFromPrevCursorParams) ([]GetGlobalUsersFromPrevCursorRow, error) {
+func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGlobalUsersFromPrevCursorParams) ([]GlobalUserDetail, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersFromPrevCursor, arg.Limit, arg.PrevCursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetGlobalUsersFromPrevCursorRow
+	var items []GlobalUserDetail
 	for rows.Next() {
-		var i GetGlobalUsersFromPrevCursorRow
+		var i GlobalUserDetail
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -302,28 +202,13 @@ func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGloba
 
 const getGlobalUsersFromPrevCursorOldestFirst = `-- name: GetGlobalUsersFromPrevCursorOldestFirst :many
 SELECT
-	users.id,
-	users.email,
-	users.name,
-	users.about,
-	users.date_of_birth,
-	users.created_at,
-	jsonb_build_object(
-		'originalProfile',
-		media.bucket_path,
-		'status',
-		image.status,
-		'variants',
-		image.variants
-	) AS profile_picture
+	id, email, name, about, date_of_birth, created_at, profile_picture
 FROM
-	global.users AS users
-	LEFT JOIN global.media AS media ON media.id = users.profile_picture_id
-	LEFT JOIN global.media_image AS image ON media.id = image.media_id
+	global.user_details
 WHERE
-	users.created_at < $2::TIMESTAMPTZ
+	created_at < $2::TIMESTAMPTZ
 ORDER BY
-	users.created_at ASC
+	created_at ASC
 LIMIT
 	$1
 `
@@ -333,25 +218,15 @@ type GetGlobalUsersFromPrevCursorOldestFirstParams struct {
 	PrevCursor pgtype.Timestamptz `json:"prevCursor"`
 }
 
-type GetGlobalUsersFromPrevCursorOldestFirstRow struct {
-	ID             pgtype.UUID        `json:"id"`
-	Email          string             `json:"email"`
-	Name           string             `json:"name"`
-	About          pgtype.Text        `json:"about"`
-	DateOfBirth    pgtype.Date        `json:"dateOfBirth"`
-	CreatedAt      pgtype.Timestamptz `json:"createdAt"`
-	ProfilePicture []byte             `json:"profilePicture"`
-}
-
-func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromPrevCursorOldestFirstParams) ([]GetGlobalUsersFromPrevCursorOldestFirstRow, error) {
+func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromPrevCursorOldestFirstParams) ([]GlobalUserDetail, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersFromPrevCursorOldestFirst, arg.Limit, arg.PrevCursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GetGlobalUsersFromPrevCursorOldestFirstRow
+	var items []GlobalUserDetail
 	for rows.Next() {
-		var i GetGlobalUsersFromPrevCursorOldestFirstRow
+		var i GlobalUserDetail
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -373,45 +248,23 @@ func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, a
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-	users.id,
-	users.email,
-	users.name,
-	users.about,
-	users.date_of_birth,
-	jsonb_build_object(
-		'originalProfile',
-		media.bucket_path,
-		'status',
-		image.status,
-		'variants',
-		image.variants
-	) AS profile_picture
+	id, email, name, about, date_of_birth, created_at, profile_picture
 FROM
-	global.users AS users
-	LEFT JOIN global.media AS media ON media.id = users.profile_picture_id
-	LEFT JOIN global.media_image AS image ON media.id = image.media_id
+	global.user_details
 WHERE
-	users.id = $1::UUID
+	id = $1::UUID
 `
 
-type GetUserByIdRow struct {
-	ID             pgtype.UUID `json:"id"`
-	Email          string      `json:"email"`
-	Name           string      `json:"name"`
-	About          pgtype.Text `json:"about"`
-	DateOfBirth    pgtype.Date `json:"dateOfBirth"`
-	ProfilePicture []byte      `json:"profilePicture"`
-}
-
-func (q *Queries) GetUserById(ctx context.Context, userID pgtype.UUID) (GetUserByIdRow, error) {
+func (q *Queries) GetUserById(ctx context.Context, userID pgtype.UUID) (GlobalUserDetail, error) {
 	row := q.db.QueryRow(ctx, getUserById, userID)
-	var i GetUserByIdRow
+	var i GlobalUserDetail
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
 		&i.Name,
 		&i.About,
 		&i.DateOfBirth,
+		&i.CreatedAt,
 		&i.ProfilePicture,
 	)
 	return i, err

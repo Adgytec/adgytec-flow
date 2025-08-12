@@ -6,7 +6,7 @@ import (
 )
 
 type IDatabase interface {
-	Queries() db_actions.Querier
+	Queries() *db_actions.Queries
 	NewTransaction() (pgx.Tx, error)
 }
 

@@ -418,6 +418,16 @@ type GlobalUser struct {
 	LastAccessed     pgtype.Timestamptz `json:"lastAccessed"`
 }
 
+type GlobalUserDetail struct {
+	ID             pgtype.UUID           `json:"id"`
+	Email          string                `json:"email"`
+	Name           string                `json:"name"`
+	About          pgtype.Text           `json:"about"`
+	DateOfBirth    pgtype.Date           `json:"dateOfBirth"`
+	CreatedAt      pgtype.Timestamptz    `json:"createdAt"`
+	ProfilePicture models.ImageQueryType `json:"profilePicture"`
+}
+
 type ManagementPermission struct {
 	Key               string                             `json:"key"`
 	ServiceName       string                             `json:"serviceName"`
