@@ -38,46 +38,20 @@ CREATE TABLE IF NOT EXISTS global.media_video (
 	status global.media_status NOT NULL DEFAULT 'pending'
 );
 
-CREATE TYPE global.media_image_variants AS (
+CREATE TABLE IF NOT EXISTS global.media_image (
+	media_id UUID NOT NULL REFERENCES global.media (id) ON DELETE CASCADE,
 	thumbnail TEXT,
 	small TEXT,
 	medium TEXT,
 	large TEXT,
-	extra_large TEXT
-);
-
-CREATE TABLE IF NOT EXISTS global.media_image (
-	media_id UUID NOT NULL REFERENCES global.media (id) ON DELETE CASCADE,
-	variants global.media_image_variants,
+	extra_large TEXT,
 	status global.media_status NOT NULL DEFAULT 'pending'
-);
-
-CREATE TYPE global.image_query_type AS (
-	original_image TEXT,
-	size BIGINT,
-	status global.media_status,
-	variants global.media_image_variants
-);
-
-CREATE TYPE global.video_query_type AS (
-	original_video TEXT,
-	size BIGINT,
-	status global.media_status,
-	thumbnail TEXT,
-	adaptive_manifest TEXT,
-	preview TEXT
 );
 
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-DROP TYPE if EXISTS global.video_query_type;
-
-DROP TYPE if EXISTS global.image_query_type;
-
 DROP TABLE IF EXISTS global.media_image;
-
-DROP TYPE if EXISTS global.media_image_variants;
 
 DROP TABLE IF EXISTS global.media_video;
 
