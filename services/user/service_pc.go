@@ -3,8 +3,6 @@ package user
 import (
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/config/cache"
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
@@ -23,13 +21,6 @@ func (pc *userServicePC) UpdateLastAccessed(username string) error {
 func CreateUserServicePC(params iUserServiceParams) core.IUserServicePC {
 	log.Println("creating user-service PC")
 	return &userServicePC{
-		service: &userService{
-			db:                    params.Database(),
-			auth:                  params.Auth(),
-			accessManagement:      params.AccessManagement(),
-			getUserCache:          cache.CreateNewCache[db_actions.GlobalUser](params.CacheClient(), "user"),
-			getUserListCache:      cache.CreateNewCache[[]db_actions.GlobalUser](params.CacheClient(), "user-list"),
-			userLastAccessedCache: cache.CreateNewCache[bool](params.CacheClient(), "user-last-accessed"),
-		},
+		service: createUserService(params),
 	}
 }
