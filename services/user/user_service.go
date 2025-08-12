@@ -3,6 +3,7 @@ package user
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
@@ -22,6 +23,47 @@ type userService struct {
 	getUserCache          core.ICache[db_actions.GlobalUser]
 	getUserListCache      core.ICache[[]db_actions.GlobalUser]
 	userLastAccessedCache core.ICache[bool]
+}
+
+func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
+	userModel := models.GlobalUser{
+		ID:           user.ID,
+		Email:        user.Email,
+		Name:         user.Name,
+		About:        user.About,
+		DateOfBirth:  user.DateOfBirth,
+		CreatedAt:    user.CreatedAt,
+		LastAccessed: user.LastAccessed,
+	}
+
+	if user.ProfilePictureID != nil {
+		profilePictureModel := &models.ImageQueryType{
+			OriginalImage: *s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
+			Size:          *user.ProfilePictureSize,
+			Status:        string(user.Status.GlobalMediaStatus),
+			Thumbnail:     s.cdn.GetSignedUrl(user.Thumbnail),
+			Small:         s.cdn.GetSignedUrl(user.Small),
+			Medium:        s.cdn.GetSignedUrl(user.Medium),
+			Large:         s.cdn.GetSignedUrl(user.Large),
+			ExtraLarge:    s.cdn.GetSignedUrl(user.ExtraLarge),
+		}
+		userModel.ProfilePicture = profilePictureModel
+	}
+
+	return userModel
+}
+
+func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail) []models.GlobalUser {
+	usersLen := len(users)
+	if usersLen == 0 {
+		return nil
+	}
+
+	userModels := make([]models.GlobalUser, usersLen, usersLen)
+	for _, user := range users {
+		userModels = append(userModels, s.getUserResponseModel(user))
+	}
+	return userModels
 }
 
 func createUserService(params iUserServiceParams) *userService {

@@ -14,7 +14,7 @@ import (
 
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -55,6 +55,7 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 			&i.ProfilePictureID,
 			&i.UncompressedProfilePicture,
 			&i.ProfilePictureSize,
+			&i.Status,
 			&i.Thumbnail,
 			&i.Small,
 			&i.Medium,
@@ -73,7 +74,7 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 
 const getGlobalUsersFromNextCursor = `-- name: GetGlobalUsersFromNextCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -109,6 +110,7 @@ func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGloba
 			&i.ProfilePictureID,
 			&i.UncompressedProfilePicture,
 			&i.ProfilePictureSize,
+			&i.Status,
 			&i.Thumbnail,
 			&i.Small,
 			&i.Medium,
@@ -127,7 +129,7 @@ func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGloba
 
 const getGlobalUsersFromNextCursorOldestFirst = `-- name: GetGlobalUsersFromNextCursorOldestFirst :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -163,6 +165,7 @@ func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, a
 			&i.ProfilePictureID,
 			&i.UncompressedProfilePicture,
 			&i.ProfilePictureSize,
+			&i.Status,
 			&i.Thumbnail,
 			&i.Small,
 			&i.Medium,
@@ -181,7 +184,7 @@ func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, a
 
 const getGlobalUsersFromPrevCursor = `-- name: GetGlobalUsersFromPrevCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -217,6 +220,7 @@ func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGloba
 			&i.ProfilePictureID,
 			&i.UncompressedProfilePicture,
 			&i.ProfilePictureSize,
+			&i.Status,
 			&i.Thumbnail,
 			&i.Small,
 			&i.Medium,
@@ -235,7 +239,7 @@ func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGloba
 
 const getGlobalUsersFromPrevCursorOldestFirst = `-- name: GetGlobalUsersFromPrevCursorOldestFirst :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -271,6 +275,7 @@ func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, a
 			&i.ProfilePictureID,
 			&i.UncompressedProfilePicture,
 			&i.ProfilePictureSize,
+			&i.Status,
 			&i.Thumbnail,
 			&i.Small,
 			&i.Medium,
@@ -289,7 +294,7 @@ func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, a
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -310,6 +315,7 @@ func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUser
 		&i.ProfilePictureID,
 		&i.UncompressedProfilePicture,
 		&i.ProfilePictureSize,
+		&i.Status,
 		&i.Thumbnail,
 		&i.Small,
 		&i.Medium,

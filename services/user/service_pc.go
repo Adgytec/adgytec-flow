@@ -1,6 +1,7 @@
 package user
 
 import (
+	"context"
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -10,11 +11,11 @@ type userServicePC struct {
 	service *userService
 }
 
-func (pc *userServicePC) CreateUser(username string) (string, error) {
+func (pc *userServicePC) CreateUser(ctx context.Context, username string) (string, error) {
 	return "", nil
 }
 
-func (pc *userServicePC) UpdateLastAccessed(username string) error {
+func (pc *userServicePC) UpdateLastAccessed(ctx context.Context, username string) error {
 	return nil
 }
 

@@ -498,21 +498,22 @@ type GlobalUser struct {
 }
 
 type GlobalUserDetail struct {
-	ID                         uuid.UUID   `json:"id"`
-	Email                      string      `json:"email"`
-	Name                       string      `json:"name"`
-	About                      *string     `json:"about"`
-	DateOfBirth                pgtype.Date `json:"dateOfBirth"`
-	CreatedAt                  time.Time   `json:"createdAt"`
-	LastAccessed               time.Time   `json:"lastAccessed"`
-	ProfilePictureID           *uuid.UUID  `json:"profilePictureId"`
-	UncompressedProfilePicture *string     `json:"uncompressedProfilePicture"`
-	ProfilePictureSize         *int64      `json:"profilePictureSize"`
-	Thumbnail                  *string     `json:"thumbnail"`
-	Small                      *string     `json:"small"`
-	Medium                     *string     `json:"medium"`
-	Large                      *string     `json:"large"`
-	ExtraLarge                 *string     `json:"extraLarge"`
+	ID                         uuid.UUID             `json:"id"`
+	Email                      string                `json:"email"`
+	Name                       string                `json:"name"`
+	About                      *string               `json:"about"`
+	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
+	CreatedAt                  time.Time             `json:"createdAt"`
+	LastAccessed               time.Time             `json:"lastAccessed"`
+	ProfilePictureID           *uuid.UUID            `json:"profilePictureId"`
+	UncompressedProfilePicture *string               `json:"uncompressedProfilePicture"`
+	ProfilePictureSize         *int64                `json:"profilePictureSize"`
+	Status                     NullGlobalMediaStatus `json:"status"`
+	Thumbnail                  *string               `json:"thumbnail"`
+	Small                      *string               `json:"small"`
+	Medium                     *string               `json:"medium"`
+	Large                      *string               `json:"large"`
+	ExtraLarge                 *string               `json:"extraLarge"`
 }
 
 type ManagementPermission struct {
