@@ -17,6 +17,9 @@ func (m *userServiceMux) BasePath() string {
 
 func (m *userServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
+
+	mux.Get("/profile", m.getUserProfileHandler)
+
 	return mux
 }
 

@@ -3,9 +3,13 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
+	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -41,4 +45,22 @@ func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId 
 	s.getUserCache.Set(userId, userModel)
 
 	return &userModel, nil
+}
+
+func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+	reqCtx := r.Context()
+	userID, userIdOk := helpers.GetContextValue(reqCtx, helpers.UserID)
+	if !userIdOk {
+		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
+		return
+	}
+
+	user, userErr := m.service.getUserProfile(reqCtx, userID, userID)
+	if userErr != nil {
+		payload.EncodeError(w, userErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, user)
+
 }
