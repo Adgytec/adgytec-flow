@@ -1,8 +1,8 @@
 package models
 
 type ImageQueryType struct {
-	OriginalImage string  `json:"originalImage"`
-	Size          int     `json:"size"`
+	OriginalImage *string `json:"originalImage"`
+	Size          *int64  `json:"size"`
 	Status        string  `json:"status"`
 	Thumbnail     *string `json:"thumbnail,omitempty"`
 	Small         *string `json:"small,omitempty"`
@@ -12,8 +12,8 @@ type ImageQueryType struct {
 }
 
 type VideoQueryType struct {
-	OriginalVideo    string  `json:"originalVideo"`
-	Size             int     `json:"size"`
+	OriginalVideo    *string `json:"originalVideo"`
+	Size             *int64  `json:"size"`
 	Status           string  `json:"status"`
 	Thumbnail        *string `json:"thumbnail,omitempty"`
 	AdaptiveManifest *string `json:"adaptiveManifest,omitempty"`

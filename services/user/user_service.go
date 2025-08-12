@@ -38,8 +38,8 @@ func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) mod
 
 	if user.ProfilePictureID != nil {
 		profilePictureModel := &models.ImageQueryType{
-			OriginalImage: *s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
-			Size:          *user.ProfilePictureSize,
+			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
+			Size:          user.ProfilePictureSize,
 			Status:        string(user.Status.GlobalMediaStatus),
 			Thumbnail:     s.cdn.GetSignedUrl(user.Thumbnail),
 			Small:         s.cdn.GetSignedUrl(user.Small),
