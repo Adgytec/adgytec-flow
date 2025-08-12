@@ -14,12 +14,8 @@ type cdnCloudfront struct {
 	cdnUrl    string
 }
 
-func (c *cdnCloudfront) GetSignedUrl(bucketPath string) (string, error) {
-	return "", nil
-}
-
-func (c *cdnCloudfront) GetSignedUrls(bucketPath []string) ([]string, error) {
-	return []string{}, nil
+func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
+	return nil
 }
 
 func CreateCloudfrontCDNSigner() core.ICDN {
