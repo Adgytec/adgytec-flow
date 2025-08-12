@@ -20,8 +20,8 @@ type userService struct {
 	auth                  core.IAuth
 	accessManagement      core.IAccessManagementPC
 	cdn                   core.ICDN
-	getUserCache          core.ICache[db_actions.GlobalUser]
-	getUserListCache      core.ICache[[]db_actions.GlobalUser]
+	getUserCache          core.ICache[models.GlobalUser]
+	getUserListCache      core.ICache[[]models.GlobalUser]
 	userLastAccessedCache core.ICache[bool]
 }
 
@@ -72,8 +72,8 @@ func createUserService(params iUserServiceParams) *userService {
 		auth:                  params.Auth(),
 		accessManagement:      params.AccessManagement(),
 		cdn:                   params.CDN(),
-		getUserCache:          cache.CreateNewCache[db_actions.GlobalUser](params.CacheClient(), "user"),
-		getUserListCache:      cache.CreateNewCache[[]db_actions.GlobalUser](params.CacheClient(), "user-list"),
+		getUserCache:          cache.CreateNewCache[models.GlobalUser](params.CacheClient(), "user"),
+		getUserListCache:      cache.CreateNewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
 		userLastAccessedCache: cache.CreateNewCache[bool](params.CacheClient(), "user-last-accessed"),
 	}
 }

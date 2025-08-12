@@ -16,6 +16,11 @@ func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId 
 		return nil, permissionErr
 	}
 
+	cachedUser, cacheOk := s.getUserCache.Get(userId)
+	if cacheOk {
+		return &cachedUser, nil
+	}
+
 	userUUID, userIdErr := uuid.Parse(userId)
 	if userIdErr != nil {
 		return nil, &app_errors.InvalidUserIdError{
@@ -33,5 +38,7 @@ func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId 
 	}
 
 	userModel := s.getUserResponseModel(userProfile)
+	s.getUserCache.Set(userId, userModel)
+
 	return &userModel, nil
 }
