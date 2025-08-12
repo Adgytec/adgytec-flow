@@ -1,5 +1,7 @@
 package core
 
+import "context"
+
 type IPermissionEntity interface {
 	Id() string
 	EntityType() PermissionEntityType
@@ -15,6 +17,6 @@ type IPermissionRequired interface {
 }
 
 type IAccessManagementPC interface {
-	CheckPermission(IPermissionEntity, IPermissionRequired) error
+	CheckPermission(context.Context, IPermissionEntity, IPermissionRequired) error
 	CheckSelfPermission(currentUserId string, userId string, action string) error
 }

@@ -7,13 +7,14 @@ package db_actions
 
 import (
 	"context"
+	"time"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
 
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -50,7 +51,15 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
-			&i.ProfilePicture,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
 		); err != nil {
 			return nil, err
 		}
@@ -64,7 +73,7 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 
 const getGlobalUsersFromNextCursor = `-- name: GetGlobalUsersFromNextCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -76,8 +85,8 @@ LIMIT
 `
 
 type GetGlobalUsersFromNextCursorParams struct {
-	Limit      int32              `json:"limit"`
-	NextCursor pgtype.Timestamptz `json:"nextCursor"`
+	Limit      int32     `json:"limit"`
+	NextCursor time.Time `json:"nextCursor"`
 }
 
 func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGlobalUsersFromNextCursorParams) ([]GlobalUserDetail, error) {
@@ -96,7 +105,15 @@ func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGloba
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
-			&i.ProfilePicture,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
 		); err != nil {
 			return nil, err
 		}
@@ -110,7 +127,7 @@ func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGloba
 
 const getGlobalUsersFromNextCursorOldestFirst = `-- name: GetGlobalUsersFromNextCursorOldestFirst :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -122,8 +139,8 @@ LIMIT
 `
 
 type GetGlobalUsersFromNextCursorOldestFirstParams struct {
-	Limit      int32              `json:"limit"`
-	NextCursor pgtype.Timestamptz `json:"nextCursor"`
+	Limit      int32     `json:"limit"`
+	NextCursor time.Time `json:"nextCursor"`
 }
 
 func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromNextCursorOldestFirstParams) ([]GlobalUserDetail, error) {
@@ -142,7 +159,15 @@ func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, a
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
-			&i.ProfilePicture,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
 		); err != nil {
 			return nil, err
 		}
@@ -156,7 +181,7 @@ func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, a
 
 const getGlobalUsersFromPrevCursor = `-- name: GetGlobalUsersFromPrevCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -168,8 +193,8 @@ LIMIT
 `
 
 type GetGlobalUsersFromPrevCursorParams struct {
-	Limit      int32              `json:"limit"`
-	PrevCursor pgtype.Timestamptz `json:"prevCursor"`
+	Limit      int32     `json:"limit"`
+	PrevCursor time.Time `json:"prevCursor"`
 }
 
 func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGlobalUsersFromPrevCursorParams) ([]GlobalUserDetail, error) {
@@ -188,7 +213,15 @@ func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGloba
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
-			&i.ProfilePicture,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
 		); err != nil {
 			return nil, err
 		}
@@ -202,7 +235,7 @@ func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGloba
 
 const getGlobalUsersFromPrevCursorOldestFirst = `-- name: GetGlobalUsersFromPrevCursorOldestFirst :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -214,8 +247,8 @@ LIMIT
 `
 
 type GetGlobalUsersFromPrevCursorOldestFirstParams struct {
-	Limit      int32              `json:"limit"`
-	PrevCursor pgtype.Timestamptz `json:"prevCursor"`
+	Limit      int32     `json:"limit"`
+	PrevCursor time.Time `json:"prevCursor"`
 }
 
 func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromPrevCursorOldestFirstParams) ([]GlobalUserDetail, error) {
@@ -234,7 +267,15 @@ func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, a
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
-			&i.ProfilePicture,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
 		); err != nil {
 			return nil, err
 		}
@@ -248,14 +289,14 @@ func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, a
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
 	id = $1::UUID
 `
 
-func (q *Queries) GetUserById(ctx context.Context, userID pgtype.UUID) (GlobalUserDetail, error) {
+func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetail, error) {
 	row := q.db.QueryRow(ctx, getUserById, userID)
 	var i GlobalUserDetail
 	err := row.Scan(
@@ -265,7 +306,15 @@ func (q *Queries) GetUserById(ctx context.Context, userID pgtype.UUID) (GlobalUs
 		&i.About,
 		&i.DateOfBirth,
 		&i.CreatedAt,
-		&i.ProfilePicture,
+		&i.LastAccessed,
+		&i.ProfilePictureID,
+		&i.UncompressedProfilePicture,
+		&i.ProfilePictureSize,
+		&i.Thumbnail,
+		&i.Small,
+		&i.Medium,
+		&i.Large,
+		&i.ExtraLarge,
 	)
 	return i, err
 }

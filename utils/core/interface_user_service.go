@@ -1,6 +1,8 @@
 package core
 
+import "context"
+
 type IUserServicePC interface {
-	CreateUser(string) (string, error)
-	UpdateLastAccessed(string) error
+	CreateUser(context.Context, string) (string, error)
+	UpdateLastAccessed(context.Context, string) error
 }

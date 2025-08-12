@@ -7,8 +7,6 @@ package db_actions
 
 import (
 	"context"
-
-	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const addApplicationPermission = `-- name: AddApplicationPermission :exec
@@ -32,7 +30,7 @@ type AddApplicationPermissionParams struct {
 	Key               string                              `json:"key"`
 	ServiceName       string                              `json:"serviceName"`
 	Name              string                              `json:"name"`
-	Description       pgtype.Text                         `json:"description"`
+	Description       *string                             `json:"description"`
 	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
 }
 
@@ -68,7 +66,7 @@ type AddManagementPermissionParams struct {
 	Key               string                             `json:"key"`
 	ServiceName       string                             `json:"serviceName"`
 	Name              string                             `json:"name"`
-	Description       pgtype.Text                        `json:"description"`
+	Description       *string                            `json:"description"`
 	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
 }
 

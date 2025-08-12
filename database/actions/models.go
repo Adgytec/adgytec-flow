@@ -7,8 +7,9 @@ package db_actions
 import (
 	"database/sql/driver"
 	"fmt"
+	"time"
 
-	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -55,6 +56,16 @@ func (ns NullApplicationPermissionResourceType) Value() (driver.Value, error) {
 	return string(ns.ApplicationPermissionResourceType), nil
 }
 
+func (e ApplicationPermissionResourceType) Valid() bool {
+	switch e {
+	case ApplicationPermissionResourceTypeProject,
+		ApplicationPermissionResourceTypeLogcialPartition,
+		ApplicationPermissionResourceTypeServiceItem:
+		return true
+	}
+	return false
+}
+
 type GlobalMediaStatus string
 
 const (
@@ -96,6 +107,16 @@ func (ns NullGlobalMediaStatus) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return string(ns.GlobalMediaStatus), nil
+}
+
+func (e GlobalMediaStatus) Valid() bool {
+	switch e {
+	case GlobalMediaStatusPending,
+		GlobalMediaStatusFailed,
+		GlobalMediaStatusCompleted:
+		return true
+	}
+	return false
 }
 
 type GlobalMediaType string
@@ -141,6 +162,16 @@ func (ns NullGlobalMediaType) Value() (driver.Value, error) {
 	return string(ns.GlobalMediaType), nil
 }
 
+func (e GlobalMediaType) Valid() bool {
+	switch e {
+	case GlobalMediaTypeImage,
+		GlobalMediaTypeVideo,
+		GlobalMediaTypeOther:
+		return true
+	}
+	return false
+}
+
 type GlobalServiceHierarchyResult string
 
 const (
@@ -181,6 +212,15 @@ func (ns NullGlobalServiceHierarchyResult) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return string(ns.GlobalServiceHierarchyResult), nil
+}
+
+func (e GlobalServiceHierarchyResult) Valid() bool {
+	switch e {
+	case GlobalServiceHierarchyResultHierarchy,
+		GlobalServiceHierarchyResultItem:
+		return true
+	}
+	return false
 }
 
 type GlobalServiceHierarchyType string
@@ -225,6 +265,15 @@ func (ns NullGlobalServiceHierarchyType) Value() (driver.Value, error) {
 	return string(ns.GlobalServiceHierarchyType), nil
 }
 
+func (e GlobalServiceHierarchyType) Valid() bool {
+	switch e {
+	case GlobalServiceHierarchyTypeLevel,
+		GlobalServiceHierarchyTypeTree:
+		return true
+	}
+	return false
+}
+
 type GlobalServiceLogicalPartitionType string
 
 const (
@@ -265,6 +314,15 @@ func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
 		return nil, nil
 	}
 	return string(ns.GlobalServiceLogicalPartitionType), nil
+}
+
+func (e GlobalServiceLogicalPartitionType) Valid() bool {
+	switch e {
+	case GlobalServiceLogicalPartitionTypeHierarchy,
+		GlobalServiceLogicalPartitionTypeNone:
+		return true
+	}
+	return false
 }
 
 type GlobalUserStatus string
@@ -309,6 +367,15 @@ func (ns NullGlobalUserStatus) Value() (driver.Value, error) {
 	return string(ns.GlobalUserStatus), nil
 }
 
+func (e GlobalUserStatus) Valid() bool {
+	switch e {
+	case GlobalUserStatusDisabled,
+		GlobalUserStatusEnabled:
+		return true
+	}
+	return false
+}
+
 type ManagementPermissionResourceType string
 
 const (
@@ -350,51 +417,63 @@ func (ns NullManagementPermissionResourceType) Value() (driver.Value, error) {
 	return string(ns.ManagementPermissionResourceType), nil
 }
 
+func (e ManagementPermissionResourceType) Valid() bool {
+	switch e {
+	case ManagementPermissionResourceTypeOrganization:
+		return true
+	}
+	return false
+}
+
 type ApplicationPermission struct {
 	Key               string                              `json:"key"`
 	ServiceName       string                              `json:"serviceName"`
 	Name              string                              `json:"name"`
-	Description       pgtype.Text                         `json:"description"`
+	Description       *string                             `json:"description"`
 	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
-	CreatedAt         pgtype.Timestamptz                  `json:"createdAt"`
-	UpdatedAt         pgtype.Timestamptz                  `json:"updatedAt"`
+	CreatedAt         time.Time                           `json:"createdAt"`
+	UpdatedAt         time.Time                           `json:"updatedAt"`
 }
 
 type ArchiveDeletedRecord struct {
-	ID        pgtype.UUID        `json:"id"`
-	TableName string             `json:"tableName"`
-	Record    []byte             `json:"record"`
-	DeletedAt pgtype.Timestamptz `json:"deletedAt"`
+	ID        uuid.UUID `json:"id"`
+	TableName string    `json:"tableName"`
+	Record    []byte    `json:"record"`
+	DeletedAt time.Time `json:"deletedAt"`
 }
 
 type GlobalMediaImage struct {
-	MediaID  pgtype.UUID               `json:"mediaId"`
-	Variants models.MediaImageVariants `json:"variants"`
-	Status   GlobalMediaStatus         `json:"status"`
+	MediaID    uuid.UUID         `json:"mediaId"`
+	Thumbnail  *string           `json:"thumbnail"`
+	Small      *string           `json:"small"`
+	Medium     *string           `json:"medium"`
+	Large      *string           `json:"large"`
+	ExtraLarge *string           `json:"extraLarge"`
+	Status     GlobalMediaStatus `json:"status"`
 }
 
 type GlobalMediaVideo struct {
-	MediaID          pgtype.UUID       `json:"mediaId"`
-	Thumbnail        pgtype.Text       `json:"thumbnail"`
-	AdaptiveManifest pgtype.Text       `json:"adaptiveManifest"`
-	Preview          pgtype.Text       `json:"preview"`
+	MediaID          uuid.UUID         `json:"mediaId"`
+	Thumbnail        *string           `json:"thumbnail"`
+	AdaptiveManifest *string           `json:"adaptiveManifest"`
+	Preview          *string           `json:"preview"`
 	Status           GlobalMediaStatus `json:"status"`
 }
 
 type GlobalMedium struct {
-	ID          pgtype.UUID        `json:"id"`
-	BucketPath  string             `json:"bucketPath"`
-	Size        int64              `json:"size"`
-	MediaType   GlobalMediaType    `json:"mediaType"`
-	ContentType pgtype.Text        `json:"contentType"`
-	CreatedAt   pgtype.Timestamptz `json:"createdAt"`
+	ID          uuid.UUID       `json:"id"`
+	BucketPath  string          `json:"bucketPath"`
+	Size        int64           `json:"size"`
+	MediaType   GlobalMediaType `json:"mediaType"`
+	ContentType *string         `json:"contentType"`
+	CreatedAt   time.Time       `json:"createdAt"`
 }
 
 type GlobalService struct {
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
 	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
-	CreatedAt        pgtype.Timestamptz                `json:"createdAt"`
+	CreatedAt        time.Time                         `json:"createdAt"`
 }
 
 type GlobalServiceHierarchyDetail struct {
@@ -405,35 +484,43 @@ type GlobalServiceHierarchyDetail struct {
 }
 
 type GlobalUser struct {
-	ID               pgtype.UUID        `json:"id"`
-	Email            string             `json:"email"`
-	NormalizedEmail  string             `json:"normalizedEmail"`
-	Name             string             `json:"name"`
-	NormalizedName   string             `json:"normalizedName"`
-	ProfilePictureID pgtype.UUID        `json:"profilePictureId"`
-	About            pgtype.Text        `json:"about"`
-	DateOfBirth      pgtype.Date        `json:"dateOfBirth"`
-	Status           GlobalUserStatus   `json:"status"`
-	CreatedAt        pgtype.Timestamptz `json:"createdAt"`
-	LastAccessed     pgtype.Timestamptz `json:"lastAccessed"`
+	ID               uuid.UUID        `json:"id"`
+	Email            string           `json:"email"`
+	NormalizedEmail  string           `json:"normalizedEmail"`
+	Name             string           `json:"name"`
+	NormalizedName   string           `json:"normalizedName"`
+	ProfilePictureID *uuid.UUID       `json:"profilePictureId"`
+	About            *string          `json:"about"`
+	DateOfBirth      pgtype.Date      `json:"dateOfBirth"`
+	Status           GlobalUserStatus `json:"status"`
+	CreatedAt        time.Time        `json:"createdAt"`
+	LastAccessed     time.Time        `json:"lastAccessed"`
 }
 
 type GlobalUserDetail struct {
-	ID             pgtype.UUID           `json:"id"`
-	Email          string                `json:"email"`
-	Name           string                `json:"name"`
-	About          pgtype.Text           `json:"about"`
-	DateOfBirth    pgtype.Date           `json:"dateOfBirth"`
-	CreatedAt      pgtype.Timestamptz    `json:"createdAt"`
-	ProfilePicture models.ImageQueryType `json:"profilePicture"`
+	ID                         uuid.UUID   `json:"id"`
+	Email                      string      `json:"email"`
+	Name                       string      `json:"name"`
+	About                      *string     `json:"about"`
+	DateOfBirth                pgtype.Date `json:"dateOfBirth"`
+	CreatedAt                  time.Time   `json:"createdAt"`
+	LastAccessed               time.Time   `json:"lastAccessed"`
+	ProfilePictureID           *uuid.UUID  `json:"profilePictureId"`
+	UncompressedProfilePicture *string     `json:"uncompressedProfilePicture"`
+	ProfilePictureSize         *int64      `json:"profilePictureSize"`
+	Thumbnail                  *string     `json:"thumbnail"`
+	Small                      *string     `json:"small"`
+	Medium                     *string     `json:"medium"`
+	Large                      *string     `json:"large"`
+	ExtraLarge                 *string     `json:"extraLarge"`
 }
 
 type ManagementPermission struct {
 	Key               string                             `json:"key"`
 	ServiceName       string                             `json:"serviceName"`
 	Name              string                             `json:"name"`
-	Description       pgtype.Text                        `json:"description"`
+	Description       *string                            `json:"description"`
 	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
-	CreatedAt         pgtype.Timestamptz                 `json:"createdAt"`
-	UpdatedAt         pgtype.Timestamptz                 `json:"updatedAt"`
+	CreatedAt         time.Time                          `json:"createdAt"`
+	UpdatedAt         time.Time                          `json:"updatedAt"`
 }

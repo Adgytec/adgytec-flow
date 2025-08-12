@@ -1,11 +1,15 @@
 package access_management
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"context"
 
-func (pc *accessManagementPC) CheckPermission(permissionEntity core.IPermissionEntity, permissionRequired core.IPermissionRequired) error {
-	return pc.service.checkPermission(permissionEntity, permissionRequired)
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
+
+func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionEntity core.IPermissionEntity, permissionRequired core.IPermissionRequired) error {
+	return pc.service.checkPermission(ctx, permissionEntity, permissionRequired)
 }
 
-func (s *accessManagement) checkPermission(entity core.IPermissionEntity, requiredPermission core.IPermissionRequired) error {
+func (s *accessManagement) checkPermission(ctx context.Context, entity core.IPermissionEntity, requiredPermission core.IPermissionRequired) error {
 	return nil
 }
