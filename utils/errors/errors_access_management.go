@@ -28,7 +28,7 @@ func (e *PermissionDeniedError) Is(target error) bool {
 func (e *PermissionDeniedError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusForbidden,
-		Message:        helpers.StringPtr(e.Error()),
+		Message:        helpers.ValuePtr(e.Error()),
 	}
 }
 

@@ -30,7 +30,7 @@ var services = []serviceFactory{
 func handle400(mux *chi.Mux) {
 	mux.NotFound(func(w http.ResponseWriter, _ *http.Request) {
 		payload.EncodeJSON(w, http.StatusNotFound, core.ResponseHTTPError{
-			Message: helpers.StringPtr(
+			Message: helpers.ValuePtr(
 				http.StatusText(http.StatusNotFound),
 			),
 		})
@@ -38,7 +38,7 @@ func handle400(mux *chi.Mux) {
 
 	mux.MethodNotAllowed(func(w http.ResponseWriter, _ *http.Request) {
 		payload.EncodeJSON(w, http.StatusMethodNotAllowed, core.ResponseHTTPError{
-			Message: helpers.StringPtr(
+			Message: helpers.ValuePtr(
 				http.StatusText(http.StatusMethodNotAllowed),
 			),
 		})

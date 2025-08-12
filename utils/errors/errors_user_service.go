@@ -28,7 +28,7 @@ func (e *InvalidUserIdError) Is(target error) bool {
 func (e *InvalidUserIdError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        helpers.StringPtr(e.Error()),
+		Message:        helpers.ValuePtr(e.Error()),
 	}
 }
 
@@ -46,6 +46,6 @@ func (e *UserNotFoundError) Is(target error) bool {
 func (e *UserNotFoundError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusNotFound,
-		Message:        helpers.StringPtr(e.Error()),
+		Message:        helpers.ValuePtr(e.Error()),
 	}
 }

@@ -28,7 +28,7 @@ func (e *UserExistsError) Is(target error) bool {
 func (e *UserExistsError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusConflict,
-		Message:        helpers.StringPtr(e.Error()),
+		Message:        helpers.ValuePtr(e.Error()),
 	}
 }
 

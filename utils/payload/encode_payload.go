@@ -41,7 +41,7 @@ func EncodeError(w http.ResponseWriter, err error) {
 		EncodeJSON(w, responseError.HTTPResponse().HTTPStatusCode, responseError.HTTPResponse())
 	} else {
 		EncodeJSON(w, http.StatusInternalServerError, core.ResponseHTTPError{
-			Message: helpers.StringPtr(http.StatusText(http.StatusInternalServerError)),
+			Message: helpers.ValuePtr(http.StatusText(http.StatusInternalServerError)),
 		})
 	}
 }
