@@ -72,26 +72,19 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 	return items, nil
 }
 
-const getGlobalUsersFromNextCursor = `-- name: GetGlobalUsersFromNextCursor :many
+const getGlobalUsersLatestFirst = `-- name: GetGlobalUsersLatestFirst :many
 SELECT
 	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
-WHERE
-	created_at < $2::TIMESTAMPTZ
 ORDER BY
 	created_at DESC
 LIMIT
 	$1
 `
 
-type GetGlobalUsersFromNextCursorParams struct {
-	Limit      int32     `json:"limit"`
-	NextCursor time.Time `json:"nextCursor"`
-}
-
-func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGlobalUsersFromNextCursorParams) ([]GlobalUserDetail, error) {
-	rows, err := q.db.Query(ctx, getGlobalUsersFromNextCursor, arg.Limit, arg.NextCursor)
+func (q *Queries) GetGlobalUsersLatestFirst(ctx context.Context, limit int32) ([]GlobalUserDetail, error) {
+	rows, err := q.db.Query(ctx, getGlobalUsersLatestFirst, limit)
 	if err != nil {
 		return nil, err
 	}
@@ -127,62 +120,7 @@ func (q *Queries) GetGlobalUsersFromNextCursor(ctx context.Context, arg GetGloba
 	return items, nil
 }
 
-const getGlobalUsersFromNextCursorOldestFirst = `-- name: GetGlobalUsersFromNextCursorOldestFirst :many
-SELECT
-	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
-FROM
-	global.user_details
-WHERE
-	created_at > $2::TIMESTAMPTZ
-ORDER BY
-	created_at ASC
-LIMIT
-	$1
-`
-
-type GetGlobalUsersFromNextCursorOldestFirstParams struct {
-	Limit      int32     `json:"limit"`
-	NextCursor time.Time `json:"nextCursor"`
-}
-
-func (q *Queries) GetGlobalUsersFromNextCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromNextCursorOldestFirstParams) ([]GlobalUserDetail, error) {
-	rows, err := q.db.Query(ctx, getGlobalUsersFromNextCursorOldestFirst, arg.Limit, arg.NextCursor)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GlobalUserDetail
-	for rows.Next() {
-		var i GlobalUserDetail
-		if err := rows.Scan(
-			&i.ID,
-			&i.Email,
-			&i.Name,
-			&i.About,
-			&i.DateOfBirth,
-			&i.CreatedAt,
-			&i.LastAccessed,
-			&i.ProfilePictureID,
-			&i.UncompressedProfilePicture,
-			&i.ProfilePictureSize,
-			&i.Status,
-			&i.Thumbnail,
-			&i.Small,
-			&i.Medium,
-			&i.Large,
-			&i.ExtraLarge,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getGlobalUsersFromPrevCursor = `-- name: GetGlobalUsersFromPrevCursor :many
+const getGlobalUsersLatestFirstGreaterThanCursor = `-- name: GetGlobalUsersLatestFirstGreaterThanCursor :many
 SELECT
 	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
@@ -195,13 +133,13 @@ LIMIT
 	$1
 `
 
-type GetGlobalUsersFromPrevCursorParams struct {
-	Limit      int32     `json:"limit"`
-	PrevCursor time.Time `json:"prevCursor"`
+type GetGlobalUsersLatestFirstGreaterThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
 }
 
-func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGlobalUsersFromPrevCursorParams) ([]GlobalUserDetail, error) {
-	rows, err := q.db.Query(ctx, getGlobalUsersFromPrevCursor, arg.Limit, arg.PrevCursor)
+func (q *Queries) GetGlobalUsersLatestFirstGreaterThanCursor(ctx context.Context, arg GetGlobalUsersLatestFirstGreaterThanCursorParams) ([]GlobalUserDetail, error) {
+	rows, err := q.db.Query(ctx, getGlobalUsersLatestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
@@ -237,7 +175,165 @@ func (q *Queries) GetGlobalUsersFromPrevCursor(ctx context.Context, arg GetGloba
 	return items, nil
 }
 
-const getGlobalUsersFromPrevCursorOldestFirst = `-- name: GetGlobalUsersFromPrevCursorOldestFirst :many
+const getGlobalUsersLatestFirstLesserThanCursor = `-- name: GetGlobalUsersLatestFirstLesserThanCursor :many
+SELECT
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
+FROM
+	global.user_details
+WHERE
+	created_at < $2::TIMESTAMPTZ
+ORDER BY
+	created_at DESC
+LIMIT
+	$1
+`
+
+type GetGlobalUsersLatestFirstLesserThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+func (q *Queries) GetGlobalUsersLatestFirstLesserThanCursor(ctx context.Context, arg GetGlobalUsersLatestFirstLesserThanCursorParams) ([]GlobalUserDetail, error) {
+	rows, err := q.db.Query(ctx, getGlobalUsersLatestFirstLesserThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetail
+	for rows.Next() {
+		var i GlobalUserDetail
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.Name,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Status,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getGlobalUsersOldestFirst = `-- name: GetGlobalUsersOldestFirst :many
+SELECT
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
+FROM
+	global.user_details
+ORDER BY
+	created_at ASC
+LIMIT
+	$1
+`
+
+func (q *Queries) GetGlobalUsersOldestFirst(ctx context.Context, limit int32) ([]GlobalUserDetail, error) {
+	rows, err := q.db.Query(ctx, getGlobalUsersOldestFirst, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetail
+	for rows.Next() {
+		var i GlobalUserDetail
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.Name,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Status,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getGlobalUsersOldestFirstGreaterThanCursor = `-- name: GetGlobalUsersOldestFirstGreaterThanCursor :many
+SELECT
+	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
+FROM
+	global.user_details
+WHERE
+	created_at > $2::TIMESTAMPTZ
+ORDER BY
+	created_at ASC
+LIMIT
+	$1
+`
+
+type GetGlobalUsersOldestFirstGreaterThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+func (q *Queries) GetGlobalUsersOldestFirstGreaterThanCursor(ctx context.Context, arg GetGlobalUsersOldestFirstGreaterThanCursorParams) ([]GlobalUserDetail, error) {
+	rows, err := q.db.Query(ctx, getGlobalUsersOldestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetail
+	for rows.Next() {
+		var i GlobalUserDetail
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.Name,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.LastAccessed,
+			&i.ProfilePictureID,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.Status,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getGlobalUsersOldestFirstLesserThanCursor = `-- name: GetGlobalUsersOldestFirstLesserThanCursor :many
 SELECT
 	id, email, name, about, date_of_birth, created_at, last_accessed, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
 FROM
@@ -250,13 +346,13 @@ LIMIT
 	$1
 `
 
-type GetGlobalUsersFromPrevCursorOldestFirstParams struct {
-	Limit      int32     `json:"limit"`
-	PrevCursor time.Time `json:"prevCursor"`
+type GetGlobalUsersOldestFirstLesserThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
 }
 
-func (q *Queries) GetGlobalUsersFromPrevCursorOldestFirst(ctx context.Context, arg GetGlobalUsersFromPrevCursorOldestFirstParams) ([]GlobalUserDetail, error) {
-	rows, err := q.db.Query(ctx, getGlobalUsersFromPrevCursorOldestFirst, arg.Limit, arg.PrevCursor)
+func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context, arg GetGlobalUsersOldestFirstLesserThanCursorParams) ([]GlobalUserDetail, error) {
+	rows, err := q.db.Query(ctx, getGlobalUsersOldestFirstLesserThanCursor, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}

@@ -6,49 +6,69 @@ FROM
 WHERE
 	id = sqlc.arg (user_id)::UUID;
 
--- name: GetGlobalUsersFromNextCursor :many
+-- name: GetGlobalUsersLatestFirst :many
 SELECT
 	*
 FROM
 	global.user_details
-WHERE
-	created_at < sqlc.arg (next_cursor)::TIMESTAMPTZ
 ORDER BY
 	created_at DESC
 LIMIT
 	$1;
 
--- name: GetGlobalUsersFromPrevCursor :many
+-- name: GetGlobalUsersOldestFirst :many
 SELECT
 	*
 FROM
 	global.user_details
-WHERE
-	created_at > sqlc.arg (prev_cursor)::TIMESTAMPTZ
-ORDER BY
-	created_at DESC
-LIMIT
-	$1;
-
--- name: GetGlobalUsersFromNextCursorOldestFirst :many
-SELECT
-	*
-FROM
-	global.user_details
-WHERE
-	created_at > sqlc.arg (next_cursor)::TIMESTAMPTZ
 ORDER BY
 	created_at ASC
 LIMIT
 	$1;
 
--- name: GetGlobalUsersFromPrevCursorOldestFirst :many
+-- name: GetGlobalUsersLatestFirstGreaterThanCursor :many
 SELECT
 	*
 FROM
 	global.user_details
 WHERE
-	created_at < sqlc.arg (prev_cursor)::TIMESTAMPTZ
+	created_at > sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at DESC
+LIMIT
+	$1;
+
+-- name: GetGlobalUsersOldestFirstGreaterThanCursor :many
+SELECT
+	*
+FROM
+	global.user_details
+WHERE
+	created_at > sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at ASC
+LIMIT
+	$1;
+
+-- name: GetGlobalUsersLatestFirstLesserThanCursor :many
+SELECT
+	*
+FROM
+	global.user_details
+WHERE
+	created_at < sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at DESC
+LIMIT
+	$1;
+
+-- name: GetGlobalUsersOldestFirstLesserThanCursor :many
+SELECT
+	*
+FROM
+	global.user_details
+WHERE
+	created_at < sqlc.arg (cursor)::TIMESTAMPTZ
 ORDER BY
 	created_at ASC
 LIMIT
