@@ -28,8 +28,7 @@ func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.Pag
 	}
 
 	userModels := s.getUserResponseModels(userList)
-	next := new(models.GlobalUser)
-	prev := new(models.GlobalUser)
+	var next *models.GlobalUser
 
 	// handle next page details
 	if len(userList) == helpers.PaginationLimit+1 {
@@ -38,7 +37,7 @@ func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.Pag
 		userModels = userModels[:userLen-1]
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, prev), userErr
+	return helpers.CreatePaginationResponse(userModels, next, nil), userErr
 }
 
 func (s *userService) getGlobalUsersNextPage(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
