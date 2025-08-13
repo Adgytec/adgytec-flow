@@ -62,7 +62,7 @@ func (p *permissionRequired) Action() string {
 	return p.action
 }
 
-func CreatePermssionRequiredFromManagementPermission(permission db_actions.AddManagementPermissionParams, orgId string, requiredResourcesId []string) IPermissionRequired {
+func CreatePermssionRequiredFromManagementPermission(permission db_actions.AddManagementPermissionParams, requiredResourcesId []string) IPermissionRequired {
 	var requiredResources []string
 	for _, resourceType := range permission.RequiredResources {
 		requiredResources = append(requiredResources, string(resourceType))
@@ -71,7 +71,6 @@ func CreatePermssionRequiredFromManagementPermission(permission db_actions.AddMa
 	return &permissionRequired{
 		key:                 permission.Key,
 		management:          true,
-		orgId:               orgId,
 		requiredResources:   requiredResources,
 		requiredResourcesId: requiredResourcesId,
 	}
@@ -85,7 +84,7 @@ func CreatePermssionRequiredFromApplicationPermission(permission db_actions.AddA
 
 	return &permissionRequired{
 		key:                 permission.Key,
-		management:          true,
+		management:          false,
 		orgId:               orgId,
 		requiredResources:   requiredResources,
 		requiredResourcesId: requiredResourcesId,
