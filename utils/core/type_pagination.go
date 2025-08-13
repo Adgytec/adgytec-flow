@@ -16,15 +16,15 @@ type PaginationRequestSorting string
 
 func (val PaginationRequestSorting) Value() PaginationRequestSorting {
 	switch val {
-	case LatestFirst, OldestFirst:
+	case PaginationRequestSortingLatestFirst, PaginationRequestSortingOldestFirst:
 		return val
 	}
-	return LatestFirst
+	return PaginationRequestSortingLatestFirst
 }
 
 const (
-	LatestFirst PaginationRequestSorting = "latest"
-	OldestFirst PaginationRequestSorting = "oldest"
+	PaginationRequestSortingLatestFirst PaginationRequestSorting = "latest"
+	PaginationRequestSortingOldestFirst PaginationRequestSorting = "oldest"
 )
 
 // if multiple conflicting values are presentin PaginationRequestParams values are chosen in following order
