@@ -12,16 +12,25 @@ type ResponsePagination[T any] struct {
 	PageItems []T      `json:"pageItems"`
 }
 
-type PaginationRequestSorting int
+type PaginationRequestSorting string
+
+func (val PaginationRequestSorting) Value() PaginationRequestSorting {
+	switch val {
+	case LatestFirst, OldestFirst:
+		return val
+	}
+	return LatestFirst
+}
 
 const (
-	LatestFirst PaginationRequestSorting = iota
-	OldestFirst
+	LatestFirst PaginationRequestSorting = "latest"
+	OldestFirst PaginationRequestSorting = "oldest"
 )
 
 // priority is given to NextCursor if both the cursor are present
 type PaginationRequestParams struct {
-	NextCursor *string
-	PrevCursor *string
-	Sorting    PaginationRequestSorting
+	NextCursor  *string
+	PrevCursor  *string
+	Sorting     PaginationRequestSorting
+	SearchQuery *string
 }

@@ -2,7 +2,10 @@ package helpers
 
 import (
 	"encoding/base64"
+	"net/http"
 	"time"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 func encodeTimeToBase64(payload time.Time) string {
@@ -27,4 +30,13 @@ func decodeTimeFromBase64(payload string) *time.Time {
 	}
 
 	return &timeVal
+}
+
+func GetPaginationParamsFromRequest(r *http.Request) core.PaginationRequestParams {
+	return core.PaginationRequestParams{
+		NextCursor:  ValuePtr(GetRequestQueryValue(r, NextCursor)),
+		PrevCursor:  ValuePtr(GetRequestQueryValue(r, PrevCursor)),
+		Sorting:     core.PaginationRequestSorting(GetRequestQueryValue(r, Sort)).Value(),
+		SearchQuery: ValuePtr(GetRequestQueryValue(r, SearchQuery)),
+	}
 }
