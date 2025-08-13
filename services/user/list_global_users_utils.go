@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"slices"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -24,6 +25,12 @@ func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.Pag
 	}
 
 	userModels := s.getUserResponseModels(userList)
+
+	// handle ordering default is latest first
+	if params.Sorting == core.PaginationRequestSortingOldestFirst {
+		slices.Reverse(userModels)
+	}
+
 	return helpers.CreatePaginationResponse(userModels, nil, nil), nil
 }
 
