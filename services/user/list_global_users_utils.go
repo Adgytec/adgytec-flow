@@ -10,7 +10,20 @@ import (
 )
 
 func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	return nil, nil
+	userList, userErr := s.db.Queries().GetGlobalUsersByQuery(
+		ctx,
+		db_actions.GetGlobalUsersByQueryParams{
+			Limit: helpers.SearchQueryLimit,
+			Query: params.SearchQuery,
+		},
+	)
+
+	if userErr != nil {
+		return nil, userErr
+	}
+
+	userModels := s.getUserResponseModels(userList)
+	return helpers.CreatePaginationResponse(userModels, nil, nil), nil
 }
 
 func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
@@ -37,7 +50,7 @@ func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.Pag
 		userModels = userModels[:userLen-1]
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, nil), userErr
+	return helpers.CreatePaginationResponse(userModels, next, nil), nil
 }
 
 func (s *userService) getGlobalUsersNextPage(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
