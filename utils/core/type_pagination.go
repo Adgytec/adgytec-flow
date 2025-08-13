@@ -27,10 +27,13 @@ const (
 	OldestFirst PaginationRequestSorting = "oldest"
 )
 
-// priority is given to NextCursor if both the cursor are present
+// if multiple conflicting values are presentin PaginationRequestParams values are chosen in following order
+// SearchQuery
+// NextCursor
+// PrevCursor
 type PaginationRequestParams struct {
-	NextCursor  *string
-	PrevCursor  *string
+	NextCursor  string
+	PrevCursor  string
 	Sorting     PaginationRequestSorting
-	SearchQuery *string
+	SearchQuery string
 }

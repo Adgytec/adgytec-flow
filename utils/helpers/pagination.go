@@ -34,9 +34,9 @@ func decodeTimeFromBase64(payload string) *time.Time {
 
 func GetPaginationParamsFromRequest(r *http.Request) core.PaginationRequestParams {
 	return core.PaginationRequestParams{
-		NextCursor:  ValuePtr(GetRequestQueryValue(r, NextCursor)),
-		PrevCursor:  ValuePtr(GetRequestQueryValue(r, PrevCursor)),
+		NextCursor:  GetRequestQueryValue(r, NextCursor),
+		PrevCursor:  GetRequestQueryValue(r, PrevCursor),
 		Sorting:     core.PaginationRequestSorting(GetRequestQueryValue(r, Sort)).Value(),
-		SearchQuery: ValuePtr(GetRequestQueryValue(r, SearchQuery)),
+		SearchQuery: GetRequestQueryValue(r, SearchQuery),
 	}
 }
