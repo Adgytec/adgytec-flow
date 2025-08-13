@@ -17,3 +17,7 @@ type GlobalUser struct {
 	LastAccessed   time.Time       `json:"lastAccessed"`
 	ProfilePicture *ImageQueryType `json:"profilePicture,omitempty"`
 }
+
+func (u GlobalUser) GetCreatedAt() time.Time {
+	return u.CreatedAt
+}
