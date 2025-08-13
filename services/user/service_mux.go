@@ -19,6 +19,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
 	mux.Get("/profile", m.getUserProfileHandler)
+	mux.Get("/all", m.getGlobalUsers)
 
 	return mux
 }
