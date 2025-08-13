@@ -22,14 +22,14 @@ func encodeTimeToBase64(payload time.Time) string {
 	return base64.StdEncoding.EncodeToString(bytePayload)
 }
 
-func decodeTimeFromBase64(payload string) *time.Time {
-	bytePayload, decodeErr := base64.RawStdEncoding.DecodeString(payload)
+func DecodeCursorValue(cursor string) *time.Time {
+	byteCursor, decodeErr := base64.RawStdEncoding.DecodeString(cursor)
 	if decodeErr != nil {
 		return nil
 	}
 
 	var timeVal time.Time
-	timeConvErr := timeVal.UnmarshalBinary(bytePayload)
+	timeConvErr := timeVal.UnmarshalBinary(byteCursor)
 	if timeConvErr != nil {
 		return nil
 	}
