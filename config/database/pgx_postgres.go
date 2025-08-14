@@ -63,8 +63,8 @@ func (c *pgxConnection) Queries() *db_actions.Queries {
 	return db_actions.New(c.connPool)
 }
 
-func (c *pgxConnection) NewTransaction() (pgx.Tx, error) {
-	return c.connPool.Begin(context.TODO())
+func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
+	return c.connPool.Begin(ctx)
 }
 
 func (c *pgxConnection) Shutdown() {

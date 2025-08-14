@@ -420,3 +420,25 @@ func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUser
 	)
 	return i, err
 }
+
+const updateGlobalUserStatus = `-- name: UpdateGlobalUserStatus :one
+UPDATE global.users
+SET
+	status = $1
+WHERE
+	id = $2
+RETURNING
+	id
+`
+
+type UpdateGlobalUserStatusParams struct {
+	Status GlobalUserStatus `json:"status"`
+	ID     uuid.UUID        `json:"id"`
+}
+
+func (q *Queries) UpdateGlobalUserStatus(ctx context.Context, arg UpdateGlobalUserStatusParams) (uuid.UUID, error) {
+	row := q.db.QueryRow(ctx, updateGlobalUserStatus, arg.Status, arg.ID)
+	var id uuid.UUID
+	err := row.Scan(&id)
+	return id, err
+}

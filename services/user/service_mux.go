@@ -20,6 +20,8 @@ func (m *userServiceMux) Router() *chi.Mux {
 
 	mux.Get("/profile", m.getUserProfileHandler)
 	mux.Get("/all", m.getGlobalUsers)
+	mux.Patch("/{userID}/enable", m.enableGlobalUser)
+	mux.Patch("/{userID}/disable", m.disableGlobalUser)
 
 	return mux
 }

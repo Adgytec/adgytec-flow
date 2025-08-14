@@ -90,3 +90,12 @@ ORDER BY
 	created_at DESC
 LIMIT
 	$1;
+
+-- name: UpdateGlobalUserStatus :one
+UPDATE global.users
+SET
+	status = $1
+WHERE
+	id = $2
+RETURNING
+	id;
