@@ -8,7 +8,7 @@ import (
 )
 
 // this method panics if service namespace is not found
-func GetServiceNamespace() uuid.UUID {
+func getServiceNamespace() uuid.UUID {
 	namespaceString := os.Getenv("SERVICE_NAMESPACE")
 	namespaceVal, namespaceErr := uuid.Parse(namespaceString)
 	if namespaceErr != nil {
@@ -16,4 +16,9 @@ func GetServiceNamespace() uuid.UUID {
 	}
 
 	return namespaceVal
+}
+
+func GetServiceIdFromServiceName(name string) uuid.UUID {
+	namespace := getServiceNamespace()
+	return uuid.NewSHA1(namespace, []byte(name))
 }

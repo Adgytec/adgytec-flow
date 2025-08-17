@@ -14,9 +14,9 @@ var applicationPermissions = []db_actions.AddApplicationPermissionParams{
 }
 
 var assignApplicationPermission = db_actions.AddApplicationPermissionParams{
-	Key:         fmt.Sprintf("%s:assign:permission", accessManagementDetails.Name),
-	ServiceName: accessManagementDetails.Name,
-	Name:        "Assign Permission",
+	Key:       fmt.Sprintf("%s:assign:permission", accessManagementDetails.Name),
+	ServiceID: accessManagementDetails.ID,
+	Name:      "Assign Permission",
 	Description: helpers.ValuePtr(`
 ### Assign Permission
 
@@ -25,9 +25,9 @@ Grants the ability to assign permissions to any user or group.`),
 }
 
 var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
-	Key:         fmt.Sprintf("%s:remove:permission", accessManagementDetails.Name),
-	ServiceName: accessManagementDetails.Name,
-	Name:        "Remove Permission",
+	Key:       fmt.Sprintf("%s:remove:permission", accessManagementDetails.Name),
+	ServiceID: accessManagementDetails.ID,
+	Name:      "Remove Permission",
 	Description: helpers.ValuePtr(`
 ### Remove Permission
 
@@ -36,9 +36,9 @@ Grants the ability to remove permissions from any user or group.`),
 }
 
 var listApplicationPermission = db_actions.AddApplicationPermissionParams{
-	Key:         fmt.Sprintf("%s:list:permission", accessManagementDetails.Name),
-	ServiceName: accessManagementDetails.Name,
-	Name:        "List Permission",
+	Key:       fmt.Sprintf("%s:list:permission", accessManagementDetails.Name),
+	ServiceID: accessManagementDetails.ID,
+	Name:      "List Permission",
 	Description: helpers.ValuePtr(`
 ### List Permission
 

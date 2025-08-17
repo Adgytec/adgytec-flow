@@ -14,26 +14,33 @@ import (
 const addService = `-- name: AddService :exec
 INSERT INTO
 	global.services (
+		id,
 		name,
 		assignable,
 		logical_partition
 	)
 VALUES
-	($1, $2, $3)
-ON CONFLICT (name) DO UPDATE
+	($1, $2, $3, $4)
+ON CONFLICT (id) DO UPDATE
 SET
 	assignable = excluded.assignable,
 	logical_partition = excluded.logical_partition
 `
 
 type AddServiceParams struct {
+	ID               uuid.UUID                         `json:"id"`
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
 	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
 }
 
 func (q *Queries) AddService(ctx context.Context, arg AddServiceParams) error {
-	_, err := q.db.Exec(ctx, addService, arg.Name, arg.Assignable, arg.LogicalPartition)
+	_, err := q.db.Exec(ctx, addService,
+		arg.ID,
+		arg.Name,
+		arg.Assignable,
+		arg.LogicalPartition,
+	)
 	return err
 }
 
