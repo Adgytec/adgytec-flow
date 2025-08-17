@@ -94,5 +94,4 @@ func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	payload.EncodeJSON(w, http.StatusOK, "user status updated successfully")
-
 }
