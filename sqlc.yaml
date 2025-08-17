@@ -36,4 +36,8 @@ sql:
               type: "time.Time"
               pointer: true
 
+          - db_type: "management.permission_resource_type"
+            go_type: "string"
 
+          - db_type: "application.permission_resource_type"
+            go_type: "string"

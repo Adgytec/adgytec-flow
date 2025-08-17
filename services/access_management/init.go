@@ -2,7 +2,6 @@ package access_management
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
@@ -39,22 +38,23 @@ func (i *accessManagementInit) initServiceDetails() error {
 
 func (i *accessManagementInit) initServiceManagementPermissions() error {
 	log.Println("adding access-managment management permissions")
-	jsonPermissions, err := json.Marshal(i.managementPermissions)
-	if err != nil {
-		return err
-	}
 
-	return i.db.Queries().BatchAddManagementPermission(context.TODO(), jsonPermissions)
+	for _, perm := range i.managementPermissions {
+		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (i *accessManagementInit) initServiceApplicationPermissions() error {
 	log.Println("adding access-management application permissions.")
-	jsonPermissions, err := json.Marshal(i.applicationPermissions)
-	if err != nil {
-		return err
+	for _, perm := range i.applicationPermissions {
+		if err := i.db.Queries().AddApplicationPermission(context.TODO(), perm); err != nil {
+			return err
+		}
 	}
-
-	return i.db.Queries().BatchAddApplicationPermission(context.TODO(), jsonPermissions)
+	return nil
 }
 
 type iAccessManagementInitParams interface {

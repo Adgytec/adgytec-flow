@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
@@ -34,12 +33,12 @@ func (i *userServiceInit) initServiceDetails() error {
 
 func (i *userServiceInit) initServiceManagementPermissions() error {
 	log.Println("adding user service management permissions")
-	jsonPermissions, err := json.Marshal(i.managementPermissions)
-	if err != nil {
-		return err
+	for _, perm := range i.managementPermissions {
+		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {
+			return err
+		}
 	}
-
-	return i.db.Queries().BatchAddManagementPermission(context.TODO(), jsonPermissions)
+	return nil
 }
 
 type iUserServiceInitParams interface {

@@ -426,13 +426,13 @@ func (e ManagementPermissionResourceType) Valid() bool {
 }
 
 type ApplicationPermission struct {
-	Key               string                              `json:"key"`
-	ServiceID         uuid.UUID                           `json:"serviceId"`
-	Name              string                              `json:"name"`
-	Description       *string                             `json:"description"`
-	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
-	CreatedAt         time.Time                           `json:"createdAt"`
-	UpdatedAt         time.Time                           `json:"updatedAt"`
+	Key               string    `json:"key"`
+	ServiceID         uuid.UUID `json:"serviceId"`
+	Name              string    `json:"name"`
+	Description       *string   `json:"description"`
+	RequiredResources []string  `json:"requiredResources"`
+	CreatedAt         time.Time `json:"createdAt"`
+	UpdatedAt         time.Time `json:"updatedAt"`
 }
 
 type ArchiveDeletedRecord struct {
@@ -525,11 +525,11 @@ type GlobalUserDetail struct {
 }
 
 type ManagementPermission struct {
-	Key               string                             `json:"key"`
-	ServiceID         uuid.UUID                          `json:"serviceId"`
-	Name              string                             `json:"name"`
-	Description       *string                            `json:"description"`
-	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
-	CreatedAt         time.Time                          `json:"createdAt"`
-	UpdatedAt         time.Time                          `json:"updatedAt"`
+	Key               string    `json:"key"`
+	ServiceID         uuid.UUID `json:"serviceId"`
+	Name              string    `json:"name"`
+	Description       *string   `json:"description"`
+	RequiredResources []string  `json:"requiredResources"`
+	CreatedAt         time.Time `json:"createdAt"`
+	UpdatedAt         time.Time `json:"updatedAt"`
 }

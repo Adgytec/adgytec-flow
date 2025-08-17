@@ -21,8 +21,8 @@ var assignManagementPermission = db_actions.AddManagementPermissionParams{
 ### Assign Permission
 
 Grants the ability to assign permissions to any user or group.`),
-	RequiredResources: []db_actions.ManagementPermissionResourceType{
-		db_actions.ManagementPermissionResourceTypeOrganization,
+	RequiredResources: []string{
+		string(db_actions.ManagementPermissionResourceTypeOrganization),
 	},
 }
 
@@ -34,8 +34,8 @@ var removeManagementPermission = db_actions.AddManagementPermissionParams{
 ### Remove Permission
 
 Grants the ability to remove permissions from any user or group.`),
-	RequiredResources: []db_actions.ManagementPermissionResourceType{
-		db_actions.ManagementPermissionResourceTypeOrganization,
+	RequiredResources: []string{
+		string(db_actions.ManagementPermissionResourceTypeOrganization),
 	},
 }
 
@@ -48,7 +48,7 @@ var listManagementPermission = db_actions.AddManagementPermissionParams{
 
 Grants the ability to list permissions to any user or group.`),
 
-	RequiredResources: []db_actions.ManagementPermissionResourceType{
-		db_actions.ManagementPermissionResourceTypeOrganization,
+	RequiredResources: []string{
+		string(db_actions.ManagementPermissionResourceTypeOrganization),
 	},
 }
