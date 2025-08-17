@@ -8,7 +8,6 @@ SELECT
 	users.about,
 	users.date_of_birth,
 	users.created_at,
-	users.updated_at,
 	users.profile_picture_id,
 	media.bucket_path AS uncompressed_profile_picture,
 	media.size AS profile_picture_size,

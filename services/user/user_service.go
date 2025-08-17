@@ -16,13 +16,12 @@ type iUserServiceParams interface {
 }
 
 type userService struct {
-	db                    core.IDatabase
-	auth                  core.IAuth
-	accessManagement      core.IAccessManagementPC
-	cdn                   core.ICDN
-	getUserCache          core.ICache[models.GlobalUser]
-	getUserListCache      core.ICache[[]models.GlobalUser]
-	userLastAccessedCache core.ICache[bool]
+	db               core.IDatabase
+	auth             core.IAuth
+	accessManagement core.IAccessManagementPC
+	cdn              core.ICDN
+	getUserCache     core.ICache[models.GlobalUser]
+	getUserListCache core.ICache[[]models.GlobalUser]
 }
 
 func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
@@ -33,7 +32,6 @@ func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) mod
 		About:       user.About,
 		DateOfBirth: user.DateOfBirth,
 		CreatedAt:   user.CreatedAt,
-		UpdatedAt:   user.UpdatedAt,
 	}
 
 	if user.ProfilePictureID != nil {
@@ -68,12 +66,11 @@ func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail)
 
 func createUserService(params iUserServiceParams) *userService {
 	return &userService{
-		db:                    params.Database(),
-		auth:                  params.Auth(),
-		accessManagement:      params.AccessManagement(),
-		cdn:                   params.CDN(),
-		getUserCache:          cache.CreateNewCache[models.GlobalUser](params.CacheClient(), "user"),
-		getUserListCache:      cache.CreateNewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
-		userLastAccessedCache: cache.CreateNewCache[bool](params.CacheClient(), "user-last-accessed"),
+		db:               params.Database(),
+		auth:             params.Auth(),
+		accessManagement: params.AccessManagement(),
+		cdn:              params.CDN(),
+		getUserCache:     cache.CreateNewCache[models.GlobalUser](params.CacheClient(), "user"),
+		getUserListCache: cache.CreateNewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
 	}
 }

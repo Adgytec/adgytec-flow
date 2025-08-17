@@ -442,6 +442,15 @@ type ArchiveDeletedRecord struct {
 	DeletedAt time.Time `json:"deletedAt"`
 }
 
+type ArchiveUpdatedRecord struct {
+	ID        uuid.UUID `json:"id"`
+	TableName string    `json:"tableName"`
+	Old       []byte    `json:"old"`
+	New       []byte    `json:"new"`
+	UpdatedAt time.Time `json:"updatedAt"`
+	UpdatedBy uuid.UUID `json:"updatedBy"`
+}
+
 type GlobalMediaImage struct {
 	MediaID    uuid.UUID         `json:"mediaId"`
 	Thumbnail  *string           `json:"thumbnail"`
@@ -495,7 +504,6 @@ type GlobalUser struct {
 	DateOfBirth      pgtype.Date      `json:"dateOfBirth"`
 	Status           GlobalUserStatus `json:"status"`
 	CreatedAt        time.Time        `json:"createdAt"`
-	UpdatedAt        time.Time        `json:"updatedAt"`
 }
 
 type GlobalUserDetail struct {
@@ -505,7 +513,6 @@ type GlobalUserDetail struct {
 	About                      *string               `json:"about"`
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`
-	UpdatedAt                  time.Time             `json:"updatedAt"`
 	ProfilePictureID           *uuid.UUID            `json:"profilePictureId"`
 	UncompressedProfilePicture *string               `json:"uncompressedProfilePicture"`
 	ProfilePictureSize         *int64                `json:"profilePictureSize"`

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS global.users (
 	about TEXT,
 	date_of_birth date,
 	status global.user_status NOT NULL DEFAULT 'enabled',
-	created_at TIMESTAMPTZ NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE UNIQUE INDEX global_users_email_unique_idx ON global.users (lower(email));
