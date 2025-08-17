@@ -1,6 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE OR REPLACE FUNCTION global.set_created_by () returns trigger AS $$
+declare
+    actor text;
 begin
     actor := current_setting('global.user_id', true);
 
