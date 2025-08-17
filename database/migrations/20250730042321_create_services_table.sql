@@ -7,7 +7,8 @@ assignble tells if this permission can be assignable to organization
 if the value is false it means it is normal service which can be part of organization or not 
 */
 CREATE TABLE IF NOT EXISTS global.services (
-	name TEXT PRIMARY KEY,
+	id UUID PRIMARY KEY,
+	name TEXT NOT NULL UNIQUE,
 	assignable BOOL NOT NULL DEFAULT FALSE,
 	logical_partition global.service_logical_partition_type NOT NULL DEFAULT 'none',
 	created_at TIMESTAMPTZ NOT NULL

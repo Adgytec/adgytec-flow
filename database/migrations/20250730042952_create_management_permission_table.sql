@@ -4,7 +4,7 @@ CREATE TYPE management.permission_resource_type AS ENUM('organization');
 
 CREATE TABLE IF NOT EXISTS management.permissions (
 	key TEXT PRIMARY KEY,
-	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
+	service_id UUID NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
 	name TEXT NOT NULL,
 	description TEXT,
 	required_resources management.permission_resource_type[] NOT NULL,

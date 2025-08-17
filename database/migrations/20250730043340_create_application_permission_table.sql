@@ -8,7 +8,7 @@ CREATE TYPE application.permission_resource_type AS ENUM(
 
 CREATE TABLE IF NOT EXISTS application.permissions (
 	key TEXT PRIMARY KEY,
-	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
+	service_id UUID NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
 	name TEXT NOT NULL,
 	description TEXT,
 	required_resources application.permission_resource_type[] NOT NULL,
