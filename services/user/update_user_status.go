@@ -39,7 +39,7 @@ func (s *userService) updateUserStatus(ctx context.Context, currentUserId, userI
 	}
 
 	// start transaction
-	tx, txErr := s.db.NewTransaction(ctx)
+	tx, txErr := s.db.NewTransaction(ctx, currentUserId)
 	if txErr != nil {
 		return txErr
 	}

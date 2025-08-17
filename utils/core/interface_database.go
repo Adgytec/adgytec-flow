@@ -9,7 +9,7 @@ import (
 
 type IDatabase interface {
 	Queries() *db_actions.Queries
-	NewTransaction(context.Context) (pgx.Tx, error)
+	NewTransaction(context.Context, string) (pgx.Tx, error)
 }
 
 type IDatabaseWithShutdown interface {

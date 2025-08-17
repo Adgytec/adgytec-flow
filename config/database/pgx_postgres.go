@@ -63,8 +63,19 @@ func (c *pgxConnection) Queries() *db_actions.Queries {
 	return db_actions.New(c.connPool)
 }
 
-func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
-	return c.connPool.Begin(ctx)
+func (c *pgxConnection) NewTransaction(ctx context.Context, userID string) (pgx.Tx, error) {
+	tx, txErr := c.connPool.Begin(ctx)
+	if txErr != nil {
+		return nil, txErr
+	}
+
+	_, err := tx.Exec(ctx, "SELECT set_config('global.user_id', $1, true)", userID)
+	if err != nil {
+		tx.Rollback(ctx)
+		return nil, err
+	}
+
+	return tx, nil
 }
 
 func (c *pgxConnection) Shutdown() {
