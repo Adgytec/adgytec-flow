@@ -116,7 +116,7 @@ INSERT INTO
 	)
 SELECT
 	key,
-	service_id,
+	service_id::UUID,
 	name,
 	description,
 	required_resources
@@ -166,7 +166,7 @@ INSERT INTO
 	)
 SELECT
 	key,
-	service_id,
+	service_id::UUID,
 	name,
 	description,
 	required_resources
