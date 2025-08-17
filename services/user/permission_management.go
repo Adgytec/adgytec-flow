@@ -12,9 +12,9 @@ var managementPermissions = []db_actions.AddManagementPermissionParams{
 }
 
 var listAllUsersPermission = db_actions.AddManagementPermissionParams{
-	Key:         fmt.Sprintf("%s:list:users", userServiceDetails.Name),
-	ServiceName: userServiceDetails.Name,
-	Name:        "List All Users",
+	Key:       fmt.Sprintf("%s:list:users", userServiceDetails.Name),
+	ServiceID: userServiceDetails.ID,
+	Name:      "List All Users",
 	Description: helpers.ValuePtr(`
 ### List All Users
 
@@ -24,9 +24,9 @@ Grants the ability to list all the users that are part of Adgytec studio.
 }
 
 var disableUserPermission = db_actions.AddManagementPermissionParams{
-	Key:         fmt.Sprintf("%s:disable:users", userServiceDetails.Name),
-	ServiceName: userServiceDetails.Name,
-	Name:        "Disable Users",
+	Key:       fmt.Sprintf("%s:disable:users", userServiceDetails.Name),
+	ServiceID: userServiceDetails.ID,
+	Name:      "Disable Users",
 	Description: helpers.ValuePtr(`
 ### Disable Users
 
@@ -36,9 +36,9 @@ Grants the ability to disable users access to Adgytec Studio.
 }
 
 var enableUserPermission = db_actions.AddManagementPermissionParams{
-	Key:         fmt.Sprintf("%s:enable:users", userServiceDetails.Name),
-	ServiceName: userServiceDetails.Name,
-	Name:        "Enable Users",
+	Key:       fmt.Sprintf("%s:enable:users", userServiceDetails.Name),
+	ServiceID: userServiceDetails.ID,
+	Name:      "Enable Users",
 	Description: helpers.ValuePtr(`
 ### Enable Users
 
