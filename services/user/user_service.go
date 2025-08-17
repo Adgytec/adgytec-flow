@@ -33,7 +33,7 @@ func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) mod
 		About:       user.About,
 		DateOfBirth: user.DateOfBirth,
 		CreatedAt:   user.CreatedAt,
-		UpdatedAt:   user.LastAccessed,
+		UpdatedAt:   user.UpdatedAt,
 	}
 
 	if user.ProfilePictureID != nil {

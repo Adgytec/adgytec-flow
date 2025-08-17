@@ -7,13 +7,15 @@ package db_actions
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const addApplicationPermission = `-- name: AddApplicationPermission :exec
 INSERT INTO
 	application.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
@@ -28,7 +30,7 @@ SET
 
 type AddApplicationPermissionParams struct {
 	Key               string                              `json:"key"`
-	ServiceName       string                              `json:"serviceName"`
+	ServiceID         uuid.UUID                           `json:"serviceId"`
 	Name              string                              `json:"name"`
 	Description       *string                             `json:"description"`
 	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
@@ -37,7 +39,7 @@ type AddApplicationPermissionParams struct {
 func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
 	_, err := q.db.Exec(ctx, addApplicationPermission,
 		arg.Key,
-		arg.ServiceName,
+		arg.ServiceID,
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
@@ -49,7 +51,7 @@ const addManagementPermission = `-- name: AddManagementPermission :exec
 INSERT INTO
 	management.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
@@ -64,7 +66,7 @@ SET
 
 type AddManagementPermissionParams struct {
 	Key               string                             `json:"key"`
-	ServiceName       string                             `json:"serviceName"`
+	ServiceID         uuid.UUID                          `json:"serviceId"`
 	Name              string                             `json:"name"`
 	Description       *string                            `json:"description"`
 	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
@@ -73,7 +75,7 @@ type AddManagementPermissionParams struct {
 func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
 	_, err := q.db.Exec(ctx, addManagementPermission,
 		arg.Key,
-		arg.ServiceName,
+		arg.ServiceID,
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
@@ -92,7 +94,7 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'serviceName' AS service_name,
+			perm ->> 'serviceId' AS service_id,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
@@ -107,14 +109,14 @@ WITH
 INSERT INTO
 	application.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
 	)
 SELECT
 	key,
-	service_name,
+	service_id,
 	name,
 	description,
 	required_resources
@@ -142,7 +144,7 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'serviceName' AS service_name,
+			perm ->> 'serviceId' AS service_id,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
@@ -157,14 +159,14 @@ WITH
 INSERT INTO
 	management.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
 	)
 SELECT
 	key,
-	service_name,
+	service_id,
 	name,
 	description,
 	required_resources

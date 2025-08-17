@@ -15,14 +15,14 @@ SET
 -- name: AddServiceHierarchyDetails :exec
 INSERT INTO
 	global.service_hierarchy_details (
-		service_name,
+		service_id,
 		hierarchy_name,
 		hierarchy_type,
 		hierarchy_result
 	)
 VALUES
 	($1, $2, $3, $4)
-ON CONFLICT (service_name) DO UPDATE
+ON CONFLICT (service_id) DO UPDATE
 SET
 	hierarchy_name = excluded.hierarchy_name,
 	hierarchy_type = excluded.hierarchy_type,

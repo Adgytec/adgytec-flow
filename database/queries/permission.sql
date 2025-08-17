@@ -2,7 +2,7 @@
 INSERT INTO
 	management.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
@@ -18,7 +18,7 @@ SET
 INSERT INTO
 	application.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
@@ -41,7 +41,7 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'serviceName' AS service_name,
+			perm ->> 'serviceId' AS service_id,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
@@ -56,14 +56,14 @@ WITH
 INSERT INTO
 	management.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
 	)
 SELECT
 	key,
-	service_name,
+	service_id,
 	name,
 	description,
 	required_resources
@@ -85,7 +85,7 @@ WITH
 	expanded_permissions AS (
 		SELECT
 			perm ->> 'key' AS key,
-			perm ->> 'serviceName' AS service_name,
+			perm ->> 'serviceId' AS service_id,
 			perm ->> 'name' AS name,
 			perm ->> 'description' AS description,
 			ARRAY(
@@ -100,14 +100,14 @@ WITH
 INSERT INTO
 	application.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
 	)
 SELECT
 	key,
-	service_name,
+	service_id,
 	name,
 	description,
 	required_resources

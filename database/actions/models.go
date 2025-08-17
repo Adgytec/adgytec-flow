@@ -427,7 +427,7 @@ func (e ManagementPermissionResourceType) Valid() bool {
 
 type ApplicationPermission struct {
 	Key               string                              `json:"key"`
-	ServiceName       string                              `json:"serviceName"`
+	ServiceID         uuid.UUID                           `json:"serviceId"`
 	Name              string                              `json:"name"`
 	Description       *string                             `json:"description"`
 	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
@@ -470,6 +470,7 @@ type GlobalMedium struct {
 }
 
 type GlobalService struct {
+	ID               uuid.UUID                         `json:"id"`
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
 	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
@@ -477,7 +478,7 @@ type GlobalService struct {
 }
 
 type GlobalServiceHierarchyDetail struct {
-	ServiceName     string                       `json:"serviceName"`
+	ServiceID       uuid.UUID                    `json:"serviceId"`
 	HierarchyName   string                       `json:"hierarchyName"`
 	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
 	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
@@ -494,7 +495,7 @@ type GlobalUser struct {
 	DateOfBirth      pgtype.Date      `json:"dateOfBirth"`
 	Status           GlobalUserStatus `json:"status"`
 	CreatedAt        time.Time        `json:"createdAt"`
-	LastAccessed     time.Time        `json:"lastAccessed"`
+	UpdatedAt        time.Time        `json:"updatedAt"`
 }
 
 type GlobalUserDetail struct {
@@ -504,7 +505,7 @@ type GlobalUserDetail struct {
 	About                      *string               `json:"about"`
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`
-	LastAccessed               time.Time             `json:"lastAccessed"`
+	UpdatedAt                  time.Time             `json:"updatedAt"`
 	ProfilePictureID           *uuid.UUID            `json:"profilePictureId"`
 	UncompressedProfilePicture *string               `json:"uncompressedProfilePicture"`
 	ProfilePictureSize         *int64                `json:"profilePictureSize"`
@@ -518,7 +519,7 @@ type GlobalUserDetail struct {
 
 type ManagementPermission struct {
 	Key               string                             `json:"key"`
-	ServiceName       string                             `json:"serviceName"`
+	ServiceID         uuid.UUID                          `json:"serviceId"`
 	Name              string                             `json:"name"`
 	Description       *string                            `json:"description"`
 	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
