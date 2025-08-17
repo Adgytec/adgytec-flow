@@ -18,13 +18,20 @@ CREATE TABLE IF NOT EXISTS global.users (
 	date_of_birth date,
 	status global.user_status NOT NULL DEFAULT 'enabled',
 	created_at TIMESTAMPTZ NOT NULL,
-	last_accessed TIMESTAMPTZ NOT NULL
+	updated_at TIMESTAMPTZ NOT NULL
 );
 
 CREATE UNIQUE INDEX global_users_email_unique_idx ON global.users (lower(email));
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON global.users FOR each ROW
 EXECUTE function global.set_created_at ();
+
+CREATE OR REPLACE TRIGGER on_insert_set_updated_at before insert ON global.users FOR each ROW
+EXECUTE function global.set_updated_at ();
+
+CREATE OR REPLACE TRIGGER on_update_set_updated_at before
+UPDATE ON global.users FOR each ROW
+EXECUTE function global.set_updated_at ();
 
 CREATE OR REPLACE TRIGGER on_update_prevent_created_at_update before
 UPDATE ON global.users FOR each ROW WHEN (

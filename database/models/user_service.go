@@ -14,7 +14,7 @@ type GlobalUser struct {
 	About          *string         `json:"about,omitempty"`
 	DateOfBirth    pgtype.Date     `json:"dateOfBirth"`
 	CreatedAt      time.Time       `json:"createdAt"`
-	LastAccessed   time.Time       `json:"lastAccessed"`
+	UpdatedAt      time.Time       `json:"updatedAt"`
 	ProfilePicture *ImageQueryType `json:"profilePicture,omitempty"`
 }
 

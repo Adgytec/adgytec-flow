@@ -27,13 +27,13 @@ type userService struct {
 
 func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
 	userModel := models.GlobalUser{
-		ID:           user.ID,
-		Email:        user.Email,
-		Name:         user.Name,
-		About:        user.About,
-		DateOfBirth:  user.DateOfBirth,
-		CreatedAt:    user.CreatedAt,
-		LastAccessed: user.LastAccessed,
+		ID:          user.ID,
+		Email:       user.Email,
+		Name:        user.Name,
+		About:       user.About,
+		DateOfBirth: user.DateOfBirth,
+		CreatedAt:   user.CreatedAt,
+		UpdatedAt:   user.LastAccessed,
 	}
 
 	if user.ProfilePictureID != nil {
