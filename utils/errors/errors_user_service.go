@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	ErrInvalidUserId = errors.New("invalid-user-id")
-	ErrUserNotFound  = errors.New("user-not-found")
+	ErrInvalidUserId = errors.New("invalid user id")
+	ErrUserNotFound  = errors.New("user not found")
 )
 
 type InvalidUserIdError struct {
