@@ -15,10 +15,10 @@ func (c *implCache[T]) key(id string) string {
 	return fmt.Sprintf("%s:%s", c.namespace, id)
 }
 
-func (c *implCache[T]) Get(key string) (T, bool) {
+func (c *implCache[T]) Get(id string) (T, bool) {
 	var zero T
 
-	data, found := c.cacheClient.Get(key)
+	data, found := c.cacheClient.Get(c.key(id))
 	if !found {
 		return zero, found
 	}
