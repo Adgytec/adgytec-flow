@@ -69,10 +69,12 @@ func (c *pgxConnection) NewTransaction(ctx context.Context, userID string) (pgx.
 		return nil, txErr
 	}
 
-	_, err := tx.Exec(ctx, "SELECT set_config('global.user_id', $1, true)", userID)
-	if err != nil {
-		tx.Rollback(ctx)
-		return nil, err
+	if len(userID) > 0 {
+		_, err := tx.Exec(ctx, "SELECT set_config('global.user_id', $1, true)", userID)
+		if err != nil {
+			tx.Rollback(ctx)
+			return nil, err
+		}
 	}
 
 	return tx, nil

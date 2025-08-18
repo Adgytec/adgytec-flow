@@ -15,8 +15,8 @@ type authCognito struct {
 	userPoolRegion string
 }
 
-func (a *authCognito) CreateUser(username string) (string, error) {
-	return "", nil
+func (a *authCognito) CreateUser(username string) error {
+	return nil
 }
 
 func (a *authCognito) DisableUser(username string) error {
@@ -24,10 +24,6 @@ func (a *authCognito) DisableUser(username string) error {
 }
 
 func (a *authCognito) EnableUser(username string) error {
-	return nil
-}
-
-func (a *authCognito) AddUserToManagement(username string) error {
 	return nil
 }
 

@@ -1,8 +1,11 @@
 package core
 
-import "context"
+import (
+	"context"
+
+	"github.com/google/uuid"
+)
 
 type IUserServicePC interface {
-	CreateUser(context.Context, string) (string, error)
-	UpdateLastAccessed(context.Context, string) error
+	CreateUser(context.Context, string) (uuid.UUID, error)
 }

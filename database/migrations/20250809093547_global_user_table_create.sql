@@ -8,7 +8,7 @@ CREATE TYPE global.user_status AS ENUM(
 );
 
 CREATE TABLE IF NOT EXISTS global.users (
-	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
+	id UUID PRIMARY KEY,
 	email TEXT NOT NULL,
 	normalized_email TEXT NOT NULL,
 	name TEXT NOT NULL,

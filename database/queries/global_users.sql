@@ -99,3 +99,10 @@ WHERE
 	id = $2
 RETURNING
 	id;
+
+-- name: CreateGlobalUser :execrows
+INSERT INTO
+	global.users (id, email)
+VALUES
+	($1, $2)
+ON CONFLICT (id) DO NOTHING;

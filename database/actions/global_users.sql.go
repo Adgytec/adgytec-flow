@@ -12,6 +12,27 @@ import (
 	"github.com/google/uuid"
 )
 
+const createGlobalUser = `-- name: CreateGlobalUser :execrows
+INSERT INTO
+	global.users (id, email)
+VALUES
+	($1, $2)
+ON CONFLICT (id) DO NOTHING
+`
+
+type CreateGlobalUserParams struct {
+	ID    uuid.UUID `json:"id"`
+	Email string    `json:"email"`
+}
+
+func (q *Queries) CreateGlobalUser(ctx context.Context, arg CreateGlobalUserParams) (int64, error) {
+	result, err := q.db.Exec(ctx, createGlobalUser, arg.ID, arg.Email)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
 	id, email, name, about, date_of_birth, created_at, profile_picture_id, uncompressed_profile_picture, profile_picture_size, status, thumbnail, small, medium, large, extra_large
