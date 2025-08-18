@@ -1,6 +1,7 @@
 package app_errors
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -9,8 +10,8 @@ import (
 )
 
 var (
-	ErrInvalidUserId = fmt.Errorf("invalid-user-id")
-	ErrUserNotFound  = fmt.Errorf("user-not-found")
+	ErrInvalidUserId = errors.New("invalid-user-id")
+	ErrUserNotFound  = errors.New("user-not-found")
 )
 
 type InvalidUserIdError struct {

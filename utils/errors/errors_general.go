@@ -1,7 +1,7 @@
 package app_errors
 
-import "fmt"
+import "errors"
 
 var (
-	ErrNotImplemented = fmt.Errorf("error not implemented")
+	ErrNotImplemented = errors.New("error not implemented")
 )
