@@ -2,10 +2,14 @@ package access_management
 
 import (
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
+var serviceName = "access-management"
+
 var accessManagementDetails = db_actions.AddServiceParams{
-	Name:             "access-management",
+	ID:               helpers.GetIDFromString(serviceName),
+	Name:             serviceName,
 	Assignable:       false,
 	LogicalPartition: db_actions.GlobalServiceLogicalPartitionTypeNone,
 }

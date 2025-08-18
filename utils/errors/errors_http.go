@@ -19,7 +19,7 @@ func (e *RequestDecodeError) Error() string {
 func (e *RequestDecodeError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: e.Status,
-		Message:        helpers.StringPtr(e.Error()),
+		Message:        helpers.ValuePtr(e.Error()),
 	}
 }
 

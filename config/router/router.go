@@ -1,13 +1,13 @@
 package router
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -22,12 +22,15 @@ var services = []serviceFactory{
 	func(appConfig app.IApp) core.IServiceMux {
 		return access_management.CreateAccessManagementMux(appConfig)
 	},
+	func(appConfig app.IApp) core.IServiceMux {
+		return user.CreateUserServiceMux(appConfig)
+	},
 }
 
 func handle400(mux *chi.Mux) {
 	mux.NotFound(func(w http.ResponseWriter, _ *http.Request) {
 		payload.EncodeJSON(w, http.StatusNotFound, core.ResponseHTTPError{
-			Message: helpers.StringPtr(
+			Message: helpers.ValuePtr(
 				http.StatusText(http.StatusNotFound),
 			),
 		})
@@ -35,7 +38,7 @@ func handle400(mux *chi.Mux) {
 
 	mux.MethodNotAllowed(func(w http.ResponseWriter, _ *http.Request) {
 		payload.EncodeJSON(w, http.StatusMethodNotAllowed, core.ResponseHTTPError{
-			Message: helpers.StringPtr(
+			Message: helpers.ValuePtr(
 				http.StatusText(http.StatusMethodNotAllowed),
 			),
 		})
@@ -43,7 +46,6 @@ func handle400(mux *chi.Mux) {
 }
 
 func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
-	fmt.Println()
 	log.Println("adding application mux")
 	mux := chi.NewMux()
 

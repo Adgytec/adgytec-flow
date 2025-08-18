@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	configAWS "github.com/Adgytec/adgytec-flow/config/aws"
+	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/config/communication"
 	"github.com/Adgytec/adgytec-flow/config/database"
@@ -12,10 +13,11 @@ import (
 
 type externalServices struct {
 	auth          core.IAuth
-	database      core.IDatabase
+	database      core.IDatabaseWithShutdown
 	communicaiton core.ICommunicaiton
 	storage       core.IStorage
 	cdn           core.ICDN
+	cacheClient   core.ICacheClient
 }
 
 func (s *externalServices) Auth() core.IAuth {
@@ -38,6 +40,14 @@ func (s *externalServices) CDN() core.ICDN {
 	return s.cdn
 }
 
+func (s *externalServices) Shutdown() {
+	s.database.Shutdown()
+}
+
+func (s *externalServices) CacheClient() core.ICacheClient {
+	return s.cacheClient
+}
+
 func createExternalServices() iAppExternalServices {
 	awsConfig := configAWS.CreateAWSConfig()
 
@@ -47,5 +57,6 @@ func createExternalServices() iAppExternalServices {
 		communicaiton: communication.CreateAWSCommunicationClient(awsConfig),
 		storage:       storage.CreateS3Client(awsConfig),
 		cdn:           cdn.CreateCloudfrontCDNSigner(),
+		cacheClient:   cache.CreateInMemoryCacheClient(),
 	}
 }

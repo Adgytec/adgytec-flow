@@ -19,6 +19,7 @@ type IServer interface {
 type httpServer struct {
 	server *http.Server
 	// stopOngoingGracefully context.CancelFunc
+	app app.IApp
 }
 
 func (s *httpServer) ListenAndServe() error {
@@ -31,6 +32,7 @@ func (s *httpServer) Shutdown() error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	s.app.Shutdown()
 	err := s.server.Shutdown(shutdownCtx)
 	// if s.stopOngoingGracefully != nil {
 	// 	s.stopOngoingGracefully()
@@ -64,5 +66,6 @@ func CreateHttpServer(port string) IServer {
 	return &httpServer{
 		server: &appServer,
 		// stopOngoingGracefully: stopOngoingGracefully,
+		app: appConfig,
 	}
 }

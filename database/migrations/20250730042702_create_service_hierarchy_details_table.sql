@@ -5,7 +5,7 @@ CREATE TYPE global.service_hierarchy_type AS ENUM('level', 'tree');
 CREATE TYPE global.service_hierarchy_result AS ENUM('hierarchy', 'item');
 
 CREATE TABLE IF NOT EXISTS global.service_hierarchy_details (
-	service_name TEXT PRIMARY KEY NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
+	service_id UUID PRIMARY KEY NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
 	hierarchy_name TEXT NOT NULL,
 	hierarchy_type global.service_hierarchy_type NOT NULL DEFAULT 'tree',
 	hierarchy_result global.service_hierarchy_result NOT NULL DEFAULT 'item'

@@ -7,45 +7,54 @@ package db_actions
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
 const addService = `-- name: AddService :exec
 INSERT INTO
 	global.services (
+		id,
 		name,
 		assignable,
 		logical_partition
 	)
 VALUES
-	($1, $2, $3)
-ON CONFLICT (name) DO UPDATE
+	($1, $2, $3, $4)
+ON CONFLICT (id) DO UPDATE
 SET
 	assignable = excluded.assignable,
 	logical_partition = excluded.logical_partition
 `
 
 type AddServiceParams struct {
+	ID               uuid.UUID                         `json:"id"`
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
 	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
 }
 
 func (q *Queries) AddService(ctx context.Context, arg AddServiceParams) error {
-	_, err := q.db.Exec(ctx, addService, arg.Name, arg.Assignable, arg.LogicalPartition)
+	_, err := q.db.Exec(ctx, addService,
+		arg.ID,
+		arg.Name,
+		arg.Assignable,
+		arg.LogicalPartition,
+	)
 	return err
 }
 
 const addServiceHierarchyDetails = `-- name: AddServiceHierarchyDetails :exec
 INSERT INTO
 	global.service_hierarchy_details (
-		service_name,
+		service_id,
 		hierarchy_name,
 		hierarchy_type,
 		hierarchy_result
 	)
 VALUES
 	($1, $2, $3, $4)
-ON CONFLICT (service_name) DO UPDATE
+ON CONFLICT (service_id) DO UPDATE
 SET
 	hierarchy_name = excluded.hierarchy_name,
 	hierarchy_type = excluded.hierarchy_type,
@@ -53,7 +62,7 @@ SET
 `
 
 type AddServiceHierarchyDetailsParams struct {
-	ServiceName     string                       `json:"serviceName"`
+	ServiceID       uuid.UUID                    `json:"serviceId"`
 	HierarchyName   string                       `json:"hierarchyName"`
 	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
 	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
@@ -61,7 +70,7 @@ type AddServiceHierarchyDetailsParams struct {
 
 func (q *Queries) AddServiceHierarchyDetails(ctx context.Context, arg AddServiceHierarchyDetailsParams) error {
 	_, err := q.db.Exec(ctx, addServiceHierarchyDetails,
-		arg.ServiceName,
+		arg.ServiceID,
 		arg.HierarchyName,
 		arg.HierarchyType,
 		arg.HierarchyResult,

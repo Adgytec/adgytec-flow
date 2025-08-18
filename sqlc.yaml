@@ -9,5 +9,35 @@ sql:
         out: "./database/actions/"
         sql_package: "pgx/v5"
         emit_json_tags: true
+        emit_pointers_for_null_types: true
+        emit_enum_valid_method: true
         json_tags_case_style: camel
+        overrides:
+          - db_type: "uuid"
+            nullable: false
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
 
+          - db_type: "uuid"
+            nullable: true
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+              pointer: true
+
+          - db_type: "timestamptz"
+            nullable: false
+            go_type: "time.Time"
+
+          - db_type: "timestamptz"
+            nullable: true
+            go_type:
+              type: "time.Time"
+              pointer: true
+
+          - db_type: "management.permission_resource_type"
+            go_type: "string"
+
+          - db_type: "application.permission_resource_type"
+            go_type: "string"
