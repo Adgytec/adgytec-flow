@@ -264,9 +264,7 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 			},
 		)
 
-		if nextUserErr != nil && len(nextUser) > 0 {
-			next = &userModels[len(userModels)-1]
-		}
+if nextUserErr == nil && len(nextUser) > 0 {
 	}
 
 	return helpers.CreatePaginationResponse(userModels, next, prev), nil
