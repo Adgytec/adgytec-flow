@@ -1,10 +1,16 @@
 package app_errors
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
+)
+
+var (
+	ErrRequestDecode     = fmt.Errorf("request decoding failed")
+	ErrRequestValidation = fmt.Errorf("request validation failed")
 )
 
 type RequestDecodeError struct {
@@ -14,6 +20,10 @@ type RequestDecodeError struct {
 
 func (e *RequestDecodeError) Error() string {
 	return e.Message
+}
+
+func (e *RequestDecodeError) Is(target error) bool {
+	return target == ErrRequestDecode
 }
 
 func (e *RequestDecodeError) HTTPResponse() core.ResponseHTTPError {
@@ -29,6 +39,10 @@ type RequestValidationError struct {
 
 func (e *RequestValidationError) Error() string {
 	return "invalid request body"
+}
+
+func (e *RequestValidationError) Is(target error) bool {
+	return target == ErrRequestValidation
 }
 
 func (e *RequestValidationError) HTTPResponse() core.ResponseHTTPError {
