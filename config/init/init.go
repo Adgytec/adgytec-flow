@@ -5,6 +5,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
@@ -13,6 +14,9 @@ type serviceFactory func(params app.IApp) core.IServiceInit
 var services = []serviceFactory{
 	func(appConfig app.IApp) core.IServiceInit {
 		return access_management.InitAccessManagement(appConfig)
+	},
+	func(appConfig app.IApp) core.IServiceInit {
+		return user.InitUserService(appConfig)
 	},
 }
 

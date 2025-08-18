@@ -8,14 +8,14 @@ package db_actions
 import (
 	"context"
 
-	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/google/uuid"
 )
 
 const addApplicationPermission = `-- name: AddApplicationPermission :exec
 INSERT INTO
 	application.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
@@ -29,17 +29,17 @@ SET
 `
 
 type AddApplicationPermissionParams struct {
-	Key               string                              `json:"key"`
-	ServiceName       string                              `json:"serviceName"`
-	Name              string                              `json:"name"`
-	Description       pgtype.Text                         `json:"description"`
-	RequiredResources []ApplicationPermissionResourceType `json:"requiredResources"`
+	Key               string    `json:"key"`
+	ServiceID         uuid.UUID `json:"serviceId"`
+	Name              string    `json:"name"`
+	Description       *string   `json:"description"`
+	RequiredResources []string  `json:"requiredResources"`
 }
 
 func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
 	_, err := q.db.Exec(ctx, addApplicationPermission,
 		arg.Key,
-		arg.ServiceName,
+		arg.ServiceID,
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
@@ -51,7 +51,7 @@ const addManagementPermission = `-- name: AddManagementPermission :exec
 INSERT INTO
 	management.permissions (
 		key,
-		service_name,
+		service_id,
 		name,
 		description,
 		required_resources
@@ -65,120 +65,20 @@ SET
 `
 
 type AddManagementPermissionParams struct {
-	Key               string                             `json:"key"`
-	ServiceName       string                             `json:"serviceName"`
-	Name              string                             `json:"name"`
-	Description       pgtype.Text                        `json:"description"`
-	RequiredResources []ManagementPermissionResourceType `json:"requiredResources"`
+	Key               string    `json:"key"`
+	ServiceID         uuid.UUID `json:"serviceId"`
+	Name              string    `json:"name"`
+	Description       *string   `json:"description"`
+	RequiredResources []string  `json:"requiredResources"`
 }
 
 func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
 	_, err := q.db.Exec(ctx, addManagementPermission,
 		arg.Key,
-		arg.ServiceName,
+		arg.ServiceID,
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
 	)
-	return err
-}
-
-const batchAddApplicationPermission = `-- name: BatchAddApplicationPermission :exec
-WITH
-	input_permissions AS (
-		SELECT
-			jsonb_array_elements(
-				$1::JSONB
-			) AS perm
-	),
-	expanded_permissions AS (
-		SELECT
-			perm ->> 'key' AS key,
-			perm ->> 'serviceName' AS service_name,
-			perm ->> 'name' AS name,
-			perm ->> 'description' AS description,
-			ARRAY(
-				SELECT
-					jsonb_array_elements_text(
-						perm -> 'requiredResources'
-					)::application.permission_resource_type
-			) AS required_resources
-		FROM
-			input_permissions
-	)
-INSERT INTO
-	application.permissions (
-		key,
-		service_name,
-		name,
-		description,
-		required_resources
-	)
-SELECT
-	key,
-	service_name,
-	name,
-	description,
-	required_resources
-FROM
-	expanded_permissions
-ON CONFLICT (key) DO UPDATE
-SET
-	name = excluded.name,
-	description = excluded.description
-`
-
-func (q *Queries) BatchAddApplicationPermission(ctx context.Context, permissions []byte) error {
-	_, err := q.db.Exec(ctx, batchAddApplicationPermission, permissions)
-	return err
-}
-
-const batchAddManagementPermission = `-- name: BatchAddManagementPermission :exec
-WITH
-	input_permissions AS (
-		SELECT
-			jsonb_array_elements(
-				$1::JSONB
-			) AS perm
-	),
-	expanded_permissions AS (
-		SELECT
-			perm ->> 'key' AS key,
-			perm ->> 'serviceName' AS service_name,
-			perm ->> 'name' AS name,
-			perm ->> 'description' AS description,
-			ARRAY(
-				SELECT
-					jsonb_array_elements_text(
-						perm -> 'requiredResources'
-					)::management.permission_resource_type
-			) AS required_resources
-		FROM
-			input_permissions
-	)
-INSERT INTO
-	management.permissions (
-		key,
-		service_name,
-		name,
-		description,
-		required_resources
-	)
-SELECT
-	key,
-	service_name,
-	name,
-	description,
-	required_resources
-FROM
-	expanded_permissions
-ON CONFLICT (key) DO UPDATE
-SET
-	name = excluded.name,
-	description = excluded.description
-`
-
-func (q *Queries) BatchAddManagementPermission(ctx context.Context, permissions []byte) error {
-	_, err := q.db.Exec(ctx, batchAddManagementPermission, permissions)
 	return err
 }

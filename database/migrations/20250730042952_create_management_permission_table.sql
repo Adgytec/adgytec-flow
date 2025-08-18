@@ -4,7 +4,7 @@ CREATE TYPE management.permission_resource_type AS ENUM('organization');
 
 CREATE TABLE IF NOT EXISTS management.permissions (
 	key TEXT PRIMARY KEY,
-	service_name TEXT NOT NULL REFERENCES global.services (name) ON DELETE CASCADE ON UPDATE CASCADE,
+	service_id UUID NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
 	name TEXT NOT NULL,
 	description TEXT,
 	required_resources management.permission_resource_type[] NOT NULL,
@@ -13,20 +13,20 @@ CREATE TABLE IF NOT EXISTS management.permissions (
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON management.permissions FOR each ROW
-EXECUTE procedure global.set_created_at ();
+EXECUTE function global.set_created_at ();
 
 CREATE OR REPLACE TRIGGER on_insert_set_updated_at before insert ON management.permissions FOR each ROW
-EXECUTE procedure global.set_updated_at ();
+EXECUTE function global.set_updated_at ();
 
 CREATE OR REPLACE TRIGGER on_update_set_updated_at before
 UPDATE ON management.permissions FOR each ROW
-EXECUTE procedure global.set_updated_at ();
+EXECUTE function global.set_updated_at ();
 
 CREATE OR REPLACE TRIGGER on_update_prevent_created_at_update before
 UPDATE ON management.permissions FOR each ROW WHEN (
 	old.created_at IS DISTINCT FROM new.created_at
 )
-EXECUTE procedure global.created_at_update ();
+EXECUTE function global.created_at_update ();
 
 CREATE OR REPLACE TRIGGER permissions_archive before delete ON management.permissions FOR each ROW
 EXECUTE function archive.archive_before_delete ();
