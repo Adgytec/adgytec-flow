@@ -1,6 +1,7 @@
 package app_errors
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -9,8 +10,8 @@ import (
 )
 
 var (
-	ErrUserExists       = fmt.Errorf("user exists")
-	ErrAuthActionFailed = fmt.Errorf("auth action failed")
+	ErrUserExists       = errors.New("user exists")
+	ErrAuthActionFailed = errors.New("auth action failed")
 )
 
 type UserExistsError struct {

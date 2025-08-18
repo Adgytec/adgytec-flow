@@ -1,6 +1,7 @@
 package app_errors
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -9,7 +10,7 @@ import (
 )
 
 var (
-	ErrInvalidCursorValue = fmt.Errorf("invalid-cursor-value")
+	ErrInvalidCursorValue = errors.New("invalid cursor value")
 )
 
 type InvalidCursorValueError struct {

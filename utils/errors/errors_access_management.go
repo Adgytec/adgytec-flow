@@ -1,6 +1,7 @@
 package app_errors
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -9,8 +10,8 @@ import (
 )
 
 var (
-	ErrPermissionDenied      = fmt.Errorf("permission denied")
-	ErrPermissionCheckFailed = fmt.Errorf("permission check failed")
+	ErrPermissionDenied      = errors.New("permission denied")
+	ErrPermissionCheckFailed = errors.New("permission check failed")
 )
 
 type PermissionDeniedError struct {

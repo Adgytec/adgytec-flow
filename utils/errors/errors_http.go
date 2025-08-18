@@ -1,7 +1,7 @@
 package app_errors
 
 import (
-	"fmt"
+	"errors"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	ErrRequestDecode     = fmt.Errorf("request decoding failed")
-	ErrRequestValidation = fmt.Errorf("request validation failed")
+	ErrRequestDecode     = errors.New("request decoding failed")
+	ErrRequestValidation = errors.New("request validation failed")
 )
 
 type RequestDecodeError struct {
