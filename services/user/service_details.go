@@ -8,7 +8,7 @@ import (
 var serviceName = "user"
 
 var userServiceDetails = db_actions.AddServiceParams{
-	ID:               helpers.GetServiceIdFromServiceName(serviceName),
+	ID:               helpers.GetIDFromString(serviceName),
 	Name:             serviceName,
 	Assignable:       false,
 	LogicalPartition: db_actions.GlobalServiceLogicalPartitionTypeNone,
