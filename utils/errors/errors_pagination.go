@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrInvalidCursorValue = errors.New("invalid-cursor-value")
+	ErrInvalidCursorValue = errors.New("invalid cursor value")
 )
 
 type InvalidCursorValueError struct {
