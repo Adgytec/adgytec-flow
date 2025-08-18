@@ -22,10 +22,11 @@ func (s *internalServices) UserService() core.IUserServicePC {
 func createInternalService(externalService iAppExternalServices) iAppInternalServices {
 	internalService := internalServices{}
 	appInstance := &app{
-		externalService,
-		&internalService,
+		iAppExternalServices: externalService,
+		iAppInternalServices: &internalService,
 	}
 
+	// Initialize internal services. The order of initialization is important.
 	internalService.accessManagement = access_management.CreateAccessManagementPC(externalService)
 	internalService.userService = user.CreateUserServicePC(appInstance)
 
