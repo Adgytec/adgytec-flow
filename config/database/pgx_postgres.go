@@ -2,12 +2,14 @@ package database
 
 import (
 	"context"
+	"errors"
 	"log"
 	"os"
 	"time"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -63,18 +65,25 @@ func (c *pgxConnection) Queries() *db_actions.Queries {
 	return db_actions.New(c.connPool)
 }
 
-func (c *pgxConnection) NewTransaction(ctx context.Context, userID string) (pgx.Tx, error) {
+func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 	tx, txErr := c.connPool.Begin(ctx)
 	if txErr != nil {
 		return nil, txErr
 	}
 
-	if len(userID) > 0 {
-		_, err := tx.Exec(ctx, "SELECT set_config('global.user_id', $1, true)", userID)
+	actorID, actorIDOk := helpers.GetContextValue(ctx, helpers.ActorIDKey)
+	actorType, actorTypeOk := helpers.GetContextValue(ctx, helpers.ActorTypeKey)
+	if actorIDOk && actorTypeOk {
+		_, err := tx.Exec(ctx, `
+		SELECT 
+			set_config('global.actor_id', $1, true),
+			set_config('global.actor_type', $2, true)`, actorID, actorType)
 		if err != nil {
 			tx.Rollback(ctx)
 			return nil, err
 		}
+	} else {
+		return nil, errors.New("can't find actor type and actor id in context value.")
 	}
 
 	return tx, nil
