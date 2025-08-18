@@ -1,6 +1,6 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE archive.actor_type AS ENUM('api_key', 'user');
+CREATE TYPE global.actor_type AS ENUM('api_key', 'user');
 
 CREATE TABLE IF NOT EXISTS archive.updated_records (
 	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
@@ -31,7 +31,7 @@ begin
         table_full_name,
         jsonb_object(old),
         jsonb_object(new),
-        actor_type::text,
+        actor_type::global.actor_type,
         actor::uuid
     );
     return null;
@@ -45,6 +45,6 @@ DROP FUNCTION if EXISTS archive.archive_after_update;
 
 DROP TABLE archive.updated_records;
 
-DROP TYPE if EXISTS archive.actor_type;
+DROP TYPE if EXISTS global.actor_type;
 
 -- +goose StatementEnd
