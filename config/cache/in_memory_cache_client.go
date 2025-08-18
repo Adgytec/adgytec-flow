@@ -7,6 +7,11 @@ import (
 	lru "github.com/hashicorp/golang-lru/v2/expirable"
 )
 
+const (
+	defaultCacheSize = 1 << 13 // 8192
+	defaultCacheTTL  = 5 * time.Minute
+)
+
 type inMemoryLruCache struct {
 	cache *lru.LRU[string, any]
 }
@@ -25,6 +30,6 @@ func (cc *inMemoryLruCache) Delete(key string) {
 
 func CreateInMemoryCacheClient() core.ICacheClient {
 	return &inMemoryLruCache{
-		cache: lru.NewLRU[string, any](1<<13, nil, 5*time.Minute),
+		cache: lru.NewLRU[string, any](defaultCacheSize, nil, defaultCacheTTL),
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
 func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionEntity core.IPermissionEntity, permissionRequired core.IPermissionRequired) error {
@@ -11,5 +12,7 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionEnt
 }
 
 func (s *accessManagement) checkPermission(ctx context.Context, entity core.IPermissionEntity, requiredPermission core.IPermissionRequired) error {
-	return nil
+	// TODO: Implement actual permission checking logic here.
+	// For now, returning an error to prevent accidental use in production.
+	return app_errors.ErrNotImplemented
 }
