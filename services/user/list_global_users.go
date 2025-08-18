@@ -39,7 +39,7 @@ func (s *userService) getGlobalUsers(
 
 func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userId, userIdOk := helpers.GetContextValue(reqCtx, helpers.UserID)
+	userId, userIdOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
 	if !userIdOk {
 		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
 		return

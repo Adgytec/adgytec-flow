@@ -49,7 +49,7 @@ func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId 
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userID, userIdOk := helpers.GetContextValue(reqCtx, helpers.UserID)
+	userID, userIdOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
 	if !userIdOk {
 		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
 		return

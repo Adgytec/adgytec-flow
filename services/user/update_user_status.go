@@ -81,7 +81,7 @@ func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	reqCtx := r.Context()
-	currentUserID, userIDOk := helpers.GetContextValue(reqCtx, helpers.UserID)
+	currentUserID, userIDOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
 	if !userIDOk {
 		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
 		return
