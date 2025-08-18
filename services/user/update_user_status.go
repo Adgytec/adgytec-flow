@@ -7,7 +7,6 @@ import (
 	"net/http"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -16,7 +15,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) updateUserStatus(ctx context.Context, currentUserId, userId string, status db_actions.GlobalUserStatus) error {
+func (s *userService) updateUserStatus(ctx context.Context, userId string, status db_actions.GlobalUserStatus) error {
 	requiredPermission := enableUserPermission
 	if status == db_actions.GlobalUserStatusDisabled {
 		requiredPermission = disableUserPermission
@@ -24,8 +23,7 @@ func (s *userService) updateUserStatus(ctx context.Context, currentUserId, userI
 
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		core.CreatePermissionEntity(currentUserId, core.PermissionEntityTypeUser),
-		core.CreatePermssionRequiredFromManagementPermission(requiredPermission, nil),
+		helpers.CreatePermssionRequiredFromManagementPermission(requiredPermission, nil),
 	)
 	if permissionErr != nil {
 		return permissionErr
@@ -39,7 +37,7 @@ func (s *userService) updateUserStatus(ctx context.Context, currentUserId, userI
 	}
 
 	// start transaction
-	tx, txErr := s.db.NewTransaction(ctx, currentUserId)
+	tx, txErr := s.db.NewTransaction(ctx)
 	if txErr != nil {
 		return txErr
 	}
@@ -81,14 +79,8 @@ func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Req
 	}
 
 	reqCtx := r.Context()
-	currentUserID, userIDOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
-	if !userIDOk {
-		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
-		return
-	}
-
 	userID := chi.URLParam(r, "userID")
-	enableErr := s.updateUserStatus(reqCtx, currentUserID, userID, status)
+	enableErr := s.updateUserStatus(reqCtx, userID, status)
 	if enableErr != nil {
 		payload.EncodeError(w, enableErr)
 	}

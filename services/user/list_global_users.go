@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -13,13 +12,11 @@ import (
 
 func (s *userService) getGlobalUsers(
 	ctx context.Context,
-	userId string,
 	params core.PaginationRequestParams,
 ) (*core.ResponsePagination[models.GlobalUser], error) {
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		core.CreatePermissionEntity(userId, core.PermissionEntityTypeUser),
-		core.CreatePermssionRequiredFromManagementPermission(listAllUsersPermission, nil),
+		helpers.CreatePermssionRequiredFromManagementPermission(listAllUsersPermission, nil),
 	)
 	if permissionErr != nil {
 		return nil, permissionErr
@@ -39,14 +36,9 @@ func (s *userService) getGlobalUsers(
 
 func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userId, userIdOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
-	if !userIdOk {
-		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
-		return
-	}
 
 	paginationParams := helpers.GetPaginationParamsFromRequest(r)
-	userList, userErr := m.service.getGlobalUsers(reqCtx, userId, paginationParams)
+	userList, userErr := m.service.getGlobalUsers(reqCtx, paginationParams)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return

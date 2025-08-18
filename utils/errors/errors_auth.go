@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 var (
@@ -29,7 +28,7 @@ func (e *UserExistsError) Is(target error) bool {
 func (e *UserExistsError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusConflict,
-		Message:        helpers.ValuePtr(e.Error()),
+		Message:        valuePtr(e.Error()),
 	}
 }
 

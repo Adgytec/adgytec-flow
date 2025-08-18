@@ -18,6 +18,7 @@ func (m *userServiceMux) BasePath() string {
 func (m *userServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
+	// TODO: add middleware to ensure actor type is user
 	mux.Get("/profile", m.getUserProfileHandler)
 	mux.Get("/all", m.getGlobalUsers)
 	mux.Patch("/{userID}/enable", m.enableGlobalUser)

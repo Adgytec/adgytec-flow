@@ -8,13 +8,14 @@ CREATE TABLE IF NOT EXISTS archive.updated_records (
 	old JSONB NOT NULL,
 	new JSONB NOT NULL,
 	updated_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp(),
-	updated_by_type archive.actor_type NOT NULL,
+	updated_by_type global.actor_type NOT NULL,
 	updated_by UUID NOT NULL
 );
 
 CREATE OR REPLACE FUNCTION archive.archive_after_update () returns trigger AS $$
 declare
     actor text;
+    actor_type text;
     table_full_name text;
 begin
     actor := current_setting('global.actor_id', true);

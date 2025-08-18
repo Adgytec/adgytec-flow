@@ -12,7 +12,7 @@ func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, 
 	var zero uuid.UUID
 	userID := helpers.GetIDFromString(email)
 
-	tx, txErr := s.db.NewTransaction(ctx, "")
+	tx, txErr := s.db.NewTransaction(ctx)
 	if txErr != nil {
 		return zero, txErr
 	}

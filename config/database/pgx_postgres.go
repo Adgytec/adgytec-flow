@@ -2,7 +2,6 @@ package database
 
 import (
 	"context"
-	"errors"
 	"log"
 	"os"
 	"time"
@@ -71,19 +70,18 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 		return nil, txErr
 	}
 
-	actorID, actorIDOk := helpers.GetContextValue(ctx, helpers.ActorIDKey)
-	actorType, actorTypeOk := helpers.GetContextValue(ctx, helpers.ActorTypeKey)
-	if actorIDOk && actorTypeOk {
+	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
+	if actorDetailsErr == nil {
 		_, err := tx.Exec(ctx, `
 		SELECT 
 			set_config('global.actor_id', $1, true),
-			set_config('global.actor_type', $2, true)`, actorID, actorType)
+			set_config('global.actor_type', $2, true)`, actorDetails.ID, actorDetails.Type)
 		if err != nil {
 			tx.Rollback(ctx)
 			return nil, err
 		}
 	} else {
-		return nil, errors.New("can't find actor type and actor id in context value.")
+		return nil, actorDetailsErr
 	}
 
 	return tx, nil
