@@ -8,6 +8,7 @@ import (
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -63,18 +64,28 @@ func (c *pgxConnection) Queries() *db_actions.Queries {
 	return db_actions.New(c.connPool)
 }
 
-func (c *pgxConnection) NewTransaction(ctx context.Context, userID string) (pgx.Tx, error) {
+func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
+	// Use context.Background() for transaction rollback and commit to ensure these operations complete even if the original request context is cancelled.
 	tx, txErr := c.connPool.Begin(ctx)
 	if txErr != nil {
 		return nil, txErr
 	}
 
-	if len(userID) > 0 {
-		_, err := tx.Exec(ctx, "SELECT set_config('global.user_id', $1, true)", userID)
-		if err != nil {
-			tx.Rollback(ctx)
-			return nil, err
-		}
+	// actor should be present in all the scenarios
+	// sign up is created by using auth admin api so also require actor in that case too
+	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
+	if actorDetailsErr != nil {
+		tx.Rollback(context.Background())
+		return nil, actorDetailsErr
+	}
+
+	_, err := tx.Exec(ctx, `
+		SELECT 
+			set_config('global.actor_id', $1, true),
+			set_config('global.actor_type', $2, true)`, actorDetails.ID, actorDetails.Type)
+	if err != nil {
+		tx.Rollback(context.Background())
+		return nil, err
 	}
 
 	return tx, nil

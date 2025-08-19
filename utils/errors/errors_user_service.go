@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 var (
@@ -29,7 +28,7 @@ func (e *InvalidUserIdError) Is(target error) bool {
 func (e *InvalidUserIdError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        helpers.ValuePtr(e.Error()),
+		Message:        valuePtr(e.Error()),
 	}
 }
 
@@ -47,6 +46,6 @@ func (e *UserNotFoundError) Is(target error) bool {
 func (e *UserNotFoundError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusNotFound,
-		Message:        helpers.ValuePtr(e.Error()),
+		Message:        valuePtr(e.Error()),
 	}
 }

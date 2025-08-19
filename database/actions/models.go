@@ -431,6 +431,7 @@ type ApplicationPermission struct {
 	Name              string    `json:"name"`
 	Description       *string   `json:"description"`
 	RequiredResources []string  `json:"requiredResources"`
+	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
 	CreatedAt         time.Time `json:"createdAt"`
 	UpdatedAt         time.Time `json:"updatedAt"`
 }

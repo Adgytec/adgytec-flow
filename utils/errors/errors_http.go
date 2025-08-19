@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 var (
@@ -29,7 +28,7 @@ func (e *RequestDecodeError) Is(target error) bool {
 func (e *RequestDecodeError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: e.Status,
-		Message:        helpers.ValuePtr(e.Error()),
+		Message:        valuePtr(e.Error()),
 	}
 }
 

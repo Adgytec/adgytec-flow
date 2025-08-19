@@ -3,5 +3,6 @@ package helpers
 type ContextKey string
 
 const (
-	UserID ContextKey = "user-id"
+	ActorTypeKey ContextKey = "actor-type"
+	ActorIDKey   ContextKey = "actor-id"
 )
