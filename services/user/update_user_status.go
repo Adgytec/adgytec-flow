@@ -41,7 +41,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 	if txErr != nil {
 		return txErr
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(context.Background())
 	qtx := s.db.Queries().WithTx(tx)
 
 	_, dbErr := qtx.UpdateGlobalUserStatus(
@@ -69,7 +69,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 		return authErr
 	}
 
-	return tx.Commit(ctx)
+	return tx.Commit(context.Background())
 }
 
 func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Request, status db_actions.GlobalUserStatus) {

@@ -16,7 +16,7 @@ func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, 
 	if txErr != nil {
 		return zero, txErr
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(context.Background())
 	qtx := s.db.Queries().WithTx(tx)
 
 	inserted, dbErr := qtx.CreateGlobalUser(
@@ -38,7 +38,7 @@ func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, 
 		}
 	}
 
-	txCommitErr := tx.Commit(ctx)
+	txCommitErr := tx.Commit(context.Background())
 	return userID, txCommitErr
 }
 
