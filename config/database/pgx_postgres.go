@@ -70,6 +70,8 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 		return nil, txErr
 	}
 
+	// actor should be present in all the scenarios
+	// sign up is created by using auth admin api so also require actor in that case too
 	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr == nil {
 		_, err := tx.Exec(ctx, `
@@ -81,6 +83,7 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 			return nil, err
 		}
 	} else {
+		tx.Rollback(ctx)
 		return nil, actorDetailsErr
 	}
 
