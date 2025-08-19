@@ -18,14 +18,23 @@ INSERT INTO
 		service_id,
 		name,
 		description,
-		required_resources
+		required_resources,
+		api_key_assignable
 	)
 VALUES
-	($1, $2, $3, $4, $5)
+	(
+		$1,
+		$2,
+		$3,
+		$4,
+		$5,
+		$6
+	)
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description
+	description = excluded.description,
+	api_key_assignable = excluded.api_key_assignable
 `
 
 type AddApplicationPermissionParams struct {
@@ -34,6 +43,7 @@ type AddApplicationPermissionParams struct {
 	Name              string    `json:"name"`
 	Description       *string   `json:"description"`
 	RequiredResources []string  `json:"requiredResources"`
+	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
 }
 
 func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
@@ -43,6 +53,7 @@ func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicati
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
+		arg.ApiKeyAssignable,
 	)
 	return err
 }
