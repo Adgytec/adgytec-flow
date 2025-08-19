@@ -11,6 +11,8 @@ import (
 func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetials, error) {
 	var zero core.ActorDetials
 
+	// empty actor id and actor type are also considered errors
+	// and is part of ErrInvalidActorDetails
 	actorID, actorIDOk := GetContextValue(ctx, ActorIDKey)
 	actorType, actorTypeOk := GetContextValue(ctx, ActorTypeKey)
 	if actorIDOk && !actorTypeOk {
