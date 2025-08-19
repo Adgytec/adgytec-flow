@@ -23,7 +23,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		helpers.CreatePermssionRequiredFromManagementPermission(requiredPermission, nil),
+		helpers.CreatePermissionRequiredFromManagementPermission(requiredPermission, nil),
 	)
 	if permissionErr != nil {
 		return permissionErr

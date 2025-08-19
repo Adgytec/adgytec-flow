@@ -16,7 +16,7 @@ func (s *userService) getGlobalUsers(
 ) (*core.ResponsePagination[models.GlobalUser], error) {
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		helpers.CreatePermssionRequiredFromManagementPermission(listAllUsersPermission, nil),
+		helpers.CreatePermissionRequiredFromManagementPermission(listAllUsersPermission, nil),
 	)
 	if permissionErr != nil {
 		return nil, permissionErr

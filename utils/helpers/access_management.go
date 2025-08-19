@@ -5,7 +5,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-func CreatePermssionRequiredFromManagementPermission(permission db_actions.AddManagementPermissionParams, requiredResourcesId []string) core.PermissionRequired {
+func CreatePermissionRequiredFromManagementPermission(permission db_actions.AddManagementPermissionParams, requiredResourcesId []string) core.PermissionRequired {
 	var requiredResources []string
 	for _, resourceType := range permission.RequiredResources {
 		requiredResources = append(requiredResources, string(resourceType))
@@ -19,7 +19,7 @@ func CreatePermssionRequiredFromManagementPermission(permission db_actions.AddMa
 	}
 }
 
-func CreatePermssionRequiredFromApplicationPermission(permission db_actions.AddApplicationPermissionParams, orgId string, requiredResourcesId []string) core.PermissionRequired {
+func CreatePerimssionRequiredFromApplicationPermission(permission db_actions.AddApplicationPermissionParams, orgId string, requiredResourcesId []string) core.PermissionRequired {
 	var requiredResources []string
 	for _, resourceType := range permission.RequiredResources {
 		requiredResources = append(requiredResources, string(resourceType))
