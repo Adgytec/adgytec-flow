@@ -65,6 +65,7 @@ func (c *pgxConnection) Queries() *db_actions.Queries {
 }
 
 func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
+	// will use context.Background() for commiting transaction that interacts with other services aside from database
 	tx, txErr := c.connPool.Begin(ctx)
 	if txErr != nil {
 		return nil, txErr

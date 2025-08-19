@@ -19,7 +19,7 @@ func CreatePermissionRequiredFromManagementPermission(permission db_actions.AddM
 	}
 }
 
-func CreatePerimssionRequiredFromApplicationPermission(permission db_actions.AddApplicationPermissionParams, orgId string, requiredResourcesId []string) core.PermissionRequired {
+func CreatePermissionRequiredFromApplicationPermission(permission db_actions.AddApplicationPermissionParams, orgId string, requiredResourcesId []string) core.PermissionRequired {
 	var requiredResources []string
 	for _, resourceType := range permission.RequiredResources {
 		requiredResources = append(requiredResources, string(resourceType))
