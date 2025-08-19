@@ -6,7 +6,7 @@ type ActorType string
 
 const (
 	ActorTypeUser    ActorType = "user"
-	ActorTypeApiKey  ActorType = "api-key"
+	ActorTypeApiKey  ActorType = "api_key"
 	ActorTypeUnknown ActorType = "unknown"
 )
 
