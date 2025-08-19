@@ -16,7 +16,7 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 
 	permissionEntity := core.PermissionEntity{
 		ID:         actorDetails.ID,
-		EntityType: actorDetails.Type.GetPermissionEntityType(),
+		EntityType: actorDetails.Type,
 	}
 	return pc.service.checkPermission(ctx, permissionEntity, permissionRequired)
 }

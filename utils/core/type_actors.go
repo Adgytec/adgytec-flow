@@ -7,19 +7,8 @@ type ActorType string
 const (
 	ActorTypeUser    ActorType = "user"
 	ActorTypeApiKey  ActorType = "api-key"
-	ActorTypeInvalid ActorType = "invalid"
+	ActorTypeUnknown ActorType = "unknown"
 )
-
-func (a ActorType) GetPermissionEntityType() PermissionEntityType {
-	switch a {
-	case ActorTypeUser:
-		return PermissionEntityTypeUser
-	case ActorTypeApiKey:
-		return PermissionEntityTypeAPIKey
-	}
-
-	return PermissionEntityTypeUser
-}
 
 func (a ActorType) Value() ActorType {
 	switch a {
@@ -27,7 +16,7 @@ func (a ActorType) Value() ActorType {
 		return a
 	}
 
-	return ActorTypeInvalid
+	return ActorTypeUnknown
 }
 
 type ActorDetials struct {

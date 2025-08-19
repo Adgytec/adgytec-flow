@@ -23,7 +23,7 @@ func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetials, error) 
 	}
 
 	actorTypeValue := core.ActorType(actorType).Value()
-	if actorTypeValue == core.ActorTypeInvalid {
+	if actorTypeValue == core.ActorTypeUnknown {
 		return zero, app_errors.ErrInvalidActorDetails
 	}
 
