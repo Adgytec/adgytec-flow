@@ -15,7 +15,7 @@ func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetails, error) 
 	// and is part of ErrInvalidActorDetails
 	actorID, actorIDOk := GetContextValue(ctx, ActorIDKey)
 	actorType, actorTypeOk := GetContextValue(ctx, ActorTypeKey)
-	if actorIDOk && !actorTypeOk {
+	if !actorIDOk || !actorTypeOk {
 		return zero, app_errors.ErrInvalidActorDetails
 	}
 
