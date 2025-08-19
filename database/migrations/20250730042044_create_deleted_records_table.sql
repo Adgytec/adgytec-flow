@@ -16,7 +16,7 @@ begin
     insert into archive.deleted_records (table_name, record)
     values (
         table_full_name,
-        jsonb_object(old)
+        to_jsonb(old)
     );
     return old;
 end;

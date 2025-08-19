@@ -30,8 +30,8 @@ begin
     insert into archive.updated_records (table_name, old, new, updated_by_type, updated_by)
     values (
         table_full_name,
-        jsonb_object(old),
-        jsonb_object(new),
+        to_jsonb(old),
+        to_jsonb(new),
         actor_type::global.actor_type,
         actor::uuid
     );
