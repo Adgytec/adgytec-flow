@@ -27,7 +27,7 @@ begin
         RAISE EXCEPTION 'global.actor_id  and global.actor_type session variable must be set before INSERT/UPDATE';
     END IF;
 
-    insert into archive.updated_records (table_name, old, new, updated_by)
+    insert into archive.updated_records (table_name, old, new, updated_by_type, updated_by)
     values (
         table_full_name,
         jsonb_object(old),
