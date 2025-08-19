@@ -8,8 +8,8 @@ import (
 	"github.com/google/uuid"
 )
 
-func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetials, error) {
-	var zero core.ActorDetials
+func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetails, error) {
+	var zero core.ActorDetails
 
 	// empty actor id and actor type are also considered errors
 	// and is part of ErrInvalidActorDetails
@@ -29,7 +29,7 @@ func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetials, error) 
 		return zero, app_errors.ErrInvalidActorDetails
 	}
 
-	return core.ActorDetials{
+	return core.ActorDetails{
 		ID:   actorUUID,
 		Type: actorTypeValue,
 	}, nil

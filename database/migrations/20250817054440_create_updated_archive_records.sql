@@ -24,7 +24,7 @@ begin
 
     -- Fail if user is not set
     IF actor IS NULL OR actor_type IS NULL THEN
-        RAISE EXCEPTION 'global.actor_id  and global.actor_type session variable must be set before INSERT/UPDATE';
+        RAISE EXCEPTION 'global.actor_id and global.actor_type session variable must be set before INSERT/UPDATE';
     END IF;
 
     insert into archive.updated_records (table_name, old, new, updated_by_type, updated_by)

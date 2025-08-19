@@ -19,7 +19,7 @@ func (a ActorType) Value() ActorType {
 	return ActorTypeUnknown
 }
 
-type ActorDetials struct {
+type ActorDetails struct {
 	ID   uuid.UUID
 	Type ActorType
 }
