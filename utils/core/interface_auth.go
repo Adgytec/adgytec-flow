@@ -7,4 +7,5 @@ type IAuth interface {
 	DisableUser(string) error
 	EnableUser(string) error
 	ValidateUserAccessToken(string) (uuid.UUID, error)
+	ValidateAPIKey(string) (uuid.UUID, error)
 }
