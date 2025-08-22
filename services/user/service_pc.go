@@ -13,9 +13,9 @@ type userServicePC struct {
 	service *userService
 }
 
-func (pc *userServicePC) GetUserStatus(ctx context.Context, userID uuid.UUID) db_actions.GlobalUserStatus {
+func (pc *userServicePC) GetUserStatus(ctx context.Context, userID uuid.UUID) (db_actions.GlobalUserStatus, error) {
 	// TODO: will implement this later
-	return db_actions.GlobalUserStatusDisabled
+	return db_actions.GlobalUserStatusDisabled, nil
 }
 
 func CreateUserServicePC(params iUserServiceParams) core.IUserServicePC {

@@ -9,5 +9,5 @@ import (
 
 type IUserServicePC interface {
 	CreateUser(context.Context, string) (uuid.UUID, error)
-	GetUserStatus(context.Context, uuid.UUID) db_actions.GlobalUserStatus
+	GetUserStatus(context.Context, uuid.UUID) (db_actions.GlobalUserStatus, error)
 }
