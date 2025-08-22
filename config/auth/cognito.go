@@ -7,6 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
+	"github.com/google/uuid"
 )
 
 type authCognito struct {
@@ -25,6 +26,10 @@ func (a *authCognito) DisableUser(username string) error {
 
 func (a *authCognito) EnableUser(username string) error {
 	return nil
+}
+
+func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, error) {
+	return uuid.UUID{}, nil
 }
 
 func CreateCognitoAuthClient(awsConfig aws.Config) core.IAuth {
