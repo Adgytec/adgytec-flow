@@ -12,7 +12,7 @@ func (pc *appMiddlewarePC) ActorOrganizationManagementAccessCheck(next http.Hand
 	})
 }
 
-// ensure adding actor is user middleware
+// before this middleware ensure adding middleware to check actor type is user
 func (s *appMiddleware) actorOrganizationManagementAccessCheck(actorID uuid.UUID, orgID uuid.UUID) error {
 	return nil
 }

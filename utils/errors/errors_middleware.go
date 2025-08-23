@@ -2,7 +2,6 @@ package app_errors
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -43,10 +42,9 @@ func (e *OrganizationStatusBadError) Is(target error) bool {
 }
 
 func (e *OrganizationStatusBadError) HTTPResponse() core.ResponseHTTPError {
-	// TODO: message will be based on organization status
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusForbidden,
-		Message:        valuePtr(fmt.Sprintf("Organization is currently: %s", "status")),
+		Message:        valuePtr("Action forbidden due to organization status."),
 	}
 }
 
@@ -61,7 +59,6 @@ func (e *NoAccessError) Is(target error) bool {
 }
 
 func (e *NoAccessError) HTTPResponse() core.ResponseHTTPError {
-	// TODO: message will be based on organization status
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusForbidden,
 		Message:        valuePtr(http.StatusText(http.StatusForbidden)),
