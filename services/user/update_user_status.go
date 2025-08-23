@@ -31,8 +31,8 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 
 	userUUID, userIdErr := uuid.Parse(userId)
 	if userIdErr != nil {
-		return &app_errors.InvalidUserIdError{
-			InvalidUserId: userId,
+		return &app_errors.InvalidUserIDError{
+			InvalidUserID: userId,
 		}
 	}
 

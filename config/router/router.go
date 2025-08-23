@@ -54,6 +54,7 @@ func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.StripSlashes)
 	mux.Use(middleware.AllowContentType("application/json"))
+	mux.Use(middleware.Compress(5, "application/json"))
 
 	allowedOrigins := []string{
 		"https://*",
@@ -74,6 +75,8 @@ func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
 
 	handle400(mux)
 
+	mux.Use(appConfig.Middleware().ValidateAndGetActorDetailsFromHttpRequest)
+	mux.Use(appConfig.Middleware().ValidateActorTypeUserGlobalStatus)
 	for _, factory := range services {
 		serviceMux := factory(appConfig)
 		mux.Mount(serviceMux.BasePath(), serviceMux.Router())

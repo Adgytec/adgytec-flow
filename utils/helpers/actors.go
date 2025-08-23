@@ -14,23 +14,39 @@ func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetails, error) 
 	// empty actor id and actor type are also considered errors
 	// and is part of ErrInvalidActorDetails
 	actorID, actorIDOk := GetContextValue(ctx, ActorIDKey)
+	if !actorIDOk {
+		return zero, app_errors.ErrInvalidActorID
+	}
+
 	actorType, actorTypeOk := GetContextValue(ctx, ActorTypeKey)
-	if !actorIDOk || !actorTypeOk {
-		return zero, app_errors.ErrInvalidActorDetails
+	if !actorTypeOk {
+		return zero, app_errors.ErrInvalidActorType
 	}
 
 	actorUUID, actorUUIDErr := uuid.Parse(actorID)
 	if actorUUIDErr != nil {
-		return zero, app_errors.ErrInvalidActorDetails
+		return zero, app_errors.ErrInvalidActorID
 	}
 
 	actorTypeValue := core.ActorType(actorType).Value()
 	if actorTypeValue == core.ActorTypeUnknown {
-		return zero, app_errors.ErrInvalidActorDetails
+		return zero, app_errors.ErrInvalidActorType
 	}
 
 	return core.ActorDetails{
 		ID:   actorUUID,
 		Type: actorTypeValue,
 	}, nil
+}
+
+// as both the actor id and actor type are closely related
+// if any one of them causes any error than both the values are considered invalid
+func GetActorIdFromContext(ctx context.Context) (uuid.UUID, error) {
+	actorDetails, actorDetailsErr := GetActorDetailsFromContext(ctx)
+	return actorDetails.ID, actorDetailsErr
+}
+
+func GetActorTypeFromContext(ctx context.Context) (core.ActorType, error) {
+	actorDetails, actorDetailsErr := GetActorDetailsFromContext(ctx)
+	return actorDetails.Type, actorDetailsErr
 }

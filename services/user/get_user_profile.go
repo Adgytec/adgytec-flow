@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -14,25 +13,13 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId string) (*models.GlobalUser, error) {
-	permissionErr := s.accessManagement.CheckSelfPermission(currentUserId, userId, "get-user-profile")
-	if permissionErr != nil {
-		return nil, permissionErr
-	}
-
-	cachedUser, cacheOk := s.getUserCache.Get(userId)
+func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
+	cachedUser, cacheOk := s.getUserCache.Get(userID.String())
 	if cacheOk {
 		return &cachedUser, nil
 	}
 
-	userUUID, userIdErr := uuid.Parse(userId)
-	if userIdErr != nil {
-		return nil, &app_errors.InvalidUserIdError{
-			InvalidUserId: userId,
-		}
-	}
-
-	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userUUID)
+	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 	if dbErr != nil {
 		if errors.Is(dbErr, pgx.ErrNoRows) {
 			return nil, &app_errors.UserNotFoundError{}
@@ -42,25 +29,25 @@ func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId 
 	}
 
 	userModel := s.getUserResponseModel(userProfile)
-	s.getUserCache.Set(userId, userModel)
+	s.getUserCache.Set(userID.String(), userModel)
 
 	return &userModel, nil
 }
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userID, userIdOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
-	if !userIdOk {
-		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
+
+	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
+	if userIDErr != nil {
+		payload.EncodeError(w, userIDErr)
 		return
 	}
 
-	user, userErr := m.service.getUserProfile(reqCtx, userID, userID)
+	user, userErr := m.service.getUserProfile(reqCtx, userID)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return
 	}
 
 	payload.EncodeJSON(w, http.StatusOK, user)
-
 }

@@ -13,19 +13,19 @@ var (
 	ErrUserNotFound  = errors.New("user not found")
 )
 
-type InvalidUserIdError struct {
-	InvalidUserId string
+type InvalidUserIDError struct {
+	InvalidUserID string
 }
 
-func (e *InvalidUserIdError) Error() string {
-	return fmt.Sprintf("User ID: '%s', is not a valid user id.", e.InvalidUserId)
+func (e *InvalidUserIDError) Error() string {
+	return fmt.Sprintf("User ID: '%s', is not a valid user id.", e.InvalidUserID)
 }
 
-func (e *InvalidUserIdError) Is(target error) bool {
+func (e *InvalidUserIDError) Is(target error) bool {
 	return target == ErrInvalidUserId
 }
 
-func (e *InvalidUserIdError) HTTPResponse() core.ResponseHTTPError {
+func (e *InvalidUserIDError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        valuePtr(e.Error()),
