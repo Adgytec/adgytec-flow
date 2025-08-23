@@ -19,11 +19,19 @@ func (m *userServiceMux) BasePath() string {
 func (m *userServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
-	// TODO: add middleware to ensure actor type is user
-	mux.Get("/profile", m.getUserProfileHandler)
-	mux.Get("/all", m.getGlobalUsers)
-	mux.Patch("/{userID}/enable", m.enableGlobalUser)
-	mux.Patch("/{userID}/disable", m.disableGlobalUser)
+	mux.Group(func(router chi.Router) {
+		router.Use(m.middleware.EnsureActorTypeUserOnly)
+
+		router.Get("/profile", m.getUserProfileHandler)
+	})
+
+	mux.Group(func(router chi.Router) {
+		router.Use(m.middleware.ActorManagementAccessCheck)
+
+		router.Get("/all", m.getGlobalUsers)
+		router.Patch("/{userID}/enable", m.enableGlobalUser)
+		router.Patch("/{userID}/disable", m.disableGlobalUser)
+	})
 
 	return mux
 }
