@@ -75,6 +75,8 @@ func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
 
 	handle400(mux)
 
+	mux.Use(appConfig.Middleware().ValidateAndGetActorDetailsFromHttpRequest)
+	mux.Use(appConfig.Middleware().ValidateActorTypeUserGlobalStatus)
 	for _, factory := range services {
 		serviceMux := factory(appConfig)
 		mux.Mount(serviceMux.BasePath(), serviceMux.Router())
