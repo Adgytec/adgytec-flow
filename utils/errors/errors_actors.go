@@ -3,5 +3,6 @@ package app_errors
 import "errors"
 
 var (
-	ErrInvalidActorDetails = errors.New("invalid actor details in context value")
+	ErrInvalidActorID   = errors.New("invalid actor id")
+	ErrInvalidActorType = errors.New("invalid actor type")
 )

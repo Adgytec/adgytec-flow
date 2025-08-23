@@ -15,7 +15,6 @@ import (
 )
 
 func (s *userService) getUserProfile(ctx context.Context, userID string) (*models.GlobalUser, error) {
-
 	cachedUser, cacheOk := s.getUserCache.Get(userID)
 	if cacheOk {
 		return &cachedUser, nil
@@ -52,5 +51,4 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	payload.EncodeJSON(w, http.StatusOK, user)
-
 }
