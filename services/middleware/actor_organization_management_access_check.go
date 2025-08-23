@@ -3,7 +3,6 @@ package app_middleware
 import (
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
 )
 
@@ -13,6 +12,7 @@ func (pc *appMiddlewarePC) ActorOrganizationManagementAccessCheck(next http.Hand
 	})
 }
 
-func (s *appMiddleware) actorOrganizationManagementAccessCheck(actor core.ActorDetails, orgID uuid.UUID) error {
+// ensure adding actor is user middleware
+func (s *appMiddleware) actorOrganizationManagementAccessCheck(actorID uuid.UUID, orgID uuid.UUID) error {
 	return nil
 }
