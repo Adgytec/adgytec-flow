@@ -9,8 +9,10 @@ import (
 )
 
 var (
-	ErrUserExists       = errors.New("user exists")
-	ErrAuthActionFailed = errors.New("auth action failed")
+	ErrUserExists         = errors.New("user exists")
+	ErrAuthActionFailed   = errors.New("auth action failed")
+	ErrInvalidAccessToken = errors.New("invalid access token")
+	ErrInvalidAPIKey      = errors.New("invalid api key")
 )
 
 type UserExistsError struct {
@@ -55,5 +57,39 @@ func (e *AuthActionFailedError) HTTPResponse() core.ResponseHTTPError {
 	// TODO: handle status based on e.cause
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusInternalServerError,
+	}
+}
+
+type InvalidAccessTokenError struct{}
+
+func (e *InvalidAccessTokenError) Error() string {
+	return "Invalid access token."
+}
+
+func (e *InvalidAccessTokenError) Is(target error) bool {
+	return target == ErrInvalidAccessToken
+}
+
+func (e *InvalidAccessTokenError) HTTPResponse() core.ResponseHTTPError {
+	return core.ResponseHTTPError{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        valuePtr(e.Error()),
+	}
+}
+
+type InvalidAPIKeyError struct{}
+
+func (e *InvalidAPIKeyError) Error() string {
+	return "Invalid API Key."
+}
+
+func (e *InvalidAPIKeyError) Is(target error) bool {
+	return target == ErrInvalidAPIKey
+}
+
+func (e *InvalidAPIKeyError) HTTPResponse() core.ResponseHTTPError {
+	return core.ResponseHTTPError{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        valuePtr(e.Error()),
 	}
 }
