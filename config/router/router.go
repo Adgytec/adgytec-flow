@@ -54,6 +54,7 @@ func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
 	mux.Use(middleware.Recoverer)
 	mux.Use(middleware.StripSlashes)
 	mux.Use(middleware.AllowContentType("application/json"))
+	mux.Use(middleware.Compress(5, "application/json"))
 
 	allowedOrigins := []string{
 		"https://*",
