@@ -14,10 +14,10 @@ type IMiddlewarePC interface {
 
 	CheckOrganizationStatusAndRequestMethod(http.Handler) http.Handler
 
+	ActorManagementAccessCheck(http.Handler) http.Handler
+
 	// this checks whether actor is part of the organization whose resources its working on
 	// these methods also checks whether the actor status for that organization, but its only used for individual organiztion related methods
 	ActorOrganizationAccessCheck(http.Handler) http.Handler
 	ActorOrganizationManagementAccessCheck(http.Handler) http.Handler
-
-	ActorManagementAccessCheck(http.Handler) http.Handler
 }
