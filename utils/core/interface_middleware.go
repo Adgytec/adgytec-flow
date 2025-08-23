@@ -9,6 +9,8 @@ import "net/http"
 type IMiddlewarePC interface {
 	ValidateAndGetActorDetailsFromHttpRequest(http.Handler) http.Handler
 
+	EnsureActorTypeUserOnly(http.Handler) http.Handler
+
 	// check auth status of the actor type user
 	ValidateActorTypeUserGlobalStatus(http.Handler) http.Handler
 
