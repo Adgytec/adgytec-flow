@@ -12,7 +12,7 @@ import (
 
 type authCognito struct {
 	client         *cognitoidentityprovider.Client
-	userPoolId     string
+	userPoolID     string
 	userPoolRegion string
 }
 
@@ -40,7 +40,7 @@ func CreateCognitoAuthClient(awsConfig aws.Config) core.IAuth {
 	log.Println("init authentication cognito")
 	return &authCognito{
 		client:         cognitoidentityprovider.NewFromConfig(awsConfig),
-		userPoolId:     os.Getenv("AWS_USER_POOL_ID"),
+		userPoolID:     os.Getenv("AWS_USER_POOL_ID"),
 		userPoolRegion: os.Getenv("AWS_USER_POOL_REGION"),
 	}
 }

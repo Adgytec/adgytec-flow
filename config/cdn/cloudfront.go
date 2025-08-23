@@ -21,10 +21,10 @@ func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
 func CreateCloudfrontCDNSigner() core.ICDN {
 	log.Println("creating cloudfront url signer")
 
-	keyPairId := os.Getenv("CLOUDFRONT_KEY_PAIR_ID")
+	keyPairID := os.Getenv("CLOUDFRONT_KEY_PAIR_ID")
 	key := os.Getenv("CLOUDFRONT_PRIVATE_KEY")
 	cdnUrl := os.Getenv("CDN_URL")
-	if len(keyPairId) == 0 || len(key) == 0 || len(cdnUrl) == 0 {
+	if len(keyPairID) == 0 || len(key) == 0 || len(cdnUrl) == 0 {
 		log.Fatalf("Can't find cloudfront key pair id, url and private key")
 	}
 
@@ -34,7 +34,7 @@ func CreateCloudfrontCDNSigner() core.ICDN {
 	}
 
 	return &cdnCloudfront{
-		urlSigner: sign.NewURLSigner(keyPairId, privKey),
+		urlSigner: sign.NewURLSigner(keyPairID, privKey),
 		cdnUrl:    cdnUrl,
 	}
 }
