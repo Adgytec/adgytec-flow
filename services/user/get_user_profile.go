@@ -22,12 +22,6 @@ func (s *userService) getUserProfile(ctx context.Context, userID string) (*model
 	}
 
 	userUUID := uuid.MustParse(userID)
-	// if userIDErr != nil {
-	// 	return nil, &app_errors.InvalidUserIDError{
-	// 		InvalidUserID: userID,
-	// 	}
-	// }
-
 	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userUUID)
 	if dbErr != nil {
 		if errors.Is(dbErr, pgx.ErrNoRows) {
