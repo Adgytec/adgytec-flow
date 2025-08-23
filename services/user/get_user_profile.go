@@ -14,23 +14,19 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId string) (*models.GlobalUser, error) {
-	permissionErr := s.accessManagement.CheckSelfPermission(currentUserId, userId, "get-user-profile")
-	if permissionErr != nil {
-		return nil, permissionErr
-	}
+func (s *userService) getUserProfile(ctx context.Context, userID string) (*models.GlobalUser, error) {
 
-	cachedUser, cacheOk := s.getUserCache.Get(userId)
+	cachedUser, cacheOk := s.getUserCache.Get(userID)
 	if cacheOk {
 		return &cachedUser, nil
 	}
 
-	userUUID, userIdErr := uuid.Parse(userId)
-	if userIdErr != nil {
-		return nil, &app_errors.InvalidUserIdError{
-			InvalidUserId: userId,
-		}
-	}
+	userUUID := uuid.MustParse(userID)
+	// if userIDErr != nil {
+	// 	return nil, &app_errors.InvalidUserIDError{
+	// 		InvalidUserID: userID,
+	// 	}
+	// }
 
 	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userUUID)
 	if dbErr != nil {
@@ -42,20 +38,20 @@ func (s *userService) getUserProfile(ctx context.Context, currentUserId, userId 
 	}
 
 	userModel := s.getUserResponseModel(userProfile)
-	s.getUserCache.Set(userId, userModel)
+	s.getUserCache.Set(userID, userModel)
 
 	return &userModel, nil
 }
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userID, userIdOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
-	if !userIdOk {
+	userID, userIDOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
+	if !userIDOk {
 		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
 		return
 	}
 
-	user, userErr := m.service.getUserProfile(reqCtx, userID, userID)
+	user, userErr := m.service.getUserProfile(reqCtx, userID)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return
