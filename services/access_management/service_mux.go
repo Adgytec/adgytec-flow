@@ -3,13 +3,13 @@ package access_management
 import (
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/go-chi/chi/v5"
 )
 
 type accessManagementMux struct {
-	service *accessManagement
+	service    *accessManagement
+	middleware core.IMiddlewarePC
 }
 
 func (m *accessManagementMux) BasePath() string {
@@ -21,12 +21,10 @@ func (m *accessManagementMux) Router() *chi.Mux {
 	return mux
 }
 
-func CreateAccessManagementMux(params iAccessManagementParams) core.IServiceMux {
+func CreateAccessManagementMux(params iAccessManagementMuxParams) core.IServiceMux {
 	log.Println("adding access-managment mux")
 	return &accessManagementMux{
-		service: &accessManagement{
-			db:              params.Database(),
-			permissionCache: cache.CreateNewCache[bool](params.CacheClient(), "access-management"),
-		},
+		service:    createAccessManagementService(params),
+		middleware: params.Middleware(),
 	}
 }

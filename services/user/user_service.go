@@ -15,6 +15,11 @@ type iUserServiceParams interface {
 	CacheClient() core.ICacheClient
 }
 
+type iUserServiceMuxParams interface {
+	iUserServiceParams
+	Middleware() core.IMiddlewarePC
+}
+
 type userService struct {
 	db               core.IDatabase
 	auth             core.IAuth
