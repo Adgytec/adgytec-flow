@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -14,14 +13,13 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) getUserProfile(ctx context.Context, userID string) (*models.GlobalUser, error) {
-	cachedUser, cacheOk := s.getUserCache.Get(userID)
+func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
+	cachedUser, cacheOk := s.getUserCache.Get(userID.String())
 	if cacheOk {
 		return &cachedUser, nil
 	}
 
-	userUUID := uuid.MustParse(userID)
-	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userUUID)
+	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 	if dbErr != nil {
 		if errors.Is(dbErr, pgx.ErrNoRows) {
 			return nil, &app_errors.UserNotFoundError{}
@@ -31,16 +29,17 @@ func (s *userService) getUserProfile(ctx context.Context, userID string) (*model
 	}
 
 	userModel := s.getUserResponseModel(userProfile)
-	s.getUserCache.Set(userID, userModel)
+	s.getUserCache.Set(userID.String(), userModel)
 
 	return &userModel, nil
 }
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userID, userIDOk := helpers.GetContextValue(reqCtx, helpers.ActorIDKey)
-	if !userIDOk {
-		payload.EncodeError(w, fmt.Errorf("Can't find current user."))
+
+	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
+	if userIDErr != nil {
+		payload.EncodeError(w, userIDErr)
 		return
 	}
 
