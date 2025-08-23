@@ -15,6 +15,7 @@ type iAppExternalServices interface {
 type iAppInternalServices interface {
 	AccessManagement() core.IAccessManagementPC
 	UserService() core.IUserServicePC
+	Middleware() core.IMiddlewarePC
 }
 
 type IApp interface {
