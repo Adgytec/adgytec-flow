@@ -53,7 +53,7 @@ func (e *OrganizationStatusBadError) HTTPResponse() core.ResponseHTTPError {
 type NoAccessError struct{}
 
 func (e *NoAccessError) Error() string {
-	return "bad organization status"
+	return "no access"
 }
 
 func (e *NoAccessError) Is(target error) bool {
