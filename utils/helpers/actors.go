@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/google/uuid"
@@ -28,8 +29,8 @@ func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetails, error) 
 		return zero, app_errors.ErrInvalidActorID
 	}
 
-	actorTypeValue := core.ActorType(actorType).Value()
-	if actorTypeValue == core.ActorTypeUnknown {
+	actorTypeValue := db_actions.GlobalActorType(actorType)
+	if !actorTypeValue.Valid() {
 		return zero, app_errors.ErrInvalidActorType
 	}
 
@@ -46,7 +47,7 @@ func GetActorIdFromContext(ctx context.Context) (uuid.UUID, error) {
 	return actorDetails.ID, actorDetailsErr
 }
 
-func GetActorTypeFromContext(ctx context.Context) (core.ActorType, error) {
+func GetActorTypeFromContext(ctx context.Context) (db_actions.GlobalActorType, error) {
 	actorDetails, actorDetailsErr := GetActorDetailsFromContext(ctx)
 	return actorDetails.Type, actorDetailsErr
 }

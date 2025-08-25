@@ -1,10 +1,13 @@
 package core
 
-import "github.com/google/uuid"
+import (
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/google/uuid"
+)
 
 type PermissionEntity struct {
 	ID         uuid.UUID
-	EntityType ActorType
+	EntityType db_actions.GlobalActorType
 }
 
 type PermissionRequired struct {
