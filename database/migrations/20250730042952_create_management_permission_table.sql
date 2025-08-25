@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS management.permissions (
 	name TEXT NOT NULL,
 	description TEXT,
 	required_resources management.permission_resource_type[] NOT NULL,
+	api_key_assignable BOOLEAN NOT NULL DEFAULT FALSE,
 	created_at TIMESTAMPTZ NOT NULL,
 	updated_at TIMESTAMPTZ NOT NULL
 );

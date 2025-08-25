@@ -66,6 +66,57 @@ func (e ApplicationPermissionResourceType) Valid() bool {
 	return false
 }
 
+type GlobalActorType string
+
+const (
+	GlobalActorTypeApiKey GlobalActorType = "api_key"
+	GlobalActorTypeUser   GlobalActorType = "user"
+)
+
+func (e *GlobalActorType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalActorType(s)
+	case string:
+		*e = GlobalActorType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalActorType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalActorType struct {
+	GlobalActorType GlobalActorType `json:"globalActorType"`
+	Valid           bool            `json:"valid"` // Valid is true if GlobalActorType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalActorType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalActorType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalActorType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalActorType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalActorType), nil
+}
+
+func (e GlobalActorType) Valid() bool {
+	switch e {
+	case GlobalActorTypeApiKey,
+		GlobalActorTypeUser:
+		return true
+	}
+	return false
+}
+
 type GlobalMediaStatus string
 
 const (
@@ -444,12 +495,13 @@ type ArchiveDeletedRecord struct {
 }
 
 type ArchiveUpdatedRecord struct {
-	ID        uuid.UUID `json:"id"`
-	TableName string    `json:"tableName"`
-	Old       []byte    `json:"old"`
-	New       []byte    `json:"new"`
-	UpdatedAt time.Time `json:"updatedAt"`
-	UpdatedBy uuid.UUID `json:"updatedBy"`
+	ID            uuid.UUID       `json:"id"`
+	TableName     string          `json:"tableName"`
+	Old           []byte          `json:"old"`
+	New           []byte          `json:"new"`
+	UpdatedAt     time.Time       `json:"updatedAt"`
+	UpdatedByType GlobalActorType `json:"updatedByType"`
+	UpdatedBy     uuid.UUID       `json:"updatedBy"`
 }
 
 type GlobalMediaImage struct {
@@ -531,6 +583,7 @@ type ManagementPermission struct {
 	Name              string    `json:"name"`
 	Description       *string   `json:"description"`
 	RequiredResources []string  `json:"requiredResources"`
+	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
 	CreatedAt         time.Time `json:"createdAt"`
 	UpdatedAt         time.Time `json:"updatedAt"`
 }

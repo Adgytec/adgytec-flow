@@ -65,14 +65,23 @@ INSERT INTO
 		service_id,
 		name,
 		description,
-		required_resources
+		required_resources,
+		api_key_assignable
 	)
 VALUES
-	($1, $2, $3, $4, $5)
+	(
+		$1,
+		$2,
+		$3,
+		$4,
+		$5,
+		$6
+	)
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
-	description = excluded.description
+	description = excluded.description,
+	api_key_assignable = excluded.api_key_assignable
 `
 
 type AddManagementPermissionParams struct {
@@ -81,6 +90,7 @@ type AddManagementPermissionParams struct {
 	Name              string    `json:"name"`
 	Description       *string   `json:"description"`
 	RequiredResources []string  `json:"requiredResources"`
+	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
 }
 
 func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
@@ -90,6 +100,7 @@ func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagement
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
+		arg.ApiKeyAssignable,
 	)
 	return err
 }
