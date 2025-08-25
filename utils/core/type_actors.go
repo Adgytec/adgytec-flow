@@ -1,25 +1,28 @@
 package core
 
-import "github.com/google/uuid"
-
-type ActorType string
-
-const (
-	ActorTypeUser    ActorType = "user"
-	ActorTypeApiKey  ActorType = "api_key"
-	ActorTypeUnknown ActorType = "unknown"
+import (
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/google/uuid"
 )
 
-func (a ActorType) Value() ActorType {
-	switch a {
-	case ActorTypeApiKey, ActorTypeUser:
-		return a
-	}
+// type ActorType string
 
-	return ActorTypeUnknown
-}
+// const (
+// 	ActorTypeUser    ActorType = "user"
+// 	ActorTypeApiKey  ActorType = "api_key"
+// 	ActorTypeUnknown ActorType = "unknown"
+// )
+//
+// func (a ActorType) Value() ActorType {
+// 	switch a {
+// 	case ActorTypeApiKey, ActorTypeUser:
+// 		return a
+// 	}
+//
+// 	return ActorTypeUnknown
+// }
 
 type ActorDetails struct {
 	ID   uuid.UUID
-	Type ActorType
+	Type db_actions.GlobalActorType
 }

@@ -3,7 +3,7 @@ package app_middleware
 import (
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 )
 
 func (pc *appMiddlewarePC) EnsureActorTypeUserOnly(next http.Handler) http.Handler {
@@ -12,6 +12,6 @@ func (pc *appMiddlewarePC) EnsureActorTypeUserOnly(next http.Handler) http.Handl
 	})
 }
 
-func (s *appMiddleware) ensureActorTypeUserOnly(actorType core.ActorType) error {
+func (s *appMiddleware) ensureActorTypeUserOnly(actorType db_actions.GlobalActorType) error {
 	return nil
 }
