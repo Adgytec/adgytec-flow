@@ -14,7 +14,7 @@ func (s *accessManagement) validateActorType(
 		return nil
 	default:
 		return &app_errors.PermissionDeniedError{
-			Reason: "Required and current actor mismatch.",
+			Reason: "The action requires a different actor type than the one currently authenticated.",
 		}
 	}
 }
