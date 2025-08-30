@@ -33,16 +33,33 @@ type PermissionRequiredResources struct {
 	ServiceResourceItemID *uuid.UUID
 }
 
+// PermissionEntity defines the current actor details for permission resolution
 type PermissionEntity struct {
 	ID         uuid.UUID
 	EntityType db_actions.GlobalActorType
 }
 
+// PermissionRequired defines the permission details required for successfull resolution of permission
+// this is not directly used
 type PermissionRequired struct {
-	Key                 string
-	RequiredResources   []string
-	Management          bool
-	OrgId               string
-	RequiredResourcesId []string
-	Action              string
+	key                 string
+	permissionType      PermissionType
+	permissionActorType db_actions.GlobalAssignableActorType
+	requiredResources   PermissionRequiredResources
+}
+
+func (p PermissionRequired) PermissionKey() string {
+	return p.key
+}
+
+func (p PermissionRequired) PermissionType() PermissionType {
+	return p.permissionType
+}
+
+func (p PermissionRequired) PermissionActorType() db_actions.GlobalAssignableActorType {
+	return p.permissionActorType
+}
+
+func (p PermissionRequired) PermissionRequiredResources() PermissionRequiredResources {
+	return p.requiredResources
 }
