@@ -14,6 +14,25 @@ type SelfPermissions struct {
 	Description string
 }
 
+// PermissionType defines 'Type' of permission
+// this is used during permission resolution in access managment
+type PermissionType string
+
+const (
+	PermissionTypeSelf        PermissionType = "self"
+	PermissionTypeManagement  PermissionType = "managment"
+	PermissionTypeApplication PermissionType = "application"
+)
+
+// PermissionRequiredResources defines the required resources for PermissionEntity for successfull resolution
+type PermissionRequiredResources struct {
+	OrgID                 *uuid.UUID
+	ProjectID             *uuid.UUID
+	UserID                *uuid.UUID
+	ServiceHierarchyID    *uuid.UUID
+	ServiceResourceItemID *uuid.UUID
+}
+
 type PermissionEntity struct {
 	ID         uuid.UUID
 	EntityType db_actions.GlobalActorType
