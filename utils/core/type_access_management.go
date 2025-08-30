@@ -19,7 +19,7 @@ type PermissionType string
 
 const (
 	PermissionTypeSelf        PermissionType = "self"
-	PermissionTypeManagement  PermissionType = "managment"
+	PermissionTypeManagement  PermissionType = "management"
 	PermissionTypeApplication PermissionType = "application"
 )
 
