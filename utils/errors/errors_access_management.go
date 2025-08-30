@@ -43,7 +43,7 @@ func (e *PermissionDeniedError) HTTPResponse() core.ResponseHTTPError {
 }
 
 type PermissionResolutionFailedError struct {
-	cause error
+	Cause error
 }
 
 func (e *PermissionResolutionFailedError) Error() string {
@@ -55,7 +55,7 @@ func (e *PermissionResolutionFailedError) Is(target error) bool {
 }
 
 func (e *PermissionResolutionFailedError) Unwrap() error {
-	return e.cause
+	return e.Cause
 }
 
 func (e *PermissionResolutionFailedError) HTTPResponse() core.ResponseHTTPError {
