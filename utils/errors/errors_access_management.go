@@ -18,7 +18,7 @@ type PermissionDeniedError struct {
 }
 
 func (e *PermissionDeniedError) Error() string {
-	return fmt.Sprintf("Permission denied. Missing required permissison: '%s'.", e.MissingPermission)
+	return fmt.Sprintf("Permission denied. Missing required permission: '%s'.", e.MissingPermission)
 }
 
 func (e *PermissionDeniedError) Is(target error) bool {
