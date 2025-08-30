@@ -2,6 +2,7 @@ package access_management
 
 import (
 	"context"
+	"errors"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
@@ -29,7 +30,13 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 	for _, perm := range permissionRequired {
 		err = pc.service.checkPermission(ctx, permissionEntity, perm)
 		if err == nil {
+			// permission granted
 			return nil
+		}
+
+		if !errors.Is(err, app_errors.ErrPermissionDenied) {
+			// some other error than permission denied so return early
+			return err
 		}
 	}
 
