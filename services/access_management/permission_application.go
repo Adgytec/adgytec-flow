@@ -22,6 +22,7 @@ var assignApplicationPermission = db_actions.AddApplicationPermissionParams{
 
 Grants the ability to assign permissions to any user or group.`),
 	RequiredResources: []string{},
+	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
 }
 
 var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
@@ -33,6 +34,7 @@ var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
 
 Grants the ability to remove permissions from any user or group.`),
 	RequiredResources: []string{},
+	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
 }
 
 var listApplicationPermission = db_actions.AddApplicationPermissionParams{
@@ -44,4 +46,5 @@ var listApplicationPermission = db_actions.AddApplicationPermissionParams{
 
 Grants the ability to list permissions to any user or group.`),
 	RequiredResources: []string{},
+	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
 }

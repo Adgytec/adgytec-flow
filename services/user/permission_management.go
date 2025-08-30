@@ -21,6 +21,7 @@ var listAllUsersPermission = db_actions.AddManagementPermissionParams{
 Grants the ability to list all the users that are part of Adgytec studio.
 *Note: This allows to view all the user regardless if they are part of any organization or management.*`),
 	RequiredResources: []string{},
+	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
 }
 
 var disableUserPermission = db_actions.AddManagementPermissionParams{
@@ -33,6 +34,7 @@ var disableUserPermission = db_actions.AddManagementPermissionParams{
 Grants the ability to disable users access to Adgytec Studio.
 *Note: This disables users globally regardless of the organization they belong to.*`),
 	RequiredResources: []string{},
+	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
 }
 
 var enableUserPermission = db_actions.AddManagementPermissionParams{
@@ -44,4 +46,5 @@ var enableUserPermission = db_actions.AddManagementPermissionParams{
 
 Grants the ability to enable users access to Adgytec Studio.`),
 	RequiredResources: []string{},
+	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
 }
