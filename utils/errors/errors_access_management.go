@@ -52,7 +52,10 @@ type PermissionResolutionFailedError struct {
 }
 
 func (e *PermissionResolutionFailedError) Error() string {
-	return fmt.Sprintf("Permission resolution failed: %v", e.Cause)
+	if e.Cause != nil {
+		return fmt.Sprintf("Permission resolution failed: %v", e.Cause)
+	}
+	return ErrPermissionResolutionFailed.Error()
 }
 
 func (e *PermissionResolutionFailedError) Is(target error) bool {
