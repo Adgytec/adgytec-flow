@@ -9,9 +9,8 @@ import (
 // this is not stored in db
 // SelfPermissions are not assignable to any user and are implictly available for all the users for their account actions
 type SelfPermissions struct {
-	Key         string
-	Name        string
-	Description string
+	Key  string
+	Name string
 }
 
 // PermissionType defines 'Type' of permission
@@ -46,7 +45,6 @@ type PermissionRequired struct {
 	PermissionType      PermissionType
 	PermissionActorType db_actions.GlobalAssignableActorType
 	RequiredResources   PermissionRequiredResources
-	ActionName          string
 }
 
 func (p PermissionRequired) GetPermissionKey() string {
@@ -63,8 +61,4 @@ func (p PermissionRequired) GetPermissionActorType() db_actions.GlobalAssignable
 
 func (p PermissionRequired) GetPermissionRequiredResources() PermissionRequiredResources {
 	return p.RequiredResources
-}
-
-func (p PermissionRequired) GetActionName() string {
-	return p.ActionName
 }

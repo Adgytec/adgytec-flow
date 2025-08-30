@@ -19,9 +19,9 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 		EntityType: actorDetails.Type,
 	}
 
-	// if permissionRequired is empty slice than action is unknown
+	// if permissionRequired is empty slice than MissingPermission is unknown
 	var err error = &app_errors.PermissionDeniedError{
-		Action: "unknown",
+		MissingPermission: "Unknown",
 	}
 
 	for _, perm := range permissionRequired {

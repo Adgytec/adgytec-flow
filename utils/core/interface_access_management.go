@@ -17,7 +17,4 @@ type IPermissionRequired interface {
 	GetPermissionType() PermissionType
 	GetPermissionActorType() db_actions.GlobalAssignableActorType
 	GetPermissionRequiredResources() PermissionRequiredResources
-
-	// GetActionName returns current service action name
-	GetActionName() string
 }
