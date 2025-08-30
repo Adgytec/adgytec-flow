@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -21,9 +22,12 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 		requiredPermission = disableUserPermission
 	}
 
+	requiredPermissions := []core.IPermissionRequired{
+		helpers.CreatePermissionRequiredFromManagementPermission(requiredPermission, core.PermissionRequiredResources{}),
+	}
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		helpers.CreatePermissionRequiredFromManagementPermission(requiredPermission, nil),
+		requiredPermissions,
 	)
 	if permissionErr != nil {
 		return permissionErr
