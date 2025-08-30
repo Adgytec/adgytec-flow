@@ -5,31 +5,43 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-func CreatePermissionRequiredFromManagementPermission(permission db_actions.AddManagementPermissionParams, requiredResourcesId []string) core.PermissionRequired {
-	var requiredResources []string
-	for _, resourceType := range permission.RequiredResources {
-		requiredResources = append(requiredResources, string(resourceType))
-	}
+// helper methods to create core.IPermissionRequired for permission resolution
 
+func CreatePermissionRequiredFromManagementPermission(
+	permission db_actions.AddManagementPermissionParams,
+	requiredPermissionResources core.PermissionRequiredResources,
+) core.IPermissionRequired {
 	return core.PermissionRequired{
 		Key:                 permission.Key,
-		Management:          true,
-		RequiredResources:   requiredResources,
-		RequiredResourcesId: requiredResourcesId,
+		PermissionType:      core.PermissionTypeManagement,
+		PermissionActorType: permission.AssignableActor,
+		RequiredResources:   requiredPermissionResources,
+		ActionName:          permission.Name,
 	}
 }
 
-func CreatePermissionRequiredFromApplicationPermission(permission db_actions.AddApplicationPermissionParams, orgId string, requiredResourcesId []string) core.PermissionRequired {
-	var requiredResources []string
-	for _, resourceType := range permission.RequiredResources {
-		requiredResources = append(requiredResources, string(resourceType))
-	}
-
+func CreatePermissionRequiredFromApplicationPermission(
+	permission db_actions.AddApplicationPermissionParams,
+	requiredPermissionResources core.PermissionRequiredResources,
+) core.IPermissionRequired {
 	return core.PermissionRequired{
 		Key:                 permission.Key,
-		Management:          false,
-		OrgId:               orgId,
-		RequiredResources:   requiredResources,
-		RequiredResourcesId: requiredResourcesId,
+		PermissionType:      core.PermissionTypeApplication,
+		PermissionActorType: permission.AssignableActor,
+		RequiredResources:   requiredPermissionResources,
+		ActionName:          permission.Name,
+	}
+}
+
+func CreatePermissionRequiredFromSelfPermission(
+	permission core.SelfPermissions,
+	requiredPermissionResources core.PermissionRequiredResources,
+) core.IPermissionRequired {
+	return core.PermissionRequired{
+		Key:                 permission.Key,
+		PermissionType:      core.PermissionTypeSelf,
+		PermissionActorType: db_actions.GlobalAssignableActorTypeUser,
+		RequiredResources:   requiredPermissionResources,
+		ActionName:          permission.Name,
 	}
 }
