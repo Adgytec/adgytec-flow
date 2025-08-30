@@ -9,11 +9,12 @@ import (
 )
 
 var (
-	ErrPermissionDenied      = errors.New("permission denied")
-	ErrPermissionCheckFailed = errors.New("permission check failed")
+	ErrPermissionDenied           = errors.New("permission denied")
+	ErrPermissionResolutionFailed = errors.New("permission resolution failed")
 )
 
 type PermissionDeniedError struct {
+	// Action defines the action for which action permision is failed
 	Action string
 }
 
@@ -32,23 +33,23 @@ func (e *PermissionDeniedError) HTTPResponse() core.ResponseHTTPError {
 	}
 }
 
-type PermissionCheckFailedError struct {
+type PermissionResolutionFailedError struct {
 	cause error
 }
 
-func (e *PermissionCheckFailedError) Error() string {
-	return "Permission check failed."
+func (e *PermissionResolutionFailedError) Error() string {
+	return "Permission resolution failed."
 }
 
-func (e *PermissionCheckFailedError) Is(target error) bool {
-	return target == ErrPermissionCheckFailed
+func (e *PermissionResolutionFailedError) Is(target error) bool {
+	return target == ErrPermissionResolutionFailed
 }
 
-func (e *PermissionCheckFailedError) Unwrap() error {
+func (e *PermissionResolutionFailedError) Unwrap() error {
 	return e.cause
 }
 
-func (e *PermissionCheckFailedError) HTTPResponse() core.ResponseHTTPError {
+func (e *PermissionResolutionFailedError) HTTPResponse() core.ResponseHTTPError {
 	// TODO: handle status code based on e.cause
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusInternalServerError,
