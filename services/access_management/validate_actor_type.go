@@ -1,6 +1,8 @@
 package access_management
 
 import (
+	"fmt"
+
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
@@ -14,7 +16,7 @@ func (s *accessManagement) validateActorType(
 		return nil
 	default:
 		return &app_errors.PermissionDeniedError{
-			Reason: "The action requires a different actor type than the one currently authenticated.",
+			Reason: fmt.Sprintf("The action requires actor type '%s' but the current actor type is '%s'.", string(requiredActorType), string(currentActorType)),
 		}
 	}
 }
