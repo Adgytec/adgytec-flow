@@ -16,7 +16,7 @@ func (s *accessManagement) validateActorType(
 		return nil
 	default:
 		return &app_errors.PermissionDeniedError{
-			Reason: fmt.Sprintf("The action requires actor type '%s' but the current actor type is '%s'.", string(requiredActorType), string(currentActorType)),
+			Reason: fmt.Sprintf("The action requires actor type '%s' but the current actor type is '%s'.", requiredActorType, currentActorType),
 		}
 	}
 }
