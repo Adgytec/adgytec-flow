@@ -59,9 +59,9 @@ func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity
 		return s.resolveApplicationPermission(ctx, permissionEntity, permissionRequired)
 	case core.PermissionTypeManagement:
 		return s.resolveManagementPermission(ctx, permissionEntity, permissionRequired)
-	}
-
-	return &app_errors.PermissionResolutionFailedError{
-		Cause: errors.New("Unknown permission type value."),
+	default:
+		return &app_errors.PermissionResolutionFailedError{
+			Cause: errors.New("Unknown permission type value."),
+		}
 	}
 }
