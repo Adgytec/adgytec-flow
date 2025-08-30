@@ -7,7 +7,8 @@ import (
 )
 
 type IAccessManagementPC interface {
-	CheckPermission(context.Context, PermissionRequired) error
+	// CheckPermission returns nil if any of the IPermissionRequired is successfully resolved
+	CheckPermission(context.Context, []IPermissionRequired) error
 }
 
 // IPermissionRequired provides common interface for all the permission types for easy resolution
