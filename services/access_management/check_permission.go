@@ -8,6 +8,9 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
+// CheckPermission is called for actions which requires secure access
+// only require single permissionRequired to be successfull to successfully resolve the permission
+// if by any chance permissionRequired slice is empty than its an invalid case and will implicitly deny the permission with MissingPermission = 'unknown'
 func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired []core.IPermissionRequired) error {
 	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
@@ -19,15 +22,12 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 		EntityType: actorDetails.Type,
 	}
 
-	// if permissionRequired is empty slice than MissingPermission is unknown
 	var err error = &app_errors.PermissionDeniedError{
 		MissingPermission: "Unknown",
 	}
 
 	for _, perm := range permissionRequired {
 		err = pc.service.checkPermission(ctx, permissionEntity, perm)
-
-		// permission successfully resolved when any of the permission is resolved successfully
 		if err == nil {
 			return nil
 		}
