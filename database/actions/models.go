@@ -69,7 +69,7 @@ func (e ApplicationPermissionResourceType) Valid() bool {
 type GlobalActorType string
 
 const (
-	GlobalActorTypeApiKey GlobalActorType = "api_key"
+	GlobalActorTypeApiKey GlobalActorType = "api-key"
 	GlobalActorTypeUser   GlobalActorType = "user"
 )
 
