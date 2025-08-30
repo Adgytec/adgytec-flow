@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -14,6 +15,27 @@ import (
 )
 
 func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
+	requiredPermissions := []core.IPermissionRequired{
+		helpers.CreatePermissionRequiredFromSelfPermission(
+			getSelfProfilePermission,
+			core.PermissionRequiredResources{
+				UserID: helpers.ValuePtr(userID),
+			},
+		),
+		helpers.CreatePermissionRequiredFromManagementPermission(
+			getUserProfilePermission,
+			core.PermissionRequiredResources{},
+		),
+	}
+
+	permissionErr := s.accessManagement.CheckPermission(
+		ctx,
+		requiredPermissions,
+	)
+	if permissionErr != nil {
+		return nil, permissionErr
+	}
+
 	cachedUser, cacheOk := s.getUserCache.Get(userID.String())
 	if cacheOk {
 		return &cachedUser, nil
