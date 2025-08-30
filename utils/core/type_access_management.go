@@ -46,6 +46,7 @@ type PermissionRequired struct {
 	PermissionType      PermissionType
 	PermissionActorType db_actions.GlobalAssignableActorType
 	RequiredResources   PermissionRequiredResources
+	ActionName          string
 }
 
 func (p PermissionRequired) GetPermissionKey() string {
@@ -62,4 +63,8 @@ func (p PermissionRequired) GetPermissionActorType() db_actions.GlobalAssignable
 
 func (p PermissionRequired) GetPermissionRequiredResources() PermissionRequiredResources {
 	return p.RequiredResources
+}
+
+func (p PermissionRequired) GetActionName() string {
+	return p.ActionName
 }
