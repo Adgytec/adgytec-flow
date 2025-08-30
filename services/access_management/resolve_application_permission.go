@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
 func (s *accessManagement) resolveApplicationPermission(
@@ -11,5 +12,5 @@ func (s *accessManagement) resolveApplicationPermission(
 	permissionEntity core.PermissionEntity,
 	permissionRequired core.IPermissionRequired,
 ) error {
-	return nil
+	return app_errors.ErrNotImplemented
 }
