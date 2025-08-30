@@ -43,8 +43,25 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 	return err
 }
 
-func (s *accessManagement) checkPermission(ctx context.Context, entity core.PermissionEntity, requiredPermission core.IPermissionRequired) error {
-	// TODO: Implement actual permission checking logic here.
-	// For now, returning an error to prevent accidental use in production.
-	return app_errors.ErrNotImplemented
+func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity core.PermissionEntity, permissionRequired core.IPermissionRequired) error {
+	actorTypeError := s.validateActorType(
+		permissionEntity.EntityType,
+		permissionRequired.GetPermissionActorType(),
+	)
+	if actorTypeError != nil {
+		return actorTypeError
+	}
+
+	switch permissionRequired.GetPermissionType() {
+	case core.PermissionTypeSelf:
+		return s.resolveSelfPermission(permissionEntity, permissionRequired)
+	case core.PermissionTypeApplication:
+		return s.resolveApplicationPermission(ctx, permissionEntity, permissionRequired)
+	case core.PermissionTypeManagement:
+		return s.resolveManagementPermission(ctx, permissionEntity, permissionRequired)
+	}
+
+	return &app_errors.PermissionResolutionFailedError{
+		Cause: errors.New("Unknown permission type value."),
+	}
 }
