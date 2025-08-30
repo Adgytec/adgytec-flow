@@ -8,7 +8,7 @@ import (
 var serviceName = "access-management"
 
 var accessManagementDetails = db_actions.AddServiceParams{
-	ID:               helpers.GetIDFromString(serviceName),
+	ID:               helpers.GetIDFromPayload([]byte(serviceName)),
 	Name:             serviceName,
 	Assignable:       false,
 	LogicalPartition: db_actions.GlobalServiceLogicalPartitionTypeNone,

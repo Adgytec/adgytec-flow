@@ -10,7 +10,7 @@ import (
 
 func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, error) {
 	var zero uuid.UUID
-	userID := helpers.GetIDFromString(email)
+	userID := helpers.GetIDFromPayload([]byte(email))
 
 	tx, txErr := s.db.NewTransaction(ctx)
 	if txErr != nil {
