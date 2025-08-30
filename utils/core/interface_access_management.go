@@ -12,8 +12,8 @@ type IAccessManagementPC interface {
 
 // IPermissionRequired provides common interface for all the permission types for easy resolution
 type IPermissionRequired interface {
-	PermissionKey() string
-	PermissionType() PermissionType
-	PermissionActorType() db_actions.GlobalAssignableActorType
-	PermissionRequiredResources() PermissionRequiredResources
+	GetPermissionKey() string
+	GetPermissionType() PermissionType
+	GetPermissionActorType() db_actions.GlobalAssignableActorType
+	GetPermissionRequiredResources() PermissionRequiredResources
 }
