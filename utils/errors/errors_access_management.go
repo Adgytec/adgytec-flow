@@ -25,10 +25,10 @@ type PermissionDeniedError struct {
 
 func (e *PermissionDeniedError) Error() string {
 	if e.Reason != "" {
-		return fmt.Sprintf("Permission denied.\nCause: '%s'", e.Reason)
+		return fmt.Sprintf("Permission denied: %s", e.Reason)
 	}
 
-	return fmt.Sprintf("Permission denied.\nMissing required permission: '%s'.", e.MissingPermission)
+	return fmt.Sprintf("Permission denied: missing required permission '%s'", e.MissingPermission)
 }
 
 func (e *PermissionDeniedError) Is(target error) bool {
