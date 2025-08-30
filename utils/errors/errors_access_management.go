@@ -13,12 +13,22 @@ var (
 	ErrPermissionResolutionFailed = errors.New("permission resolution failed")
 )
 
+// PermissionDeniedError defines error used when permission is denied for reasons that doesn't involve external errors
+// MissingPermission tells which permission is missing
+// Reason gives more details about why permission is denied, if permission resolution failed before actually checking if permission is present
+// like permission actor type and current actor type doesn't match
+// Only one of the MissingPermission or Reason is used for final Error() message and Reason is given more priority
 type PermissionDeniedError struct {
 	MissingPermission string
+	Reason            string
 }
 
 func (e *PermissionDeniedError) Error() string {
-	return fmt.Sprintf("Permission denied. Missing required permission: '%s'.", e.MissingPermission)
+	if e.Reason != "" {
+		return fmt.Sprintf("Permission denied.\nCause: '%s'", e.Reason)
+	}
+
+	return fmt.Sprintf("Permission denied.\nMissing required permission: '%s'.", e.MissingPermission)
 }
 
 func (e *PermissionDeniedError) Is(target error) bool {
