@@ -28,7 +28,12 @@ func (e *PermissionDeniedError) Error() string {
 		return fmt.Sprintf("Permission denied: %s", e.Reason)
 	}
 
-	return fmt.Sprintf("Permission denied: missing required permission '%s'", e.MissingPermission)
+	if e.MissingPermission != "" {
+
+		return fmt.Sprintf("Permission denied: missing required permission '%s'", e.MissingPermission)
+	}
+
+	return ErrPermissionDenied.Error()
 }
 
 func (e *PermissionDeniedError) Is(target error) bool {
