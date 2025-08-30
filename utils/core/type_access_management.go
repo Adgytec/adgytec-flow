@@ -42,24 +42,24 @@ type PermissionEntity struct {
 // PermissionRequired defines the permission details required for successfull resolution of permission
 // this is not directly used
 type PermissionRequired struct {
-	key                 string
-	permissionType      PermissionType
-	permissionActorType db_actions.GlobalAssignableActorType
-	requiredResources   PermissionRequiredResources
+	Key                 string
+	PermissionType      PermissionType
+	PermissionActorType db_actions.GlobalAssignableActorType
+	RequiredResources   PermissionRequiredResources
 }
 
-func (p PermissionRequired) PermissionKey() string {
-	return p.key
+func (p PermissionRequired) GetPermissionKey() string {
+	return p.Key
 }
 
-func (p PermissionRequired) PermissionType() PermissionType {
-	return p.permissionType
+func (p PermissionRequired) GetPermissionType() PermissionType {
+	return p.PermissionType
 }
 
-func (p PermissionRequired) PermissionActorType() db_actions.GlobalAssignableActorType {
-	return p.permissionActorType
+func (p PermissionRequired) GetPermissionActorType() db_actions.GlobalAssignableActorType {
+	return p.PermissionActorType
 }
 
-func (p PermissionRequired) PermissionRequiredResources() PermissionRequiredResources {
-	return p.requiredResources
+func (p PermissionRequired) GetPermissionRequiredResources() PermissionRequiredResources {
+	return p.RequiredResources
 }
