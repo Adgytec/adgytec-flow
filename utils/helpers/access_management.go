@@ -16,7 +16,6 @@ func CreatePermissionRequiredFromManagementPermission(
 		PermissionType:      core.PermissionTypeManagement,
 		PermissionActorType: permission.AssignableActor,
 		RequiredResources:   requiredPermissionResources,
-		ActionName:          permission.Name,
 	}
 }
 
@@ -29,7 +28,6 @@ func CreatePermissionRequiredFromApplicationPermission(
 		PermissionType:      core.PermissionTypeApplication,
 		PermissionActorType: permission.AssignableActor,
 		RequiredResources:   requiredPermissionResources,
-		ActionName:          permission.Name,
 	}
 }
 
@@ -42,6 +40,5 @@ func CreatePermissionRequiredFromSelfPermission(
 		PermissionType:      core.PermissionTypeSelf,
 		PermissionActorType: db_actions.GlobalAssignableActorTypeUser,
 		RequiredResources:   requiredPermissionResources,
-		ActionName:          permission.Name,
 	}
 }
