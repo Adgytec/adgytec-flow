@@ -7,12 +7,13 @@ CREATE TYPE application.permission_resource_type AS ENUM(
 );
 
 CREATE TABLE IF NOT EXISTS application.permissions (
-	key TEXT PRIMARY KEY,
+	id UUID PRIMARY KEY,
 	service_id UUID NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
+	key TEXT UNIQUE NOT NULL,
+	assignable_actor global.assignable_actor_type NOT NULL,
+	required_resources application.permission_resource_type[] NOT NULL,
 	name TEXT NOT NULL,
 	description TEXT,
-	required_resources application.permission_resource_type[] NOT NULL,
-	api_key_assignable BOOLEAN NOT NULL DEFAULT FALSE,
 	created_at TIMESTAMPTZ NOT NULL,
 	updated_at TIMESTAMPTZ NOT NULL
 );

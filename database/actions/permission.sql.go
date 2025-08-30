@@ -14,12 +14,13 @@ import (
 const addApplicationPermission = `-- name: AddApplicationPermission :exec
 INSERT INTO
 	application.permissions (
-		key,
+		id,
 		service_id,
+		key,
 		name,
 		description,
 		required_resources,
-		api_key_assignable
+		assignable_actor
 	)
 VALUES
 	(
@@ -28,32 +29,35 @@ VALUES
 		$3,
 		$4,
 		$5,
-		$6
+		$6,
+		$7
 	)
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
-	api_key_assignable = excluded.api_key_assignable
+	assignable_actor = excluded.assignable_actor
 `
 
 type AddApplicationPermissionParams struct {
-	Key               string    `json:"key"`
-	ServiceID         uuid.UUID `json:"serviceId"`
-	Name              string    `json:"name"`
-	Description       *string   `json:"description"`
-	RequiredResources []string  `json:"requiredResources"`
-	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	RequiredResources []string                  `json:"requiredResources"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
 }
 
 func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicationPermissionParams) error {
 	_, err := q.db.Exec(ctx, addApplicationPermission,
-		arg.Key,
+		arg.ID,
 		arg.ServiceID,
+		arg.Key,
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
-		arg.ApiKeyAssignable,
+		arg.AssignableActor,
 	)
 	return err
 }
@@ -61,12 +65,13 @@ func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicati
 const addManagementPermission = `-- name: AddManagementPermission :exec
 INSERT INTO
 	management.permissions (
-		key,
+		id,
 		service_id,
+		key,
 		name,
 		description,
 		required_resources,
-		api_key_assignable
+		assignable_actor
 	)
 VALUES
 	(
@@ -75,32 +80,35 @@ VALUES
 		$3,
 		$4,
 		$5,
-		$6
+		$6,
+		$7
 	)
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
-	api_key_assignable = excluded.api_key_assignable
+	assignable_actor = excluded.assignable_actor
 `
 
 type AddManagementPermissionParams struct {
-	Key               string    `json:"key"`
-	ServiceID         uuid.UUID `json:"serviceId"`
-	Name              string    `json:"name"`
-	Description       *string   `json:"description"`
-	RequiredResources []string  `json:"requiredResources"`
-	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	RequiredResources []string                  `json:"requiredResources"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
 }
 
 func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
 	_, err := q.db.Exec(ctx, addManagementPermission,
-		arg.Key,
+		arg.ID,
 		arg.ServiceID,
+		arg.Key,
 		arg.Name,
 		arg.Description,
 		arg.RequiredResources,
-		arg.ApiKeyAssignable,
+		arg.AssignableActor,
 	)
 	return err
 }

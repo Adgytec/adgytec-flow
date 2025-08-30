@@ -1,14 +1,21 @@
 -- +goose Up
 -- +goose StatementBegin
+CREATE TYPE global.assignable_actor_type AS ENUM(
+	'api-key',
+	'user',
+	'all'
+);
+
 CREATE TYPE management.permission_resource_type AS ENUM('organization');
 
 CREATE TABLE IF NOT EXISTS management.permissions (
-	key TEXT PRIMARY KEY,
+	id UUID PRIMARY KEY,
 	service_id UUID NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
+	key TEXT UNIQUE NOT NULL,
+	assignable_actor global.assignable_actor_type NOT NULL,
+	required_resources management.permission_resource_type[] NOT NULL,
 	name TEXT NOT NULL,
 	description TEXT,
-	required_resources management.permission_resource_type[] NOT NULL,
-	api_key_assignable BOOLEAN NOT NULL DEFAULT FALSE,
 	created_at TIMESTAMPTZ NOT NULL,
 	updated_at TIMESTAMPTZ NOT NULL
 );
@@ -48,5 +55,7 @@ DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON management.permiss
 DROP TABLE management.permissions;
 
 DROP TYPE if EXISTS management.permission_resource_type;
+
+DROP TYPE if EXISTS global.assignable_actor_type;
 
 -- +goose StatementEnd

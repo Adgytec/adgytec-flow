@@ -33,7 +33,7 @@ func getIDNamespace() uuid.UUID {
 	return idNamespace
 }
 
-func GetIDFromString(name string) uuid.UUID {
+func GetIDFromPayload(payload []byte) uuid.UUID {
 	namespace := getIDNamespace()
-	return uuid.NewSHA1(namespace, []byte(name))
+	return uuid.NewSHA1(namespace, payload)
 }

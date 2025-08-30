@@ -1,12 +1,13 @@
 -- name: AddManagementPermission :exec
 INSERT INTO
 	management.permissions (
-		key,
+		id,
 		service_id,
+		key,
 		name,
 		description,
 		required_resources,
-		api_key_assignable
+		assignable_actor
 	)
 VALUES
 	(
@@ -15,23 +16,25 @@ VALUES
 		$3,
 		$4,
 		$5,
-		$6
+		$6,
+		$7
 	)
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
-	api_key_assignable = excluded.api_key_assignable;
+	assignable_actor = excluded.assignable_actor;
 
 -- name: AddApplicationPermission :exec
 INSERT INTO
 	application.permissions (
-		key,
+		id,
 		service_id,
+		key,
 		name,
 		description,
 		required_resources,
-		api_key_assignable
+		assignable_actor
 	)
 VALUES
 	(
@@ -40,10 +43,11 @@ VALUES
 		$3,
 		$4,
 		$5,
-		$6
+		$6,
+		$7
 	)
 ON CONFLICT (key) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
-	api_key_assignable = excluded.api_key_assignable;
+	assignable_actor = excluded.assignable_actor;

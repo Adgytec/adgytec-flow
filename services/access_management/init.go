@@ -6,6 +6,7 @@ import (
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 type accessManagementInit struct {
@@ -40,6 +41,7 @@ func (i *accessManagementInit) initServiceManagementPermissions() error {
 	log.Println("adding access-managment management permissions")
 
 	for _, perm := range i.managementPermissions {
+		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {
 			return err
 		}
@@ -50,6 +52,7 @@ func (i *accessManagementInit) initServiceManagementPermissions() error {
 func (i *accessManagementInit) initServiceApplicationPermissions() error {
 	log.Println("adding access-management application permissions.")
 	for _, perm := range i.applicationPermissions {
+		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddApplicationPermission(context.TODO(), perm); err != nil {
 			return err
 		}

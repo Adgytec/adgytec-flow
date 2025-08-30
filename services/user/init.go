@@ -6,6 +6,7 @@ import (
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 type userServiceInit struct {
@@ -34,6 +35,7 @@ func (i *userServiceInit) initServiceDetails() error {
 func (i *userServiceInit) initServiceManagementPermissions() error {
 	log.Println("adding user service management permissions")
 	for _, perm := range i.managementPermissions {
+		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {
 			return err
 		}
