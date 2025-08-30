@@ -3,6 +3,7 @@ package access_management
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
@@ -61,7 +62,7 @@ func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity
 		return s.resolveManagementPermission(ctx, permissionEntity, permissionRequired)
 	default:
 		return &app_errors.PermissionResolutionFailedError{
-			Cause: errors.New("Unknown permission type value."),
+			Cause: fmt.Errorf("Unknown permission type value: %v", permissionRequired.GetPermissionType()),
 		}
 	}
 }
