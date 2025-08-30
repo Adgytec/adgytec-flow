@@ -1,5 +1,11 @@
 -- +goose Up
 -- +goose StatementBegin
+CREATE TYPE global.assignable_actor_type AS ENUM(
+	'api-key',
+	'user',
+	'all',
+);
+
 CREATE TYPE management.permission_resource_type AS ENUM('organization');
 
 CREATE TABLE IF NOT EXISTS management.permissions (
@@ -48,5 +54,7 @@ DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON management.permiss
 DROP TABLE management.permissions;
 
 DROP TYPE if EXISTS management.permission_resource_type;
+
+DROP TYPE if EXISTS global.assignable_actor_type;
 
 -- +goose StatementEnd
