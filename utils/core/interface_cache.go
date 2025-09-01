@@ -1,8 +1,7 @@
 package core
 
 type ICache[T any] interface {
-	Get(string) (T, bool)
-	Set(string, T)
+	Get(string, func() (T, error)) (T, error)
 	Delete(string)
 }
 

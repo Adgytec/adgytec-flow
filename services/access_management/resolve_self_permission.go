@@ -1,8 +1,6 @@
 package access_management
 
 import (
-	"errors"
-
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
@@ -14,7 +12,7 @@ func (s *accessManagement) resolveSelfPermission(
 	// invalid case
 	if permissionRequired.GetPermissionRequiredResources().UserID == nil {
 		return &app_errors.PermissionResolutionFailedError{
-			Cause: errors.New("Missing required resources userID value for self permission resolution."),
+			Cause: app_errors.ErrMissingRequiredResourcesValue,
 		}
 	}
 

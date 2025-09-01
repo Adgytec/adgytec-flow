@@ -10,6 +10,7 @@ import (
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -36,27 +37,38 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		return nil, permissionErr
 	}
 
-	cachedUser, cacheOk := s.getUserCache.Get(userID.String())
-	if cacheOk {
-		return &cachedUser, nil
-	}
+	userModel, userError := s.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
+		var zero models.GlobalUser
+		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
+		if dbErr != nil {
+			if errors.Is(dbErr, pgx.ErrNoRows) {
+				return zero, &app_errors.UserNotFoundError{}
+			}
 
-	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
-	if dbErr != nil {
-		if errors.Is(dbErr, pgx.ErrNoRows) {
-			return nil, &app_errors.UserNotFoundError{}
+			return zero, dbErr
 		}
 
-		return nil, dbErr
+		userModel := s.getUserResponseModel(userProfile)
+		return userModel, nil
+	})
+	if userError != nil {
+		return nil, userError
 	}
-
-	userModel := s.getUserResponseModel(userProfile)
-	s.getUserCache.Set(userID.String(), userModel)
 
 	return &userModel, nil
 }
 
-func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (m *userServiceMux) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, userID uuid.UUID) {
+	user, userErr := m.service.getUserProfile(ctx, userID)
+	if userErr != nil {
+		payload.EncodeError(w, userErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, user)
+}
+
+func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
 	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
@@ -65,11 +77,18 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	user, userErr := m.service.getUserProfile(reqCtx, userID)
-	if userErr != nil {
-		payload.EncodeError(w, userErr)
+	m.getUserProfileUtil(reqCtx, w, userID)
+}
+
+func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+	reqCtx := r.Context()
+	userID := chi.URLParam(r, "userID")
+
+	userUUID, userIdErr := m.service.getUserUUIDFromString(userID)
+	if userIdErr != nil {
+		payload.EncodeError(w, userIdErr)
 		return
 	}
 
-	payload.EncodeJSON(w, http.StatusOK, user)
+	m.getUserProfileUtil(reqCtx, w, userUUID)
 }

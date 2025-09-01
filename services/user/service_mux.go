@@ -22,13 +22,14 @@ func (m *userServiceMux) Router() *chi.Mux {
 	mux.Group(func(router chi.Router) {
 		router.Use(m.middleware.EnsureActorTypeUserOnly)
 
-		router.Get("/profile", m.getUserProfileHandler)
+		router.Get("/profile", m.getUserSelfProfileHandler)
 	})
 
 	mux.Group(func(router chi.Router) {
 		router.Use(m.middleware.ActorManagementAccessCheck)
 
-		router.Get("/all", m.getGlobalUsers)
+		router.Get("/list", m.getGlobalUsers)
+		router.Get("/{userID}", m.getUserProfileHandler)
 		router.Patch("/{userID}/enable", m.enableGlobalUser)
 		router.Patch("/{userID}/disable", m.disableGlobalUser)
 	})
