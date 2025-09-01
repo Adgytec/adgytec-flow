@@ -4,7 +4,11 @@ import (
 	"fmt"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"golang.org/x/sync/singleflight"
 )
+
+var group singleflight.Group
 
 type implCache[T any] struct {
 	cacheClient core.ICacheClient
@@ -15,16 +19,36 @@ func (c *implCache[T]) key(id string) string {
 	return fmt.Sprintf("%s:%s", c.namespace, id)
 }
 
-func (c *implCache[T]) Get(id string) (T, bool) {
+func (c *implCache[T]) Get(
+	id string,
+	getDataFromPersistentStorage func() (T, error),
+) (T, error) {
 	var zero T
 
-	data, found := c.cacheClient.Get(c.key(id))
-	if !found {
-		return zero, found
+	// get data from cache
+	cachedData, cacheHit := c.cacheClient.Get(c.key(id))
+	if cacheHit {
+		val, typeOK := cachedData.(T)
+		if typeOK {
+			return val, nil
+		}
 	}
 
-	val, typeOK := data.(T)
-	return val, typeOK
+	// get data from persistent storage
+	persistentData, persistentErr, _ := group.Do(c.key(id), func() (any, error) {
+		return getDataFromPersistentStorage()
+	})
+	if persistentErr != nil {
+		return zero, persistentErr
+	}
+
+	val, typeOK := persistentData.(T)
+	if !typeOK {
+		return zero, app_errors.ErrTypeCastingCacheValueFailed
+	}
+
+	c.Set(id, val)
+	return val, nil
 }
 
 func (c *implCache[T]) Set(id string, data T) {
