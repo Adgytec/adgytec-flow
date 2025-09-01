@@ -9,11 +9,10 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
-var group singleflight.Group
-
 type implCache[T any] struct {
 	cacheClient core.ICacheClient
 	namespace   string
+	group       singleflight.Group
 }
 
 func (c *implCache[T]) key(id string) string {
@@ -38,7 +37,7 @@ func (c *implCache[T]) Get(
 	}
 
 	// get data from persistent storage
-	persistentData, persistentErr, _ := group.Do(c.key(id), func() (any, error) {
+	persistentData, persistentErr, _ := c.group.Do(c.key(id), func() (any, error) {
 		return getDataFromPersistentStorage()
 	})
 	if persistentErr != nil {
