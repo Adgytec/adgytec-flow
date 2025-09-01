@@ -58,6 +58,16 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 	return &userModel, nil
 }
 
+func (m *userServiceMux) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, userID uuid.UUID) {
+	user, userErr := m.service.getUserProfile(ctx, userID)
+	if userErr != nil {
+		payload.EncodeError(w, userErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, user)
+}
+
 func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
@@ -67,13 +77,7 @@ func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	user, userErr := m.service.getUserProfile(reqCtx, userID)
-	if userErr != nil {
-		payload.EncodeError(w, userErr)
-		return
-	}
-
-	payload.EncodeJSON(w, http.StatusOK, user)
+	m.getUserProfileUtil(reqCtx, w, userID)
 }
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
@@ -86,11 +90,5 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	user, userErr := m.service.getUserProfile(reqCtx, userUUID)
-	if userErr != nil {
-		payload.EncodeError(w, userErr)
-		return
-	}
-
-	payload.EncodeJSON(w, http.StatusOK, user)
+	m.getUserProfileUtil(reqCtx, w, userUUID)
 }
