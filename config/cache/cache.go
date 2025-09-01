@@ -47,11 +47,11 @@ func (c *implCache[T]) Get(
 		return zero, app_errors.ErrTypeCastingCacheValueFailed
 	}
 
-	c.Set(id, val)
+	c.set(id, val)
 	return val, nil
 }
 
-func (c *implCache[T]) Set(id string, data T) {
+func (c *implCache[T]) set(id string, data T) {
 	c.cacheClient.Set(c.key(id), data)
 }
 
