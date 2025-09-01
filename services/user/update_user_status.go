@@ -12,11 +12,10 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) updateUserStatus(ctx context.Context, userId string, status db_actions.GlobalUserStatus) error {
+func (s *userService) updateUserStatus(ctx context.Context, userID string, status db_actions.GlobalUserStatus) error {
 	requiredPermission := enableUserPermission
 	if status == db_actions.GlobalUserStatusDisabled {
 		requiredPermission = disableUserPermission
@@ -33,11 +32,9 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 		return permissionErr
 	}
 
-	userUUID, userIdErr := uuid.Parse(userId)
+	userUUID, userIdErr := s.getUserUUIDFromString(userID)
 	if userIdErr != nil {
-		return &app_errors.InvalidUserIDError{
-			InvalidUserID: userId,
-		}
+		return userIdErr
 	}
 
 	// start transaction
@@ -65,9 +62,9 @@ func (s *userService) updateUserStatus(ctx context.Context, userId string, statu
 	// update cognito
 	var authErr error
 	if status == db_actions.GlobalUserStatusDisabled {
-		authErr = s.auth.DisableUser(userId)
+		authErr = s.auth.DisableUser(userID)
 	} else {
-		authErr = s.auth.EnableUser(userId)
+		authErr = s.auth.EnableUser(userID)
 	}
 	if authErr != nil {
 		return authErr
