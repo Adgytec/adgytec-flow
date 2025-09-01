@@ -9,8 +9,10 @@ import (
 )
 
 var (
-	ErrPermissionDenied           = errors.New("permission denied")
-	ErrPermissionResolutionFailed = errors.New("permission resolution failed")
+	ErrPermissionDenied              = errors.New("permission denied")
+	ErrPermissionResolutionFailed    = errors.New("permission resolution failed")
+	ErrUnknownPermissionType         = errors.New("unknown permission type")
+	ErrMissingRequiredResourcesValue = errors.New("missing required resources value")
 )
 
 // PermissionDeniedError defines error used when permission is denied for reasons that doesn't involve external errors
