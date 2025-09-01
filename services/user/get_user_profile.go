@@ -10,6 +10,7 @@ import (
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -57,7 +58,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 	return &userModel, nil
 }
 
-func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
 	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
@@ -67,6 +68,25 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	user, userErr := m.service.getUserProfile(reqCtx, userID)
+	if userErr != nil {
+		payload.EncodeError(w, userErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, user)
+}
+
+func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+	reqCtx := r.Context()
+	userID := chi.URLParam(r, "userID")
+
+	userUUID, userIdErr := m.service.getUserUUIDFromString(userID)
+	if userIdErr != nil {
+		payload.EncodeError(w, userIdErr)
+		return
+	}
+
+	user, userErr := m.service.getUserProfile(reqCtx, userUUID)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return
