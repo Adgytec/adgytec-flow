@@ -2,6 +2,7 @@ package cache
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
@@ -32,6 +33,8 @@ func (c *implCache[T]) Get(
 		if typeOK {
 			return val, nil
 		}
+
+		log.Printf("cache type-casting failed for key: %s", c.key(id))
 	}
 
 	// get data from persistent storage
