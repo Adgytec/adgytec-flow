@@ -36,22 +36,23 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		return nil, permissionErr
 	}
 
-	cachedUser, cacheOk := s.getUserCache.Get(userID.String())
-	if cacheOk {
-		return &cachedUser, nil
-	}
+	userModel, userError := s.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
+		var zero models.GlobalUser
+		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
+		if dbErr != nil {
+			if errors.Is(dbErr, pgx.ErrNoRows) {
+				return zero, &app_errors.UserNotFoundError{}
+			}
 
-	userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
-	if dbErr != nil {
-		if errors.Is(dbErr, pgx.ErrNoRows) {
-			return nil, &app_errors.UserNotFoundError{}
+			return zero, dbErr
 		}
 
-		return nil, dbErr
+		userModel := s.getUserResponseModel(userProfile)
+		return userModel, nil
+	})
+	if userError != nil {
+		return nil, userError
 	}
-
-	userModel := s.getUserResponseModel(userProfile)
-	s.getUserCache.Set(userID.String(), userModel)
 
 	return &userModel, nil
 }
