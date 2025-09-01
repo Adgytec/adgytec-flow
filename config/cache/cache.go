@@ -34,6 +34,7 @@ func (c *implCache[T]) Get(
 		}
 
 		log.Printf("cache type-casting failed for key: %s", c.key(id))
+		c.Delete(id)
 	}
 
 	// get data from persistent storage
