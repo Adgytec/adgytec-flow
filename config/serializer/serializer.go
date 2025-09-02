@@ -1,14 +1,16 @@
 package serializer
 
 import (
+	"encoding/gob"
+	"reflect"
+
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
 // iSerializer defines the internal serializers like json-serializer, gob-serializer methods
 type iSerializer interface {
 	encode(any) ([]byte, error)
-	decode([]byte) (any, error)
+	decode([]byte, any) error
 }
 
 type serializer[T any] struct {
@@ -20,22 +22,19 @@ func (s *serializer[T]) Encode(data T) ([]byte, error) {
 }
 
 func (s *serializer[T]) Decode(data []byte) (T, error) {
-	var zero T
+	var value T
 
-	serilizedData, serializeErr := s.serializer.decode(data)
-	if serializeErr != nil {
-		return zero, serializeErr
-	}
-
-	val, typeOK := serilizedData.(T)
-	if !typeOK {
-		return zero, app_errors.ErrTypeCastingCacheValueFailed
-	}
-
-	return val, nil
+	serializeErr := s.serializer.decode(data, &value)
+	return value, serializeErr
 }
 
 func CreateSerializer[T any]() core.ISerializer[T] {
+	// register type for gob
+	var zero T
+	if reflect.TypeOf(zero).Kind() == reflect.Struct {
+		gob.Register(new(T))
+	}
+
 	return &serializer[T]{
 		serializer: createGobSerializer(),
 	}
