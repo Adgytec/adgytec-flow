@@ -18,6 +18,7 @@ type externalServices struct {
 	storage       core.IStorage
 	cdn           core.ICDN
 	cacheClient   core.ICacheClient
+	serializer    core.ISerializer[any]
 }
 
 func (s *externalServices) Auth() core.IAuth {
@@ -46,6 +47,10 @@ func (s *externalServices) Shutdown() {
 
 func (s *externalServices) CacheClient() core.ICacheClient {
 	return s.cacheClient
+}
+
+func (s *externalServices) Serializer() core.ISerializer[any] {
+	return s.serializer
 }
 
 func createExternalServices() iAppExternalServices {

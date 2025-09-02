@@ -10,6 +10,7 @@ type iAppExternalServices interface {
 	CDN() core.ICDN
 	Shutdown()
 	CacheClient() core.ICacheClient
+	Serializer() core.ISerializer[any]
 }
 
 type iAppInternalServices interface {
