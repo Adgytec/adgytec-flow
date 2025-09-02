@@ -441,7 +441,8 @@ SET
 WHERE
 	id = $2
 RETURNING
-	id
+	id,
+	email AS username
 `
 
 type UpdateGlobalUserStatusParams struct {
@@ -449,9 +450,14 @@ type UpdateGlobalUserStatusParams struct {
 	ID     uuid.UUID        `json:"id"`
 }
 
-func (q *Queries) UpdateGlobalUserStatus(ctx context.Context, arg UpdateGlobalUserStatusParams) (uuid.UUID, error) {
+type UpdateGlobalUserStatusRow struct {
+	ID       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+}
+
+func (q *Queries) UpdateGlobalUserStatus(ctx context.Context, arg UpdateGlobalUserStatusParams) (UpdateGlobalUserStatusRow, error) {
 	row := q.db.QueryRow(ctx, updateGlobalUserStatus, arg.Status, arg.ID)
-	var id uuid.UUID
-	err := row.Scan(&id)
-	return id, err
+	var i UpdateGlobalUserStatusRow
+	err := row.Scan(&i.ID, &i.Username)
+	return i, err
 }

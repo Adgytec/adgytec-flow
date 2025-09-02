@@ -7,5 +7,5 @@ import (
 )
 
 func (m *userServiceMux) enableGlobalUser(w http.ResponseWriter, r *http.Request) {
-	m.service.updateUserStatusHandler(w, r, db_actions.GlobalUserStatusEnabled)
+	m.updateUserStatusUtil(w, r, db_actions.GlobalUserStatusEnabled)
 }
