@@ -48,8 +48,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			return zero, dbErr
 		}
 
-		model := s.getUserResponseModel(userProfile)
-		return model, nil
+		return s.getUserResponseModel(userProfile), nil
 	})
 	if userError != nil {
 		return nil, userError
