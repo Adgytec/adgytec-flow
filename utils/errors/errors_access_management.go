@@ -13,6 +13,7 @@ var (
 	ErrPermissionResolutionFailed    = errors.New("permission resolution failed")
 	ErrUnknownPermissionType         = errors.New("unknown permission type")
 	ErrMissingRequiredResourcesValue = errors.New("missing required resources value")
+	ErrMissingPermissionsToCheck     = errors.New("missing permissions to check")
 )
 
 // PermissionDeniedError defines error used when permission is denied for reasons that doesn't involve external errors
