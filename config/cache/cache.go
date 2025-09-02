@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"golang.org/x/sync/singleflight"
@@ -73,5 +74,6 @@ func CreateNewCache[T any](cacheClient core.ICacheClient, namespace string) core
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,
+		serializer:  serializer.CreateSerializer[T](),
 	}
 }

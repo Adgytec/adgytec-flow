@@ -35,8 +35,8 @@ func (s *serializer[T]) Decode(data []byte) (T, error) {
 	return val, nil
 }
 
-func CreateSerializer() core.ISerializer[any] {
-	return &serializer[any]{
+func CreateSerializer[T any]() core.ISerializer[T] {
+	return &serializer[T]{
 		serializer: createGobSerializer(),
 	}
 }
