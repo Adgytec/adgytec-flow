@@ -13,6 +13,7 @@ type implCache[T any] struct {
 	cacheClient core.ICacheClient
 	namespace   string
 	group       singleflight.Group
+	serializer  core.ISerializer[T]
 }
 
 func (c *implCache[T]) key(id string) string {
@@ -28,12 +29,12 @@ func (c *implCache[T]) Get(
 	// get data from cache
 	cachedData, cacheHit := c.cacheClient.Get(c.key(id))
 	if cacheHit {
-		val, typeOK := cachedData.(T)
-		if typeOK {
-			return val, nil
+		serializedData, serializeErr := c.serializer.Decode(cachedData)
+		if serializeErr == nil {
+			return serializedData, nil
 		}
 
-		log.Printf("cache type-casting failed for key: %s", c.key(id))
+		log.Printf("cache data serialization failed for key: %s", c.key(id))
 		c.Delete(id)
 	}
 
@@ -55,7 +56,13 @@ func (c *implCache[T]) Get(
 }
 
 func (c *implCache[T]) set(id string, data T) {
-	c.cacheClient.Set(c.key(id), data)
+	byteData, err := c.serializer.Encode(data)
+	if err != nil {
+		log.Printf("error serializing cache data for key %s failed: %v", c.key(id), err)
+		return
+	}
+
+	c.cacheClient.Set(c.key(id), byteData)
 }
 
 func (c *implCache[T]) Delete(id string) {
