@@ -87,6 +87,7 @@ func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Req
 	statusErr := s.updateUserStatus(reqCtx, userUUID, status)
 	if statusErr != nil {
 		payload.EncodeError(w, statusErr)
+		return
 	}
 
 	payload.EncodeJSON(w, http.StatusOK, "user status updated successfully")
