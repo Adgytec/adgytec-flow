@@ -10,23 +10,14 @@ import (
 )
 
 func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
-	jsonRes, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		log.Printf("Error encoding json: %v", err)
-		http.Error(
-			w,
-			http.StatusText(http.StatusInternalServerError),
-			http.StatusInternalServerError,
-		)
-		return
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	_, err = w.Write(jsonRes)
-	if err != nil {
-		log.Printf("Error writing response: %v", err)
+	jsonEncoder := json.NewEncoder(w)
+	jsonEncoder.SetIndent("", "\t")
+
+	if err := jsonEncoder.Encode(data); err != nil {
+		log.Printf("Error encoding json: %v", err)
 		http.Error(
 			w,
 			http.StatusText(http.StatusInternalServerError),
