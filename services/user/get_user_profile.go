@@ -15,7 +15,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (m *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
+func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
 	requiredPermissions := []core.IPermissionRequired{
 		helpers.CreatePermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
@@ -29,7 +29,7 @@ func (m *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		),
 	}
 
-	permissionErr := m.accessManagement.CheckPermission(
+	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
 		requiredPermissions,
 	)
@@ -37,9 +37,9 @@ func (m *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		return nil, permissionErr
 	}
 
-	userModel, userError := m.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
+	userModel, userError := s.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
 		var zero models.GlobalUser
-		userProfile, dbErr := m.db.Queries().GetUserById(ctx, userID)
+		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 		if dbErr != nil {
 			if errors.Is(dbErr, pgx.ErrNoRows) {
 				return zero, &app_errors.UserNotFoundError{}
@@ -48,7 +48,7 @@ func (m *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			return zero, dbErr
 		}
 
-		userModel := m.getUserResponseModel(userProfile)
+		userModel := s.getUserResponseModel(userProfile)
 		return userModel, nil
 	})
 	if userError != nil {
