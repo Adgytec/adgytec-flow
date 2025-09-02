@@ -74,6 +74,6 @@ func CreateNewCache[T any](cacheClient core.ICacheClient, namespace string) core
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,
-		serializer:  serializer.CreateSerializer[T](),
+		serializer:  serializer.CreateJSONSerializer[T](),
 	}
 }

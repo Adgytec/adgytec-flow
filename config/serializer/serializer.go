@@ -25,7 +25,7 @@ func (s *serializer[T]) Decode(data []byte) (T, error) {
 	return value, serializeErr
 }
 
-func CreateSerializer[T any]() core.ISerializer[T] {
+func CreateJSONSerializer[T any]() core.ISerializer[T] {
 	return &serializer[T]{
 		serializer: createJsonSerializer(),
 	}
