@@ -35,7 +35,7 @@ func (c *implCache[T]) Get(
 			return serializedData, nil
 		}
 
-		log.Printf("cache data serialization failed for key: %s", c.key(id))
+		log.Printf("cache data serialization failed for key: %s, error: %v", c.key(id), serializeErr)
 		c.Delete(id)
 	}
 
