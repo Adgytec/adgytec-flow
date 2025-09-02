@@ -16,6 +16,12 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 // CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
 // If the permissionsRequired slice is empty, it will implicitly deny permission.
 func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.IPermissionRequired) error {
+	if len(permissionsRequired) == 0 {
+		return &app_errors.PermissionResolutionFailedError{
+			Cause: app_errors.ErrMissingPermissionsToCheck,
+		}
+	}
+
 	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		return actorDetailsErr
@@ -26,24 +32,21 @@ func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsR
 		EntityType: actorDetails.Type,
 	}
 
-	var err error = &app_errors.PermissionDeniedError{
-		MissingPermission: "Unknown",
-	}
-
+	var lastPermissionErr error
 	for _, permission := range permissionsRequired {
-		err = pc.service.checkPermission(ctx, permissionEntity, permission)
-		if err == nil {
+		lastPermissionErr = pc.service.checkPermission(ctx, permissionEntity, permission)
+		if lastPermissionErr == nil {
 			// permission granted
 			return nil
 		}
 
-		if !errors.Is(err, app_errors.ErrPermissionDenied) {
+		if !errors.Is(lastPermissionErr, app_errors.ErrPermissionDenied) {
 			// some other error than permission denied so return early
-			return err
+			return lastPermissionErr
 		}
 	}
 
-	return err
+	return lastPermissionErr
 }
 
 func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity core.PermissionEntity, permissionRequired core.IPermissionRequired) error {
