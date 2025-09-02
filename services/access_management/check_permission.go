@@ -10,9 +10,13 @@ import (
 )
 
 // CheckPermission is called for actions which requires secure access
-// only require single permissionRequired to be successfull to successfully resolve the permission
+func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired core.IPermissionRequired) error {
+	return pc.CheckPermissions(ctx, []core.IPermissionRequired{permissionRequired})
+}
+
+// CheckPermissions only require single permissionRequired to be successfull to successfully resolve the permission
 // if by any chance permissionRequired slice is empty than its an invalid case and will implicitly deny the permission with MissingPermission = 'unknown'
-func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired []core.IPermissionRequired) error {
+func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.IPermissionRequired) error {
 	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		return actorDetailsErr
@@ -27,8 +31,8 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 		MissingPermission: "Unknown",
 	}
 
-	for _, perm := range permissionRequired {
-		err = pc.service.checkPermission(ctx, permissionEntity, perm)
+	for _, permissionRequired := range permissionsRequired {
+		err = pc.service.checkPermission(ctx, permissionEntity, permissionRequired)
 		if err == nil {
 			// permission granted
 			return nil
