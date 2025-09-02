@@ -14,7 +14,7 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 }
 
 // CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
-// If the permissionsRequired slice is empty, it will implicitly deny permission.
+// If the permissionsRequired slice is empty, it returns an error.
 func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.IPermissionRequired) error {
 	if len(permissionsRequired) == 0 {
 		return &app_errors.PermissionResolutionFailedError{
