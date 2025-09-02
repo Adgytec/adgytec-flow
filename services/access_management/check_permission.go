@@ -14,8 +14,8 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 	return pc.CheckPermissions(ctx, []core.IPermissionRequired{permissionRequired})
 }
 
-// CheckPermissions only require single permissionRequired to be successfull to successfully resolve the permission
-// if by any chance permissionRequired slice is empty than its an invalid case and will implicitly deny the permission with MissingPermission = 'unknown'
+// CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
+// If the permissionsRequired slice is empty, it will implicitly deny permission.
 func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.IPermissionRequired) error {
 	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
