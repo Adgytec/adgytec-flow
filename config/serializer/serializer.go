@@ -1,9 +1,6 @@
 package serializer
 
 import (
-	"encoding/gob"
-	"reflect"
-
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
@@ -29,13 +26,7 @@ func (s *serializer[T]) Decode(data []byte) (T, error) {
 }
 
 func CreateSerializer[T any]() core.ISerializer[T] {
-	// register type for gob
-	var zero T
-	if reflect.TypeOf(zero).Kind() == reflect.Struct {
-		gob.Register(new(T))
-	}
-
 	return &serializer[T]{
-		serializer: createGobSerializer(),
+		serializer: createJsonSerializer(),
 	}
 }
