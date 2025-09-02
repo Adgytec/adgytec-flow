@@ -9,7 +9,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-// CheckPermission is called for actions which requires secure access
 func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired core.IPermissionRequired) error {
 	return pc.CheckPermissions(ctx, []core.IPermissionRequired{permissionRequired})
 }
