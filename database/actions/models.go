@@ -69,7 +69,7 @@ func (e ApplicationPermissionResourceType) Valid() bool {
 type GlobalActorType string
 
 const (
-	GlobalActorTypeApiKey GlobalActorType = "api_key"
+	GlobalActorTypeApiKey GlobalActorType = "api-key"
 	GlobalActorTypeUser   GlobalActorType = "user"
 )
 
@@ -112,6 +112,59 @@ func (e GlobalActorType) Valid() bool {
 	switch e {
 	case GlobalActorTypeApiKey,
 		GlobalActorTypeUser:
+		return true
+	}
+	return false
+}
+
+type GlobalAssignableActorType string
+
+const (
+	GlobalAssignableActorTypeApiKey GlobalAssignableActorType = "api-key"
+	GlobalAssignableActorTypeUser   GlobalAssignableActorType = "user"
+	GlobalAssignableActorTypeAll    GlobalAssignableActorType = "all"
+)
+
+func (e *GlobalAssignableActorType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalAssignableActorType(s)
+	case string:
+		*e = GlobalAssignableActorType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalAssignableActorType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalAssignableActorType struct {
+	GlobalAssignableActorType GlobalAssignableActorType `json:"globalAssignableActorType"`
+	Valid                     bool                      `json:"valid"` // Valid is true if GlobalAssignableActorType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalAssignableActorType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalAssignableActorType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalAssignableActorType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalAssignableActorType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalAssignableActorType), nil
+}
+
+func (e GlobalAssignableActorType) Valid() bool {
+	switch e {
+	case GlobalAssignableActorTypeApiKey,
+		GlobalAssignableActorTypeUser,
+		GlobalAssignableActorTypeAll:
 		return true
 	}
 	return false
@@ -477,14 +530,15 @@ func (e ManagementPermissionResourceType) Valid() bool {
 }
 
 type ApplicationPermission struct {
-	Key               string    `json:"key"`
-	ServiceID         uuid.UUID `json:"serviceId"`
-	Name              string    `json:"name"`
-	Description       *string   `json:"description"`
-	RequiredResources []string  `json:"requiredResources"`
-	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
-	CreatedAt         time.Time `json:"createdAt"`
-	UpdatedAt         time.Time `json:"updatedAt"`
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+	RequiredResources []string                  `json:"requiredResources"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	CreatedAt         time.Time                 `json:"createdAt"`
+	UpdatedAt         time.Time                 `json:"updatedAt"`
 }
 
 type ArchiveDeletedRecord struct {
@@ -578,12 +632,13 @@ type GlobalUserDetail struct {
 }
 
 type ManagementPermission struct {
-	Key               string    `json:"key"`
-	ServiceID         uuid.UUID `json:"serviceId"`
-	Name              string    `json:"name"`
-	Description       *string   `json:"description"`
-	RequiredResources []string  `json:"requiredResources"`
-	ApiKeyAssignable  bool      `json:"apiKeyAssignable"`
-	CreatedAt         time.Time `json:"createdAt"`
-	UpdatedAt         time.Time `json:"updatedAt"`
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+	RequiredResources []string                  `json:"requiredResources"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	CreatedAt         time.Time                 `json:"createdAt"`
+	UpdatedAt         time.Time                 `json:"updatedAt"`
 }

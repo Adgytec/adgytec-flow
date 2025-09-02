@@ -16,7 +16,10 @@ func (s *userService) getGlobalUsers(
 ) (*core.ResponsePagination[models.GlobalUser], error) {
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		helpers.CreatePermissionRequiredFromManagementPermission(listAllUsersPermission, nil),
+		helpers.CreatePermissionRequiredFromManagementPermission(
+			listAllUsersPermission,
+			core.PermissionRequiredResources{},
+		),
 	)
 	if permissionErr != nil {
 		return nil, permissionErr
@@ -45,5 +48,4 @@ func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) 
 	}
 
 	payload.EncodeJSON(w, http.StatusOK, userList)
-
 }

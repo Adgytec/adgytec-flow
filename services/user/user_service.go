@@ -5,6 +5,8 @@ import (
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"github.com/google/uuid"
 )
 
 type iUserServiceParams interface {
@@ -67,6 +69,17 @@ func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail)
 		userModels = append(userModels, s.getUserResponseModel(user))
 	}
 	return userModels
+}
+
+func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
+	userUUID, userIdErr := uuid.Parse(userID)
+	if userIdErr != nil {
+		return uuid.UUID{}, &app_errors.InvalidUserIDError{
+			InvalidUserID: userID,
+		}
+	}
+
+	return userUUID, nil
 }
 
 func createUserService(params iUserServiceParams) *userService {

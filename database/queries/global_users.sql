@@ -98,7 +98,8 @@ SET
 WHERE
 	id = $2
 RETURNING
-	id;
+	id,
+	email AS username;
 
 -- name: CreateGlobalUser :execrows
 INSERT INTO
