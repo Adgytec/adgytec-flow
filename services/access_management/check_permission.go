@@ -31,8 +31,8 @@ func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsR
 		MissingPermission: "Unknown",
 	}
 
-	for _, permissionRequired := range permissionsRequired {
-		err = pc.service.checkPermission(ctx, permissionEntity, permissionRequired)
+	for _, permission := range permissionsRequired {
+		err = pc.service.checkPermission(ctx, permissionEntity, permission)
 		if err == nil {
 			// permission granted
 			return nil
