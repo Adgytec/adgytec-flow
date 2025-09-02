@@ -14,16 +14,12 @@ func (s *userService) getGlobalUsers(
 	ctx context.Context,
 	params core.PaginationRequestParams,
 ) (*core.ResponsePagination[models.GlobalUser], error) {
-	requiredPermissions := []core.IPermissionRequired{
+	permissionErr := s.accessManagement.CheckPermission(
+		ctx,
 		helpers.CreatePermissionRequiredFromManagementPermission(
 			listAllUsersPermission,
 			core.PermissionRequiredResources{},
 		),
-	}
-
-	permissionErr := s.accessManagement.CheckPermission(
-		ctx,
-		requiredPermissions,
 	)
 	if permissionErr != nil {
 		return nil, permissionErr

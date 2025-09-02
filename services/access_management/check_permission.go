@@ -9,10 +9,19 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-// CheckPermission is called for actions which requires secure access
-// only require single permissionRequired to be successfull to successfully resolve the permission
-// if by any chance permissionRequired slice is empty than its an invalid case and will implicitly deny the permission with MissingPermission = 'unknown'
-func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired []core.IPermissionRequired) error {
+func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired core.IPermissionRequired) error {
+	return pc.CheckPermissions(ctx, []core.IPermissionRequired{permissionRequired})
+}
+
+// CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
+// If the permissionsRequired slice is empty, it returns an error.
+func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.IPermissionRequired) error {
+	if len(permissionsRequired) == 0 {
+		return &app_errors.PermissionResolutionFailedError{
+			Cause: app_errors.ErrMissingPermissionsToCheck,
+		}
+	}
+
 	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		return actorDetailsErr
@@ -23,24 +32,21 @@ func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionReq
 		EntityType: actorDetails.Type,
 	}
 
-	var err error = &app_errors.PermissionDeniedError{
-		MissingPermission: "Unknown",
-	}
-
-	for _, perm := range permissionRequired {
-		err = pc.service.checkPermission(ctx, permissionEntity, perm)
-		if err == nil {
+	var lastPermissionErr error
+	for _, permission := range permissionsRequired {
+		lastPermissionErr = pc.service.checkPermission(ctx, permissionEntity, permission)
+		if lastPermissionErr == nil {
 			// permission granted
 			return nil
 		}
 
-		if !errors.Is(err, app_errors.ErrPermissionDenied) {
+		if !errors.Is(lastPermissionErr, app_errors.ErrPermissionDenied) {
 			// some other error than permission denied so return early
-			return err
+			return lastPermissionErr
 		}
 	}
 
-	return err
+	return lastPermissionErr
 }
 
 func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity core.PermissionEntity, permissionRequired core.IPermissionRequired) error {
