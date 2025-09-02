@@ -13,14 +13,14 @@ const (
 )
 
 type inMemoryLruCache struct {
-	cache *lru.LRU[string, any]
+	cache *lru.LRU[string, []byte]
 }
 
-func (cc *inMemoryLruCache) Get(key string) (any, bool) {
+func (cc *inMemoryLruCache) Get(key string) ([]byte, bool) {
 	return cc.cache.Get(key)
 }
 
-func (cc *inMemoryLruCache) Set(key string, data any) {
+func (cc *inMemoryLruCache) Set(key string, data []byte) {
 	cc.cache.Add(key, data)
 }
 
@@ -30,6 +30,6 @@ func (cc *inMemoryLruCache) Delete(key string) {
 
 func CreateInMemoryCacheClient() core.ICacheClient {
 	return &inMemoryLruCache{
-		cache: lru.NewLRU[string, any](defaultCacheSize, nil, defaultCacheTTL),
+		cache: lru.NewLRU[string, []byte](defaultCacheSize, nil, defaultCacheTTL),
 	}
 }

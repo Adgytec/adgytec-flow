@@ -6,7 +6,7 @@ type ICache[T any] interface {
 }
 
 type ICacheClient interface {
-	Get(string) (any, bool)
-	Set(string, any)
+	Get(string) ([]byte, bool)
+	Set(string, []byte)
 	Delete(string)
 }
