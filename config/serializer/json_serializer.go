@@ -15,6 +15,6 @@ func (j *jsonSerializer) decode(data []byte, value any) error {
 	return json.Unmarshal(data, value)
 }
 
-func createJsonSerializer() iSerializer {
+func newJsonSerializer() iSerializer {
 	return &jsonSerializer{}
 }
