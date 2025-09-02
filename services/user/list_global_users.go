@@ -52,5 +52,4 @@ func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) 
 	}
 
 	payload.EncodeJSON(w, http.StatusOK, userList)
-
 }

@@ -15,7 +15,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
+func (m *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
 	requiredPermissions := []core.IPermissionRequired{
 		helpers.CreatePermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
@@ -29,7 +29,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		),
 	}
 
-	permissionErr := s.accessManagement.CheckPermission(
+	permissionErr := m.accessManagement.CheckPermission(
 		ctx,
 		requiredPermissions,
 	)
@@ -37,9 +37,9 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		return nil, permissionErr
 	}
 
-	userModel, userError := s.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
+	userModel, userError := m.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
 		var zero models.GlobalUser
-		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
+		userProfile, dbErr := m.db.Queries().GetUserById(ctx, userID)
 		if dbErr != nil {
 			if errors.Is(dbErr, pgx.ErrNoRows) {
 				return zero, &app_errors.UserNotFoundError{}
@@ -48,7 +48,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			return zero, dbErr
 		}
 
-		userModel := s.getUserResponseModel(userProfile)
+		userModel := m.getUserResponseModel(userProfile)
 		return userModel, nil
 	})
 	if userError != nil {
@@ -58,8 +58,8 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 	return &userModel, nil
 }
 
-func (s *userService) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, userID uuid.UUID) {
-	user, userErr := s.getUserProfile(ctx, userID)
+func (m *userServiceMux) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, userID uuid.UUID) {
+	user, userErr := m.service.getUserProfile(ctx, userID)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return
@@ -77,7 +77,7 @@ func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	m.service.getUserProfileUtil(reqCtx, w, userID)
+	m.getUserProfileUtil(reqCtx, w, userID)
 }
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
@@ -90,5 +90,5 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	m.service.getUserProfileUtil(reqCtx, w, userUUID)
+	m.getUserProfileUtil(reqCtx, w, userUUID)
 }

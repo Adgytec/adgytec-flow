@@ -69,7 +69,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	return tx.Commit(context.Background())
 }
 
-func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Request, status db_actions.GlobalUserStatus) {
+func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db_actions.GlobalUserStatus) {
 	if !status.Valid() {
 		payload.EncodeError(w, fmt.Errorf("invalid-status-value"))
 		return
@@ -78,13 +78,13 @@ func (s *userService) updateUserStatusHandler(w http.ResponseWriter, r *http.Req
 	reqCtx := r.Context()
 	userID := chi.URLParam(r, "userID")
 
-	userUUID, userIdErr := s.getUserUUIDFromString(userID)
+	userUUID, userIdErr := m.service.getUserUUIDFromString(userID)
 	if userIdErr != nil {
 		payload.EncodeError(w, userIdErr)
 		return
 	}
 
-	statusErr := s.updateUserStatus(reqCtx, userUUID, status)
+	statusErr := m.service.updateUserStatus(reqCtx, userUUID, status)
 	if statusErr != nil {
 		payload.EncodeError(w, statusErr)
 		return
