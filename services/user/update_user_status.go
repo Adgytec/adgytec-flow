@@ -22,12 +22,12 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		requiredPermission = disableUserPermission
 	}
 
-	requiredPermissions := []core.IPermissionRequired{
-		helpers.CreatePermissionRequiredFromManagementPermission(requiredPermission, core.PermissionRequiredResources{}),
-	}
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		requiredPermissions,
+		helpers.CreatePermissionRequiredFromManagementPermission(
+			requiredPermission,
+			core.PermissionRequiredResources{},
+		),
 	)
 	if permissionErr != nil {
 		return permissionErr

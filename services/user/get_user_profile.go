@@ -29,7 +29,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		),
 	}
 
-	permissionErr := s.accessManagement.CheckPermission(
+	permissionErr := s.accessManagement.CheckPermissions(
 		ctx,
 		requiredPermissions,
 	)
