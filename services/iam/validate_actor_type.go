@@ -1,4 +1,4 @@
-package access_management
+package iam
 
 import (
 	"fmt"

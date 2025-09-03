@@ -1,4 +1,4 @@
-package access_management
+package iam
 
 import (
 	"github.com/Adgytec/adgytec-flow/utils/core"

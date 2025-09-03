@@ -1,4 +1,4 @@
-package access_management
+package iam
 
 import (
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
