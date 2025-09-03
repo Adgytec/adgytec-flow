@@ -28,7 +28,7 @@ func (cc *inMemoryLruCache) Delete(key string) {
 	cc.cache.Remove(key)
 }
 
-func CreateInMemoryCacheClient() core.ICacheClient {
+func NewInMemoryCacheClient() core.ICacheClient {
 	return &inMemoryLruCache{
 		cache: lru.NewLRU[string, []byte](defaultCacheSize, nil, defaultCacheTTL),
 	}

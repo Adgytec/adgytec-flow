@@ -24,7 +24,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 
 	permissionErr := s.accessManagement.CheckPermission(
 		ctx,
-		helpers.CreatePermissionRequiredFromManagementPermission(
+		helpers.NewPermissionRequiredFromManagementPermission(
 			requiredPermission,
 			core.PermissionRequiredResources{},
 		),

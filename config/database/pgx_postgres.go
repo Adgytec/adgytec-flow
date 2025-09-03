@@ -13,6 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// TODO: handle this using env variables
 const (
 	defaultMaxConns          = int32(50)
 	defaultMinConns          = int32(5)
@@ -40,7 +41,7 @@ func dbConfig() *pgxpool.Config {
 	return dbConfig
 }
 
-func createPgxConnPool() *pgxpool.Pool {
+func newPgxConnPool() *pgxpool.Pool {
 	config := dbConfig()
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
@@ -95,9 +96,9 @@ func (c *pgxConnection) Shutdown() {
 	c.connPool.Close()
 }
 
-func CreatePgxDbConnectionPool() core.IDatabaseWithShutdown {
+func NewPgxDbConnectionPool() core.IDatabaseWithShutdown {
 	log.Println("init db pgx pool")
 	return &pgxConnection{
-		connPool: createPgxConnPool(),
+		connPool: newPgxConnPool(),
 	}
 }

@@ -20,9 +20,9 @@ type accessManagement struct {
 	permissionCache core.ICache[bool]
 }
 
-func createAccessManagementService(params iAccessManagementParams) *accessManagement {
+func newAccessManagementService(params iAccessManagementParams) *accessManagement {
 	return &accessManagement{
 		db:              params.Database(),
-		permissionCache: cache.CreateNewCache[bool](params.CacheClient(), "access-management"),
+		permissionCache: cache.NewCache[bool](params.CacheClient(), "access-management"),
 	}
 }

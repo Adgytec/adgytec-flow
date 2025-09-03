@@ -20,10 +20,10 @@ type serviceFactory func(params app.IApp) core.IServiceMux
 
 var services = []serviceFactory{
 	func(appConfig app.IApp) core.IServiceMux {
-		return access_management.CreateAccessManagementMux(appConfig)
+		return access_management.NewAccessManagementMux(appConfig)
 	},
 	func(appConfig app.IApp) core.IServiceMux {
-		return user.CreateUserServiceMux(appConfig)
+		return user.NewUserServiceMux(appConfig)
 	},
 }
 
@@ -45,7 +45,7 @@ func handle400(mux *chi.Mux) {
 	})
 }
 
-func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
+func NewApplicationRouter(appConfig app.IApp) *chi.Mux {
 	log.Println("adding application mux")
 	mux := chi.NewMux()
 

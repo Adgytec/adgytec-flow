@@ -12,7 +12,7 @@ type appMiddleware struct {
 	userService core.IUserServicePC
 }
 
-func createAppMiddleware(params iAppMiddlewareParams) *appMiddleware {
+func newAppMiddleware(params iAppMiddlewareParams) *appMiddleware {
 	return &appMiddleware{
 		auth:        params.Auth(),
 		userService: params.UserService(),

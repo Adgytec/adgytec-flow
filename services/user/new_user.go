@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, error) {
+func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, error) {
 	var zero uuid.UUID
 	userID := helpers.GetIDFromPayload([]byte(email))
 
@@ -32,7 +32,7 @@ func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, 
 
 	// for newly inserted users also create the useraccount in auth service
 	if inserted == 1 {
-		authErr := s.auth.CreateUser(email)
+		authErr := s.auth.NewUser(email)
 		if authErr != nil {
 			return zero, authErr
 		}
@@ -42,6 +42,6 @@ func (s *userService) createUser(ctx context.Context, email string) (uuid.UUID, 
 	return userID, txCommitErr
 }
 
-func (pc *userServicePC) CreateUser(ctx context.Context, email string) (uuid.UUID, error) {
-	return pc.service.createUser(ctx, email)
+func (pc *userServicePC) NewUser(ctx context.Context, email string) (uuid.UUID, error) {
+	return pc.service.newUser(ctx, email)
 }

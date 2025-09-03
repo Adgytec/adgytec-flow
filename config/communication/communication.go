@@ -19,9 +19,9 @@ func (c *communicationImpl) SendMail(to []string, from string) error {
 	return c.email.SendMail(to, from)
 }
 
-func CreateAWSCommunicationClient(awsConfig aws.Config) core.ICommunicaiton {
+func NewAWSCommunicationClient(awsConfig aws.Config) core.ICommunicaiton {
 	log.Println("creating aws communication client")
 	return &communicationImpl{
-		email: createSesClient(awsConfig),
+		email: newSesClient(awsConfig),
 	}
 }

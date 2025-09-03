@@ -21,10 +21,10 @@ func (m *accessManagementMux) Router() *chi.Mux {
 	return mux
 }
 
-func CreateAccessManagementMux(params iAccessManagementMuxParams) core.IServiceMux {
+func NewAccessManagementMux(params iAccessManagementMuxParams) core.IServiceMux {
 	log.Println("adding access-managment mux")
 	return &accessManagementMux{
-		service:    createAccessManagementService(params),
+		service:    newAccessManagementService(params),
 		middleware: params.Middleware(),
 	}
 }

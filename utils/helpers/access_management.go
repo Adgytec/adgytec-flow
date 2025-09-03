@@ -7,7 +7,7 @@ import (
 
 // helper methods to create core.IPermissionRequired for permission resolution
 
-func CreatePermissionRequiredFromManagementPermission(
+func NewPermissionRequiredFromManagementPermission(
 	permission db_actions.AddManagementPermissionParams,
 	requiredPermissionResources core.PermissionRequiredResources,
 ) core.IPermissionRequired {
@@ -19,7 +19,7 @@ func CreatePermissionRequiredFromManagementPermission(
 	}
 }
 
-func CreatePermissionRequiredFromApplicationPermission(
+func NewPermissionRequiredFromApplicationPermission(
 	permission db_actions.AddApplicationPermissionParams,
 	requiredPermissionResources core.PermissionRequiredResources,
 ) core.IPermissionRequired {
@@ -31,7 +31,7 @@ func CreatePermissionRequiredFromApplicationPermission(
 	}
 }
 
-func CreatePermissionRequiredFromSelfPermission(
+func NewPermissionRequiredFromSelfPermission(
 	permission core.SelfPermissions,
 	requiredPermissionResources core.PermissionRequiredResources,
 ) core.IPermissionRequired {

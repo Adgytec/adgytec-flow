@@ -37,10 +37,10 @@ func (m *userServiceMux) Router() *chi.Mux {
 	return mux
 }
 
-func CreateUserServiceMux(params iUserServiceMuxParams) core.IServiceMux {
+func NewUserServiceMux(params iUserServiceMuxParams) core.IServiceMux {
 	log.Println("adding user-service mux")
 	return &userServiceMux{
-		service:    createUserService(params),
+		service:    newUserService(params),
 		middleware: params.Middleware(),
 	}
 }
