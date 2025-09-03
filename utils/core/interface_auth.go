@@ -2,7 +2,7 @@ package core
 
 import "github.com/google/uuid"
 
-type IAuth interface {
+type Auth interface {
 	NewUser(string) error
 	DisableUser(string) error
 	EnableUser(string) error

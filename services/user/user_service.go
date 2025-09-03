@@ -9,26 +9,26 @@ import (
 	"github.com/google/uuid"
 )
 
-type iUserServiceParams interface {
-	Database() core.IDatabase
-	Auth() core.IAuth
-	AccessManagement() core.IAccessManagementPC
-	CDN() core.ICDN
-	CacheClient() core.ICacheClient
+type userServiceParams interface {
+	Database() core.Database
+	Auth() core.Auth
+	AccessManagement() core.AccessManagementPC
+	CDN() core.CDN
+	CacheClient() core.CacheClient
 }
 
-type iUserServiceMuxParams interface {
-	iUserServiceParams
-	Middleware() core.IMiddlewarePC
+type userServiceMuxParams interface {
+	userServiceParams
+	Middleware() core.MiddlewarePC
 }
 
 type userService struct {
-	db               core.IDatabase
-	auth             core.IAuth
-	accessManagement core.IAccessManagementPC
-	cdn              core.ICDN
-	getUserCache     core.ICache[models.GlobalUser]
-	getUserListCache core.ICache[[]models.GlobalUser]
+	db               core.Database
+	auth             core.Auth
+	accessManagement core.AccessManagementPC
+	cdn              core.CDN
+	getUserCache     core.Cache[models.GlobalUser]
+	getUserListCache core.Cache[[]models.GlobalUser]
 }
 
 func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
@@ -82,7 +82,7 @@ func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func newUserService(params iUserServiceParams) *userService {
+func newUserService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),

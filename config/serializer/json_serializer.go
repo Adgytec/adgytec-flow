@@ -4,17 +4,19 @@ import (
 	"encoding/json"
 )
 
-type jsonSerializer struct{}
+type jsonSerializer[T any] struct{}
 
-func (j *jsonSerializer) encode(data any) ([]byte, error) {
+func (j *jsonSerializer[T]) Encode(data T) ([]byte, error) {
 	return json.Marshal(data)
 }
 
 // value should be pointer
-func (j *jsonSerializer) decode(data []byte, value any) error {
-	return json.Unmarshal(data, value)
+func (j *jsonSerializer[T]) Decode(data []byte) (T, error) {
+	var value T
+	jsonSerializerErr := json.Unmarshal(data, &value)
+	return value, jsonSerializerErr
 }
 
-func newJsonSerializer() iSerializer {
-	return &jsonSerializer{}
+func NewJSONSerializer[T any]() core.Serializer[T] {
+	return &jsonSerializer[T]{	}
 }

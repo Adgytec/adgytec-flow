@@ -28,7 +28,7 @@ func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
 }
 
 func EncodeError(w http.ResponseWriter, err error) {
-	if responseError, ok := err.(core.IErrorResponse); ok {
+	if responseError, ok := err.(core.ErrorResponse); ok {
 		EncodeJSON(w, responseError.HTTPResponse().HTTPStatusCode, responseError.HTTPResponse())
 	} else {
 		EncodeJSON(w, http.StatusInternalServerError, core.ResponseHTTPError{

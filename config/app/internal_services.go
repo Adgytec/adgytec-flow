@@ -8,28 +8,28 @@ import (
 )
 
 type internalServices struct {
-	accessManagement core.IAccessManagementPC
-	userService      core.IUserServicePC
-	middleware       core.IMiddlewarePC
+	accessManagement core.AccessManagementPC
+	userService      core.UserServicePC
+	middleware       core.MiddlewarePC
 }
 
-func (s *internalServices) AccessManagement() core.IAccessManagementPC {
+func (s *internalServices) AccessManagement() core.AccessManagementPC {
 	return s.accessManagement
 }
 
-func (s *internalServices) UserService() core.IUserServicePC {
+func (s *internalServices) UserService() core.UserServicePC {
 	return s.userService
 }
 
-func (s *internalServices) Middleware() core.IMiddlewarePC {
+func (s *internalServices) Middleware() core.MiddlewarePC {
 	return s.middleware
 }
 
-func newInternalService(externalService iAppExternalServices) iAppInternalServices {
+func newInternalService(externalService appExternalServices) appInternalServices {
 	internalService := internalServices{}
 	appInstance := &app{
-		iAppExternalServices: externalService,
-		iAppInternalServices: &internalService,
+		appExternalServices: externalService,
+		appInternalServices: &internalService,
 	}
 
 	// Initialize internal services. The order of initialization is important.

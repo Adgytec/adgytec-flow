@@ -46,7 +46,7 @@ func GetPaginationParamsFromRequest(r *http.Request) core.PaginationRequestParam
 	}
 }
 
-func NewPaginationResponse[T core.IPaginationItem](items []T, next, prev *T) *core.ResponsePagination[T] {
+func NewPaginationResponse[T core.PaginationItem](items []T, next, prev *T) *core.ResponsePagination[T] {
 	var pageInfo core.PageInfo
 
 	if next != nil {

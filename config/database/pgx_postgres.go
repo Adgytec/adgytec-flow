@@ -96,7 +96,7 @@ func (c *pgxConnection) Shutdown() {
 	c.connPool.Close()
 }
 
-func NewPgxDbConnectionPool() core.IDatabaseWithShutdown {
+func NewPgxDbConnectionPool() core.DatabaseWithShutdown {
 	log.Println("init db pgx pool")
 	return &pgxConnection{
 		connPool: newPgxConnPool(),

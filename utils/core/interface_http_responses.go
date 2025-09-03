@@ -1,5 +1,5 @@
 package core
 
-type IErrorResponse interface {
+type ErrorResponse interface {
 	HTTPResponse() ResponseHTTPError
 }

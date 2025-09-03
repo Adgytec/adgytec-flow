@@ -10,7 +10,7 @@ type appMiddlewarePC struct {
 	service *appMiddleware
 }
 
-func NewAppMiddlewarePC(params iAppMiddlewareParams) core.IMiddlewarePC {
+func NewAppMiddlewarePC(params iAppMiddlewareParams) core.MiddlewarePC {
 	log.Println("creating app-middleware PC")
 	return &appMiddlewarePC{
 		service: newAppMiddleware(params),

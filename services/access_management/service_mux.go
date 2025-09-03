@@ -9,7 +9,7 @@ import (
 
 type accessManagementMux struct {
 	service    *accessManagement
-	middleware core.IMiddlewarePC
+	middleware core.MiddlewarePC
 }
 
 func (m *accessManagementMux) BasePath() string {
@@ -21,7 +21,7 @@ func (m *accessManagementMux) Router() *chi.Mux {
 	return mux
 }
 
-func NewAccessManagementMux(params iAccessManagementMuxParams) core.IServiceMux {
+func NewAccessManagementMux(params iAccessManagementMuxParams) core.ServiceMux {
 	log.Println("adding access-managment mux")
 	return &accessManagementMux{
 		service:    newAccessManagementService(params),

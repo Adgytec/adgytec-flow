@@ -1,5 +1,5 @@
 package core
 
-type IStorage interface {
+type Storage interface {
 	GetPresignUploadUrl(string) (string, error)
 }

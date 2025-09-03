@@ -6,7 +6,7 @@ import (
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 )
 
-type IAccessManagementPC interface {
+type AccessManagementPC interface {
 	// CheckPermission checks a single permission and returns nil if it is granted.
 	CheckPermission(context.Context, IPermissionRequired) error
 
