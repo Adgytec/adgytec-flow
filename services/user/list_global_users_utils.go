@@ -31,7 +31,7 @@ func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.Pag
 		slices.Reverse(userModels)
 	}
 
-	return helpers.CreatePaginationResponse(userModels, nil, nil), nil
+	return helpers.NewPaginationResponse(userModels, nil, nil), nil
 }
 
 func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
@@ -58,7 +58,7 @@ func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.Pag
 		userModels = userModels[:userLen-1]
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, nil), nil
+	return helpers.NewPaginationResponse(userModels, next, nil), nil
 }
 
 func (s *userService) getGlobalUsersNextPage(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
@@ -116,7 +116,7 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, prev), nil
+	return helpers.NewPaginationResponse(userModels, next, prev), nil
 }
 
 func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
@@ -166,7 +166,7 @@ func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, par
 
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, prev), nil
+	return helpers.NewPaginationResponse(userModels, next, prev), nil
 }
 
 func (s *userService) getGlobalUsersPrevPage(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
@@ -223,7 +223,7 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 		}
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, prev), nil
+	return helpers.NewPaginationResponse(userModels, next, prev), nil
 }
 
 func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
@@ -271,5 +271,5 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 		}
 	}
 
-	return helpers.CreatePaginationResponse(userModels, next, prev), nil
+	return helpers.NewPaginationResponse(userModels, next, prev), nil
 }

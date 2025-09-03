@@ -17,13 +17,13 @@ import (
 
 func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
 	requiredPermissions := []core.IPermissionRequired{
-		helpers.CreatePermissionRequiredFromSelfPermission(
+		helpers.NewPermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
 			core.PermissionRequiredResources{
 				UserID: helpers.ValuePtr(userID),
 			},
 		),
-		helpers.CreatePermissionRequiredFromManagementPermission(
+		helpers.NewPermissionRequiredFromManagementPermission(
 			getUserProfilePermission,
 			core.PermissionRequiredResources{},
 		),
