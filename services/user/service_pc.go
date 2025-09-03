@@ -9,8 +9,8 @@ import (
 )
 
 type UserServicePC interface {
-	NewUser(context.Context, string) (uuid.UUID, error)
-	GetUserStatus(context.Context, uuid.UUID) (db_actions.GlobalUserStatus, error)
+	NewUser(ctx context.Context, email string) (uuid.UUID, error)
+	GetUserStatus(ctx context.Context, userID uuid.UUID) (db_actions.GlobalUserStatus, error)
 }
 
 type userServicePC struct {
