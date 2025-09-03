@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -9,26 +10,26 @@ import (
 	"github.com/google/uuid"
 )
 
-type iUserServiceParams interface {
-	Database() core.IDatabase
-	Auth() core.IAuth
-	AccessManagement() core.IAccessManagementPC
-	CDN() core.ICDN
-	CacheClient() core.ICacheClient
+type userServiceParams interface {
+	Database() core.Database
+	Auth() core.Auth
+	AccessManagement() core.AccessManagementPC
+	CDN() core.CDN
+	CacheClient() core.CacheClient
 }
 
-type iUserServiceMuxParams interface {
-	iUserServiceParams
-	Middleware() core.IMiddlewarePC
+type userServiceMuxParams interface {
+	userServiceParams
+	Middleware() core.MiddlewarePC
 }
 
 type userService struct {
-	db               core.IDatabase
-	auth             core.IAuth
-	accessManagement core.IAccessManagementPC
-	cdn              core.ICDN
-	getUserCache     core.ICache[models.GlobalUser]
-	getUserListCache core.ICache[[]models.GlobalUser]
+	db               core.Database
+	auth             core.Auth
+	accessManagement core.AccessManagementPC
+	cdn              core.CDN
+	getUserCache     core.Cache[models.GlobalUser]
+	getUserListCache core.Cache[core.ResponsePagination[models.GlobalUser]]
 }
 
 func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
@@ -82,13 +83,13 @@ func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func newUserService(params iUserServiceParams) *userService {
+func newUserService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
 		accessManagement: params.AccessManagement(),
 		cdn:              params.CDN(),
-		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), "user"),
-		getUserListCache: cache.NewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
+		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
+		getUserListCache: cache.NewCache[core.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[core.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}
 }

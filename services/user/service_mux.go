@@ -9,7 +9,7 @@ import (
 
 type userServiceMux struct {
 	service    *userService
-	middleware core.IMiddlewarePC
+	middleware core.MiddlewarePC
 }
 
 func (m *userServiceMux) BasePath() string {
@@ -37,7 +37,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 	return mux
 }
 
-func NewUserServiceMux(params iUserServiceMuxParams) core.IServiceMux {
+func NewUserServiceMux(params userServiceMuxParams) core.ServiceMux {
 	log.Println("adding user-service mux")
 	return &userServiceMux{
 		service:    newUserService(params),

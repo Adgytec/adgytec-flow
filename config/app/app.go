@@ -2,28 +2,28 @@ package app
 
 import "github.com/Adgytec/adgytec-flow/utils/core"
 
-type iAppExternalServices interface {
-	Auth() core.IAuth
-	Database() core.IDatabase
-	Communication() core.ICommunicaiton
-	Storage() core.IStorage
-	CDN() core.ICDN
+type appExternalServices interface {
+	Auth() core.Auth
+	Database() core.Database
+	Communication() core.Communication
+	Storage() core.Storage
+	CDN() core.CDN
 	Shutdown()
-	CacheClient() core.ICacheClient
+	CacheClient() core.CacheClient
 }
 
-type iAppInternalServices interface {
-	AccessManagement() core.IAccessManagementPC
-	UserService() core.IUserServicePC
-	Middleware() core.IMiddlewarePC
+type appInternalServices interface {
+	AccessManagement() core.AccessManagementPC
+	UserService() core.UserServicePC
+	Middleware() core.MiddlewarePC
 }
 
-type IApp interface {
-	iAppExternalServices
-	iAppInternalServices
+type App interface {
+	appExternalServices
+	appInternalServices
 }
 
 type app struct {
-	iAppExternalServices
-	iAppInternalServices
+	appExternalServices
+	appInternalServices
 }

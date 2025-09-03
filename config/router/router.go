@@ -16,13 +16,13 @@ import (
 	"github.com/go-chi/cors"
 )
 
-type serviceFactory func(params app.IApp) core.IServiceMux
+type serviceFactory func(params app.App) core.ServiceMux
 
 var services = []serviceFactory{
-	func(appConfig app.IApp) core.IServiceMux {
+	func(appConfig app.App) core.ServiceMux {
 		return access_management.NewAccessManagementMux(appConfig)
 	},
-	func(appConfig app.IApp) core.IServiceMux {
+	func(appConfig app.App) core.ServiceMux {
 		return user.NewUserServiceMux(appConfig)
 	},
 }
@@ -45,7 +45,7 @@ func handle400(mux *chi.Mux) {
 	})
 }
 
-func NewApplicationRouter(appConfig app.IApp) *chi.Mux {
+func NewApplicationRouter(appConfig app.App) *chi.Mux {
 	log.Println("adding application mux")
 	mux := chi.NewMux()
 

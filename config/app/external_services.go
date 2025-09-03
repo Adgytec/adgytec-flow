@@ -12,31 +12,31 @@ import (
 )
 
 type externalServices struct {
-	auth          core.IAuth
-	database      core.IDatabaseWithShutdown
-	communicaiton core.ICommunicaiton
-	storage       core.IStorage
-	cdn           core.ICDN
-	cacheClient   core.ICacheClient
+	auth          core.Auth
+	database      core.DatabaseWithShutdown
+	communication core.Communication
+	storage       core.Storage
+	cdn           core.CDN
+	cacheClient   core.CacheClient
 }
 
-func (s *externalServices) Auth() core.IAuth {
+func (s *externalServices) Auth() core.Auth {
 	return s.auth
 }
 
-func (s *externalServices) Database() core.IDatabase {
+func (s *externalServices) Database() core.Database {
 	return s.database
 }
 
-func (s *externalServices) Communication() core.ICommunicaiton {
-	return s.communicaiton
+func (s *externalServices) Communication() core.Communication {
+	return s.communication
 }
 
-func (s *externalServices) Storage() core.IStorage {
+func (s *externalServices) Storage() core.Storage {
 	return s.storage
 }
 
-func (s *externalServices) CDN() core.ICDN {
+func (s *externalServices) CDN() core.CDN {
 	return s.cdn
 }
 
@@ -44,17 +44,17 @@ func (s *externalServices) Shutdown() {
 	s.database.Shutdown()
 }
 
-func (s *externalServices) CacheClient() core.ICacheClient {
+func (s *externalServices) CacheClient() core.CacheClient {
 	return s.cacheClient
 }
 
-func newExternalServices() iAppExternalServices {
+func newExternalServices() appExternalServices {
 	awsConfig := configAWS.NewAWSConfig()
 
 	return &externalServices{
 		auth:          auth.NewCognitoAuthClient(awsConfig),
 		database:      database.NewPgxDbConnectionPool(),
-		communicaiton: communication.NewAWSCommunicationClient(awsConfig),
+		communication: communication.NewAWSCommunicationClient(awsConfig),
 		storage:       storage.NewS3Client(awsConfig),
 		cdn:           cdn.NewCloudfrontCDNSigner(),
 		cacheClient:   cache.NewInMemoryCacheClient(),

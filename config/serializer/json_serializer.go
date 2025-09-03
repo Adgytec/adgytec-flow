@@ -2,19 +2,23 @@ package serializer
 
 import (
 	"encoding/json"
+
+	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type jsonSerializer struct{}
+// used for primitive types
+type jsonSerializer[T any] struct{}
 
-func (j *jsonSerializer) encode(data any) ([]byte, error) {
+func (j *jsonSerializer[T]) Encode(data T) ([]byte, error) {
 	return json.Marshal(data)
 }
 
-// value should be pointer
-func (j *jsonSerializer) decode(data []byte, value any) error {
-	return json.Unmarshal(data, value)
+func (j *jsonSerializer[T]) Decode(data []byte) (T, error) {
+	var value T
+	decodingErr := json.Unmarshal(data, &value)
+	return value, decodingErr
 }
 
-func newJsonSerializer() iSerializer {
-	return &jsonSerializer{}
+func NewJSONSerializer[T any]() core.Serializer[T] {
+	return &jsonSerializer[T]{}
 }

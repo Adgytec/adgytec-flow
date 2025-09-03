@@ -9,13 +9,13 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired core.IPermissionRequired) error {
-	return pc.CheckPermissions(ctx, []core.IPermissionRequired{permissionRequired})
+func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired core.PermissionProvider) error {
+	return pc.CheckPermissions(ctx, []core.PermissionProvider{permissionRequired})
 }
 
 // CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
 // If the permissionsRequired slice is empty, it returns an error.
-func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.IPermissionRequired) error {
+func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.PermissionProvider) error {
 	if len(permissionsRequired) == 0 {
 		return &app_errors.PermissionResolutionFailedError{
 			Cause: app_errors.ErrMissingPermissionsToCheck,
@@ -49,7 +49,7 @@ func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsR
 	return lastPermissionErr
 }
 
-func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity core.PermissionEntity, permissionRequired core.IPermissionRequired) error {
+func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity core.PermissionEntity, permissionRequired core.PermissionProvider) error {
 	actorTypeError := s.validateActorType(
 		permissionEntity.EntityType,
 		permissionRequired.GetPermissionActorType(),

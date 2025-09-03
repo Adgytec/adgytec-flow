@@ -7,12 +7,12 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type IDatabase interface {
+type Database interface {
 	Queries() *db_actions.Queries
 	NewTransaction(context.Context) (pgx.Tx, error)
 }
 
-type IDatabaseWithShutdown interface {
-	IDatabase
+type DatabaseWithShutdown interface {
+	Database
 	Shutdown()
 }

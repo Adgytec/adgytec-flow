@@ -16,7 +16,7 @@ func (s *s3PresignClient) GetPresignUploadUrl(bucketPath string) (string, error)
 	return "", nil
 }
 
-func NewS3Client(awsConfig aws.Config) core.IStorage {
+func NewS3Client(awsConfig aws.Config) core.Storage {
 	log.Println("creating s3 presign client")
 	return &s3PresignClient{
 		client: s3.NewPresignClient(

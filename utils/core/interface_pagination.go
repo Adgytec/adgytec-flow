@@ -2,6 +2,6 @@ package core
 
 import "time"
 
-type IPaginationItem interface {
+type PaginationItem interface {
 	GetCreatedAt() time.Time
 }

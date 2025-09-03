@@ -11,14 +11,14 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/router"
 )
 
-type IServer interface {
+type Server interface {
 	ListenAndServe() error
 	Shutdown() error
 }
 
 type httpServer struct {
 	server *http.Server
-	app    app.IApp
+	app    app.App
 }
 
 func (s *httpServer) ListenAndServe() error {
@@ -37,7 +37,7 @@ func (s *httpServer) Shutdown() error {
 	return err
 }
 
-func NewHttpServer(port string) IServer {
+func NewHttpServer(port string) Server {
 	appConfig := app.NewApp()
 	app_init.EnsureServicesInitialization(appConfig)
 	mux := router.NewApplicationRouter(appConfig)

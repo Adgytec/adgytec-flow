@@ -10,7 +10,7 @@ import (
 func NewPermissionRequiredFromManagementPermission(
 	permission db_actions.AddManagementPermissionParams,
 	requiredPermissionResources core.PermissionRequiredResources,
-) core.IPermissionRequired {
+) core.PermissionProvider {
 	return core.PermissionRequired{
 		Key:                 permission.Key,
 		PermissionType:      core.PermissionTypeManagement,
@@ -22,7 +22,7 @@ func NewPermissionRequiredFromManagementPermission(
 func NewPermissionRequiredFromApplicationPermission(
 	permission db_actions.AddApplicationPermissionParams,
 	requiredPermissionResources core.PermissionRequiredResources,
-) core.IPermissionRequired {
+) core.PermissionProvider {
 	return core.PermissionRequired{
 		Key:                 permission.Key,
 		PermissionType:      core.PermissionTypeApplication,
@@ -34,7 +34,7 @@ func NewPermissionRequiredFromApplicationPermission(
 func NewPermissionRequiredFromSelfPermission(
 	permission core.SelfPermissions,
 	requiredPermissionResources core.PermissionRequiredResources,
-) core.IPermissionRequired {
+) core.PermissionProvider {
 	return core.PermissionRequired{
 		Key:                 permission.Key,
 		PermissionType:      core.PermissionTypeSelf,

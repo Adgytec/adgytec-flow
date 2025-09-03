@@ -1,5 +1,5 @@
 package core
 
-type ICDN interface {
+type CDN interface {
 	GetSignedUrl(*string) *string
 }

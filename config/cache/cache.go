@@ -4,17 +4,16 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"golang.org/x/sync/singleflight"
 )
 
 type implCache[T any] struct {
-	cacheClient core.ICacheClient
+	cacheClient core.CacheClient
 	namespace   string
 	group       singleflight.Group
-	serializer  core.ISerializer[T]
+	serializer  core.Serializer[T]
 }
 
 func (c *implCache[T]) key(id string) string {
@@ -70,10 +69,10 @@ func (c *implCache[T]) Delete(id string) {
 	c.cacheClient.Delete(c.key(id))
 }
 
-func NewCache[T any](cacheClient core.ICacheClient, namespace string) core.ICache[T] {
+func NewCache[T any](cacheClient core.CacheClient, serializer core.Serializer[T], namespace string) core.Cache[T] {
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,
-		serializer:  serializer.NewJSONSerializer[T](),
+		serializer:  serializer,
 	}
 }

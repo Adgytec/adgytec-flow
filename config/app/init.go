@@ -2,7 +2,7 @@ package app
 
 import "log"
 
-func NewApp() IApp {
+func NewApp() App {
 	log.Println("Initializaing application external services.")
 	externalServices := newExternalServices()
 

@@ -10,7 +10,7 @@ import (
 )
 
 type accessManagementInit struct {
-	db                     core.IDatabase
+	db                     core.Database
 	serviceDetails         db_actions.AddServiceParams
 	managementPermissions  []db_actions.AddManagementPermissionParams
 	applicationPermissions []db_actions.AddApplicationPermissionParams
@@ -60,11 +60,11 @@ func (i *accessManagementInit) initServiceApplicationPermissions() error {
 	return nil
 }
 
-type iAccessManagementInitParams interface {
-	Database() core.IDatabase
+type accessManagementInitParams interface {
+	Database() core.Database
 }
 
-func InitAccessManagement(params iAccessManagementInitParams) core.IServiceInit {
+func InitAccessManagement(params accessManagementInitParams) core.ServiceInit {
 	return &accessManagementInit{
 		db:                     params.Database(),
 		serviceDetails:         accessManagementDetails,

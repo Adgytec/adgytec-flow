@@ -10,7 +10,7 @@ import (
 )
 
 type userServiceInit struct {
-	db                    core.IDatabase
+	db                    core.Database
 	serviceDetails        db_actions.AddServiceParams
 	managementPermissions []db_actions.AddManagementPermissionParams
 }
@@ -43,11 +43,11 @@ func (i *userServiceInit) initServiceManagementPermissions() error {
 	return nil
 }
 
-type iUserServiceInitParams interface {
-	Database() core.IDatabase
+type userServiceInitParams interface {
+	Database() core.Database
 }
 
-func InitUserService(params iUserServiceInitParams) core.IServiceInit {
+func InitUserService(params userServiceInitParams) core.ServiceInit {
 	return &userServiceInit{
 		db:                    params.Database(),
 		serviceDetails:        userServiceDetails,

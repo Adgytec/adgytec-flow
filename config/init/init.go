@@ -9,18 +9,18 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type serviceFactory func(params app.IApp) core.IServiceInit
+type serviceFactory func(params app.App) core.ServiceInit
 
 var services = []serviceFactory{
-	func(appConfig app.IApp) core.IServiceInit {
+	func(appConfig app.App) core.ServiceInit {
 		return access_management.InitAccessManagement(appConfig)
 	},
-	func(appConfig app.IApp) core.IServiceInit {
+	func(appConfig app.App) core.ServiceInit {
 		return user.InitUserService(appConfig)
 	},
 }
 
-func EnsureServicesInitialization(appConfig app.IApp) {
+func EnsureServicesInitialization(appConfig app.App) {
 	log.Println("Ensuring application initialization.")
 	for _, factory := range services {
 		serviceInit := factory(appConfig)

@@ -16,7 +16,7 @@ import (
 )
 
 func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
-	requiredPermissions := []core.IPermissionRequired{
+	requiredPermissions := []core.PermissionProvider{
 		helpers.NewPermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
 			core.PermissionRequiredResources{

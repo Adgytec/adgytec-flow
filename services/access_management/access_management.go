@@ -2,27 +2,28 @@ package access_management
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type iAccessManagementParams interface {
-	Database() core.IDatabase
-	CacheClient() core.ICacheClient
+type accessManagementParams interface {
+	Database() core.Database
+	CacheClient() core.CacheClient
 }
 
-type iAccessManagementMuxParams interface {
-	iAccessManagementParams
-	Middleware() core.IMiddlewarePC
+type accessManagementMuxParams interface {
+	accessManagementParams
+	Middleware() core.MiddlewarePC
 }
 
 type accessManagement struct {
-	db              core.IDatabase
-	permissionCache core.ICache[bool]
+	db              core.Database
+	permissionCache core.Cache[bool]
 }
 
-func newAccessManagementService(params iAccessManagementParams) *accessManagement {
+func newAccessManagementService(params accessManagementParams) *accessManagement {
 	return &accessManagement{
 		db:              params.Database(),
-		permissionCache: cache.NewCache[bool](params.CacheClient(), "access-management"),
+		permissionCache: cache.NewCache[bool](params.CacheClient(), serializer.NewJSONSerializer[bool](), "access-management"),
 	}
 }
