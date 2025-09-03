@@ -23,7 +23,7 @@ var services = []serviceFactory{
 		return access_management.NewAccessManagementMux(appConfig)
 	},
 	func(appConfig app.IApp) core.IServiceMux {
-		return user.CreateUserServiceMux(appConfig)
+		return user.NewUserServiceMux(appConfig)
 	},
 }
 

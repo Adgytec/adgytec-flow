@@ -10,9 +10,9 @@ type userServicePC struct {
 	service *userService
 }
 
-func CreateUserServicePC(params iUserServiceParams) core.IUserServicePC {
+func NewUserServicePC(params iUserServiceParams) core.IUserServicePC {
 	log.Println("creating user-service PC")
 	return &userServicePC{
-		service: createUserService(params),
+		service: newUserService(params),
 	}
 }

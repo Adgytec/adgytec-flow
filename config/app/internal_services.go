@@ -34,7 +34,7 @@ func createInternalService(externalService iAppExternalServices) iAppInternalSer
 
 	// Initialize internal services. The order of initialization is important.
 	internalService.accessManagement = access_management.NewAccessManagementPC(externalService)
-	internalService.userService = user.CreateUserServicePC(appInstance)
+	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = app_middleware.CreateAppMiddlewarePC(appInstance)
 
 	return &internalService

@@ -82,13 +82,13 @@ func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func createUserService(params iUserServiceParams) *userService {
+func newUserService(params iUserServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
 		accessManagement: params.AccessManagement(),
 		cdn:              params.CDN(),
-		getUserCache:     cache.CreateNewCache[models.GlobalUser](params.CacheClient(), "user"),
-		getUserListCache: cache.CreateNewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
+		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), "user"),
+		getUserListCache: cache.NewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
 	}
 }
