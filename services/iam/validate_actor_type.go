@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
 func (s *iam) validateActorType(
@@ -15,7 +14,7 @@ func (s *iam) validateActorType(
 	case string(db.GlobalAssignableActorTypeAll), string(currentActorType):
 		return nil
 	default:
-		return &app_errors.PermissionDeniedError{
+		return &PermissionDeniedError{
 			Reason: fmt.Sprintf("The action requires actor type '%s' but the current actor type is '%s'.", requiredActorType, currentActorType),
 		}
 	}

@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
@@ -17,8 +16,8 @@ func (pc *pc) CheckPermission(ctx context.Context, permissionRequired core.Permi
 // If the permissionsRequired slice is empty, it returns an error.
 func (pc *pc) CheckPermissions(ctx context.Context, permissionsRequired []core.PermissionProvider) error {
 	if len(permissionsRequired) == 0 {
-		return &app_errors.PermissionResolutionFailedError{
-			Cause: app_errors.ErrMissingPermissionsToCheck,
+		return &PermissionResolutionFailedError{
+			Cause: ErrMissingPermissionsToCheck,
 		}
 	}
 
@@ -40,7 +39,7 @@ func (pc *pc) CheckPermissions(ctx context.Context, permissionsRequired []core.P
 			return nil
 		}
 
-		if !errors.Is(lastPermissionErr, app_errors.ErrPermissionDenied) {
+		if !errors.Is(lastPermissionErr, ErrPermissionDenied) {
 			// some other error than permission denied so return early
 			return lastPermissionErr
 		}
@@ -66,8 +65,8 @@ func (s *iam) checkPermission(ctx context.Context, permissionEntity core.Permiss
 	case core.PermissionTypeManagement:
 		return s.resolveManagementPermission(ctx, permissionEntity, permissionRequired)
 	default:
-		return &app_errors.PermissionResolutionFailedError{
-			Cause: app_errors.ErrUnknownPermissionType,
+		return &PermissionResolutionFailedError{
+			Cause: ErrUnknownPermissionType,
 		}
 	}
 }
