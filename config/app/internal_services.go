@@ -9,7 +9,7 @@ import (
 
 type internalServices struct {
 	accessManagement core.AccessManagementPC
-	userService      user.UserServicePC
+	userService      user.PC
 	middleware       core.MiddlewarePC
 }
 
@@ -17,7 +17,7 @@ func (s *internalServices) AccessManagement() core.AccessManagementPC {
 	return s.accessManagement
 }
 
-func (s *internalServices) UserService() user.UserServicePC {
+func (s *internalServices) UserService() user.PC {
 	return s.userService
 }
 
@@ -34,7 +34,7 @@ func newInternalService(externalService appExternalServices) appInternalServices
 
 	// Initialize internal services. The order of initialization is important.
 	internalService.accessManagement = iam.NewPC(externalService)
-	internalService.userService = user.NewUserServicePC(appInstance)
+	internalService.userService = user.NewPC(appInstance)
 	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
 
 	return &internalService

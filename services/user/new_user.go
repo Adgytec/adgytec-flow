@@ -42,6 +42,6 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 	return userID, txCommitErr
 }
 
-func (pc *userServicePC) NewUser(ctx context.Context, email string) (uuid.UUID, error) {
+func (pc *pc) NewUser(ctx context.Context, email string) (uuid.UUID, error) {
 	return pc.service.newUser(ctx, email)
 }

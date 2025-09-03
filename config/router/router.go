@@ -23,7 +23,7 @@ var services = []serviceFactory{
 		return iam.NewMux(appConfig)
 	},
 	func(appConfig app.App) core.ServiceMux {
-		return user.NewUserServiceMux(appConfig)
+		return user.NewMux(appConfig)
 	},
 }
 

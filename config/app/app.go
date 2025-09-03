@@ -17,7 +17,7 @@ type appExternalServices interface {
 
 type appInternalServices interface {
 	AccessManagement() core.AccessManagementPC
-	UserService() user.UserServicePC
+	UserService() user.PC
 	Middleware() core.MiddlewarePC
 }
 

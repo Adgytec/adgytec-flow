@@ -7,16 +7,16 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-type userServiceMux struct {
+type mux struct {
 	service    *userService
 	middleware core.MiddlewarePC
 }
 
-func (m *userServiceMux) BasePath() string {
+func (m *mux) BasePath() string {
 	return "/user"
 }
 
-func (m *userServiceMux) Router() *chi.Mux {
+func (m *mux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
 	mux.Group(func(router chi.Router) {
@@ -37,10 +37,10 @@ func (m *userServiceMux) Router() *chi.Mux {
 	return mux
 }
 
-func NewUserServiceMux(params userServiceMuxParams) core.ServiceMux {
+func NewMux(params muxParams) core.ServiceMux {
 	log.Println("adding user-service mux")
-	return &userServiceMux{
-		service:    newUserService(params),
+	return &mux{
+		service:    newService(params),
 		middleware: params.Middleware(),
 	}
 }

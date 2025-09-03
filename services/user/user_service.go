@@ -17,7 +17,7 @@ type userServiceParams interface {
 	CacheClient() core.CacheClient
 }
 
-type userServiceMuxParams interface {
+type muxParams interface {
 	userServiceParams
 	Middleware() core.MiddlewarePC
 }
@@ -82,7 +82,7 @@ func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func newUserService(params userServiceParams) *userService {
+func newService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
