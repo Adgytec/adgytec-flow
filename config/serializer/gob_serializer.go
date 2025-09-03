@@ -10,7 +10,7 @@ import (
 // used for custom struct and large payloads of data
 type gobSerializer[T any] struct{}
 
-func (j *gobSerializer[T]) Encode(data T) ([]byte, error) {
+func (g *gobSerializer[T]) Encode(data T) ([]byte, error) {
 	var buffer bytes.Buffer
 	encoder := gob.NewEncoder(&buffer)
 
@@ -21,7 +21,7 @@ func (j *gobSerializer[T]) Encode(data T) ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-func (j *gobSerializer[T]) Decode(data []byte) (T, error) {
+func (g *gobSerializer[T]) Decode(data []byte) (T, error) {
 	var value T
 
 	buffer := bytes.NewBuffer(data)
