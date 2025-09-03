@@ -5,7 +5,7 @@ import "github.com/Adgytec/adgytec-flow/utils/core"
 type appExternalServices interface {
 	Auth() core.Auth
 	Database() core.Database
-	Communication() core.Communicaiton
+	Communication() core.Communication
 	Storage() core.Storage
 	CDN() core.CDN
 	Shutdown()

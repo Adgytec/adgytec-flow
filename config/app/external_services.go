@@ -14,7 +14,7 @@ import (
 type externalServices struct {
 	auth          core.Auth
 	database      core.DatabaseWithShutdown
-	communicaiton core.Communicaiton
+	communicaiton core.Communication
 	storage       core.Storage
 	cdn           core.CDN
 	cacheClient   core.CacheClient
@@ -28,7 +28,7 @@ func (s *externalServices) Database() core.Database {
 	return s.database
 }
 
-func (s *externalServices) Communication() core.Communicaiton {
+func (s *externalServices) Communication() core.Communication {
 	return s.communicaiton
 }
 

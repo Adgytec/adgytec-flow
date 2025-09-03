@@ -1,5 +1,5 @@
 package core
 
-type Communicaiton interface {
+type Communication interface {
 	SendMail([]string, string) error
 }
