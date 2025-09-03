@@ -45,7 +45,7 @@ func handle400(mux *chi.Mux) {
 	})
 }
 
-func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
+func NewApplicationRouter(appConfig app.IApp) *chi.Mux {
 	log.Println("adding application mux")
 	mux := chi.NewMux()
 

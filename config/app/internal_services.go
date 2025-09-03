@@ -25,7 +25,7 @@ func (s *internalServices) Middleware() core.IMiddlewarePC {
 	return s.middleware
 }
 
-func createInternalService(externalService iAppExternalServices) iAppInternalServices {
+func newInternalService(externalService iAppExternalServices) iAppInternalServices {
 	internalService := internalServices{}
 	appInstance := &app{
 		iAppExternalServices: externalService,
@@ -35,7 +35,7 @@ func createInternalService(externalService iAppExternalServices) iAppInternalSer
 	// Initialize internal services. The order of initialization is important.
 	internalService.accessManagement = access_management.NewAccessManagementPC(externalService)
 	internalService.userService = user.NewUserServicePC(appInstance)
-	internalService.middleware = app_middleware.CreateAppMiddlewarePC(appInstance)
+	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
 
 	return &internalService
 }

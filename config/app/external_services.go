@@ -48,7 +48,7 @@ func (s *externalServices) CacheClient() core.ICacheClient {
 	return s.cacheClient
 }
 
-func createExternalServices() iAppExternalServices {
+func newExternalServices() iAppExternalServices {
 	awsConfig := configAWS.NewAWSConfig()
 
 	return &externalServices{
