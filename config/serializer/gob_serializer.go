@@ -33,8 +33,5 @@ func (g *gobSerializer[T]) Decode(data []byte) (T, error) {
 
 // NewGobSerializer should only be used for custom struct type
 func NewGobSerializer[T any]() core.Serializer[T] {
-	var zero T
-	gob.Register(&zero)
-
 	return &gobSerializer[T]{}
 }
