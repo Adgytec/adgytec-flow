@@ -6,13 +6,13 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type accessManagementPC struct {
-	service *accessManagement
+type pc struct {
+	service *iam
 }
 
-func NewAccessManagementPC(params accessManagementParams) core.AccessManagementPC {
+func NewPC(params iamParams) core.AccessManagementPC {
 	log.Println("creating access-management PC")
-	return &accessManagementPC{
-		service: newAccessManagementService(params),
+	return &pc{
+		service: newService(params),
 	}
 }

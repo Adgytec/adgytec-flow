@@ -5,7 +5,7 @@ import (
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
-func (s *accessManagement) resolveSelfPermission(
+func (s *iam) resolveSelfPermission(
 	permissionEntity core.PermissionEntity,
 	permissionRequired core.PermissionProvider,
 ) error {

@@ -20,7 +20,7 @@ type serviceFactory func(params app.App) core.ServiceMux
 
 var services = []serviceFactory{
 	func(appConfig app.App) core.ServiceMux {
-		return iam.NewAccessManagementMux(appConfig)
+		return iam.NewMux(appConfig)
 	},
 	func(appConfig app.App) core.ServiceMux {
 		return user.NewUserServiceMux(appConfig)

@@ -7,7 +7,7 @@ import (
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
-func (s *accessManagement) validateActorType(
+func (s *iam) validateActorType(
 	currentActorType db_actions.GlobalActorType,
 	requiredActorType db_actions.GlobalAssignableActorType,
 ) error {

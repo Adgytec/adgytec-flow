@@ -33,7 +33,7 @@ func newInternalService(externalService appExternalServices) appInternalServices
 	}
 
 	// Initialize internal services. The order of initialization is important.
-	internalService.accessManagement = iam.NewAccessManagementPC(externalService)
+	internalService.accessManagement = iam.NewPC(externalService)
 	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
 
