@@ -3,7 +3,7 @@ package core
 import (
 	"context"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 )
 
 type AccessManagementPC interface {
@@ -18,6 +18,6 @@ type AccessManagementPC interface {
 type PermissionProvider interface {
 	GetPermissionKey() string
 	GetPermissionType() PermissionType
-	GetPermissionActorType() db_actions.GlobalAssignableActorType
+	GetPermissionActorType() db.GlobalAssignableActorType
 	GetPermissionRequiredResources() PermissionRequiredResources
 }

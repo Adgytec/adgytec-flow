@@ -3,17 +3,17 @@ package iam
 import (
 	"fmt"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
-var applicationPermissions = []db_actions.AddApplicationPermissionParams{
+var applicationPermissions = []db.AddApplicationPermissionParams{
 	assignApplicationPermission,
 	removeApplicationPermission,
 	listApplicationPermission,
 }
 
-var assignApplicationPermission = db_actions.AddApplicationPermissionParams{
+var assignApplicationPermission = db.AddApplicationPermissionParams{
 	Key:       fmt.Sprintf("%s:assign:permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "Assign Permission",
@@ -22,10 +22,10 @@ var assignApplicationPermission = db_actions.AddApplicationPermissionParams{
 
 Grants the ability to assign permissions to any user or group.`),
 	RequiredResources: []string{},
-	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
+var removeApplicationPermission = db.AddApplicationPermissionParams{
 	Key:       fmt.Sprintf("%s:remove:permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "Remove Permission",
@@ -34,10 +34,10 @@ var removeApplicationPermission = db_actions.AddApplicationPermissionParams{
 
 Grants the ability to remove permissions from any user or group.`),
 	RequiredResources: []string{},
-	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var listApplicationPermission = db_actions.AddApplicationPermissionParams{
+var listApplicationPermission = db.AddApplicationPermissionParams{
 	Key:       fmt.Sprintf("%s:list:permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "List Permission",
@@ -46,5 +46,5 @@ var listApplicationPermission = db_actions.AddApplicationPermissionParams{
 
 Grants the ability to list permissions to any user or group.`),
 	RequiredResources: []string{},
-	AssignableActor:   db_actions.GlobalAssignableActorTypeUser,
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }

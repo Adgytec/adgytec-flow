@@ -4,13 +4,13 @@ import (
 	"context"
 	"log"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/google/uuid"
 )
 
 type PC interface {
 	NewUser(ctx context.Context, email string) (uuid.UUID, error)
-	GetUserStatus(ctx context.Context, userID uuid.UUID) (db_actions.GlobalUserStatus, error)
+	GetUserStatus(ctx context.Context, userID uuid.UUID) (db.GlobalUserStatus, error)
 }
 
 type pc struct {

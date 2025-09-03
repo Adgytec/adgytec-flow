@@ -3,16 +3,16 @@ package iam
 import (
 	"fmt"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
 func (s *iam) validateActorType(
-	currentActorType db_actions.GlobalActorType,
-	requiredActorType db_actions.GlobalAssignableActorType,
+	currentActorType db.GlobalActorType,
+	requiredActorType db.GlobalAssignableActorType,
 ) error {
 	switch string(requiredActorType) {
-	case string(db_actions.GlobalAssignableActorTypeAll), string(currentActorType):
+	case string(db.GlobalAssignableActorTypeAll), string(currentActorType):
 		return nil
 	default:
 		return &app_errors.PermissionDeniedError{

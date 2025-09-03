@@ -1,14 +1,14 @@
 package helpers
 
 import (
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 // helper methods to create core.IPermissionRequired for permission resolution
 
 func NewPermissionRequiredFromManagementPermission(
-	permission db_actions.AddManagementPermissionParams,
+	permission db.AddManagementPermissionParams,
 	requiredPermissionResources core.PermissionRequiredResources,
 ) core.PermissionProvider {
 	return core.PermissionRequired{
@@ -20,7 +20,7 @@ func NewPermissionRequiredFromManagementPermission(
 }
 
 func NewPermissionRequiredFromApplicationPermission(
-	permission db_actions.AddApplicationPermissionParams,
+	permission db.AddApplicationPermissionParams,
 	requiredPermissionResources core.PermissionRequiredResources,
 ) core.PermissionProvider {
 	return core.PermissionRequired{
@@ -38,7 +38,7 @@ func NewPermissionRequiredFromSelfPermission(
 	return core.PermissionRequired{
 		Key:                 permission.Key,
 		PermissionType:      core.PermissionTypeSelf,
-		PermissionActorType: db_actions.GlobalAssignableActorTypeUser,
+		PermissionActorType: db.GlobalAssignableActorTypeUser,
 		RequiredResources:   requiredPermissionResources,
 	}
 }

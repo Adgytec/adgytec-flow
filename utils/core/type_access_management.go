@@ -1,7 +1,7 @@
 package core
 
 import (
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/google/uuid"
 )
 
@@ -35,7 +35,7 @@ type PermissionRequiredResources struct {
 // PermissionEntity defines the current actor details for permission resolution
 type PermissionEntity struct {
 	ID         uuid.UUID
-	EntityType db_actions.GlobalActorType
+	EntityType db.GlobalActorType
 }
 
 // PermissionRequired defines the permission details required for successfull resolution of permission
@@ -43,7 +43,7 @@ type PermissionEntity struct {
 type PermissionRequired struct {
 	Key                 string
 	PermissionType      PermissionType
-	PermissionActorType db_actions.GlobalAssignableActorType
+	PermissionActorType db.GlobalAssignableActorType
 	RequiredResources   PermissionRequiredResources
 }
 
@@ -55,7 +55,7 @@ func (p PermissionRequired) GetPermissionType() PermissionType {
 	return p.PermissionType
 }
 
-func (p PermissionRequired) GetPermissionActorType() db_actions.GlobalAssignableActorType {
+func (p PermissionRequired) GetPermissionActorType() db.GlobalAssignableActorType {
 	return p.PermissionActorType
 }
 

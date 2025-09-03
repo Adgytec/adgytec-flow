@@ -3,9 +3,9 @@ package user
 import (
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 )
 
 func (m *mux) enableGlobalUser(w http.ResponseWriter, r *http.Request) {
-	m.updateUserStatusUtil(w, r, actions.GlobalUserStatusEnabled)
+	m.updateUserStatusUtil(w, r, db.GlobalUserStatusEnabled)
 }

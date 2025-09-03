@@ -3,17 +3,17 @@ package iam
 import (
 	"fmt"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
-var managementPermissions = []db_actions.AddManagementPermissionParams{
+var managementPermissions = []db.AddManagementPermissionParams{
 	assignManagementPermission,
 	removeManagementPermission,
 	listManagementPermission,
 }
 
-var assignManagementPermission = db_actions.AddManagementPermissionParams{
+var assignManagementPermission = db.AddManagementPermissionParams{
 	Key:       fmt.Sprintf("%s:assign:management-permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "Assign Permission",
@@ -22,12 +22,12 @@ var assignManagementPermission = db_actions.AddManagementPermissionParams{
 
 Grants the ability to assign permissions to any user or group.`),
 	RequiredResources: []string{
-		string(db_actions.ManagementPermissionResourceTypeOrganization),
+		string(db.ManagementPermissionResourceTypeOrganization),
 	},
-	AssignableActor: db_actions.GlobalAssignableActorTypeUser,
+	AssignableActor: db.GlobalAssignableActorTypeUser,
 }
 
-var removeManagementPermission = db_actions.AddManagementPermissionParams{
+var removeManagementPermission = db.AddManagementPermissionParams{
 	Key:       fmt.Sprintf("%s:remove:management-permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "Remove Permission",
@@ -36,12 +36,12 @@ var removeManagementPermission = db_actions.AddManagementPermissionParams{
 
 Grants the ability to remove permissions from any user or group.`),
 	RequiredResources: []string{
-		string(db_actions.ManagementPermissionResourceTypeOrganization),
+		string(db.ManagementPermissionResourceTypeOrganization),
 	},
-	AssignableActor: db_actions.GlobalAssignableActorTypeUser,
+	AssignableActor: db.GlobalAssignableActorTypeUser,
 }
 
-var listManagementPermission = db_actions.AddManagementPermissionParams{
+var listManagementPermission = db.AddManagementPermissionParams{
 	Key:       fmt.Sprintf("%s:list:management-permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "List Permission",
@@ -51,7 +51,7 @@ var listManagementPermission = db_actions.AddManagementPermissionParams{
 Grants the ability to list permissions to any user or group.`),
 
 	RequiredResources: []string{
-		string(db_actions.ManagementPermissionResourceTypeOrganization),
+		string(db.ManagementPermissionResourceTypeOrganization),
 	},
-	AssignableActor: db_actions.GlobalAssignableActorTypeUser,
+	AssignableActor: db.GlobalAssignableActorTypeUser,
 }

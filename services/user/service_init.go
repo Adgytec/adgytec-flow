@@ -4,15 +4,15 @@ import (
 	"context"
 	"log"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 type userServiceInit struct {
 	db                    core.Database
-	serviceDetails        db_actions.AddServiceParams
-	managementPermissions []db_actions.AddManagementPermissionParams
+	serviceDetails        db.AddServiceParams
+	managementPermissions []db.AddManagementPermissionParams
 }
 
 func (i *userServiceInit) InitService() error {

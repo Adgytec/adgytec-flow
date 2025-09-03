@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/serializer"
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
@@ -31,7 +31,7 @@ type userService struct {
 	getUserListCache core.Cache[core.ResponsePagination[models.GlobalUser]]
 }
 
-func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
+func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.GlobalUser {
 	userModel := models.GlobalUser{
 		ID:          user.ID,
 		Email:       user.Email,
@@ -58,7 +58,7 @@ func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) mod
 	return userModel
 }
 
-func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail) []models.GlobalUser {
+func (s *userService) getUserResponseModels(users []db.GlobalUserDetail) []models.GlobalUser {
 	usersLen := len(users)
 	if usersLen == 0 {
 		return nil
