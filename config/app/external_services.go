@@ -14,7 +14,7 @@ import (
 type externalServices struct {
 	auth          core.Auth
 	database      core.DatabaseWithShutdown
-	communicaiton core.Communication
+	communication core.Communication
 	storage       core.Storage
 	cdn           core.CDN
 	cacheClient   core.CacheClient
@@ -29,7 +29,7 @@ func (s *externalServices) Database() core.Database {
 }
 
 func (s *externalServices) Communication() core.Communication {
-	return s.communicaiton
+	return s.communication
 }
 
 func (s *externalServices) Storage() core.Storage {
@@ -54,7 +54,7 @@ func newExternalServices() appExternalServices {
 	return &externalServices{
 		auth:          auth.NewCognitoAuthClient(awsConfig),
 		database:      database.NewPgxDbConnectionPool(),
-		communicaiton: communication.NewAWSCommunicationClient(awsConfig),
+		communication: communication.NewAWSCommunicationClient(awsConfig),
 		storage:       storage.NewS3Client(awsConfig),
 		cdn:           cdn.NewCloudfrontCDNSigner(),
 		cacheClient:   cache.NewInMemoryCacheClient(),
