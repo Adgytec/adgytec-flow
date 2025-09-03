@@ -8,7 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 )
 
-func CreateAWSConfig() aws.Config {
+func NewAWSConfig() aws.Config {
 	log.Println("loading aws config")
 	cfg, err := config.LoadDefaultConfig(context.TODO())
 	if err != nil {

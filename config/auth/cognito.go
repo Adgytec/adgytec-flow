@@ -36,7 +36,7 @@ func (a *authCognito) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
 	return uuid.UUID{}, nil
 }
 
-func CreateCognitoAuthClient(awsConfig aws.Config) core.IAuth {
+func NewCognitoAuthClient(awsConfig aws.Config) core.IAuth {
 	log.Println("init authentication cognito")
 	return &authCognito{
 		client:         cognitoidentityprovider.NewFromConfig(awsConfig),

@@ -49,14 +49,14 @@ func (s *externalServices) CacheClient() core.ICacheClient {
 }
 
 func createExternalServices() iAppExternalServices {
-	awsConfig := configAWS.CreateAWSConfig()
+	awsConfig := configAWS.NewAWSConfig()
 
 	return &externalServices{
-		auth:          auth.CreateCognitoAuthClient(awsConfig),
-		database:      database.CreatePgxDbConnectionPool(),
-		communicaiton: communication.CreateAWSCommunicationClient(awsConfig),
-		storage:       storage.CreateS3Client(awsConfig),
-		cdn:           cdn.CreateCloudfrontCDNSigner(),
-		cacheClient:   cache.CreateInMemoryCacheClient(),
+		auth:          auth.NewCognitoAuthClient(awsConfig),
+		database:      database.NewPgxDbConnectionPool(),
+		communicaiton: communication.NewAWSCommunicationClient(awsConfig),
+		storage:       storage.NewS3Client(awsConfig),
+		cdn:           cdn.NewCloudfrontCDNSigner(),
+		cacheClient:   cache.NewInMemoryCacheClient(),
 	}
 }
