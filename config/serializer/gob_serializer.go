@@ -7,6 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
+// used for custom struct and large payloads of data
 type gobSerializer[T any] struct{}
 
 func (j *gobSerializer[T]) Encode(data T) ([]byte, error) {
@@ -20,7 +21,6 @@ func (j *gobSerializer[T]) Encode(data T) ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-// value should be pointer
 func (j *gobSerializer[T]) Decode(data []byte) (T, error) {
 	var value T
 
