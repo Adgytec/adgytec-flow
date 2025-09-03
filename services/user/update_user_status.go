@@ -8,7 +8,6 @@ import (
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/go-chi/chi/v5"
@@ -50,7 +49,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	)
 	if dbErr != nil {
 		if errors.Is(dbErr, pgx.ErrNoRows) {
-			return &app_errors.UserNotFoundError{}
+			return &UserNotFoundError{}
 		}
 		return dbErr
 	}

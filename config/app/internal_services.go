@@ -9,7 +9,7 @@ import (
 
 type internalServices struct {
 	accessManagement core.AccessManagementPC
-	userService      core.UserServicePC
+	userService      user.UserServicePC
 	middleware       core.MiddlewarePC
 }
 
@@ -17,7 +17,7 @@ func (s *internalServices) AccessManagement() core.AccessManagementPC {
 	return s.accessManagement
 }
 
-func (s *internalServices) UserService() core.UserServicePC {
+func (s *internalServices) UserService() user.UserServicePC {
 	return s.userService
 }
 

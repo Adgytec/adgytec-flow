@@ -1,6 +1,9 @@
 package app
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"github.com/Adgytec/adgytec-flow/services/user"
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
 
 type appExternalServices interface {
 	Auth() core.Auth
@@ -14,7 +17,7 @@ type appExternalServices interface {
 
 type appInternalServices interface {
 	AccessManagement() core.AccessManagementPC
-	UserService() core.UserServicePC
+	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC
 }
 
