@@ -74,7 +74,7 @@ func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail)
 func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	userUUID, userIdErr := uuid.Parse(userID)
 	if userIdErr != nil {
-		return uuid.UUID{}, &InvalidUserIDError{
+		return uuid.Nil, &InvalidUserIDError{
 			InvalidUserID: userID,
 		}
 	}
