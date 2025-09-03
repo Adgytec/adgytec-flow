@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
@@ -32,7 +32,7 @@ func EncodeError(w http.ResponseWriter, err error) {
 		EncodeJSON(w, responseError.HTTPResponse().HTTPStatusCode, responseError.HTTPResponse())
 	} else {
 		EncodeJSON(w, http.StatusInternalServerError, core.ResponseHTTPError{
-			Message: helpers.ValuePtr(http.StatusText(http.StatusInternalServerError)),
+			Message: pointer.New(http.StatusText(http.StatusInternalServerError)),
 		})
 	}
 }

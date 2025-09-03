@@ -7,9 +7,9 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -20,7 +20,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		helpers.NewPermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
 			core.PermissionRequiredResources{
-				UserID: helpers.ValuePtr(userID),
+				UserID: pointer.New(userID),
 			},
 		),
 		helpers.NewPermissionRequiredFromManagementPermission(
@@ -42,7 +42,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 		if dbErr != nil {
 			if errors.Is(dbErr, pgx.ErrNoRows) {
-				return zero, &app_errors.UserNotFoundError{}
+				return zero, &UserNotFoundError{}
 			}
 
 			return zero, dbErr

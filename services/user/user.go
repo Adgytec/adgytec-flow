@@ -1,4 +1,4 @@
-package app_errors
+package user
 
 import (
 	"errors"
@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 var (
@@ -28,12 +29,11 @@ func (e *InvalidUserIDError) Is(target error) bool {
 func (e *InvalidUserIDError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }
 
-type UserNotFoundError struct {
-}
+type UserNotFoundError struct{}
 
 func (e *UserNotFoundError) Error() string {
 	return "User not found."
@@ -46,6 +46,6 @@ func (e *UserNotFoundError) Is(target error) bool {
 func (e *UserNotFoundError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusNotFound,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }

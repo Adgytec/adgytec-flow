@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 var (
@@ -26,7 +27,7 @@ func (e *UserStatusBadError) Is(target error) bool {
 func (e *UserStatusBadError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusUnauthorized,
-		Message:        valuePtr(http.StatusText(http.StatusUnauthorized)),
+		Message:        pointer.New(http.StatusText(http.StatusUnauthorized)),
 	}
 }
 
@@ -44,7 +45,7 @@ func (e *OrganizationStatusBadError) Is(target error) bool {
 func (e *OrganizationStatusBadError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusForbidden,
-		Message:        valuePtr("Action forbidden due to organization status."),
+		Message:        pointer.New("Action forbidden due to organization status."),
 	}
 }
 
@@ -61,6 +62,6 @@ func (e *NoAccessError) Is(target error) bool {
 func (e *NoAccessError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusForbidden,
-		Message:        valuePtr(http.StatusText(http.StatusForbidden)),
+		Message:        pointer.New(http.StatusText(http.StatusForbidden)),
 	}
 }

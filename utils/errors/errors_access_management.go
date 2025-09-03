@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 var (
@@ -46,7 +47,7 @@ func (e *PermissionDeniedError) Is(target error) bool {
 func (e *PermissionDeniedError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusForbidden,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }
 
