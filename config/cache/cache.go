@@ -70,7 +70,7 @@ func (c *implCache[T]) Delete(id string) {
 	c.cacheClient.Delete(c.key(id))
 }
 
-func CreateNewCache[T any](cacheClient core.ICacheClient, namespace string) core.ICache[T] {
+func NewCache[T any](cacheClient core.ICacheClient, namespace string) core.ICache[T] {
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,

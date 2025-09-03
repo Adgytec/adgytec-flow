@@ -10,9 +10,9 @@ type accessManagementPC struct {
 	service *accessManagement
 }
 
-func CreateAccessManagementPC(params iAccessManagementParams) core.IAccessManagementPC {
+func NewAccessManagementPC(params iAccessManagementParams) core.IAccessManagementPC {
 	log.Println("creating access-management PC")
 	return &accessManagementPC{
-		service: createAccessManagementService(params),
+		service: newAccessManagementService(params),
 	}
 }
