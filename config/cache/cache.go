@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"golang.org/x/sync/singleflight"
@@ -70,10 +69,10 @@ func (c *implCache[T]) Delete(id string) {
 	c.cacheClient.Delete(c.key(id))
 }
 
-func NewCache[T any](cacheClient core.CacheClient, namespace string) core.Cache[T] {
+func NewCache[T any](cacheClient core.CacheClient, serializer core.Serializer[T], namespace string) core.Cache[T] {
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,
-		serializer:  serializer.NewJSONSerializer[T](),
+		serializer:  serializer,
 	}
 }

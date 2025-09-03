@@ -2,6 +2,7 @@ package user
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -28,7 +29,7 @@ type userService struct {
 	accessManagement core.AccessManagementPC
 	cdn              core.CDN
 	getUserCache     core.Cache[models.GlobalUser]
-	getUserListCache core.Cache[[]models.GlobalUser]
+	getUserListCache core.Cache[core.ResponsePagination[models.GlobalUser]]
 }
 
 func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
@@ -88,7 +89,7 @@ func newUserService(params userServiceParams) *userService {
 		auth:             params.Auth(),
 		accessManagement: params.AccessManagement(),
 		cdn:              params.CDN(),
-		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), "user"),
-		getUserListCache: cache.NewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
+		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
+		getUserListCache: cache.NewCache[core.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[core.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}
 }

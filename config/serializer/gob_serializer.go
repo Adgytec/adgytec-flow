@@ -31,6 +31,11 @@ func (j *gobSerializer[T]) Decode(data []byte) (T, error) {
 	return value, decodingErr
 }
 
+// NewGobSerializer should only be used for custom struct type
+// it will throw runtime error for primitive errors during registration
 func NewGobSerializer[T any]() core.Serializer[T] {
+	var zero T
+	gob.Register(&zero)
+
 	return &gobSerializer[T]{}
 }

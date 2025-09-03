@@ -2,6 +2,7 @@ package access_management
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
@@ -23,6 +24,6 @@ type accessManagement struct {
 func newAccessManagementService(params accessManagementParams) *accessManagement {
 	return &accessManagement{
 		db:              params.Database(),
-		permissionCache: cache.NewCache[bool](params.CacheClient(), "access-management"),
+		permissionCache: cache.NewCache[bool](params.CacheClient(), serializer.NewJSONSerializer[bool](), "access-management"),
 	}
 }
