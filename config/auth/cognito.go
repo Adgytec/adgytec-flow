@@ -16,7 +16,7 @@ type authCognito struct {
 	userPoolRegion string
 }
 
-func (a *authCognito) CreateUser(username string) error {
+func (a *authCognito) NewUser(username string) error {
 	return nil
 }
 
