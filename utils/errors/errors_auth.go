@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 var (
@@ -30,7 +31,7 @@ func (e *UserExistsError) Is(target error) bool {
 func (e *UserExistsError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusConflict,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }
 
@@ -73,7 +74,7 @@ func (e *InvalidAccessTokenError) Is(target error) bool {
 func (e *InvalidAccessTokenError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }
 
@@ -90,6 +91,6 @@ func (e *InvalidAPIKeyError) Is(target error) bool {
 func (e *InvalidAPIKeyError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }

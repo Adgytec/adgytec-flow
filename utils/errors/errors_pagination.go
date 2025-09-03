@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 var (
@@ -27,6 +28,6 @@ func (e *InvalidCursorValueError) Is(target error) bool {
 func (e *InvalidCursorValueError) HTTPResponse() core.ResponseHTTPError {
 	return core.ResponseHTTPError{
 		HTTPStatusCode: http.StatusBadRequest,
-		Message:        valuePtr(e.Error()),
+		Message:        pointer.New(e.Error()),
 	}
 }

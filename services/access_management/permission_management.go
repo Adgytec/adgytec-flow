@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 var managementPermissions = []db_actions.AddManagementPermissionParams{
@@ -17,7 +17,7 @@ var assignManagementPermission = db_actions.AddManagementPermissionParams{
 	Key:       fmt.Sprintf("%s:assign:management-permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "Assign Permission",
-	Description: helpers.ValuePtr(`
+	Description: pointer.New(`
 ### Assign Permission
 
 Grants the ability to assign permissions to any user or group.`),
@@ -31,7 +31,7 @@ var removeManagementPermission = db_actions.AddManagementPermissionParams{
 	Key:       fmt.Sprintf("%s:remove:management-permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "Remove Permission",
-	Description: helpers.ValuePtr(`
+	Description: pointer.New(`
 ### Remove Permission
 
 Grants the ability to remove permissions from any user or group.`),
@@ -45,7 +45,7 @@ var listManagementPermission = db_actions.AddManagementPermissionParams{
 	Key:       fmt.Sprintf("%s:list:management-permission", accessManagementDetails.Name),
 	ServiceID: accessManagementDetails.ID,
 	Name:      "List Permission",
-	Description: helpers.ValuePtr(`
+	Description: pointer.New(`
 ### List Permission
 
 Grants the ability to list permissions to any user or group.`),

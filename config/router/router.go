@@ -9,8 +9,8 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/access_management"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -30,7 +30,7 @@ var services = []serviceFactory{
 func handle400(mux *chi.Mux) {
 	mux.NotFound(func(w http.ResponseWriter, _ *http.Request) {
 		payload.EncodeJSON(w, http.StatusNotFound, core.ResponseHTTPError{
-			Message: helpers.ValuePtr(
+			Message: pointer.New(
 				http.StatusText(http.StatusNotFound),
 			),
 		})
@@ -38,7 +38,7 @@ func handle400(mux *chi.Mux) {
 
 	mux.MethodNotAllowed(func(w http.ResponseWriter, _ *http.Request) {
 		payload.EncodeJSON(w, http.StatusMethodNotAllowed, core.ResponseHTTPError{
-			Message: helpers.ValuePtr(
+			Message: pointer.New(
 				http.StatusText(http.StatusMethodNotAllowed),
 			),
 		})
