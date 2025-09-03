@@ -7,7 +7,7 @@ import (
 
 func (s *accessManagement) resolveSelfPermission(
 	permissionEntity core.PermissionEntity,
-	permissionRequired core.IPermissionRequired,
+	permissionRequired core.PermissionProvider,
 ) error {
 	// invalid case
 	if permissionRequired.GetPermissionRequiredResources().UserID == nil {

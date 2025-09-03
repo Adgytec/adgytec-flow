@@ -10,7 +10,7 @@ import (
 func (s *accessManagement) resolveApplicationPermission(
 	ctx context.Context,
 	permissionEntity core.PermissionEntity,
-	permissionRequired core.IPermissionRequired,
+	permissionRequired core.PermissionProvider,
 ) error {
 	return app_errors.ErrNotImplemented
 }

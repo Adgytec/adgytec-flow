@@ -8,14 +8,14 @@ import (
 
 type AccessManagementPC interface {
 	// CheckPermission checks a single permission and returns nil if it is granted.
-	CheckPermission(context.Context, IPermissionRequired) error
+	CheckPermission(context.Context, PermissionProvider) error
 
 	// CheckPermissions returns nil if any of the provided permissions are granted.
-	CheckPermissions(context.Context, []IPermissionRequired) error
+	CheckPermissions(context.Context, []PermissionProvider) error
 }
 
-// IPermissionRequired provides common interface for all the permission types for easy resolution
-type IPermissionRequired interface {
+// PermissionProvider provides common interface for all the permission types for easy resolution
+type PermissionProvider interface {
 	GetPermissionKey() string
 	GetPermissionType() PermissionType
 	GetPermissionActorType() db_actions.GlobalAssignableActorType
