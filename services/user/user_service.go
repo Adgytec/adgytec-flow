@@ -10,6 +10,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/pagination"
 	"github.com/google/uuid"
 )
 
@@ -32,7 +33,7 @@ type userService struct {
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
 	getUserCache     cache.Cache[models.GlobalUser]
-	getUserListCache cache.Cache[core.ResponsePagination[models.GlobalUser]]
+	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
 
 func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.GlobalUser {
@@ -93,6 +94,6 @@ func newUserService(params userServiceParams) *userService {
 		iam:              params.IAMService(),
 		cdn:              params.CDN(),
 		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
-		getUserListCache: cache.NewCache[core.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[core.ResponsePagination[models.GlobalUser]](), "user-list"),
+		getUserListCache: cache.NewCache[pagination.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}
 }
