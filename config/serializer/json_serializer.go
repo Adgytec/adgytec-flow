@@ -2,8 +2,6 @@ package serializer
 
 import (
 	"encoding/json"
-
-	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 // used for primitive types
@@ -19,6 +17,6 @@ func (j *jsonSerializer[T]) Decode(data []byte) (T, error) {
 	return value, decodingErr
 }
 
-func NewJSONSerializer[T any]() core.Serializer[T] {
+func NewJSONSerializer[T any]() Serializer[T] {
 	return &jsonSerializer[T]{}
 }

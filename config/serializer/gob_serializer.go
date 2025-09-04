@@ -3,8 +3,6 @@ package serializer
 import (
 	"bytes"
 	"encoding/gob"
-
-	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 // used for custom struct and large payloads of data
@@ -32,6 +30,6 @@ func (g *gobSerializer[T]) Decode(data []byte) (T, error) {
 }
 
 // NewGobSerializer should only be used for custom struct type
-func NewGobSerializer[T any]() core.Serializer[T] {
+func NewGobSerializer[T any]() Serializer[T] {
 	return &gobSerializer[T]{}
 }
