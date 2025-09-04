@@ -8,18 +8,18 @@ import (
 	"github.com/google/uuid"
 )
 
-type PC interface {
+type UserServicePC interface {
 	NewUser(ctx context.Context, email string) (uuid.UUID, error)
 	GetUserStatus(ctx context.Context, userID uuid.UUID) (db.GlobalUserStatus, error)
 }
 
-type pc struct {
+type userServicePC struct {
 	service *userService
 }
 
-func NewPC(params userServiceParams) PC {
+func NewUserServicePC(params userServiceParams) UserServicePC {
 	log.Println("creating user-service PC")
-	return &pc{
+	return &userServicePC{
 		service: newUserService(params),
 	}
 }

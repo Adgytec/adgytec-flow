@@ -8,16 +8,16 @@ import (
 )
 
 type internalServices struct {
-	iam         iam.PC
-	userService user.PC
+	iam         iam.IAMServicePC
+	userService user.UserServicePC
 	middleware  core.MiddlewarePC
 }
 
-func (s *internalServices) Iam() iam.PC {
+func (s *internalServices) Iam() iam.IAMServicePC {
 	return s.iam
 }
 
-func (s *internalServices) UserService() user.PC {
+func (s *internalServices) UserService() user.UserServicePC {
 	return s.userService
 }
 
@@ -33,8 +33,8 @@ func newInternalService(externalService appExternalServices) appInternalServices
 	}
 
 	// Initialize internal services. The order of initialization is important.
-	internalService.iam = iam.NewPC(externalService)
-	internalService.userService = user.NewPC(appInstance)
+	internalService.iam = iam.NewIAMServicePC(externalService)
+	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
 
 	return &internalService

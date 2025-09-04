@@ -13,7 +13,7 @@ import (
 type userServiceParams interface {
 	Database() core.Database
 	Auth() core.Auth
-	Iam() iam.PC
+	Iam() iam.IAMServicePC
 	CDN() core.CDN
 	CacheClient() core.CacheClient
 }
@@ -26,7 +26,7 @@ type userServiceMuxParams interface {
 type userService struct {
 	db               core.Database
 	auth             core.Auth
-	iam              iam.PC
+	iam              iam.IAMServicePC
 	cdn              core.CDN
 	getUserCache     core.Cache[models.GlobalUser]
 	getUserListCache core.Cache[core.ResponsePagination[models.GlobalUser]]

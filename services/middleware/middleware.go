@@ -7,12 +7,12 @@ import (
 
 type appMiddlewareParams interface {
 	Auth() core.Auth
-	UserService() user.PC
+	UserService() user.UserServicePC
 }
 
 type appMiddleware struct {
 	auth        core.Auth
-	userService user.PC
+	userService user.UserServicePC
 }
 
 func newAppMiddleware(params appMiddlewareParams) *appMiddleware {

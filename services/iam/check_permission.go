@@ -7,13 +7,13 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-func (pc *pc) CheckPermission(ctx context.Context, permissionRequired PermissionProvider) error {
+func (pc *iamServicePC) CheckPermission(ctx context.Context, permissionRequired PermissionProvider) error {
 	return pc.CheckPermissions(ctx, []PermissionProvider{permissionRequired})
 }
 
 // CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
 // If the permissionsRequired slice is empty, it returns an error.
-func (pc *pc) CheckPermissions(ctx context.Context, permissionsRequired []PermissionProvider) error {
+func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequired []PermissionProvider) error {
 	if len(permissionsRequired) == 0 {
 		return &PermissionResolutionFailedError{
 			Cause: ErrMissingPermissionsToCheck,

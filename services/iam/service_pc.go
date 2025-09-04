@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-type PC interface {
+type IAMServicePC interface {
 	// CheckPermission checks a single permission and returns nil if it is granted.
 	CheckPermission(context.Context, PermissionProvider) error
 
@@ -13,13 +13,13 @@ type PC interface {
 	CheckPermissions(context.Context, []PermissionProvider) error
 }
 
-type pc struct {
+type iamServicePC struct {
 	service *iam
 }
 
-func NewPC(params iamParams) PC {
+func NewIAMServicePC(params iamParams) IAMServicePC {
 	log.Println("creating access-management PC")
-	return &pc{
+	return &iamServicePC{
 		service: newIAMService(params),
 	}
 }
