@@ -22,7 +22,7 @@ func (m *iamServiceMux) Router() *chi.Mux {
 }
 
 func NewIAMMux(params iamServiceMuxParams) core.ServiceMux {
-	log.Println("adding iam-service mux")
+	log.Printf("adding %s-service mux", serviceName)
 	return &iamServiceMux{
 		service:    newIAMService(params),
 		middleware: params.Middleware(),

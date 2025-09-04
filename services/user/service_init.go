@@ -28,12 +28,12 @@ func (i *userServiceInit) InitService() error {
 }
 
 func (i *userServiceInit) initServiceDetails() error {
-	log.Println("adding user service details")
+	log.Printf("adding %s-service details", serviceName)
 	return i.db.Queries().AddService(context.TODO(), i.serviceDetails)
 }
 
 func (i *userServiceInit) initServiceManagementPermissions() error {
-	log.Println("adding user service management permissions")
+	log.Printf("adding %s-service management permissions", serviceName)
 	for _, perm := range i.managementPermissions {
 		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {

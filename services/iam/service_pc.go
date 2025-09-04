@@ -18,7 +18,7 @@ type iamServicePC struct {
 }
 
 func NewIAMServicePC(params iamServiceParams) IAMServicePC {
-	log.Println("creating iam-service PC")
+	log.Printf("creating %s-service PC", serviceName)
 	return &iamServicePC{
 		service: newIAMService(params),
 	}

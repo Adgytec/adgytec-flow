@@ -18,7 +18,7 @@ type userServicePC struct {
 }
 
 func NewUserServicePC(params userServiceParams) UserServicePC {
-	log.Println("creating user-service PC")
+	log.Printf("creating %s-service PC", serviceName)
 	return &userServicePC{
 		service: newUserService(params),
 	}

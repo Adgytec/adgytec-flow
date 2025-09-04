@@ -33,12 +33,12 @@ func (i *iamServiceInit) InitService() error {
 }
 
 func (i *iamServiceInit) initServiceDetails() error {
-	log.Println("adding iam-service details")
+	log.Printf("adding %s-service details", serviceName)
 	return i.db.Queries().AddService(context.TODO(), i.serviceDetails)
 }
 
 func (i *iamServiceInit) initServiceManagementPermissions() error {
-	log.Println("adding iam-service management permissions")
+	log.Printf("adding %s-service management permissions", serviceName)
 
 	for _, perm := range i.managementPermissions {
 		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
@@ -50,7 +50,7 @@ func (i *iamServiceInit) initServiceManagementPermissions() error {
 }
 
 func (i *iamServiceInit) initServiceApplicationPermissions() error {
-	log.Println("adding iam-service application permissions.")
+	log.Printf("adding %s-service application permissions", serviceName)
 	for _, perm := range i.applicationPermissions {
 		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddApplicationPermission(context.TODO(), perm); err != nil {
