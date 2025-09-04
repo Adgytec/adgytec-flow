@@ -1,17 +1,17 @@
 package app_middleware
 
 import (
+	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/services/user"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type appMiddlewareParams interface {
-	Auth() core.Auth
+	Auth() auth.Auth
 	UserService() user.UserServicePC
 }
 
 type appMiddleware struct {
-	auth        core.Auth
+	auth        auth.Auth
 	userService user.UserServicePC
 }
 

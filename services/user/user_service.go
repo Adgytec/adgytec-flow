@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/config/serializer"
@@ -13,7 +14,7 @@ import (
 
 type userServiceParams interface {
 	Database() core.Database
-	Auth() core.Auth
+	Auth() auth.Auth
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
 	CacheClient() core.CacheClient
@@ -26,7 +27,7 @@ type userServiceMuxParams interface {
 
 type userService struct {
 	db               core.Database
-	auth             core.Auth
+	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
 	getUserCache     core.Cache[models.GlobalUser]

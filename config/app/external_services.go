@@ -12,7 +12,7 @@ import (
 )
 
 type externalServices struct {
-	auth          core.Auth
+	auth          auth.Auth
 	database      core.DatabaseWithShutdown
 	communication core.Communication
 	storage       core.Storage
@@ -20,7 +20,7 @@ type externalServices struct {
 	cacheClient   core.CacheClient
 }
 
-func (s *externalServices) Auth() core.Auth {
+func (s *externalServices) Auth() auth.Auth {
 	return s.auth
 }
 

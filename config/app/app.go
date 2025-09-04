@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
@@ -8,7 +9,7 @@ import (
 )
 
 type appExternalServices interface {
-	Auth() core.Auth
+	Auth() auth.Auth
 	Database() core.Database
 	Communication() core.Communication
 	Storage() core.Storage
