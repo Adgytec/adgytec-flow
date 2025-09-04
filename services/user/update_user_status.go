@@ -7,8 +7,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -21,11 +20,11 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		requiredPermission = disableUserPermission
 	}
 
-	permissionErr := s.accessManagement.CheckPermission(
+	permissionErr := s.iam.CheckPermission(
 		ctx,
-		helpers.NewPermissionRequiredFromManagementPermission(
+		iam.NewPermissionRequiredFromManagementPermission(
 			requiredPermission,
-			core.PermissionRequiredResources{},
+			iam.PermissionRequiredResources{},
 		),
 	)
 	if permissionErr != nil {

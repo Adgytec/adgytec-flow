@@ -5,6 +5,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
 )
@@ -12,7 +13,7 @@ import (
 type userServiceParams interface {
 	Database() core.Database
 	Auth() core.Auth
-	AccessManagement() core.AccessManagementPC
+	Iam() iam.PC
 	CDN() core.CDN
 	CacheClient() core.CacheClient
 }
@@ -25,7 +26,7 @@ type muxParams interface {
 type userService struct {
 	db               core.Database
 	auth             core.Auth
-	accessManagement core.AccessManagementPC
+	iam              iam.PC
 	cdn              core.CDN
 	getUserCache     core.Cache[models.GlobalUser]
 	getUserListCache core.Cache[core.ResponsePagination[models.GlobalUser]]
@@ -86,7 +87,7 @@ func newService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
-		accessManagement: params.AccessManagement(),
+		iam:              params.Iam(),
 		cdn:              params.CDN(),
 		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
 		getUserListCache: cache.NewCache[core.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[core.ResponsePagination[models.GlobalUser]](), "user-list"),
