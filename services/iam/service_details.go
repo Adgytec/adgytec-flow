@@ -7,7 +7,7 @@ import (
 
 var serviceName = "iam"
 
-var accessManagementDetails = db.AddServiceParams{
+var iamServiceDetails = db.AddServiceParams{
 	ID:               helpers.GetIDFromPayload([]byte(serviceName)),
 	Name:             serviceName,
 	Assignable:       false,

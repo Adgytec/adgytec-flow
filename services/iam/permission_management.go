@@ -14,8 +14,8 @@ var managementPermissions = []db.AddManagementPermissionParams{
 }
 
 var assignManagementPermission = db.AddManagementPermissionParams{
-	Key:       fmt.Sprintf("%s:assign:management-permission", accessManagementDetails.Name),
-	ServiceID: accessManagementDetails.ID,
+	Key:       fmt.Sprintf("%s:assign:management-permission", iamServiceDetails.Name),
+	ServiceID: iamServiceDetails.ID,
 	Name:      "Assign Permission",
 	Description: pointer.New(`
 ### Assign Permission
@@ -28,8 +28,8 @@ Grants the ability to assign permissions to any user or group.`),
 }
 
 var removeManagementPermission = db.AddManagementPermissionParams{
-	Key:       fmt.Sprintf("%s:remove:management-permission", accessManagementDetails.Name),
-	ServiceID: accessManagementDetails.ID,
+	Key:       fmt.Sprintf("%s:remove:management-permission", iamServiceDetails.Name),
+	ServiceID: iamServiceDetails.ID,
 	Name:      "Remove Permission",
 	Description: pointer.New(`
 ### Remove Permission
@@ -42,8 +42,8 @@ Grants the ability to remove permissions from any user or group.`),
 }
 
 var listManagementPermission = db.AddManagementPermissionParams{
-	Key:       fmt.Sprintf("%s:list:management-permission", accessManagementDetails.Name),
-	ServiceID: accessManagementDetails.ID,
+	Key:       fmt.Sprintf("%s:list:management-permission", iamServiceDetails.Name),
+	ServiceID: iamServiceDetails.ID,
 	Name:      "List Permission",
 	Description: pointer.New(`
 ### List Permission

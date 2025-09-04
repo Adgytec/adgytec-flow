@@ -60,14 +60,14 @@ func (i *iamServiceInit) initServiceApplicationPermissions() error {
 	return nil
 }
 
-type accessManagementInitParams interface {
+type iamInitParams interface {
 	Database() core.Database
 }
 
-func InitAccessManagement(params accessManagementInitParams) core.ServiceInit {
+func InitAccessManagement(params iamInitParams) core.ServiceInit {
 	return &iamServiceInit{
 		db:                     params.Database(),
-		serviceDetails:         accessManagementDetails,
+		serviceDetails:         iamServiceDetails,
 		managementPermissions:  managementPermissions,
 		applicationPermissions: applicationPermissions,
 	}
