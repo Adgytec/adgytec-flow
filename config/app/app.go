@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -11,7 +12,7 @@ type appExternalServices interface {
 	Database() core.Database
 	Communication() core.Communication
 	Storage() core.Storage
-	CDN() core.CDN
+	CDN() cdn.CDN
 	Shutdown()
 	CacheClient() core.CacheClient
 }
