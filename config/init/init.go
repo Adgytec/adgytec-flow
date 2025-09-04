@@ -13,7 +13,7 @@ type serviceFactory func(params app.App) core.ServiceInit
 
 var services = []serviceFactory{
 	func(appConfig app.App) core.ServiceInit {
-		return iam.InitAccessManagement(appConfig)
+		return iam.InitIAMService(appConfig)
 	},
 	func(appConfig app.App) core.ServiceInit {
 		return user.InitUserService(appConfig)

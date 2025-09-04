@@ -13,7 +13,7 @@ type iamServiceMux struct {
 }
 
 func (m *iamServiceMux) BasePath() string {
-	return "/access-management"
+	return "/iam"
 }
 
 func (m *iamServiceMux) Router() *chi.Mux {
@@ -22,7 +22,7 @@ func (m *iamServiceMux) Router() *chi.Mux {
 }
 
 func NewIAMMux(params iamServiceMuxParams) core.ServiceMux {
-	log.Println("adding access-managment mux")
+	log.Println("adding iam mux")
 	return &iamServiceMux{
 		service:    newIAMService(params),
 		middleware: params.Middleware(),
