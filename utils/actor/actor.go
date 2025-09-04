@@ -7,9 +7,11 @@ import (
 	"github.com/google/uuid"
 )
 
+type ActorKey string
+
 const (
-	ActorTypeKey = "actor-type"
-	ActorIDKey   = "actor-id"
+	ActorKeyType ActorKey = "actor-type"
+	ActorKeyID   ActorKey = "actor-id"
 )
 
 type ActorDetails struct {
@@ -22,12 +24,12 @@ func GetActorDetailsFromContext(ctx context.Context) (ActorDetails, error) {
 
 	// empty actor id and actor type are also considered errors
 	// and is part of ErrInvalidActorDetails
-	actorID, actorIDOk := ctx.Value(ActorIDKey).(string)
+	actorID, actorIDOk := ctx.Value(ActorKeyID).(string)
 	if !actorIDOk {
 		return zero, ErrInvalidActorID
 	}
 
-	actorType, actorTypeOk := ctx.Value(ActorTypeKey).(string)
+	actorType, actorTypeOk := ctx.Value(ActorKeyType).(string)
 	if !actorTypeOk {
 		return zero, ErrInvalidActorType
 	}
