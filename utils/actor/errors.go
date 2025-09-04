@@ -1,4 +1,4 @@
-package app_errors
+package actor
 
 import "errors"
 

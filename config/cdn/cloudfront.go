@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/aws/aws-sdk-go-v2/feature/cloudfront/sign"
 )
 
@@ -18,7 +17,7 @@ func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
 	return nil
 }
 
-func NewCloudfrontCDNSigner() core.CDN {
+func NewCloudfrontCDNSigner() CDN {
 	log.Println("creating cloudfront url signer")
 
 	keyPairID := os.Getenv("CLOUDFRONT_KEY_PAIR_ID")

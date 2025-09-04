@@ -3,7 +3,7 @@ package iam
 import (
 	"context"
 
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 func (s *iamService) resolveManagementPermission(
@@ -11,5 +11,5 @@ func (s *iamService) resolveManagementPermission(
 	permissionEntity permissionEntity,
 	permissionRequired PermissionProvider,
 ) error {
-	return app_errors.ErrNotImplemented
+	return core.ErrNotImplemented
 }

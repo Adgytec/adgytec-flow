@@ -1,4 +1,4 @@
-package core
+package auth
 
 import "github.com/google/uuid"
 
@@ -12,3 +12,10 @@ type Auth interface {
 	// further validation like if this api key actually exists is done later on
 	ValidateAPIKey(string) (uuid.UUID, error)
 }
+
+// used in auth errors
+type authActionType string
+
+const (
+	authActionTypeCreate authActionType = "auth-user-create"
+)

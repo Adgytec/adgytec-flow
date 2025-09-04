@@ -8,35 +8,34 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/communication"
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type externalServices struct {
-	auth          core.Auth
-	database      core.DatabaseWithShutdown
-	communication core.Communication
-	storage       core.Storage
-	cdn           core.CDN
-	cacheClient   core.CacheClient
+	auth          auth.Auth
+	database      database.DatabaseWithShutdown
+	communication communication.Communication
+	storage       storage.Storage
+	cdn           cdn.CDN
+	cacheClient   cache.CacheClient
 }
 
-func (s *externalServices) Auth() core.Auth {
+func (s *externalServices) Auth() auth.Auth {
 	return s.auth
 }
 
-func (s *externalServices) Database() core.Database {
+func (s *externalServices) Database() database.Database {
 	return s.database
 }
 
-func (s *externalServices) Communication() core.Communication {
+func (s *externalServices) Communication() communication.Communication {
 	return s.communication
 }
 
-func (s *externalServices) Storage() core.Storage {
+func (s *externalServices) Storage() storage.Storage {
 	return s.storage
 }
 
-func (s *externalServices) CDN() core.CDN {
+func (s *externalServices) CDN() cdn.CDN {
 	return s.cdn
 }
 
@@ -44,7 +43,7 @@ func (s *externalServices) Shutdown() {
 	s.database.Shutdown()
 }
 
-func (s *externalServices) CacheClient() core.CacheClient {
+func (s *externalServices) CacheClient() cache.CacheClient {
 	return s.cacheClient
 }
 

@@ -4,13 +4,14 @@ import (
 	"context"
 	"log"
 
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 )
 
 type userServiceInit struct {
-	db                    core.Database
+	db                    database.Database
 	serviceDetails        db.AddServiceParams
 	managementPermissions []db.AddManagementPermissionParams
 }
@@ -35,7 +36,7 @@ func (i *userServiceInit) initServiceDetails() error {
 func (i *userServiceInit) initServiceManagementPermissions() error {
 	log.Printf("adding %s-service management permissions", serviceName)
 	for _, perm := range i.managementPermissions {
-		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
+		perm.ID = core.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {
 			return err
 		}
@@ -44,10 +45,10 @@ func (i *userServiceInit) initServiceManagementPermissions() error {
 }
 
 type userServiceInitParams interface {
-	Database() core.Database
+	Database() database.Database
 }
 
-func InitUserService(params userServiceInitParams) core.ServiceInit {
+func InitUserService(params userServiceInitParams) services.Init {
 	return &userServiceInit{
 		db:                    params.Database(),
 		serviceDetails:        userServiceDetails,

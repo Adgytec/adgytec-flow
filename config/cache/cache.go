@@ -4,16 +4,26 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"golang.org/x/sync/singleflight"
 )
 
+type Cache[T any] interface {
+	Get(string, func() (T, error)) (T, error)
+	Delete(string)
+}
+
+type CacheClient interface {
+	Get(string) ([]byte, bool)
+	Set(string, []byte)
+	Delete(string)
+}
+
 type implCache[T any] struct {
-	cacheClient core.CacheClient
+	cacheClient CacheClient
 	namespace   string
 	group       singleflight.Group
-	serializer  core.Serializer[T]
+	serializer  serializer.Serializer[T]
 }
 
 func (c *implCache[T]) key(id string) string {
@@ -48,7 +58,7 @@ func (c *implCache[T]) Get(
 
 	val, typeOK := persistentData.(T)
 	if !typeOK {
-		return zero, app_errors.ErrTypeCastingCacheValueFailed
+		return zero, ErrTypeCastingCacheValueFailed
 	}
 
 	c.set(id, val)
@@ -69,7 +79,7 @@ func (c *implCache[T]) Delete(id string) {
 	c.cacheClient.Delete(c.key(id))
 }
 
-func NewCache[T any](cacheClient core.CacheClient, serializer core.Serializer[T], namespace string) core.Cache[T] {
+func NewCache[T any](cacheClient CacheClient, serializer serializer.Serializer[T], namespace string) Cache[T] {
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,

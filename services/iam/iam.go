@@ -2,13 +2,14 @@ package iam
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type iamServiceParams interface {
-	Database() core.Database
-	CacheClient() core.CacheClient
+	Database() database.Database
+	CacheClient() cache.CacheClient
 }
 
 type iamServiceMuxParams interface {
@@ -17,8 +18,8 @@ type iamServiceMuxParams interface {
 }
 
 type iamService struct {
-	db              core.Database
-	permissionCache core.Cache[bool]
+	db              database.Database
+	permissionCache cache.Cache[bool]
 }
 
 func newIAMService(params iamServiceParams) *iamService {

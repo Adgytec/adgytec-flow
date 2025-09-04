@@ -1,4 +1,10 @@
-package core
+package pagination
+
+import "time"
+
+type PaginationItem interface {
+	GetCreatedAt() time.Time
+}
 
 type PageInfo struct {
 	HasNextPage bool   `json:"hasNextPage"`

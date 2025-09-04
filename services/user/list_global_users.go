@@ -6,15 +6,14 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/pagination"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 )
 
 func (s *userService) getGlobalUsers(
 	ctx context.Context,
-	params core.PaginationRequestParams,
-) (*core.ResponsePagination[models.GlobalUser], error) {
+	params pagination.PaginationRequestParams,
+) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	permissionErr := s.iam.CheckPermission(
 		ctx,
 		iam.NewPermissionRequiredFromManagementPermission(
@@ -41,7 +40,7 @@ func (s *userService) getGlobalUsers(
 func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
-	paginationParams := helpers.GetPaginationParamsFromRequest(r)
+	paginationParams := pagination.GetPaginationParamsFromRequest(r)
 	userList, userErr := m.service.getGlobalUsers(reqCtx, paginationParams)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)

@@ -6,16 +6,14 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/pagination"
 )
 
-func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
+func (s *userService) getGlobalUsersByQuery(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	userList, userErr := s.db.Queries().GetGlobalUsersByQuery(
 		ctx,
 		db.GetGlobalUsersByQueryParams{
-			Limit: helpers.SearchQueryLimit,
+			Limit: pagination.SearchQueryLimit,
 			Query: params.SearchQuery,
 		},
 	)
@@ -27,21 +25,21 @@ func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.Pag
 	userModels := s.getUserResponseModels(userList)
 
 	// handle ordering default is latest first
-	if params.Sorting == core.PaginationRequestSortingOldestFirst {
+	if params.Sorting == pagination.PaginationRequestSortingOldestFirst {
 		slices.Reverse(userModels)
 	}
 
-	return helpers.NewPaginationResponse(userModels, nil, nil), nil
+	return pagination.NewPaginationResponse(userModels, nil, nil), nil
 }
 
-func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
+func (s *userService) getGlobalUsersInitial(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	var userList []db.GlobalUserDetail
 	var userErr error
 
-	if params.Sorting == core.PaginationRequestSortingLatestFirst {
-		userList, userErr = s.db.Queries().GetGlobalUsersLatestFirst(ctx, helpers.PaginationLimit+1)
+	if params.Sorting == pagination.PaginationRequestSortingLatestFirst {
+		userList, userErr = s.db.Queries().GetGlobalUsersLatestFirst(ctx, pagination.PaginationLimit+1)
 	} else {
-		userList, userErr = s.db.Queries().GetGlobalUsersOldestFirst(ctx, helpers.PaginationLimit+1)
+		userList, userErr = s.db.Queries().GetGlobalUsersOldestFirst(ctx, pagination.PaginationLimit+1)
 	}
 
 	if userErr != nil {
@@ -52,27 +50,27 @@ func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.Pag
 	var next *models.GlobalUser
 
 	// handle next page details
-	if len(userList) == helpers.PaginationLimit+1 {
+	if len(userList) == pagination.PaginationLimit+1 {
 		userLen := len(userModels)
 		next = &userModels[userLen-2]
 		userModels = userModels[:userLen-1]
 	}
 
-	return helpers.NewPaginationResponse(userModels, next, nil), nil
+	return pagination.NewPaginationResponse(userModels, next, nil), nil
 }
 
-func (s *userService) getGlobalUsersNextPage(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	if params.Sorting == core.PaginationRequestSortingLatestFirst {
+func (s *userService) getGlobalUsersNextPage(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
+	if params.Sorting == pagination.PaginationRequestSortingLatestFirst {
 		return s.getGlobalUsersNextPageLatestFirst(ctx, params)
 	}
 
 	return s.getGlobalUsersNextPageOldestFirst(ctx, params)
 }
 
-func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	nextCursorVal := helpers.DecodeCursorValue(params.NextCursor)
+func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
+	nextCursorVal := pagination.DecodeCursorValue(params.NextCursor)
 	if nextCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.NextCursor,
 		}
 	}
@@ -80,7 +78,7 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 	userList, userErr := s.db.Queries().GetGlobalUsersLatestFirstLesserThanCursor(
 		ctx,
 		db.GetGlobalUsersLatestFirstLesserThanCursorParams{
-			Limit:  helpers.PaginationLimit + 1,
+			Limit:  pagination.PaginationLimit + 1,
 			Cursor: *nextCursorVal,
 		},
 	)
@@ -94,8 +92,8 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 	var prev *models.GlobalUser
 
 	// handle next page details
-	if len(userModels) > helpers.PaginationLimit {
-		userModels = userModels[:helpers.PaginationLimit]
+	if len(userModels) > pagination.PaginationLimit {
+		userModels = userModels[:pagination.PaginationLimit]
 		next = &userModels[len(userModels)-1]
 	}
 
@@ -116,13 +114,13 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 
 	}
 
-	return helpers.NewPaginationResponse(userModels, next, prev), nil
+	return pagination.NewPaginationResponse(userModels, next, prev), nil
 }
 
-func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	nextCursorVal := helpers.DecodeCursorValue(params.NextCursor)
+func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
+	nextCursorVal := pagination.DecodeCursorValue(params.NextCursor)
 	if nextCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.NextCursor,
 		}
 	}
@@ -130,7 +128,7 @@ func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, par
 	userList, userErr := s.db.Queries().GetGlobalUsersOldestFirstGreaterThanCursor(
 		ctx,
 		db.GetGlobalUsersOldestFirstGreaterThanCursorParams{
-			Limit:  helpers.PaginationLimit + 1,
+			Limit:  pagination.PaginationLimit + 1,
 			Cursor: *nextCursorVal,
 		},
 	)
@@ -144,8 +142,8 @@ func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, par
 	var prev *models.GlobalUser
 
 	// handle next page details
-	if len(userModels) > helpers.PaginationLimit {
-		userModels = userModels[:helpers.PaginationLimit]
+	if len(userModels) > pagination.PaginationLimit {
+		userModels = userModels[:pagination.PaginationLimit]
 		next = &userModels[len(userModels)-1]
 	}
 
@@ -166,11 +164,11 @@ func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, par
 
 	}
 
-	return helpers.NewPaginationResponse(userModels, next, prev), nil
+	return pagination.NewPaginationResponse(userModels, next, prev), nil
 }
 
-func (s *userService) getGlobalUsersPrevPage(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	if params.Sorting == core.PaginationRequestSortingLatestFirst {
+func (s *userService) getGlobalUsersPrevPage(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
+	if params.Sorting == pagination.PaginationRequestSortingLatestFirst {
 		return s.getGlobalUsersPrevPageLatestFirst(ctx, params)
 	}
 
@@ -178,10 +176,10 @@ func (s *userService) getGlobalUsersPrevPage(ctx context.Context, params core.Pa
 
 }
 
-func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	prevCursorVal := helpers.DecodeCursorValue(params.PrevCursor)
+func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
+	prevCursorVal := pagination.DecodeCursorValue(params.PrevCursor)
 	if prevCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.PrevCursor,
 		}
 	}
@@ -189,7 +187,7 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 	userList, userErr := s.db.Queries().GetGlobalUsersLatestFirstGreaterThanCursor(
 		ctx,
 		db.GetGlobalUsersLatestFirstGreaterThanCursorParams{
-			Limit:  helpers.PaginationLimit + 1,
+			Limit:  pagination.PaginationLimit + 1,
 			Cursor: *prevCursorVal,
 		},
 	)
@@ -202,7 +200,7 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 	var prev *models.GlobalUser
 
 	// handle prev page
-	if len(userModels) > helpers.PaginationLimit {
+	if len(userModels) > pagination.PaginationLimit {
 		userModels = userModels[1:]
 		prev = &userModels[0]
 	}
@@ -223,13 +221,13 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 		}
 	}
 
-	return helpers.NewPaginationResponse(userModels, next, prev), nil
+	return pagination.NewPaginationResponse(userModels, next, prev), nil
 }
 
-func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	prevCursorVal := helpers.DecodeCursorValue(params.PrevCursor)
+func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
+	prevCursorVal := pagination.DecodeCursorValue(params.PrevCursor)
 	if prevCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.PrevCursor,
 		}
 	}
@@ -237,7 +235,7 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 	userList, userErr := s.db.Queries().GetGlobalUsersOldestFirstLesserThanCursor(
 		ctx,
 		db.GetGlobalUsersOldestFirstLesserThanCursorParams{
-			Limit:  helpers.PaginationLimit + 1,
+			Limit:  pagination.PaginationLimit + 1,
 			Cursor: *prevCursorVal,
 		},
 	)
@@ -250,7 +248,7 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 	var prev *models.GlobalUser
 
 	// handle prev page
-	if len(userModels) > helpers.PaginationLimit {
+	if len(userModels) > pagination.PaginationLimit {
 		userModels = userModels[1:]
 		prev = &userModels[0]
 	}
@@ -271,5 +269,5 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 		}
 	}
 
-	return helpers.NewPaginationResponse(userModels, next, prev), nil
+	return pagination.NewPaginationResponse(userModels, next, prev), nil
 }

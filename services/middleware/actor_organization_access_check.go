@@ -3,7 +3,7 @@ package app_middleware
 import (
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/google/uuid"
 )
 
@@ -13,6 +13,6 @@ func (pc *appMiddlewarePC) ActorOrganizationAccessCheck(next http.Handler) http.
 	})
 }
 
-func (s *appMiddleware) actorOrganizationAccessCheck(actor core.ActorDetails, orgID uuid.UUID) error {
+func (s *appMiddleware) actorOrganizationAccessCheck(currentActor actor.ActorDetails, orgID uuid.UUID) error {
 	return nil
 }

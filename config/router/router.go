@@ -8,28 +8,29 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
-type serviceFactory func(params app.App) core.ServiceMux
+type serviceFactory func(params app.App) services.Mux
 
-var services = []serviceFactory{
-	func(appConfig app.App) core.ServiceMux {
+var appServices = []serviceFactory{
+	func(appConfig app.App) services.Mux {
 		return iam.NewIAMMux(appConfig)
 	},
-	func(appConfig app.App) core.ServiceMux {
+	func(appConfig app.App) services.Mux {
 		return user.NewUserServiceMux(appConfig)
 	},
 }
 
 func handle400(mux *chi.Mux) {
 	mux.NotFound(func(w http.ResponseWriter, _ *http.Request) {
-		payload.EncodeJSON(w, http.StatusNotFound, core.ResponseHTTPError{
+		payload.EncodeJSON(w, http.StatusNotFound, apires.ErrorDetails{
 			Message: pointer.New(
 				http.StatusText(http.StatusNotFound),
 			),
@@ -37,7 +38,7 @@ func handle400(mux *chi.Mux) {
 	})
 
 	mux.MethodNotAllowed(func(w http.ResponseWriter, _ *http.Request) {
-		payload.EncodeJSON(w, http.StatusMethodNotAllowed, core.ResponseHTTPError{
+		payload.EncodeJSON(w, http.StatusMethodNotAllowed, apires.ErrorDetails{
 			Message: pointer.New(
 				http.StatusText(http.StatusMethodNotAllowed),
 			),
@@ -77,7 +78,7 @@ func NewApplicationRouter(appConfig app.App) *chi.Mux {
 
 	mux.Use(appConfig.Middleware().ValidateAndGetActorDetailsFromHttpRequest)
 	mux.Use(appConfig.Middleware().ValidateActorTypeUserGlobalStatus)
-	for _, factory := range services {
+	for _, factory := range appServices {
 		serviceMux := factory(appConfig)
 		mux.Mount(serviceMux.BasePath(), serviceMux.Router())
 	}

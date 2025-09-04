@@ -1,10 +1,10 @@
-package app_errors
+package app_middleware
 
 import (
 	"errors"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
@@ -24,8 +24,8 @@ func (e *UserStatusBadError) Is(target error) bool {
 	return target == ErrUserStatusBad
 }
 
-func (e *UserStatusBadError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *UserStatusBadError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusUnauthorized,
 		Message:        pointer.New(http.StatusText(http.StatusUnauthorized)),
 	}
@@ -42,8 +42,8 @@ func (e *OrganizationStatusBadError) Is(target error) bool {
 	return target == ErrOrganizationStatusBad
 }
 
-func (e *OrganizationStatusBadError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *OrganizationStatusBadError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusForbidden,
 		Message:        pointer.New("Action forbidden due to organization status."),
 	}
@@ -59,8 +59,8 @@ func (e *NoAccessError) Is(target error) bool {
 	return target == ErrNoAccess
 }
 
-func (e *NoAccessError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *NoAccessError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusForbidden,
 		Message:        pointer.New(http.StatusText(http.StatusForbidden)),
 	}

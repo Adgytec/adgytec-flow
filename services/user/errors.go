@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
@@ -26,8 +26,8 @@ func (e *InvalidUserIDError) Is(target error) bool {
 	return target == ErrInvalidUserId
 }
 
-func (e *InvalidUserIDError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *InvalidUserIDError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
@@ -43,8 +43,8 @@ func (e *UserNotFoundError) Is(target error) bool {
 	return target == ErrUserNotFound
 }
 
-func (e *UserNotFoundError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *UserNotFoundError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusNotFound,
 		Message:        pointer.New(e.Error()),
 	}

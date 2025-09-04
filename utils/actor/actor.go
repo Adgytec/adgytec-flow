@@ -1,40 +1,38 @@
-package helpers
+package actor
 
 import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/google/uuid"
 )
 
-func GetActorDetailsFromContext(ctx context.Context) (core.ActorDetails, error) {
-	var zero core.ActorDetails
+func GetActorDetailsFromContext(ctx context.Context) (ActorDetails, error) {
+	var zero ActorDetails
 
 	// empty actor id and actor type are also considered errors
 	// and is part of ErrInvalidActorDetails
-	actorID, actorIDOk := GetContextValue(ctx, ActorIDKey)
+	actorID, actorIDOk := ctx.Value(ActorKeyID).(string)
 	if !actorIDOk {
-		return zero, app_errors.ErrInvalidActorID
+		return zero, ErrInvalidActorID
 	}
 
-	actorType, actorTypeOk := GetContextValue(ctx, ActorTypeKey)
+	actorType, actorTypeOk := ctx.Value(ActorKeyType).(string)
 	if !actorTypeOk {
-		return zero, app_errors.ErrInvalidActorType
+		return zero, ErrInvalidActorType
 	}
 
 	actorUUID, actorUUIDErr := uuid.Parse(actorID)
 	if actorUUIDErr != nil {
-		return zero, app_errors.ErrInvalidActorID
+		return zero, ErrInvalidActorID
 	}
 
 	actorTypeValue := db.GlobalActorType(actorType)
 	if !actorTypeValue.Valid() {
-		return zero, app_errors.ErrInvalidActorType
+		return zero, ErrInvalidActorType
 	}
 
-	return core.ActorDetails{
+	return ActorDetails{
 		ID:   actorUUID,
 		Type: actorTypeValue,
 	}, nil

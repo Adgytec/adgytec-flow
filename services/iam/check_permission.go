@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 )
 
 func (pc *iamServicePC) CheckPermission(ctx context.Context, permissionRequired PermissionProvider) error {
@@ -20,7 +20,7 @@ func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequire
 		}
 	}
 
-	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
+	actorDetails, actorDetailsErr := actor.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		return actorDetailsErr
 	}
