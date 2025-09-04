@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -73,7 +73,7 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 
 	// actor should be present in all the scenarios
 	// sign up is created by using auth admin api so also require actor in that case too
-	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
+	actorDetails, actorDetailsErr := actor.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		tx.Rollback(context.Background())
 		return nil, actorDetailsErr

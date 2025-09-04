@@ -7,7 +7,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
@@ -70,7 +70,7 @@ func (m *userServiceMux) getUserProfileUtil(ctx context.Context, w http.Response
 func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
-	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
+	userID, userIDErr := actor.GetActorIdFromContext(reqCtx)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return

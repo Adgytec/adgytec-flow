@@ -3,7 +3,7 @@ package app_middleware
 import (
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 )
 
 func (pc *appMiddlewarePC) ValidateAndGetActorDetailsFromHttpRequest(next http.Handler) http.Handler {
@@ -12,6 +12,6 @@ func (pc *appMiddlewarePC) ValidateAndGetActorDetailsFromHttpRequest(next http.H
 	})
 }
 
-func (s *appMiddleware) validateAndGetActorDetails(r *http.Request) (core.ActorDetails, error) {
-	return core.ActorDetails{}, nil
+func (s *appMiddleware) validateAndGetActorDetails(r *http.Request) (actor.ActorDetails, error) {
+	return actor.ActorDetails{}, nil
 }
