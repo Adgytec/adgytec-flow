@@ -57,7 +57,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 	return &userModel, nil
 }
 
-func (m *mux) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, userID uuid.UUID) {
+func (m *userServiceMux) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, userID uuid.UUID) {
 	user, userErr := m.service.getUserProfile(ctx, userID)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
@@ -67,7 +67,7 @@ func (m *mux) getUserProfileUtil(ctx context.Context, w http.ResponseWriter, use
 	payload.EncodeJSON(w, http.StatusOK, user)
 }
 
-func (m *mux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
 	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
@@ -79,7 +79,7 @@ func (m *mux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) 
 	m.getUserProfileUtil(reqCtx, w, userID)
 }
 
-func (m *mux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
+func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 	userID := chi.URLParam(r, "userID")
 

@@ -67,7 +67,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	return tx.Commit(context.Background())
 }
 
-func (m *mux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db.GlobalUserStatus) {
+func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db.GlobalUserStatus) {
 	if !status.Valid() {
 		payload.EncodeError(w, fmt.Errorf("invalid-status-value"))
 		return

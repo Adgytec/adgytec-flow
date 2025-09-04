@@ -11,7 +11,7 @@ type iamParams interface {
 	CacheClient() core.CacheClient
 }
 
-type muxParams interface {
+type iamServiceMuxParams interface {
 	iamParams
 	Middleware() core.MiddlewarePC
 }

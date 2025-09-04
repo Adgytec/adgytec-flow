@@ -38,7 +38,7 @@ func (s *userService) getGlobalUsers(
 	return s.getGlobalUsersInitial(ctx, params)
 }
 
-func (m *mux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
+func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
 	paginationParams := helpers.GetPaginationParamsFromRequest(r)

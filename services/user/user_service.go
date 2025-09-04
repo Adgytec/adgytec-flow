@@ -18,7 +18,7 @@ type userServiceParams interface {
 	CacheClient() core.CacheClient
 }
 
-type muxParams interface {
+type userServiceMuxParams interface {
 	userServiceParams
 	Middleware() core.MiddlewarePC
 }
