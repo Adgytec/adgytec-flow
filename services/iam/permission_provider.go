@@ -2,7 +2,6 @@ package iam
 
 import (
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/google/uuid"
 )
 
@@ -79,7 +78,7 @@ func NewPermissionRequiredFromApplicationPermission(
 }
 
 func NewPermissionRequiredFromSelfPermission(
-	permission models.SelfPermissions,
+	permission SelfPermissions,
 	requiredPermissionResources PermissionRequiredResources,
 ) PermissionProvider {
 	return permissionRequired{

@@ -1,4 +1,4 @@
-package models
+package iam
 
 // SelfPermissions defines the permission type used to define self actions
 // this is not stored in db
