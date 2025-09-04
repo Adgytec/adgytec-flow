@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
@@ -44,8 +44,8 @@ func (e *PermissionDeniedError) Is(target error) bool {
 	return target == ErrPermissionDenied
 }
 
-func (e *PermissionDeniedError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *PermissionDeniedError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusForbidden,
 		Message:        pointer.New(e.Error()),
 	}
@@ -70,9 +70,9 @@ func (e *PermissionResolutionFailedError) Unwrap() error {
 	return e.Cause
 }
 
-func (e *PermissionResolutionFailedError) HTTPResponse() core.ResponseHTTPError {
+func (e *PermissionResolutionFailedError) HTTPResponse() apires.ErrorDetails {
 	// TODO: handle status code based on e.cause
-	return core.ResponseHTTPError{
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusInternalServerError,
 	}
 }

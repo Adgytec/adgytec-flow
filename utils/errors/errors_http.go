@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
@@ -26,8 +26,8 @@ func (e *RequestDecodeError) Is(target error) bool {
 	return target == ErrRequestDecode
 }
 
-func (e *RequestDecodeError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *RequestDecodeError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: e.Status,
 		Message:        pointer.New(e.Error()),
 	}
@@ -45,8 +45,8 @@ func (e *RequestValidationError) Is(target error) bool {
 	return target == ErrRequestValidation
 }
 
-func (e *RequestValidationError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *RequestValidationError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusUnprocessableEntity,
 		FieldErrors:    &e.FieldErrors,
 	}

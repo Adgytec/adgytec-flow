@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
@@ -25,8 +25,8 @@ func (e *InvalidCursorValueError) Is(target error) bool {
 	return target == ErrInvalidCursorValue
 }
 
-func (e *InvalidCursorValueError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *InvalidCursorValueError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}

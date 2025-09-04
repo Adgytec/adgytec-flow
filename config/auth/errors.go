@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
@@ -28,8 +28,8 @@ func (e *UserExistsError) Is(target error) bool {
 	return target == ErrUserExists
 }
 
-func (e *UserExistsError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *UserExistsError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusConflict,
 		Message:        pointer.New(e.Error()),
 	}
@@ -54,9 +54,9 @@ func (e *AuthActionFailedError) Unwrap() error {
 	return e.cause
 }
 
-func (e *AuthActionFailedError) HTTPResponse() core.ResponseHTTPError {
+func (e *AuthActionFailedError) HTTPResponse() apires.ErrorDetails {
 	// TODO: handle status based on e.cause
-	return core.ResponseHTTPError{
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusInternalServerError,
 	}
 }
@@ -71,8 +71,8 @@ func (e *InvalidAccessTokenError) Is(target error) bool {
 	return target == ErrInvalidAccessToken
 }
 
-func (e *InvalidAccessTokenError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *InvalidAccessTokenError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
@@ -88,8 +88,8 @@ func (e *InvalidAPIKeyError) Is(target error) bool {
 	return target == ErrInvalidAPIKey
 }
 
-func (e *InvalidAPIKeyError) HTTPResponse() core.ResponseHTTPError {
-	return core.ResponseHTTPError{
+func (e *InvalidAPIKeyError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
