@@ -1,4 +1,4 @@
-package app_errors
+package auth
 
 import (
 	"errors"
@@ -38,7 +38,7 @@ func (e *UserExistsError) HTTPResponse() core.ResponseHTTPError {
 type AuthActionFailedError struct {
 	username   string
 	reason     string
-	actionType core.AuthActionType
+	actionType authActionType
 	cause      error
 }
 
