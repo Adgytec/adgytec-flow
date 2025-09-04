@@ -24,7 +24,7 @@ func (m *mux) Router() *chi.Mux {
 func NewMux(params muxParams) core.ServiceMux {
 	log.Println("adding access-managment mux")
 	return &mux{
-		service:    newService(params),
+		service:    newIAMService(params),
 		middleware: params.Middleware(),
 	}
 }

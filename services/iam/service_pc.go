@@ -20,6 +20,6 @@ type pc struct {
 func NewPC(params iamParams) PC {
 	log.Println("creating access-management PC")
 	return &pc{
-		service: newService(params),
+		service: newIAMService(params),
 	}
 }

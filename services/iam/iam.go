@@ -21,7 +21,7 @@ type iam struct {
 	permissionCache core.Cache[bool]
 }
 
-func newService(params iamParams) *iam {
+func newIAMService(params iamParams) *iam {
 	return &iam{
 		db:              params.Database(),
 		permissionCache: cache.NewCache[bool](params.CacheClient(), serializer.NewJSONSerializer[bool](), "access-management"),
