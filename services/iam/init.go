@@ -9,14 +9,14 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-type accessManagementInit struct {
+type iamServiceInit struct {
 	db                     core.Database
 	serviceDetails         db.AddServiceParams
 	managementPermissions  []db.AddManagementPermissionParams
 	applicationPermissions []db.AddApplicationPermissionParams
 }
 
-func (i *accessManagementInit) InitService() error {
+func (i *iamServiceInit) InitService() error {
 	if err := i.initServiceDetails(); err != nil {
 		return err
 	}
@@ -32,12 +32,12 @@ func (i *accessManagementInit) InitService() error {
 	return nil
 }
 
-func (i *accessManagementInit) initServiceDetails() error {
+func (i *iamServiceInit) initServiceDetails() error {
 	log.Println("adding access-management service details")
 	return i.db.Queries().AddService(context.TODO(), i.serviceDetails)
 }
 
-func (i *accessManagementInit) initServiceManagementPermissions() error {
+func (i *iamServiceInit) initServiceManagementPermissions() error {
 	log.Println("adding access-managment management permissions")
 
 	for _, perm := range i.managementPermissions {
@@ -49,7 +49,7 @@ func (i *accessManagementInit) initServiceManagementPermissions() error {
 	return nil
 }
 
-func (i *accessManagementInit) initServiceApplicationPermissions() error {
+func (i *iamServiceInit) initServiceApplicationPermissions() error {
 	log.Println("adding access-management application permissions.")
 	for _, perm := range i.applicationPermissions {
 		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
@@ -65,7 +65,7 @@ type accessManagementInitParams interface {
 }
 
 func InitAccessManagement(params accessManagementInitParams) core.ServiceInit {
-	return &accessManagementInit{
+	return &iamServiceInit{
 		db:                     params.Database(),
 		serviceDetails:         accessManagementDetails,
 		managementPermissions:  managementPermissions,
