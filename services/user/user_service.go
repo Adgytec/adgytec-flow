@@ -4,6 +4,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -13,7 +14,7 @@ import (
 )
 
 type userServiceParams interface {
-	Database() core.Database
+	Database() database.Database
 	Auth() auth.Auth
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
@@ -26,7 +27,7 @@ type userServiceMuxParams interface {
 }
 
 type userService struct {
-	db               core.Database
+	db               database.Database
 	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN

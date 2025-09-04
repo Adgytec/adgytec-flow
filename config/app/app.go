@@ -5,6 +5,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/config/communication"
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
@@ -13,7 +14,7 @@ import (
 
 type appExternalServices interface {
 	Auth() auth.Auth
-	Database() core.Database
+	Database() database.Database
 	Communication() communication.Communication
 	Storage() storage.Storage
 	CDN() cdn.CDN

@@ -4,13 +4,14 @@ import (
 	"context"
 	"log"
 
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 type userServiceInit struct {
-	db                    core.Database
+	db                    database.Database
 	serviceDetails        db.AddServiceParams
 	managementPermissions []db.AddManagementPermissionParams
 }
@@ -44,7 +45,7 @@ func (i *userServiceInit) initServiceManagementPermissions() error {
 }
 
 type userServiceInitParams interface {
-	Database() core.Database
+	Database() database.Database
 }
 
 func InitUserService(params userServiceInitParams) core.ServiceInit {

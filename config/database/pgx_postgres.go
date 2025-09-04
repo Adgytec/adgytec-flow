@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -96,7 +95,7 @@ func (c *pgxConnection) Shutdown() {
 	c.connPool.Close()
 }
 
-func NewPgxDbConnectionPool() core.DatabaseWithShutdown {
+func NewPgxDbConnectionPool() DatabaseWithShutdown {
 	log.Println("init db pgx pool")
 	return &pgxConnection{
 		connPool: newPgxConnPool(),

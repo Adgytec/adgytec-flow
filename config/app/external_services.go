@@ -8,12 +8,11 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/communication"
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type externalServices struct {
 	auth          auth.Auth
-	database      core.DatabaseWithShutdown
+	database      database.DatabaseWithShutdown
 	communication communication.Communication
 	storage       storage.Storage
 	cdn           cdn.CDN
@@ -24,7 +23,7 @@ func (s *externalServices) Auth() auth.Auth {
 	return s.auth
 }
 
-func (s *externalServices) Database() core.Database {
+func (s *externalServices) Database() database.Database {
 	return s.database
 }
 

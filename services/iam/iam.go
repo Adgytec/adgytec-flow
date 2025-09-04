@@ -2,12 +2,13 @@ package iam
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type iamServiceParams interface {
-	Database() core.Database
+	Database() database.Database
 	CacheClient() cache.CacheClient
 }
 
@@ -17,7 +18,7 @@ type iamServiceMuxParams interface {
 }
 
 type iamService struct {
-	db              core.Database
+	db              database.Database
 	permissionCache cache.Cache[bool]
 }
 

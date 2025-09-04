@@ -4,13 +4,14 @@ import (
 	"context"
 	"log"
 
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 type iamServiceInit struct {
-	db                     core.Database
+	db                     database.Database
 	serviceDetails         db.AddServiceParams
 	managementPermissions  []db.AddManagementPermissionParams
 	applicationPermissions []db.AddApplicationPermissionParams
@@ -61,7 +62,7 @@ func (i *iamServiceInit) initServiceApplicationPermissions() error {
 }
 
 type iamInitParams interface {
-	Database() core.Database
+	Database() database.Database
 }
 
 func InitIAMService(params iamInitParams) core.ServiceInit {
