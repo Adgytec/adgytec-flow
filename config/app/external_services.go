@@ -17,7 +17,7 @@ type externalServices struct {
 	communication core.Communication
 	storage       core.Storage
 	cdn           cdn.CDN
-	cacheClient   core.CacheClient
+	cacheClient   cache.CacheClient
 }
 
 func (s *externalServices) Auth() auth.Auth {
@@ -44,7 +44,7 @@ func (s *externalServices) Shutdown() {
 	s.database.Shutdown()
 }
 
-func (s *externalServices) CacheClient() core.CacheClient {
+func (s *externalServices) CacheClient() cache.CacheClient {
 	return s.cacheClient
 }
 

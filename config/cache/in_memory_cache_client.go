@@ -3,7 +3,6 @@ package cache
 import (
 	"time"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	lru "github.com/hashicorp/golang-lru/v2/expirable"
 )
 
@@ -28,7 +27,7 @@ func (cc *inMemoryLruCache) Delete(key string) {
 	cc.cache.Remove(key)
 }
 
-func NewInMemoryCacheClient() core.CacheClient {
+func NewInMemoryCacheClient() CacheClient {
 	return &inMemoryLruCache{
 		cache: lru.NewLRU[string, []byte](defaultCacheSize, nil, defaultCacheTTL),
 	}

@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/auth"
+	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
@@ -15,7 +16,7 @@ type appExternalServices interface {
 	Storage() core.Storage
 	CDN() cdn.CDN
 	Shutdown()
-	CacheClient() core.CacheClient
+	CacheClient() cache.CacheClient
 }
 
 type appInternalServices interface {

@@ -17,7 +17,7 @@ type userServiceParams interface {
 	Auth() auth.Auth
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
-	CacheClient() core.CacheClient
+	CacheClient() cache.CacheClient
 }
 
 type userServiceMuxParams interface {
@@ -30,8 +30,8 @@ type userService struct {
 	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
-	getUserCache     core.Cache[models.GlobalUser]
-	getUserListCache core.Cache[core.ResponsePagination[models.GlobalUser]]
+	getUserCache     cache.Cache[models.GlobalUser]
+	getUserListCache cache.Cache[core.ResponsePagination[models.GlobalUser]]
 }
 
 func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.GlobalUser {

@@ -9,8 +9,19 @@ import (
 	"golang.org/x/sync/singleflight"
 )
 
+type Cache[T any] interface {
+	Get(string, func() (T, error)) (T, error)
+	Delete(string)
+}
+
+type CacheClient interface {
+	Get(string) ([]byte, bool)
+	Set(string, []byte)
+	Delete(string)
+}
+
 type implCache[T any] struct {
-	cacheClient core.CacheClient
+	cacheClient CacheClient
 	namespace   string
 	group       singleflight.Group
 	serializer  core.Serializer[T]
@@ -69,7 +80,7 @@ func (c *implCache[T]) Delete(id string) {
 	c.cacheClient.Delete(c.key(id))
 }
 
-func NewCache[T any](cacheClient core.CacheClient, serializer core.Serializer[T], namespace string) core.Cache[T] {
+func NewCache[T any](cacheClient CacheClient, serializer core.Serializer[T], namespace string) Cache[T] {
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,

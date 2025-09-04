@@ -8,7 +8,7 @@ import (
 
 type iamServiceParams interface {
 	Database() core.Database
-	CacheClient() core.CacheClient
+	CacheClient() cache.CacheClient
 }
 
 type iamServiceMuxParams interface {
@@ -18,7 +18,7 @@ type iamServiceMuxParams interface {
 
 type iamService struct {
 	db              core.Database
-	permissionCache core.Cache[bool]
+	permissionCache cache.Cache[bool]
 }
 
 func newIAMService(params iamServiceParams) *iamService {
