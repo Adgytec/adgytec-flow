@@ -7,7 +7,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 type iamServiceInit struct {
@@ -42,7 +41,7 @@ func (i *iamServiceInit) initServiceManagementPermissions() error {
 	log.Printf("adding %s-service management permissions", serviceName)
 
 	for _, perm := range i.managementPermissions {
-		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
+		perm.ID = core.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddManagementPermission(context.TODO(), perm); err != nil {
 			return err
 		}
@@ -53,7 +52,7 @@ func (i *iamServiceInit) initServiceManagementPermissions() error {
 func (i *iamServiceInit) initServiceApplicationPermissions() error {
 	log.Printf("adding %s-service application permissions", serviceName)
 	for _, perm := range i.applicationPermissions {
-		perm.ID = helpers.GetIDFromPayload([]byte(perm.Key))
+		perm.ID = core.GetIDFromPayload([]byte(perm.Key))
 		if err := i.db.Queries().AddApplicationPermission(context.TODO(), perm); err != nil {
 			return err
 		}

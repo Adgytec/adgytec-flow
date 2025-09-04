@@ -6,7 +6,6 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/pagination"
 )
 
@@ -71,7 +70,7 @@ func (s *userService) getGlobalUsersNextPage(ctx context.Context, params paginat
 func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	nextCursorVal := pagination.DecodeCursorValue(params.NextCursor)
 	if nextCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.NextCursor,
 		}
 	}
@@ -121,7 +120,7 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	nextCursorVal := pagination.DecodeCursorValue(params.NextCursor)
 	if nextCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.NextCursor,
 		}
 	}
@@ -180,7 +179,7 @@ func (s *userService) getGlobalUsersPrevPage(ctx context.Context, params paginat
 func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	prevCursorVal := pagination.DecodeCursorValue(params.PrevCursor)
 	if prevCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.PrevCursor,
 		}
 	}
@@ -228,7 +227,7 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, params pagination.PaginationRequestParams) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	prevCursorVal := pagination.DecodeCursorValue(params.PrevCursor)
 	if prevCursorVal == nil {
-		return nil, &app_errors.InvalidCursorValueError{
+		return nil, &pagination.InvalidCursorValueError{
 			Cursor: params.PrevCursor,
 		}
 	}

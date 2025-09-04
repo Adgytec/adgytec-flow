@@ -3,9 +3,8 @@ package pagination
 import (
 	"encoding/base64"
 	"net/http"
+	"strings"
 	"time"
-
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
 const (
@@ -81,10 +80,10 @@ func DecodeCursorValue(cursor string) *time.Time {
 
 func GetPaginationParamsFromRequest(r *http.Request) PaginationRequestParams {
 	return PaginationRequestParams{
-		NextCursor:  helpers.GetRequestQueryValue(r, helpers.NextCursor),
-		PrevCursor:  helpers.GetRequestQueryValue(r, helpers.PrevCursor),
-		Sorting:     PaginationRequestSorting(helpers.GetRequestQueryValue(r, helpers.Sort)).Value(),
-		SearchQuery: helpers.GetRequestQueryValue(r, helpers.SearchQuery),
+		NextCursor:  GetRequestQueryValue(r, NextCursor),
+		PrevCursor:  GetRequestQueryValue(r, PrevCursor),
+		Sorting:     PaginationRequestSorting(GetRequestQueryValue(r, Sort)).Value(),
+		SearchQuery: GetRequestQueryValue(r, SearchQuery),
 	}
 }
 
@@ -107,4 +106,18 @@ func NewPaginationResponse[T PaginationItem](items []T, next, prev *T) *Response
 		PageInfo:  pageInfo,
 		PageItems: items,
 	}
+}
+
+type QueryKey string
+
+const (
+	NextCursor  QueryKey = "next_cursor"
+	PrevCursor  QueryKey = "prev_cursor"
+	Sort        QueryKey = "sort"
+	SearchQuery QueryKey = "search"
+)
+
+func GetRequestQueryValue(r *http.Request, key QueryKey) string {
+	queryVal := r.URL.Query().Get(string(key))
+	return strings.TrimSpace(queryVal)
 }

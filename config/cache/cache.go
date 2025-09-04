@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/config/serializer"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -59,7 +58,7 @@ func (c *implCache[T]) Get(
 
 	val, typeOK := persistentData.(T)
 	if !typeOK {
-		return zero, app_errors.ErrTypeCastingCacheValueFailed
+		return zero, ErrTypeCastingCacheValueFailed
 	}
 
 	c.set(id, val)
