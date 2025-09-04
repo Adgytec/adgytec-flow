@@ -40,7 +40,7 @@ func (m *mux) Router() *chi.Mux {
 func NewMux(params muxParams) core.ServiceMux {
 	log.Println("adding user-service mux")
 	return &mux{
-		service:    newService(params),
+		service:    newUserService(params),
 		middleware: params.Middleware(),
 	}
 }

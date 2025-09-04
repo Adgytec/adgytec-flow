@@ -20,6 +20,6 @@ type pc struct {
 func NewPC(params userServiceParams) PC {
 	log.Println("creating user-service PC")
 	return &pc{
-		service: newService(params),
+		service: newUserService(params),
 	}
 }

@@ -83,7 +83,7 @@ func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func newService(params userServiceParams) *userService {
+func newUserService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
