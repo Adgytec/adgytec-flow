@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE TYPE application.permission_resource_type AS ENUM(
 	'project',
-	'logcial-partition',
+	'logical-partition',
 	'service-item'
 );
 
