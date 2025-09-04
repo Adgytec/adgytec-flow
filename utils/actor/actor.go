@@ -7,18 +7,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type ActorKey string
-
-const (
-	ActorKeyType ActorKey = "actor-type"
-	ActorKeyID   ActorKey = "actor-id"
-)
-
-type ActorDetails struct {
-	ID   uuid.UUID
-	Type db.GlobalActorType
-}
-
 func GetActorDetailsFromContext(ctx context.Context) (ActorDetails, error) {
 	var zero ActorDetails
 
