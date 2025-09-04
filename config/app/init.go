@@ -2,12 +2,12 @@ package app
 
 import "log"
 
-func InitApp() IApp {
+func NewApp() App {
 	log.Println("Initializaing application external services.")
-	externalServices := createExternalServices()
+	externalServices := newExternalServices()
 
 	log.Println("Initializing application services PC.")
-	internalServices := createInternalService(externalServices)
+	internalServices := newInternalService(externalServices)
 
 	return &app{
 		externalServices,

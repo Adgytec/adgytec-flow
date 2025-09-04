@@ -6,30 +6,30 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/services/iam"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
 func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
-	requiredPermissions := []core.IPermissionRequired{
-		helpers.CreatePermissionRequiredFromSelfPermission(
+	requiredPermissions := []iam.PermissionProvider{
+		iam.NewPermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
-			core.PermissionRequiredResources{
-				UserID: helpers.ValuePtr(userID),
+			iam.PermissionRequiredResources{
+				UserID: pointer.New(userID),
 			},
 		),
-		helpers.CreatePermissionRequiredFromManagementPermission(
+		iam.NewPermissionRequiredFromManagementPermission(
 			getUserProfilePermission,
-			core.PermissionRequiredResources{},
+			iam.PermissionRequiredResources{},
 		),
 	}
 
-	permissionErr := s.accessManagement.CheckPermissions(
+	permissionErr := s.iam.CheckPermissions(
 		ctx,
 		requiredPermissions,
 	)
@@ -42,7 +42,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 		if dbErr != nil {
 			if errors.Is(dbErr, pgx.ErrNoRows) {
-				return zero, &app_errors.UserNotFoundError{}
+				return zero, &UserNotFoundError{}
 			}
 
 			return zero, dbErr
@@ -70,7 +70,7 @@ func (m *userServiceMux) getUserProfileUtil(ctx context.Context, w http.Response
 func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
-	userID, userIDErr := helpers.GetActorIdFromContext(reqCtx)
+	userID, userIDErr := actor.GetActorIdFromContext(reqCtx)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return

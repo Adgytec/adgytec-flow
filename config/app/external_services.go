@@ -8,35 +8,34 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/communication"
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type externalServices struct {
-	auth          core.IAuth
-	database      core.IDatabaseWithShutdown
-	communicaiton core.ICommunicaiton
-	storage       core.IStorage
-	cdn           core.ICDN
-	cacheClient   core.ICacheClient
+	auth          auth.Auth
+	database      database.DatabaseWithShutdown
+	communication communication.Communication
+	storage       storage.Storage
+	cdn           cdn.CDN
+	cacheClient   cache.CacheClient
 }
 
-func (s *externalServices) Auth() core.IAuth {
+func (s *externalServices) Auth() auth.Auth {
 	return s.auth
 }
 
-func (s *externalServices) Database() core.IDatabase {
+func (s *externalServices) Database() database.Database {
 	return s.database
 }
 
-func (s *externalServices) Communication() core.ICommunicaiton {
-	return s.communicaiton
+func (s *externalServices) Communication() communication.Communication {
+	return s.communication
 }
 
-func (s *externalServices) Storage() core.IStorage {
+func (s *externalServices) Storage() storage.Storage {
 	return s.storage
 }
 
-func (s *externalServices) CDN() core.ICDN {
+func (s *externalServices) CDN() cdn.CDN {
 	return s.cdn
 }
 
@@ -44,19 +43,19 @@ func (s *externalServices) Shutdown() {
 	s.database.Shutdown()
 }
 
-func (s *externalServices) CacheClient() core.ICacheClient {
+func (s *externalServices) CacheClient() cache.CacheClient {
 	return s.cacheClient
 }
 
-func createExternalServices() iAppExternalServices {
-	awsConfig := configAWS.CreateAWSConfig()
+func newExternalServices() appExternalServices {
+	awsConfig := configAWS.NewAWSConfig()
 
 	return &externalServices{
-		auth:          auth.CreateCognitoAuthClient(awsConfig),
-		database:      database.CreatePgxDbConnectionPool(),
-		communicaiton: communication.CreateAWSCommunicationClient(awsConfig),
-		storage:       storage.CreateS3Client(awsConfig),
-		cdn:           cdn.CreateCloudfrontCDNSigner(),
-		cacheClient:   cache.CreateInMemoryCacheClient(),
+		auth:          auth.NewCognitoAuthClient(awsConfig),
+		database:      database.NewPgxDbConnectionPool(),
+		communication: communication.NewAWSCommunicationClient(awsConfig),
+		storage:       storage.NewS3Client(awsConfig),
+		cdn:           cdn.NewCloudfrontCDNSigner(),
+		cacheClient:   cache.NewInMemoryCacheClient(),
 	}
 }

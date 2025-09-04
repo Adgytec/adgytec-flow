@@ -1,15 +1,15 @@
 package user
 
 import (
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 )
 
-var getSelfProfilePermission = core.SelfPermissions{
+var getSelfProfilePermission = iam.SelfPermissions{
 	Key:  "self:get:user-profile",
 	Name: "Get self profile",
 }
 
-var updateSelfProfilePermission = core.SelfPermissions{
+var updateSelfProfilePermission = iam.SelfPermissions{
 	Key:  "self:update:user-profile",
 	Name: "Update self profile",
 }

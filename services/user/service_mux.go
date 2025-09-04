@@ -4,12 +4,13 @@ import (
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
 )
 
 type userServiceMux struct {
 	service    *userService
-	middleware core.IMiddlewarePC
+	middleware core.MiddlewarePC
 }
 
 func (m *userServiceMux) BasePath() string {
@@ -37,10 +38,10 @@ func (m *userServiceMux) Router() *chi.Mux {
 	return mux
 }
 
-func CreateUserServiceMux(params iUserServiceMuxParams) core.IServiceMux {
-	log.Println("adding user-service mux")
+func NewUserServiceMux(params userServiceMuxParams) services.Mux {
+	log.Printf("adding %s-service mux", serviceName)
 	return &userServiceMux{
-		service:    createUserService(params),
+		service:    newUserService(params),
 		middleware: params.Middleware(),
 	}
 }

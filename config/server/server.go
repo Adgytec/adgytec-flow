@@ -11,15 +11,14 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/router"
 )
 
-type IServer interface {
+type Server interface {
 	ListenAndServe() error
 	Shutdown() error
 }
 
 type httpServer struct {
 	server *http.Server
-	// stopOngoingGracefully context.CancelFunc
-	app app.IApp
+	app    app.App
 }
 
 func (s *httpServer) ListenAndServe() error {
@@ -34,38 +33,30 @@ func (s *httpServer) Shutdown() error {
 
 	s.app.Shutdown()
 	err := s.server.Shutdown(shutdownCtx)
-	// if s.stopOngoingGracefully != nil {
-	// 	s.stopOngoingGracefully()
-	// }
 
 	return err
 }
 
-func CreateHttpServer(port string) IServer {
-	appConfig := app.InitApp()
+func NewHttpServer(port string) Server {
+	appConfig := app.NewApp()
 	app_init.EnsureServicesInitialization(appConfig)
-	mux := router.CreateApplicationRouter(appConfig)
+	mux := router.NewApplicationRouter(appConfig)
 
 	var protocols http.Protocols
 	protocols.SetUnencryptedHTTP2(true)
 
-	// ongoingCtx, stopOngoingGracefully := context.WithCancel(context.Background())
 	appServer := http.Server{
 		Addr:              ":" + port,
 		ReadTimeout:       5 * time.Second,
 		ReadHeaderTimeout: 2 * time.Second,
 		WriteTimeout:      10 * time.Second,
 		IdleTimeout:       120 * time.Second,
-		// BaseContext: func(_ net.Listener) context.Context {
-		// 	return ongoingCtx
-		// },
-		Handler:   mux,
-		Protocols: &protocols,
+		Handler:           mux,
+		Protocols:         &protocols,
 	}
 
 	return &httpServer{
 		server: &appServer,
-		// stopOngoingGracefully: stopOngoingGracefully,
-		app: appConfig,
+		app:    appConfig,
 	}
 }

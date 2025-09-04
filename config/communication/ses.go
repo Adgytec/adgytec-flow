@@ -15,7 +15,7 @@ func (c *communicationEmailSES) SendMail(to []string, from string) error {
 	return nil
 }
 
-func createSesClient(awsConfig aws.Config) iCommunicationEmail {
+func newSesClient(awsConfig aws.Config) communicationEmail {
 	log.Println("creating ses client")
 	return &communicationEmailSES{
 		client: ses.NewFromConfig(awsConfig),

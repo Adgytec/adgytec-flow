@@ -1,29 +1,39 @@
 package app
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"github.com/Adgytec/adgytec-flow/config/auth"
+	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/config/cdn"
+	"github.com/Adgytec/adgytec-flow/config/communication"
+	"github.com/Adgytec/adgytec-flow/config/database"
+	"github.com/Adgytec/adgytec-flow/config/storage"
+	"github.com/Adgytec/adgytec-flow/services/iam"
+	"github.com/Adgytec/adgytec-flow/services/user"
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
 
-type iAppExternalServices interface {
-	Auth() core.IAuth
-	Database() core.IDatabase
-	Communication() core.ICommunicaiton
-	Storage() core.IStorage
-	CDN() core.ICDN
+type appExternalServices interface {
+	Auth() auth.Auth
+	Database() database.Database
+	Communication() communication.Communication
+	Storage() storage.Storage
+	CDN() cdn.CDN
 	Shutdown()
-	CacheClient() core.ICacheClient
+	CacheClient() cache.CacheClient
 }
 
-type iAppInternalServices interface {
-	AccessManagement() core.IAccessManagementPC
-	UserService() core.IUserServicePC
-	Middleware() core.IMiddlewarePC
+type appInternalServices interface {
+	IAMService() iam.IAMServicePC
+	UserService() user.UserServicePC
+	Middleware() core.MiddlewarePC
 }
 
-type IApp interface {
-	iAppExternalServices
-	iAppInternalServices
+type App interface {
+	appExternalServices
+	appInternalServices
 }
 
 type app struct {
-	iAppExternalServices
-	iAppInternalServices
+	appExternalServices
+	appInternalServices
 }

@@ -3,7 +3,6 @@ package storage
 import (
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -16,7 +15,7 @@ func (s *s3PresignClient) GetPresignUploadUrl(bucketPath string) (string, error)
 	return "", nil
 }
 
-func CreateS3Client(awsConfig aws.Config) core.IStorage {
+func NewS3Client(awsConfig aws.Config) Storage {
 	log.Println("creating s3 presign client")
 	return &s3PresignClient{
 		client: s3.NewPresignClient(

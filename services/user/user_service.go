@@ -1,37 +1,42 @@
 package user
 
 import (
+	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/cache"
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/config/cdn"
+	"github.com/Adgytec/adgytec-flow/config/database"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"github.com/Adgytec/adgytec-flow/utils/pagination"
 	"github.com/google/uuid"
 )
 
-type iUserServiceParams interface {
-	Database() core.IDatabase
-	Auth() core.IAuth
-	AccessManagement() core.IAccessManagementPC
-	CDN() core.ICDN
-	CacheClient() core.ICacheClient
+type userServiceParams interface {
+	Database() database.Database
+	Auth() auth.Auth
+	IAMService() iam.IAMServicePC
+	CDN() cdn.CDN
+	CacheClient() cache.CacheClient
 }
 
-type iUserServiceMuxParams interface {
-	iUserServiceParams
-	Middleware() core.IMiddlewarePC
+type userServiceMuxParams interface {
+	userServiceParams
+	Middleware() core.MiddlewarePC
 }
 
 type userService struct {
-	db               core.IDatabase
-	auth             core.IAuth
-	accessManagement core.IAccessManagementPC
-	cdn              core.ICDN
-	getUserCache     core.ICache[models.GlobalUser]
-	getUserListCache core.ICache[[]models.GlobalUser]
+	db               database.Database
+	auth             auth.Auth
+	iam              iam.IAMServicePC
+	cdn              cdn.CDN
+	getUserCache     cache.Cache[models.GlobalUser]
+	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
 
-func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) models.GlobalUser {
+func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.GlobalUser {
 	userModel := models.GlobalUser{
 		ID:          user.ID,
 		Email:       user.Email,
@@ -58,7 +63,7 @@ func (s *userService) getUserResponseModel(user db_actions.GlobalUserDetail) mod
 	return userModel
 }
 
-func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail) []models.GlobalUser {
+func (s *userService) getUserResponseModels(users []db.GlobalUserDetail) []models.GlobalUser {
 	usersLen := len(users)
 	if usersLen == 0 {
 		return nil
@@ -74,7 +79,7 @@ func (s *userService) getUserResponseModels(users []db_actions.GlobalUserDetail)
 func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	userUUID, userIdErr := uuid.Parse(userID)
 	if userIdErr != nil {
-		return uuid.UUID{}, &app_errors.InvalidUserIDError{
+		return uuid.Nil, &InvalidUserIDError{
 			InvalidUserID: userID,
 		}
 	}
@@ -82,13 +87,13 @@ func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
 	return userUUID, nil
 }
 
-func createUserService(params iUserServiceParams) *userService {
+func newUserService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
-		accessManagement: params.AccessManagement(),
+		iam:              params.IAMService(),
 		cdn:              params.CDN(),
-		getUserCache:     cache.CreateNewCache[models.GlobalUser](params.CacheClient(), "user"),
-		getUserListCache: cache.CreateNewCache[[]models.GlobalUser](params.CacheClient(), "user-list"),
+		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
+		getUserListCache: cache.NewCache[pagination.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}
 }

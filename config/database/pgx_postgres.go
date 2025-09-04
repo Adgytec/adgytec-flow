@@ -6,13 +6,13 @@ import (
 	"os"
 	"time"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// TODO: handle this using env variables
 const (
 	defaultMaxConns          = int32(50)
 	defaultMinConns          = int32(5)
@@ -40,7 +40,7 @@ func dbConfig() *pgxpool.Config {
 	return dbConfig
 }
 
-func createPgxConnPool() *pgxpool.Pool {
+func newPgxConnPool() *pgxpool.Pool {
 	config := dbConfig()
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
@@ -60,8 +60,8 @@ type pgxConnection struct {
 	connPool *pgxpool.Pool
 }
 
-func (c *pgxConnection) Queries() *db_actions.Queries {
-	return db_actions.New(c.connPool)
+func (c *pgxConnection) Queries() *db.Queries {
+	return db.New(c.connPool)
 }
 
 func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
@@ -73,7 +73,7 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 
 	// actor should be present in all the scenarios
 	// sign up is created by using auth admin api so also require actor in that case too
-	actorDetails, actorDetailsErr := helpers.GetActorDetailsFromContext(ctx)
+	actorDetails, actorDetailsErr := actor.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		tx.Rollback(context.Background())
 		return nil, actorDetailsErr
@@ -95,9 +95,9 @@ func (c *pgxConnection) Shutdown() {
 	c.connPool.Close()
 }
 
-func CreatePgxDbConnectionPool() core.IDatabaseWithShutdown {
+func NewPgxDbConnectionPool() DatabaseWithShutdown {
 	log.Println("init db pgx pool")
 	return &pgxConnection{
-		connPool: createPgxConnPool(),
+		connPool: newPgxConnPool(),
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/cognitoidentityprovider"
 	"github.com/google/uuid"
@@ -16,7 +15,7 @@ type authCognito struct {
 	userPoolRegion string
 }
 
-func (a *authCognito) CreateUser(username string) error {
+func (a *authCognito) NewUser(username string) error {
 	return nil
 }
 
@@ -36,7 +35,7 @@ func (a *authCognito) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
 	return uuid.UUID{}, nil
 }
 
-func CreateCognitoAuthClient(awsConfig aws.Config) core.IAuth {
+func NewCognitoAuthClient(awsConfig aws.Config) Auth {
 	log.Println("init authentication cognito")
 	return &authCognito{
 		client:         cognitoidentityprovider.NewFromConfig(awsConfig),

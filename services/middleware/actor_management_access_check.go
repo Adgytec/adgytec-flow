@@ -3,7 +3,7 @@ package app_middleware
 import (
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 )
 
 func (pc *appMiddlewarePC) ActorManagementAccessCheck(next http.Handler) http.Handler {
@@ -12,6 +12,6 @@ func (pc *appMiddlewarePC) ActorManagementAccessCheck(next http.Handler) http.Ha
 	})
 }
 
-func (s *appMiddleware) actorManagementAccessCheck(actor core.ActorDetails) error {
+func (s *appMiddleware) actorManagementAccessCheck(currentActor actor.ActorDetails) error {
 	return nil
 }

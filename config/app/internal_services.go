@@ -1,41 +1,41 @@
 package app
 
 import (
-	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	app_middleware "github.com/Adgytec/adgytec-flow/services/middleware"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type internalServices struct {
-	accessManagement core.IAccessManagementPC
-	userService      core.IUserServicePC
-	middleware       core.IMiddlewarePC
+	iamService  iam.IAMServicePC
+	userService user.UserServicePC
+	middleware  core.MiddlewarePC
 }
 
-func (s *internalServices) AccessManagement() core.IAccessManagementPC {
-	return s.accessManagement
+func (s *internalServices) IAMService() iam.IAMServicePC {
+	return s.iamService
 }
 
-func (s *internalServices) UserService() core.IUserServicePC {
+func (s *internalServices) UserService() user.UserServicePC {
 	return s.userService
 }
 
-func (s *internalServices) Middleware() core.IMiddlewarePC {
+func (s *internalServices) Middleware() core.MiddlewarePC {
 	return s.middleware
 }
 
-func createInternalService(externalService iAppExternalServices) iAppInternalServices {
+func newInternalService(externalService appExternalServices) appInternalServices {
 	internalService := internalServices{}
 	appInstance := &app{
-		iAppExternalServices: externalService,
-		iAppInternalServices: &internalService,
+		appExternalServices: externalService,
+		appInternalServices: &internalService,
 	}
 
 	// Initialize internal services. The order of initialization is important.
-	internalService.accessManagement = access_management.CreateAccessManagementPC(externalService)
-	internalService.userService = user.CreateUserServicePC(appInstance)
-	internalService.middleware = app_middleware.CreateAppMiddlewarePC(appInstance)
+	internalService.iamService = iam.NewIAMServicePC(externalService)
+	internalService.userService = user.NewUserServicePC(appInstance)
+	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
 
 	return &internalService
 }

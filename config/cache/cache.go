@@ -4,15 +4,26 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
+	"github.com/Adgytec/adgytec-flow/config/serializer"
 	"golang.org/x/sync/singleflight"
 )
 
+type Cache[T any] interface {
+	Get(string, func() (T, error)) (T, error)
+	Delete(string)
+}
+
+type CacheClient interface {
+	Get(string) ([]byte, bool)
+	Set(string, []byte)
+	Delete(string)
+}
+
 type implCache[T any] struct {
-	cacheClient core.ICacheClient
+	cacheClient CacheClient
 	namespace   string
 	group       singleflight.Group
+	serializer  serializer.Serializer[T]
 }
 
 func (c *implCache[T]) key(id string) string {
@@ -28,12 +39,12 @@ func (c *implCache[T]) Get(
 	// get data from cache
 	cachedData, cacheHit := c.cacheClient.Get(c.key(id))
 	if cacheHit {
-		val, typeOK := cachedData.(T)
-		if typeOK {
-			return val, nil
+		serializedData, serializeErr := c.serializer.Decode(cachedData)
+		if serializeErr == nil {
+			return serializedData, nil
 		}
 
-		log.Printf("cache type-casting failed for key: %s", c.key(id))
+		log.Printf("cache data serialization failed for key: %s, error: %v", c.key(id), serializeErr)
 		c.Delete(id)
 	}
 
@@ -47,7 +58,7 @@ func (c *implCache[T]) Get(
 
 	val, typeOK := persistentData.(T)
 	if !typeOK {
-		return zero, app_errors.ErrTypeCastingCacheValueFailed
+		return zero, ErrTypeCastingCacheValueFailed
 	}
 
 	c.set(id, val)
@@ -55,16 +66,23 @@ func (c *implCache[T]) Get(
 }
 
 func (c *implCache[T]) set(id string, data T) {
-	c.cacheClient.Set(c.key(id), data)
+	byteData, err := c.serializer.Encode(data)
+	if err != nil {
+		log.Printf("error serializing cache data for key %s failed: %v", c.key(id), err)
+		return
+	}
+
+	c.cacheClient.Set(c.key(id), byteData)
 }
 
 func (c *implCache[T]) Delete(id string) {
 	c.cacheClient.Delete(c.key(id))
 }
 
-func CreateNewCache[T any](cacheClient core.ICacheClient, namespace string) core.ICache[T] {
+func NewCache[T any](cacheClient CacheClient, serializer serializer.Serializer[T], namespace string) Cache[T] {
 	return &implCache[T]{
 		cacheClient: cacheClient,
 		namespace:   namespace,
+		serializer:  serializer,
 	}
 }

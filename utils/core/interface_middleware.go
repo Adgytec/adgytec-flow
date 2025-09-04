@@ -2,11 +2,11 @@ package core
 
 import "net/http"
 
-// IMiddlewarePC provides multiple middleware funcs to use with individual service mux
+// MiddlewarePC provides multiple middleware funcs to use with individual service mux
 // Its the responsibility of individual service to correctly call the respective middleware
 // As API key can be generated for both a single organization and for management purposes
 // need multiple handler for api keys to correctly verify for the required action
-type IMiddlewarePC interface {
+type MiddlewarePC interface {
 	ValidateAndGetActorDetailsFromHttpRequest(http.Handler) http.Handler
 
 	EnsureActorTypeUserOnly(http.Handler) http.Handler

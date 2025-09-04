@@ -5,28 +5,19 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
 func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
-	jsonRes, err := json.MarshalIndent(data, "", "\t")
-	if err != nil {
-		log.Printf("Error encoding json: %v", err)
-		http.Error(
-			w,
-			http.StatusText(http.StatusInternalServerError),
-			http.StatusInternalServerError,
-		)
-		return
-	}
-
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 
-	_, err = w.Write(jsonRes)
-	if err != nil {
-		log.Printf("Error writing response: %v", err)
+	jsonEncoder := json.NewEncoder(w)
+	jsonEncoder.SetIndent("", "\t")
+
+	if err := jsonEncoder.Encode(data); err != nil {
+		log.Printf("Error encoding json: %v", err)
 		http.Error(
 			w,
 			http.StatusText(http.StatusInternalServerError),
@@ -37,11 +28,11 @@ func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
 }
 
 func EncodeError(w http.ResponseWriter, err error) {
-	if responseError, ok := err.(core.IErrorResponse); ok {
+	if responseError, ok := err.(apires.ErrorResponse); ok {
 		EncodeJSON(w, responseError.HTTPResponse().HTTPStatusCode, responseError.HTTPResponse())
 	} else {
-		EncodeJSON(w, http.StatusInternalServerError, core.ResponseHTTPError{
-			Message: helpers.ValuePtr(http.StatusText(http.StatusInternalServerError)),
+		EncodeJSON(w, http.StatusInternalServerError, apires.ErrorDetails{
+			Message: pointer.New(http.StatusText(http.StatusInternalServerError)),
 		})
 	}
 }

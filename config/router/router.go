@@ -6,46 +6,47 @@ import (
 	"os"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
-	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
-type serviceFactory func(params app.IApp) core.IServiceMux
+type serviceFactory func(params app.App) services.Mux
 
-var services = []serviceFactory{
-	func(appConfig app.IApp) core.IServiceMux {
-		return access_management.CreateAccessManagementMux(appConfig)
+var appServices = []serviceFactory{
+	func(appConfig app.App) services.Mux {
+		return iam.NewIAMMux(appConfig)
 	},
-	func(appConfig app.IApp) core.IServiceMux {
-		return user.CreateUserServiceMux(appConfig)
+	func(appConfig app.App) services.Mux {
+		return user.NewUserServiceMux(appConfig)
 	},
 }
 
 func handle400(mux *chi.Mux) {
 	mux.NotFound(func(w http.ResponseWriter, _ *http.Request) {
-		payload.EncodeJSON(w, http.StatusNotFound, core.ResponseHTTPError{
-			Message: helpers.ValuePtr(
+		payload.EncodeJSON(w, http.StatusNotFound, apires.ErrorDetails{
+			Message: pointer.New(
 				http.StatusText(http.StatusNotFound),
 			),
 		})
 	})
 
 	mux.MethodNotAllowed(func(w http.ResponseWriter, _ *http.Request) {
-		payload.EncodeJSON(w, http.StatusMethodNotAllowed, core.ResponseHTTPError{
-			Message: helpers.ValuePtr(
+		payload.EncodeJSON(w, http.StatusMethodNotAllowed, apires.ErrorDetails{
+			Message: pointer.New(
 				http.StatusText(http.StatusMethodNotAllowed),
 			),
 		})
 	})
 }
 
-func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
+func NewApplicationRouter(appConfig app.App) *chi.Mux {
 	log.Println("adding application mux")
 	mux := chi.NewMux()
 
@@ -77,7 +78,7 @@ func CreateApplicationRouter(appConfig app.IApp) *chi.Mux {
 
 	mux.Use(appConfig.Middleware().ValidateAndGetActorDetailsFromHttpRequest)
 	mux.Use(appConfig.Middleware().ValidateActorTypeUserGlobalStatus)
-	for _, factory := range services {
+	for _, factory := range appServices {
 		serviceMux := factory(appConfig)
 		mux.Mount(serviceMux.BasePath(), serviceMux.Router())
 	}
