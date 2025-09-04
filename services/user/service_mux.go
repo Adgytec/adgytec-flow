@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
 )
 
@@ -37,7 +38,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 	return mux
 }
 
-func NewUserServiceMux(params userServiceMuxParams) core.ServiceMux {
+func NewUserServiceMux(params userServiceMuxParams) services.Mux {
 	log.Printf("adding %s-service mux", serviceName)
 	return &userServiceMux{
 		service:    newUserService(params),

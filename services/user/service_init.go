@@ -7,6 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 )
 
 type userServiceInit struct {
@@ -47,7 +48,7 @@ type userServiceInitParams interface {
 	Database() database.Database
 }
 
-func InitUserService(params userServiceInitParams) core.ServiceInit {
+func InitUserService(params userServiceInitParams) services.Init {
 	return &userServiceInit{
 		db:                    params.Database(),
 		serviceDetails:        userServiceDetails,

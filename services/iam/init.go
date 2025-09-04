@@ -7,6 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/services"
 )
 
 type iamServiceInit struct {
@@ -64,7 +65,7 @@ type iamInitParams interface {
 	Database() database.Database
 }
 
-func InitIAMService(params iamInitParams) core.ServiceInit {
+func InitIAMService(params iamInitParams) services.Init {
 	return &iamServiceInit{
 		db:                     params.Database(),
 		serviceDetails:         iamServiceDetails,
