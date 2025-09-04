@@ -1,0 +1,90 @@
+package iam
+
+import (
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/google/uuid"
+)
+
+// PermissionProvider provides common interface for all the permission types for easy resolution
+type PermissionProvider interface {
+	GetPermissionKey() string
+	GetPermissionType() PermissionType
+	GetPermissionActorType() db.GlobalAssignableActorType
+	GetPermissionRequiredResources() PermissionRequiredResources
+}
+
+// PermissionRequiredResources defines the required resources for PermissionEntity for successfull resolution
+type PermissionRequiredResources struct {
+	OrgID                 *uuid.UUID
+	ProjectID             *uuid.UUID
+	UserID                *uuid.UUID
+	ServiceHierarchyID    *uuid.UUID
+	ServiceResourceItemID *uuid.UUID
+}
+
+// permissionEntity defines the current actor details for permission resolution
+type permissionEntity struct {
+	id         uuid.UUID
+	entityType db.GlobalActorType
+}
+
+type permissionRequired struct {
+	key                 string
+	permissionType      PermissionType
+	permissionActorType db.GlobalAssignableActorType
+	requiredResources   PermissionRequiredResources
+}
+
+func (p permissionRequired) GetPermissionKey() string {
+	return p.key
+}
+
+func (p permissionRequired) GetPermissionType() PermissionType {
+	return p.permissionType
+}
+
+func (p permissionRequired) GetPermissionActorType() db.GlobalAssignableActorType {
+	return p.permissionActorType
+}
+
+func (p permissionRequired) GetPermissionRequiredResources() PermissionRequiredResources {
+	return p.requiredResources
+}
+
+// helper methods to create PermissionProvider for permission resolution
+
+func NewPermissionRequiredFromManagementPermission(
+	permission db.AddManagementPermissionParams,
+	requiredPermissionResources PermissionRequiredResources,
+) PermissionProvider {
+	return permissionRequired{
+		key:                 permission.Key,
+		permissionType:      PermissionTypeManagement,
+		permissionActorType: permission.AssignableActor,
+		requiredResources:   requiredPermissionResources,
+	}
+}
+
+func NewPermissionRequiredFromApplicationPermission(
+	permission db.AddApplicationPermissionParams,
+	requiredPermissionResources PermissionRequiredResources,
+) PermissionProvider {
+	return permissionRequired{
+		key:                 permission.Key,
+		permissionType:      PermissionTypeApplication,
+		permissionActorType: permission.AssignableActor,
+		requiredResources:   requiredPermissionResources,
+	}
+}
+
+func NewPermissionRequiredFromSelfPermission(
+	permission SelfPermissions,
+	requiredPermissionResources PermissionRequiredResources,
+) PermissionProvider {
+	return permissionRequired{
+		key:                 permission.Key,
+		permissionType:      PermissionTypeSelf,
+		permissionActorType: db.GlobalAssignableActorTypeUser,
+		requiredResources:   requiredPermissionResources,
+	}
+}

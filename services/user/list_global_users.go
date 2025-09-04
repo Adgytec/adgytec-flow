@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -14,11 +15,11 @@ func (s *userService) getGlobalUsers(
 	ctx context.Context,
 	params core.PaginationRequestParams,
 ) (*core.ResponsePagination[models.GlobalUser], error) {
-	permissionErr := s.accessManagement.CheckPermission(
+	permissionErr := s.iam.CheckPermission(
 		ctx,
-		helpers.NewPermissionRequiredFromManagementPermission(
+		iam.NewPermissionRequiredFromManagementPermission(
 			listAllUsersPermission,
-			core.PermissionRequiredResources{},
+			iam.PermissionRequiredResources{},
 		),
 	)
 	if permissionErr != nil {

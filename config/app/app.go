@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
@@ -16,7 +17,7 @@ type appExternalServices interface {
 }
 
 type appInternalServices interface {
-	AccessManagement() core.AccessManagementPC
+	IAMService() iam.IAMServicePC
 	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC
 }

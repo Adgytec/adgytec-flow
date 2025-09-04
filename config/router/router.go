@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
-	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -20,7 +20,7 @@ type serviceFactory func(params app.App) core.ServiceMux
 
 var services = []serviceFactory{
 	func(appConfig app.App) core.ServiceMux {
-		return access_management.NewAccessManagementMux(appConfig)
+		return iam.NewIAMMux(appConfig)
 	},
 	func(appConfig app.App) core.ServiceMux {
 		return user.NewUserServiceMux(appConfig)

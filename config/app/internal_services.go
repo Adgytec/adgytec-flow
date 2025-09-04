@@ -1,20 +1,20 @@
 package app
 
 import (
-	"github.com/Adgytec/adgytec-flow/services/access_management"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	app_middleware "github.com/Adgytec/adgytec-flow/services/middleware"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 type internalServices struct {
-	accessManagement core.AccessManagementPC
-	userService      user.UserServicePC
-	middleware       core.MiddlewarePC
+	iamService  iam.IAMServicePC
+	userService user.UserServicePC
+	middleware  core.MiddlewarePC
 }
 
-func (s *internalServices) AccessManagement() core.AccessManagementPC {
-	return s.accessManagement
+func (s *internalServices) IAMService() iam.IAMServicePC {
+	return s.iamService
 }
 
 func (s *internalServices) UserService() user.UserServicePC {
@@ -33,7 +33,7 @@ func newInternalService(externalService appExternalServices) appInternalServices
 	}
 
 	// Initialize internal services. The order of initialization is important.
-	internalService.accessManagement = access_management.NewAccessManagementPC(externalService)
+	internalService.iamService = iam.NewIAMServicePC(externalService)
 	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
 

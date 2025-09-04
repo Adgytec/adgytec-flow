@@ -3,7 +3,7 @@
 //   sqlc v1.29.0
 // source: services.sql
 
-package db_actions
+package db
 
 import (
 	"context"

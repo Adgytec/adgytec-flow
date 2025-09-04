@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/models"
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
@@ -16,20 +16,20 @@ import (
 )
 
 func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
-	requiredPermissions := []core.PermissionProvider{
-		helpers.NewPermissionRequiredFromSelfPermission(
+	requiredPermissions := []iam.PermissionProvider{
+		iam.NewPermissionRequiredFromSelfPermission(
 			getSelfProfilePermission,
-			core.PermissionRequiredResources{
+			iam.PermissionRequiredResources{
 				UserID: pointer.New(userID),
 			},
 		),
-		helpers.NewPermissionRequiredFromManagementPermission(
+		iam.NewPermissionRequiredFromManagementPermission(
 			getUserProfilePermission,
-			core.PermissionRequiredResources{},
+			iam.PermissionRequiredResources{},
 		),
 	}
 
-	permissionErr := s.accessManagement.CheckPermissions(
+	permissionErr := s.iam.CheckPermissions(
 		ctx,
 		requiredPermissions,
 	)

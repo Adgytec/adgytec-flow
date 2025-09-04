@@ -6,26 +6,25 @@ import (
 	"fmt"
 	"net/http"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	"github.com/Adgytec/adgytec-flow/utils/helpers"
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
 
-func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, status db_actions.GlobalUserStatus) error {
+func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, status db.GlobalUserStatus) error {
 	requiredPermission := enableUserPermission
-	if status == db_actions.GlobalUserStatusDisabled {
+	if status == db.GlobalUserStatusDisabled {
 		requiredPermission = disableUserPermission
 	}
 
-	permissionErr := s.accessManagement.CheckPermission(
+	permissionErr := s.iam.CheckPermission(
 		ctx,
-		helpers.NewPermissionRequiredFromManagementPermission(
+		iam.NewPermissionRequiredFromManagementPermission(
 			requiredPermission,
-			core.PermissionRequiredResources{},
+			iam.PermissionRequiredResources{},
 		),
 	)
 	if permissionErr != nil {
@@ -42,7 +41,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 
 	userData, dbErr := qtx.UpdateGlobalUserStatus(
 		ctx,
-		db_actions.UpdateGlobalUserStatusParams{
+		db.UpdateGlobalUserStatusParams{
 			ID:     userID,
 			Status: status,
 		},
@@ -56,7 +55,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 
 	// update cognito
 	var authErr error
-	if status == db_actions.GlobalUserStatusDisabled {
+	if status == db.GlobalUserStatusDisabled {
 		authErr = s.auth.DisableUser(userData.Username)
 	} else {
 		authErr = s.auth.EnableUser(userData.Username)
@@ -68,7 +67,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	return tx.Commit(context.Background())
 }
 
-func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db_actions.GlobalUserStatus) {
+func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db.GlobalUserStatus) {
 	if !status.Valid() {
 		payload.EncodeError(w, fmt.Errorf("invalid-status-value"))
 		return

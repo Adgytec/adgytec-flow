@@ -2,7 +2,7 @@
 // versions:
 //   sqlc v1.29.0
 
-package db_actions
+package db
 
 import (
 	"database/sql/driver"
@@ -17,7 +17,7 @@ type ApplicationPermissionResourceType string
 
 const (
 	ApplicationPermissionResourceTypeProject          ApplicationPermissionResourceType = "project"
-	ApplicationPermissionResourceTypeLogcialPartition ApplicationPermissionResourceType = "logcial-partition"
+	ApplicationPermissionResourceTypeLogicalPartition ApplicationPermissionResourceType = "logical-partition"
 	ApplicationPermissionResourceTypeServiceItem      ApplicationPermissionResourceType = "service-item"
 )
 
@@ -59,7 +59,7 @@ func (ns NullApplicationPermissionResourceType) Value() (driver.Value, error) {
 func (e ApplicationPermissionResourceType) Valid() bool {
 	switch e {
 	case ApplicationPermissionResourceTypeProject,
-		ApplicationPermissionResourceTypeLogcialPartition,
+		ApplicationPermissionResourceTypeLogicalPartition,
 		ApplicationPermissionResourceTypeServiceItem:
 		return true
 	}

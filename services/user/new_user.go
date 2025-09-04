@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/google/uuid"
 )
@@ -21,7 +21,7 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 
 	inserted, dbErr := qtx.CreateGlobalUser(
 		ctx,
-		db_actions.CreateGlobalUserParams{
+		db.CreateGlobalUserParams{
 			ID:    userID,
 			Email: email,
 		},

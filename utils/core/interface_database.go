@@ -3,12 +3,12 @@ package core
 import (
 	"context"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/jackc/pgx/v5"
 )
 
 type Database interface {
-	Queries() *db_actions.Queries
+	Queries() *db.Queries
 	NewTransaction(context.Context) (pgx.Tx, error)
 }
 

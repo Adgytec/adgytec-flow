@@ -4,7 +4,7 @@ import (
 	"context"
 	"slices"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
@@ -14,7 +14,7 @@ import (
 func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
 	userList, userErr := s.db.Queries().GetGlobalUsersByQuery(
 		ctx,
-		db_actions.GetGlobalUsersByQueryParams{
+		db.GetGlobalUsersByQueryParams{
 			Limit: helpers.SearchQueryLimit,
 			Query: params.SearchQuery,
 		},
@@ -35,7 +35,7 @@ func (s *userService) getGlobalUsersByQuery(ctx context.Context, params core.Pag
 }
 
 func (s *userService) getGlobalUsersInitial(ctx context.Context, params core.PaginationRequestParams) (*core.ResponsePagination[models.GlobalUser], error) {
-	var userList []db_actions.GlobalUserDetail
+	var userList []db.GlobalUserDetail
 	var userErr error
 
 	if params.Sorting == core.PaginationRequestSortingLatestFirst {
@@ -79,7 +79,7 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 
 	userList, userErr := s.db.Queries().GetGlobalUsersLatestFirstLesserThanCursor(
 		ctx,
-		db_actions.GetGlobalUsersLatestFirstLesserThanCursorParams{
+		db.GetGlobalUsersLatestFirstLesserThanCursorParams{
 			Limit:  helpers.PaginationLimit + 1,
 			Cursor: *nextCursorVal,
 		},
@@ -104,7 +104,7 @@ func (s *userService) getGlobalUsersNextPageLatestFirst(ctx context.Context, par
 		prevCursor := userModels[0].GetCreatedAt()
 		prevUser, prevUserErr := s.db.Queries().GetGlobalUsersLatestFirstGreaterThanCursor(
 			ctx,
-			db_actions.GetGlobalUsersLatestFirstGreaterThanCursorParams{
+			db.GetGlobalUsersLatestFirstGreaterThanCursorParams{
 				Limit:  1,
 				Cursor: prevCursor,
 			},
@@ -129,7 +129,7 @@ func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, par
 
 	userList, userErr := s.db.Queries().GetGlobalUsersOldestFirstGreaterThanCursor(
 		ctx,
-		db_actions.GetGlobalUsersOldestFirstGreaterThanCursorParams{
+		db.GetGlobalUsersOldestFirstGreaterThanCursorParams{
 			Limit:  helpers.PaginationLimit + 1,
 			Cursor: *nextCursorVal,
 		},
@@ -154,7 +154,7 @@ func (s *userService) getGlobalUsersNextPageOldestFirst(ctx context.Context, par
 		prevCursor := userModels[0].GetCreatedAt()
 		prevUser, prevUserErr := s.db.Queries().GetGlobalUsersOldestFirstLesserThanCursor(
 			ctx,
-			db_actions.GetGlobalUsersOldestFirstLesserThanCursorParams{
+			db.GetGlobalUsersOldestFirstLesserThanCursorParams{
 				Limit:  1,
 				Cursor: prevCursor,
 			},
@@ -188,7 +188,7 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 
 	userList, userErr := s.db.Queries().GetGlobalUsersLatestFirstGreaterThanCursor(
 		ctx,
-		db_actions.GetGlobalUsersLatestFirstGreaterThanCursorParams{
+		db.GetGlobalUsersLatestFirstGreaterThanCursorParams{
 			Limit:  helpers.PaginationLimit + 1,
 			Cursor: *prevCursorVal,
 		},
@@ -212,7 +212,7 @@ func (s *userService) getGlobalUsersPrevPageLatestFirst(ctx context.Context, par
 		nextCursor := userModels[len(userModels)-1].GetCreatedAt()
 		nextUser, nextUserErr := s.db.Queries().GetGlobalUsersLatestFirstLesserThanCursor(
 			ctx,
-			db_actions.GetGlobalUsersLatestFirstLesserThanCursorParams{
+			db.GetGlobalUsersLatestFirstLesserThanCursorParams{
 				Limit:  1,
 				Cursor: nextCursor,
 			},
@@ -236,7 +236,7 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 
 	userList, userErr := s.db.Queries().GetGlobalUsersOldestFirstLesserThanCursor(
 		ctx,
-		db_actions.GetGlobalUsersOldestFirstLesserThanCursorParams{
+		db.GetGlobalUsersOldestFirstLesserThanCursorParams{
 			Limit:  helpers.PaginationLimit + 1,
 			Cursor: *prevCursorVal,
 		},
@@ -260,7 +260,7 @@ func (s *userService) getGlobalUsersPrevPageOldestFirst(ctx context.Context, par
 		nextCursor := userModels[len(userModels)-1].GetCreatedAt()
 		nextUser, nextUserErr := s.db.Queries().GetGlobalUsersOldestFirstGreaterThanCursor(
 			ctx,
-			db_actions.GetGlobalUsersOldestFirstGreaterThanCursorParams{
+			db.GetGlobalUsersOldestFirstGreaterThanCursorParams{
 				Limit:  1,
 				Cursor: nextCursor,
 			},

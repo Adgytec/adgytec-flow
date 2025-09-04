@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 	"github.com/jackc/pgx/v5"
@@ -61,8 +61,8 @@ type pgxConnection struct {
 	connPool *pgxpool.Pool
 }
 
-func (c *pgxConnection) Queries() *db_actions.Queries {
-	return db_actions.New(c.connPool)
+func (c *pgxConnection) Queries() *db.Queries {
+	return db.New(c.connPool)
 }
 
 func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {

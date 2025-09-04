@@ -1,24 +1,22 @@
-package access_management
+package iam
 
 import (
 	"context"
 	"errors"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
-	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-func (pc *accessManagementPC) CheckPermission(ctx context.Context, permissionRequired core.PermissionProvider) error {
-	return pc.CheckPermissions(ctx, []core.PermissionProvider{permissionRequired})
+func (pc *iamServicePC) CheckPermission(ctx context.Context, permissionRequired PermissionProvider) error {
+	return pc.CheckPermissions(ctx, []PermissionProvider{permissionRequired})
 }
 
 // CheckPermissions checks a list of permissions and succeeds if any one of them is granted.
 // If the permissionsRequired slice is empty, it returns an error.
-func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsRequired []core.PermissionProvider) error {
+func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequired []PermissionProvider) error {
 	if len(permissionsRequired) == 0 {
-		return &app_errors.PermissionResolutionFailedError{
-			Cause: app_errors.ErrMissingPermissionsToCheck,
+		return &PermissionResolutionFailedError{
+			Cause: ErrMissingPermissionsToCheck,
 		}
 	}
 
@@ -27,9 +25,9 @@ func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsR
 		return actorDetailsErr
 	}
 
-	permissionEntity := core.PermissionEntity{
-		ID:         actorDetails.ID,
-		EntityType: actorDetails.Type,
+	permissionEntity := permissionEntity{
+		id:         actorDetails.ID,
+		entityType: actorDetails.Type,
 	}
 
 	var lastPermissionErr error
@@ -40,7 +38,7 @@ func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsR
 			return nil
 		}
 
-		if !errors.Is(lastPermissionErr, app_errors.ErrPermissionDenied) {
+		if !errors.Is(lastPermissionErr, ErrPermissionDenied) {
 			// some other error than permission denied so return early
 			return lastPermissionErr
 		}
@@ -49,9 +47,9 @@ func (pc *accessManagementPC) CheckPermissions(ctx context.Context, permissionsR
 	return lastPermissionErr
 }
 
-func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity core.PermissionEntity, permissionRequired core.PermissionProvider) error {
+func (s *iamService) checkPermission(ctx context.Context, permissionEntity permissionEntity, permissionRequired PermissionProvider) error {
 	actorTypeError := s.validateActorType(
-		permissionEntity.EntityType,
+		permissionEntity.entityType,
 		permissionRequired.GetPermissionActorType(),
 	)
 	if actorTypeError != nil {
@@ -59,15 +57,15 @@ func (s *accessManagement) checkPermission(ctx context.Context, permissionEntity
 	}
 
 	switch permissionRequired.GetPermissionType() {
-	case core.PermissionTypeSelf:
+	case PermissionTypeSelf:
 		return s.resolveSelfPermission(permissionEntity, permissionRequired)
-	case core.PermissionTypeApplication:
+	case PermissionTypeApplication:
 		return s.resolveApplicationPermission(ctx, permissionEntity, permissionRequired)
-	case core.PermissionTypeManagement:
+	case PermissionTypeManagement:
 		return s.resolveManagementPermission(ctx, permissionEntity, permissionRequired)
 	default:
-		return &app_errors.PermissionResolutionFailedError{
-			Cause: app_errors.ErrUnknownPermissionType,
+		return &PermissionResolutionFailedError{
+			Cause: ErrUnknownPermissionType,
 		}
 	}
 }

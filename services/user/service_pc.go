@@ -4,13 +4,13 @@ import (
 	"context"
 	"log"
 
-	db_actions "github.com/Adgytec/adgytec-flow/database/actions"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/google/uuid"
 )
 
 type UserServicePC interface {
 	NewUser(ctx context.Context, email string) (uuid.UUID, error)
-	GetUserStatus(ctx context.Context, userID uuid.UUID) (db_actions.GlobalUserStatus, error)
+	GetUserStatus(ctx context.Context, userID uuid.UUID) (db.GlobalUserStatus, error)
 }
 
 type userServicePC struct {
@@ -18,7 +18,7 @@ type userServicePC struct {
 }
 
 func NewUserServicePC(params userServiceParams) UserServicePC {
-	log.Println("creating user-service PC")
+	log.Printf("creating %s-service PC", serviceName)
 	return &userServicePC{
 		service: newUserService(params),
 	}
