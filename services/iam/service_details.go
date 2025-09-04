@@ -5,7 +5,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/helpers"
 )
 
-var serviceName = "access-management"
+var serviceName = "iam"
 
 var accessManagementDetails = db.AddServiceParams{
 	ID:               helpers.GetIDFromPayload([]byte(serviceName)),
