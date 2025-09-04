@@ -47,7 +47,7 @@ func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequire
 	return lastPermissionErr
 }
 
-func (s *iam) checkPermission(ctx context.Context, permissionEntity permissionEntity, permissionRequired PermissionProvider) error {
+func (s *iamService) checkPermission(ctx context.Context, permissionEntity permissionEntity, permissionRequired PermissionProvider) error {
 	actorTypeError := s.validateActorType(
 		permissionEntity.entityType,
 		permissionRequired.GetPermissionActorType(),

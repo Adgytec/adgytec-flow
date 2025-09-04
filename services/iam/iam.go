@@ -6,23 +6,23 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type iamParams interface {
+type iamServiceParams interface {
 	Database() core.Database
 	CacheClient() core.CacheClient
 }
 
 type iamServiceMuxParams interface {
-	iamParams
+	iamServiceParams
 	Middleware() core.MiddlewarePC
 }
 
-type iam struct {
+type iamService struct {
 	db              core.Database
 	permissionCache core.Cache[bool]
 }
 
-func newIAMService(params iamParams) *iam {
-	return &iam{
+func newIAMService(params iamServiceParams) *iamService {
+	return &iamService{
 		db:              params.Database(),
 		permissionCache: cache.NewCache[bool](params.CacheClient(), serializer.NewJSONSerializer[bool](), "iam"),
 	}

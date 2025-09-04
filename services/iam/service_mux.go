@@ -8,7 +8,7 @@ import (
 )
 
 type iamServiceMux struct {
-	service    *iam
+	service    *iamService
 	middleware core.MiddlewarePC
 }
 
@@ -22,7 +22,7 @@ func (m *iamServiceMux) Router() *chi.Mux {
 }
 
 func NewIAMMux(params iamServiceMuxParams) core.ServiceMux {
-	log.Println("adding iam mux")
+	log.Println("adding iam-service mux")
 	return &iamServiceMux{
 		service:    newIAMService(params),
 		middleware: params.Middleware(),

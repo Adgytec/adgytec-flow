@@ -14,11 +14,11 @@ type IAMServicePC interface {
 }
 
 type iamServicePC struct {
-	service *iam
+	service *iamService
 }
 
-func NewIAMServicePC(params iamParams) IAMServicePC {
-	log.Println("creating iam PC")
+func NewIAMServicePC(params iamServiceParams) IAMServicePC {
+	log.Println("creating iam-service PC")
 	return &iamServicePC{
 		service: newIAMService(params),
 	}

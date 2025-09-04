@@ -6,7 +6,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 )
 
-func (s *iam) validateActorType(
+func (s *iamService) validateActorType(
 	currentActorType db.GlobalActorType,
 	requiredActorType db.GlobalAssignableActorType,
 ) error {

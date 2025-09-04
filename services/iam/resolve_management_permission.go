@@ -6,7 +6,7 @@ import (
 	app_errors "github.com/Adgytec/adgytec-flow/utils/errors"
 )
 
-func (s *iam) resolveManagementPermission(
+func (s *iamService) resolveManagementPermission(
 	ctx context.Context,
 	permissionEntity permissionEntity,
 	permissionRequired PermissionProvider,

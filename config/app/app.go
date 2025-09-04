@@ -17,7 +17,7 @@ type appExternalServices interface {
 }
 
 type appInternalServices interface {
-	Iam() iam.IAMServicePC
+	IAMService() iam.IAMServicePC
 	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC
 }

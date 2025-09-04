@@ -1,6 +1,6 @@
 package iam
 
-func (s *iam) resolveSelfPermission(
+func (s *iamService) resolveSelfPermission(
 	permissionEntity permissionEntity,
 	permissionRequired PermissionProvider,
 ) error {

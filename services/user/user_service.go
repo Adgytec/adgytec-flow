@@ -13,7 +13,7 @@ import (
 type userServiceParams interface {
 	Database() core.Database
 	Auth() core.Auth
-	Iam() iam.IAMServicePC
+	IAMService() iam.IAMServicePC
 	CDN() core.CDN
 	CacheClient() core.CacheClient
 }
@@ -87,7 +87,7 @@ func newUserService(params userServiceParams) *userService {
 	return &userService{
 		db:               params.Database(),
 		auth:             params.Auth(),
-		iam:              params.Iam(),
+		iam:              params.IAMService(),
 		cdn:              params.CDN(),
 		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
 		getUserListCache: cache.NewCache[core.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[core.ResponsePagination[models.GlobalUser]](), "user-list"),
