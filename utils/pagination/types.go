@@ -72,17 +72,17 @@ func (p PaginationRequestParams) cacheID() string {
 // PaginationFuncQuery defines a func required for getting paginated data with search query
 type PaginationFuncQuery[T any] func(ctx context.Context, searchQuery string, limit int32) ([]T, error)
 
-// PaginationFuncInitial defines a func requried for getting initial page data
+// PaginationFuncInitial defines a func required for getting initial page data
 type PaginationFuncInitial[T any] func(ctx context.Context, limit int32) ([]T, error)
 
-// PaginationFuncCursor defines a func required for ggetting pages using cursor
+// PaginationFuncCursor defines a func required for getting pages using cursor
 // cursor actual evaluation is done by client providing the funcs
 type PaginationFuncCursor[T any] func(ctx context.Context, cursor time.Time, limit int32) ([]T, error)
 
-// PaginationFuncToModel converts db response model to acutal item model which can be used by applications
+// PaginationFuncToModel converts db response model to actual item model which can be used by applications
 type PaginationFuncToModel[T any, M PaginationItem] func(items []T) []M
 
-// PaginationActions types T defines item type send by database-query resolution, M defines model used in applications
+// PaginationActions types T defines item type sent by database-query resolution, M defines model used in applications
 type PaginationActions[T any, M PaginationItem] struct {
 	Query                        PaginationFuncQuery[T]
 	InitialLatestFirst           PaginationFuncInitial[T]
