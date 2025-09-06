@@ -114,6 +114,7 @@ func getNextPageLatestFirst[T any, M PaginationItem](
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
 
+	// require item created before next cursor
 	list, listErr := actions.LesserThanCursorLatestFirst(ctx, nextCursor, paginationLimit+1)
 	if listErr != nil {
 		return zero, listErr
@@ -148,6 +149,7 @@ func getNextPageOldestFirst[T any, M PaginationItem](
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
 
+	// require items created after next cursor
 	list, listErr := actions.GreaterThanCursorOldestFirst(ctx, nextCursor, paginationLimit+1)
 	if listErr != nil {
 		return zero, listErr
@@ -204,6 +206,8 @@ func getPrevPageLatestFirst[T any, M PaginationItem](
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
 
+	// cursor is time based so when fetching previous page with latest first,
+	// we need items that are created after prev cursor with latest first
 	list, listErr := actions.GreaterThanCursorLatestFirst(ctx, prevCursor, paginationLimit+1)
 	if listErr != nil {
 		return zero, listErr
@@ -239,6 +243,7 @@ func getPrevPageOldestFirst[T any, M PaginationItem](
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
 
+	// require items that are created prior to prev cursor
 	list, listErr := actions.LesserThanCursorOldestFirst(ctx, prevCursor, paginationLimit+1)
 	if listErr != nil {
 		return zero, listErr
