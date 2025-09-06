@@ -1,6 +1,9 @@
 package pagination
 
-import "time"
+import (
+	"context"
+	"time"
+)
 
 type PaginationItem interface {
 	GetCreatedAt() time.Time
@@ -42,4 +45,28 @@ type PaginationRequestParams struct {
 	PrevCursor  string
 	Sorting     PaginationRequestSorting
 	SearchQuery string
+}
+
+// PaginationFuncQuery defines a func required for getting paginated data with search query
+type PaginationFuncQuery[T any] func(ctx context.Context, searchQuery string, limit int) ([]T, error)
+
+// PaginationFuncInitial defines a func requried for getting initial page data
+type PaginationFuncInitial[T any] func(ctx context.Context, limit int) ([]T, error)
+
+// PaginationFuncCursor defines a func required for ggetting pages using cursor
+// cursor actual evaluation is done by client providing the funcs
+type PaginationFuncCursor[T any] func(ctx context.Context, cursor string, limit int) ([]T, error)
+
+// PaginationFuncToModel converts db response model to acutal item model which can be used by applications
+type PaginationFuncToModel[T any, M any] func(items []T) []M
+
+type PaginationActions[T any, M any] struct {
+	Query                        PaginationFuncQuery[T]
+	InitialLatestFirst           PaginationFuncInitial[T]
+	InitialOldestFirst           PaginationFuncInitial[T]
+	GreaterThanCursorLatestFirst PaginationFuncCursor[T]
+	GreaterThanCursorOldestFirst PaginationFuncCursor[T]
+	LesserThanCursorLatestFirst  PaginationFuncCursor[T]
+	LesserThanCursorOldestFirst  PaginationFuncCursor[T]
+	ToModel                      PaginationFuncToModel[T, M]
 }
