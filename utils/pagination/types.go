@@ -77,7 +77,7 @@ type PaginationFuncInitial[T any] func(ctx context.Context, limit int) ([]T, err
 
 // PaginationFuncCursor defines a func required for ggetting pages using cursor
 // cursor actual evaluation is done by client providing the funcs
-type PaginationFuncCursor[T any] func(ctx context.Context, cursor string, limit int) ([]T, error)
+type PaginationFuncCursor[T any] func(ctx context.Context, cursor time.Time, limit int) ([]T, error)
 
 // PaginationFuncToModel converts db response model to acutal item model which can be used by applications
 type PaginationFuncToModel[T any, M PaginationItem] func(items []T) []M

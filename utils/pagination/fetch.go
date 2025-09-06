@@ -3,6 +3,7 @@ package pagination
 import (
 	"context"
 	"slices"
+	"time"
 )
 
 // GetPaginatedData T defines db response type and M defines model used in application
@@ -78,10 +79,9 @@ func getInitialPage[T any, M PaginationItem](
 	var next *M
 
 	// handle next page details
-	if len(list) == PaginationLimit+1 {
-		listLen := len(list)
-		next = &models[listLen-2]
-		models = models[:listLen-1]
+	if len(models) > PaginationLimit {
+		models = models[:PaginationLimit]
+		next = &models[len(models)-1]
 	}
 	return NewPaginationResponse(models, next, nil), nil
 }
@@ -90,6 +90,60 @@ func getNextPage[T any, M PaginationItem](
 	ctx context.Context,
 	nextCursor string,
 	sort PaginationRequestSorting,
+	actions *PaginationActions[T, M],
+) (ResponsePagination[M], error) {
+	var zero ResponsePagination[M]
+
+	nextCursorVal := DecodeCursorValue(nextCursor)
+	if nextCursorVal == nil {
+		return zero, &InvalidCursorValueError{
+			Cursor: nextCursor,
+		}
+	}
+
+	if sort == PaginationRequestSortingLatestFirst {
+		return getNextPageLatestFirst(ctx, *nextCursorVal, actions)
+	}
+	return getNextPageOldestFirst(ctx, *nextCursorVal, actions)
+}
+
+func getNextPageLatestFirst[T any, M PaginationItem](
+	ctx context.Context,
+	nextCursor time.Time,
+	actions *PaginationActions[T, M],
+) (ResponsePagination[M], error) {
+	var zero ResponsePagination[M]
+
+	list, listErr := actions.LesserThanCursorLatestFirst(ctx, nextCursor, PaginationLimit)
+	if listErr != nil {
+		return zero, listErr
+	}
+
+	models := actions.ToModel(list)
+	var next *M
+	var prev *M
+
+	// handle next page details
+	if len(models) > PaginationLimit {
+		models = models[:PaginationLimit]
+		next = &models[len(models)-1]
+	}
+
+	if len(models) > 0 {
+		prevCursor := models[0].GetCreatedAt()
+		prevItem, prevItemErr := actions.GreaterThanCursorLatestFirst(ctx, prevCursor, 1)
+
+		if prevItemErr == nil && len(prevItem) > 0 {
+			prev = &models[0]
+		}
+	}
+
+	return NewPaginationResponse(models, next, prev), nil
+}
+
+func getNextPageOldestFirst[T any, M PaginationItem](
+	ctx context.Context,
+	nextCursor time.Time,
 	actions *PaginationActions[T, M],
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
