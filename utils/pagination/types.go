@@ -2,7 +2,7 @@ package pagination
 
 import (
 	"context"
-	"crypto/sha1"
+	"crypto/sha256"
 	"fmt"
 	"time"
 
@@ -56,8 +56,8 @@ func (p PaginationRequestParams) cacheID() string {
 
 	switch {
 	case p.SearchQuery != "":
-		queryHash := sha1.Sum([]byte(p.SearchQuery))
-		id = fmt.Sprintf("query:%x", queryHash[:8])
+		queryHash := sha256.Sum256([]byte(p.SearchQuery))
+		id = fmt.Sprintf("query:%x", queryHash[:16])
 	case p.NextCursor != "":
 		id = fmt.Sprintf("next:%s", p.NextCursor)
 	case p.PrevCursor != "":
