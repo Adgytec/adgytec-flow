@@ -14,7 +14,7 @@ func encodeTimeToBase64(payload time.Time) string {
 	return base64.StdEncoding.EncodeToString(bytePayload)
 }
 
-func DecodeCursorValue(cursor string) *time.Time {
+func decodeCursorValue(cursor string) *time.Time {
 	byteCursor, decodeErr := base64.RawStdEncoding.DecodeString(cursor)
 	if decodeErr != nil {
 		return nil

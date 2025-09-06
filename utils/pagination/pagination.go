@@ -1,6 +1,6 @@
 package pagination
 
 const (
-	PaginationLimit  = 25
-	SearchQueryLimit = PaginationLimit * 2
+	paginationLimit  = 25
+	searchQueryLimit = paginationLimit * 2
 )
