@@ -60,6 +60,7 @@ type PaginationFuncCursor[T any] func(ctx context.Context, cursor string, limit 
 // PaginationFuncToModel converts db response model to acutal item model which can be used by applications
 type PaginationFuncToModel[T any, M any] func(items []T) []M
 
+// PaginationActions types T defines item type send by database-query resolution, M defines model used in applications
 type PaginationActions[T any, M any] struct {
 	Query                        PaginationFuncQuery[T]
 	InitialLatestFirst           PaginationFuncInitial[T]
