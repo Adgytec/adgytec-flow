@@ -183,5 +183,34 @@ func getPrevPage[T any, M PaginationItem](
 	actions *PaginationActions[T, M],
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
+
+	prevCursorVal := DecodeCursorValue(prevCursor)
+	if prevCursorVal == nil {
+		return zero, &InvalidCursorValueError{
+			Cursor: prevCursor,
+		}
+	}
+
+	if sort == PaginationRequestSortingLatestFirst {
+		return getPrevPageLatestFirst(ctx, *prevCursorVal, actions)
+	}
+	return getPrevPageOldestFirst(ctx, *prevCursorVal, actions)
+}
+
+func getPrevPageLatestFirst[T any, M PaginationItem](
+	ctx context.Context,
+	prevCursor time.Time,
+	actions *PaginationActions[T, M],
+) (ResponsePagination[M], error) {
+	var zero ResponsePagination[M]
+	return zero, nil
+}
+
+func getPrevPageOldestFirst[T any, M PaginationItem](
+	ctx context.Context,
+	prevCursor time.Time,
+	actions *PaginationActions[T, M],
+) (ResponsePagination[M], error) {
+	var zero ResponsePagination[M]
 	return zero, nil
 }
