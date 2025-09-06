@@ -66,7 +66,7 @@ func (p PaginationRequestParams) cacheID() string {
 		id = "initial"
 	}
 
-	return fmt.Sprintf("%s:%s", id, p.Sorting.Value())
+	return fmt.Sprintf("%s:%s", id, p.Sorting)
 }
 
 // PaginationFuncQuery defines a func required for getting paginated data with search query
