@@ -2,6 +2,7 @@ package pagination
 
 import (
 	"context"
+	"slices"
 )
 
 // GetPaginatedData T defines db response type and M defines model used in application
@@ -31,6 +32,8 @@ func GetPaginatedData[T any, M any](
 	return &res, nil
 }
 
+// utilities funcs to fetch actual data
+
 func getPageByQuery[T any, M any](
 	ctx context.Context,
 	searchQuery string,
@@ -38,7 +41,19 @@ func getPageByQuery[T any, M any](
 	actions *PaginationActions[T, M],
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
-	return zero, nil
+
+	list, listErr := actions.Query(ctx, searchQuery, SearchQueryLimit)
+	if listErr != nil {
+		return zero, listErr
+	}
+
+	models := actions.ToModel(list)
+
+	// handle ordering
+	if sort == PaginationRequestSortingOldestFirst {
+		slices.Reverse(models)
+	}
+	return NewPaginationResponse(models, nil, nil), nil
 }
 
 func getInitialPage[T any, M any](
