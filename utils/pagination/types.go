@@ -2,6 +2,8 @@ package pagination
 
 import (
 	"context"
+	"crypto/sha1"
+	"fmt"
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/cache"
@@ -47,6 +49,24 @@ type PaginationRequestParams struct {
 	PrevCursor  string
 	Sorting     PaginationRequestSorting
 	SearchQuery string
+}
+
+func (p PaginationRequestParams) cacheID() string {
+	var id string
+
+	switch {
+	case p.SearchQuery != "":
+		queryHash := sha1.Sum([]byte(p.SearchQuery))
+		id = fmt.Sprintf("query:%x", queryHash[:8])
+	case p.NextCursor != "":
+		id = fmt.Sprintf("next:%s", p.NextCursor)
+	case p.PrevCursor != "":
+		id = fmt.Sprintf("prev:%s", p.PrevCursor)
+	default:
+		id = "initial"
+	}
+
+	return fmt.Sprintf("%s:%s", id, p.Sorting.Value())
 }
 
 // PaginationFuncQuery defines a func required for getting paginated data with search query
