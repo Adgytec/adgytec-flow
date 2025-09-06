@@ -159,7 +159,7 @@ func getNextPageOldestFirst[T any, M PaginationItem](
 
 	// handle next page
 	if len(models) > paginationLimit {
-		models := models[:paginationLimit]
+		models = models[:paginationLimit]
 		next = &models[len(models)-1]
 	}
 
