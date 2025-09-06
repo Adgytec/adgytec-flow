@@ -12,7 +12,6 @@ func GetPaginatedData[T any, M PaginationItem](
 	reqParams PaginationRequestParams,
 	actions PaginationActions[T, M],
 ) (*ResponsePagination[M], error) {
-
 	res, resErr := actions.Cache.Get(reqParams.cacheID(), func() (ResponsePagination[M], error) {
 		switch {
 		case reqParams.SearchQuery != "":
@@ -62,7 +61,29 @@ func getInitialPage[T any, M PaginationItem](
 	actions *PaginationActions[T, M],
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
-	return zero, nil
+
+	var list []T
+	var listErr error
+
+	if sort == PaginationRequestSortingLatestFirst {
+		list, listErr = actions.InitialLatestFirst(ctx, PaginationLimit)
+	} else {
+		list, listErr = actions.InitialOldestFirst(ctx, PaginationLimit)
+	}
+	if listErr != nil {
+		return zero, listErr
+	}
+
+	models := actions.ToModel(list)
+	var next *M
+
+	// handle next page details
+	if len(list) == PaginationLimit+1 {
+		listLen := len(list)
+		next = &models[listLen-2]
+		models = models[:listLen-1]
+	}
+	return NewPaginationResponse(models, next, nil), nil
 }
 
 func getNextPage[T any, M PaginationItem](
