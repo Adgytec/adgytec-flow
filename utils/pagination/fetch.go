@@ -11,12 +11,30 @@ func GetPaginatedData[T any, M any](
 	reqParams PaginationRequestParams,
 	actions PaginationActions[T, M],
 ) (*ResponsePagination[M], error) {
-	return nil, nil
+
+	res, resErr := actions.Cache.Get(reqParams.cacheID(), func() (ResponsePagination[M], error) {
+		switch {
+		case reqParams.SearchQuery != "":
+			return getPageByQuery(ctx, reqParams.SearchQuery, reqParams.Sorting, &actions)
+		case reqParams.NextCursor != "":
+			return getNextPage(ctx, reqParams.NextCursor, reqParams.Sorting, &actions)
+		case reqParams.PrevCursor != "":
+			return getPrevPage(ctx, reqParams.PrevCursor, reqParams.Sorting, &actions)
+		default:
+			return getInitialPage(ctx, reqParams.Sorting, &actions)
+		}
+	})
+	if resErr != nil {
+		return nil, resErr
+	}
+
+	return &res, nil
 }
 
 func getPageByQuery[T any, M any](
 	ctx context.Context,
 	searchQuery string,
+	sort PaginationRequestSorting,
 	actions *PaginationActions[T, M],
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
