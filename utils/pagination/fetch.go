@@ -114,7 +114,7 @@ func getNextPageLatestFirst[T any, M PaginationItem](
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
 
-	list, listErr := actions.LesserThanCursorLatestFirst(ctx, nextCursor, PaginationLimit)
+	list, listErr := actions.LesserThanCursorLatestFirst(ctx, nextCursor, PaginationLimit+1)
 	if listErr != nil {
 		return zero, listErr
 	}
@@ -148,7 +148,7 @@ func getNextPageOldestFirst[T any, M PaginationItem](
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
 
-	list, listErr := actions.GreaterThanCursorOldestFirst(ctx, nextCursor, PaginationLimit)
+	list, listErr := actions.GreaterThanCursorOldestFirst(ctx, nextCursor, PaginationLimit+1)
 	if listErr != nil {
 		return zero, listErr
 	}
@@ -203,7 +203,33 @@ func getPrevPageLatestFirst[T any, M PaginationItem](
 	actions *PaginationActions[T, M],
 ) (ResponsePagination[M], error) {
 	var zero ResponsePagination[M]
-	return zero, nil
+
+	list, listErr := actions.GreaterThanCursorLatestFirst(ctx, prevCursor, PaginationLimit+1)
+	if listErr != nil {
+		return zero, listErr
+	}
+
+	models := actions.ToModel(list)
+	var next *M
+	var prev *M
+
+	// handle prev page
+	if len(models) > PaginationLimit {
+		models = models[1:]
+		prev = &models[0]
+	}
+
+	// handle next page
+	if len(models) > 0 {
+		nextCursor := models[len(models)-1].GetCreatedAt()
+
+		nextItem, nextItemErr := actions.LesserThanCursorLatestFirst(ctx, nextCursor, 1)
+		if nextItemErr == nil && len(nextItem) > 0 {
+			next = &models[len(models)-1]
+		}
+	}
+
+	return NewPaginationResponse(models, next, prev), nil
 }
 
 func getPrevPageOldestFirst[T any, M PaginationItem](
