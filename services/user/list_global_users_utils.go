@@ -31,7 +31,7 @@ func (s *userService) getGlobalUsersInitialLatestFirst(
 	)
 }
 
-func (s *userService) getGlobalUserInitialOldestFirst(
+func (s *userService) getGlobalUsersInitialOldestFirst(
 	ctx context.Context,
 	limit int32,
 ) ([]db.GlobalUserDetail, error) {

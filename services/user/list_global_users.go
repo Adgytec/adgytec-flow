@@ -37,7 +37,7 @@ func (s *userService) getGlobalUsers(
 			ToModel:                      s.getUserResponseModels,
 			Query:                        s.getGlobalUsersQuery,
 			InitialLatestFirst:           s.getGlobalUsersInitialLatestFirst,
-			InitialOldestFirst:           s.getGlobalUserInitialOldestFirst,
+			InitialOldestFirst:           s.getGlobalUsersInitialOldestFirst,
 			GreaterThanCursorLatestFirst: s.getGlobalUsersGreaterThanCursorLatestFirst,
 			GreaterThanCursorOldestFirst: s.getGlobalUsersGreaterThanCursorOldestFirst,
 			LesserThanCursorLatestFirst:  s.getGlobalUsersLesserThanCursorLatestFirst,
