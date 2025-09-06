@@ -3,6 +3,8 @@ package pagination
 import (
 	"context"
 	"time"
+
+	"github.com/Adgytec/adgytec-flow/config/cache"
 )
 
 type PaginationItem interface {
@@ -70,4 +72,5 @@ type PaginationActions[T any, M any] struct {
 	LesserThanCursorLatestFirst  PaginationFuncCursor[T]
 	LesserThanCursorOldestFirst  PaginationFuncCursor[T]
 	ToModel                      PaginationFuncToModel[T, M]
+	Cache                        cache.Cache[ResponsePagination[M]]
 }
