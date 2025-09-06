@@ -3,7 +3,6 @@ package user
 import (
 	"context"
 	"net/http"
-	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -34,91 +33,15 @@ func (s *userService) getGlobalUsers(
 			db.GlobalUserDetail,
 			models.GlobalUser,
 		]{
-			Cache:   s.getUserListCache,
-			ToModel: s.getUserResponseModels,
-			Query: func(
-				ctx context.Context,
-				searchQuery string,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersByQuery(
-					ctx,
-					db.GetGlobalUsersByQueryParams{
-						Limit: limit,
-						Query: searchQuery,
-					},
-				)
-			},
-			InitialLatestFirst: func(
-				ctx context.Context,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersLatestFirst(
-					ctx,
-					limit,
-				)
-			},
-			InitialOldestFirst: func(
-				ctx context.Context,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersOldestFirst(
-					ctx,
-					limit,
-				)
-			},
-			GreaterThanCursorLatestFirst: func(
-				ctx context.Context,
-				cursor time.Time,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersLatestFirstGreaterThanCursor(
-					ctx,
-					db.GetGlobalUsersLatestFirstGreaterThanCursorParams{
-						Cursor: cursor,
-						Limit:  limit,
-					},
-				)
-			},
-			GreaterThanCursorOldestFirst: func(
-				ctx context.Context,
-				cursor time.Time,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersOldestFirstGreaterThanCursor(
-					ctx,
-					db.GetGlobalUsersOldestFirstGreaterThanCursorParams{
-						Cursor: cursor,
-						Limit:  limit,
-					},
-				)
-			},
-			LesserThanCursorLatestFirst: func(
-				ctx context.Context,
-				cursor time.Time,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersLatestFirstLesserThanCursor(
-					ctx,
-					db.GetGlobalUsersLatestFirstLesserThanCursorParams{
-						Cursor: cursor,
-						Limit:  limit,
-					},
-				)
-			},
-			LesserThanCursorOldestFirst: func(
-				ctx context.Context,
-				cursor time.Time,
-				limit int32,
-			) ([]db.GlobalUserDetail, error) {
-				return s.db.Queries().GetGlobalUsersOldestFirstLesserThanCursor(
-					ctx,
-					db.GetGlobalUsersOldestFirstLesserThanCursorParams{
-						Cursor: cursor,
-						Limit:  limit,
-					},
-				)
-			},
+			Cache:                        s.getUserListCache,
+			ToModel:                      s.getUserResponseModels,
+			Query:                        s.getGlobalUsersQuery,
+			InitialLatestFirst:           s.getGlobalUsersInitialLatestFirst,
+			InitialOldestFirst:           s.getGlobalUserInitialOldestFirst,
+			GreaterThanCursorLatestFirst: s.getGlobalUsersGreaterThanCursorLatestFirst,
+			GreaterThanCursorOldestFirst: s.getGlobalUsersGreaterThanCursorOldestFirst,
+			LesserThanCursorLatestFirst:  s.getGlobalUsersLesserThanCursorLatestFirst,
+			LesserThanCursorOldestFirst:  s.getGlobalUsersLesserThanCursorOldestFirst,
 		},
 	)
 }
