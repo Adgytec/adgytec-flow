@@ -25,19 +25,19 @@ type ResponsePagination[T any] struct {
 	PageItems []T      `json:"pageItems"`
 }
 
-type PaginationRequestSorting string
+type paginationRequestSorting string
 
-func (val PaginationRequestSorting) Value() PaginationRequestSorting {
+func (val paginationRequestSorting) Value() paginationRequestSorting {
 	switch val {
-	case PaginationRequestSortingLatestFirst, PaginationRequestSortingOldestFirst:
+	case paginationRequestSortingLatestFirst, paginationRequestSortingOldestFirst:
 		return val
 	}
-	return PaginationRequestSortingLatestFirst
+	return paginationRequestSortingLatestFirst
 }
 
 const (
-	PaginationRequestSortingLatestFirst PaginationRequestSorting = "latest"
-	PaginationRequestSortingOldestFirst PaginationRequestSorting = "oldest"
+	paginationRequestSortingLatestFirst paginationRequestSorting = "latest"
+	paginationRequestSortingOldestFirst paginationRequestSorting = "oldest"
 )
 
 // if multiple conflicting values are presentin PaginationRequestParams values are chosen in following order
@@ -47,7 +47,7 @@ const (
 type PaginationRequestParams struct {
 	NextCursor  string
 	PrevCursor  string
-	Sorting     PaginationRequestSorting
+	Sorting     paginationRequestSorting
 	SearchQuery string
 }
 
