@@ -67,9 +67,9 @@ func getInitialPage[T any, M PaginationItem](
 	var listErr error
 
 	if sort == paginationRequestSortingLatestFirst {
-		list, listErr = actions.InitialLatestFirst(ctx, paginationLimit)
+		list, listErr = actions.InitialLatestFirst(ctx, paginationLimit+1)
 	} else {
-		list, listErr = actions.InitialOldestFirst(ctx, paginationLimit)
+		list, listErr = actions.InitialOldestFirst(ctx, paginationLimit+1)
 	}
 	if listErr != nil {
 		return zero, listErr
