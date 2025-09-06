@@ -29,7 +29,7 @@ func (s *userService) getGlobalUsers(
 	return pagination.GetPaginatedData(
 		ctx,
 		params,
-		pagination.PaginationActions[
+		&pagination.PaginationActions[
 			db.GlobalUserDetail,
 			models.GlobalUser,
 		]{
