@@ -7,7 +7,7 @@ import (
 
 // GetPaginatedData T defines db response type and M defines model used in application
 // this is the function called by the service which require paginated response
-func GetPaginatedData[T any, M any](
+func GetPaginatedData[T any, M PaginationItem](
 	ctx context.Context,
 	reqParams PaginationRequestParams,
 	actions PaginationActions[T, M],
@@ -34,7 +34,7 @@ func GetPaginatedData[T any, M any](
 
 // utilities funcs to fetch actual data
 
-func getPageByQuery[T any, M any](
+func getPageByQuery[T any, M PaginationItem](
 	ctx context.Context,
 	searchQuery string,
 	sort PaginationRequestSorting,
@@ -56,7 +56,7 @@ func getPageByQuery[T any, M any](
 	return NewPaginationResponse(models, nil, nil), nil
 }
 
-func getInitialPage[T any, M any](
+func getInitialPage[T any, M PaginationItem](
 	ctx context.Context,
 	sort PaginationRequestSorting,
 	actions *PaginationActions[T, M],
@@ -65,7 +65,7 @@ func getInitialPage[T any, M any](
 	return zero, nil
 }
 
-func getNextPage[T any, M any](
+func getNextPage[T any, M PaginationItem](
 	ctx context.Context,
 	nextCursor string,
 	sort PaginationRequestSorting,
@@ -75,7 +75,7 @@ func getNextPage[T any, M any](
 	return zero, nil
 }
 
-func getPrevPage[T any, M any](
+func getPrevPage[T any, M PaginationItem](
 	ctx context.Context,
 	prevCursor string,
 	sort PaginationRequestSorting,
