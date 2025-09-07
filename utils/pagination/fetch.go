@@ -132,7 +132,6 @@ func getNextPage[T any, M PaginationItem](
 	}
 
 	// prevPageAction latest first and oldest first doesn't matter as only one record is checked
-	// so reusing the methods that are used for fetchPageAction
 	var fetchPageAction, prevPageAction PaginationFuncCursor[T]
 	if sort == paginationRequestSortingLatestFirst {
 		fetchPageAction = actions.LesserThanCursorLatestFirst
@@ -208,7 +207,6 @@ func getPrevPage[T any, M PaginationItem](
 	}
 
 	// nextPageAction latest first and oldest first doesn't matter as only one record is checked
-	// so reusing the methods that are used for fetchPageAction
 	var fetchPageAction, nextPageAction PaginationFuncCursor[T]
 	if sort == paginationRequestSortingLatestFirst {
 		fetchPageAction = actions.GreaterThanCursorLatestFirst
