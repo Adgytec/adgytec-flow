@@ -150,7 +150,11 @@ func getNextPageUtil[T any, M PaginationItem](
 		prevCursor := models[0].GetCreatedAt()
 
 		prevItem, prevItemErr := prevPageAction(ctx, prevCursor, 1)
-		if prevItemErr == nil && len(prevItem) > 0 {
+		if prevItemErr != nil {
+			return zero, prevItemErr
+		}
+
+		if len(prevItem) > 0 {
 			prev = &models[0]
 		}
 	}
@@ -223,7 +227,11 @@ func getPrevPageUtil[T any, M PaginationItem](
 		nextCursor := models[len(models)-1].GetCreatedAt()
 
 		nextItem, nextItemErr := nextPageAction(ctx, nextCursor, 1)
-		if nextItemErr == nil && len(nextItem) > 0 {
+		if nextItemErr != nil {
+			return zero, nextItemErr
+		}
+
+		if len(nextItem) > 0 {
 			next = &models[len(models)-1]
 		}
 	}
