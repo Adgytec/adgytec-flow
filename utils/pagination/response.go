@@ -1,6 +1,6 @@
 package pagination
 
-func NewPaginationResponse[T PaginationItem](items []T, next, prev *T) *ResponsePagination[T] {
+func newPaginationResponse[T PaginationItem](items []T, next, prev *T) ResponsePagination[T] {
 	var pageInfo PageInfo
 
 	if next != nil {
@@ -15,7 +15,7 @@ func NewPaginationResponse[T PaginationItem](items []T, next, prev *T) *Response
 		pageInfo.PrevCursor = encodeTimeToBase64((*prev).GetCreatedAt())
 	}
 
-	return &ResponsePagination[T]{
+	return ResponsePagination[T]{
 		PageInfo:  pageInfo,
 		PageItems: items,
 	}

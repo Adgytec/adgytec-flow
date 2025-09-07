@@ -18,7 +18,7 @@ func TestNewPaginationResponse(t *testing.T) {
 	// no next and prev page
 	var nilNext *testPaginationItem
 	var nilPrev *testPaginationItem
-	nilRes := NewPaginationResponse(items, nilNext, nilPrev)
+	nilRes := newPaginationResponse(items, nilNext, nilPrev)
 
 	if nilRes.PageInfo.HasNextPage || nilRes.PageInfo.HasPrevPage {
 		t.Errorf("Expected next page and prev page to be false but got true instead.")
@@ -27,7 +27,7 @@ func TestNewPaginationResponse(t *testing.T) {
 	// with next and prev page
 	next := &testPaginationItem{}
 	prev := &testPaginationItem{}
-	res := NewPaginationResponse(items, next, prev)
+	res := newPaginationResponse(items, next, prev)
 
 	if !res.PageInfo.HasNextPage || !res.PageInfo.HasPrevPage {
 		t.Errorf("Expected next page and prev page to be true but got false instead.")

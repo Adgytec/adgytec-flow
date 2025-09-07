@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/pagination"
@@ -25,16 +26,24 @@ func (s *userService) getGlobalUsers(
 		return nil, permissionErr
 	}
 
-	switch {
-	case params.SearchQuery != "":
-		return s.getGlobalUsersByQuery(ctx, params)
-	case params.NextCursor != "":
-		return s.getGlobalUsersNextPage(ctx, params)
-	case params.PrevCursor != "":
-		return s.getGlobalUsersPrevPage(ctx, params)
-	}
-
-	return s.getGlobalUsersInitial(ctx, params)
+	return pagination.GetPaginatedData(
+		ctx,
+		params,
+		&pagination.PaginationActions[
+			db.GlobalUserDetail,
+			models.GlobalUser,
+		]{
+			Cache:                        s.getUserListCache,
+			ToModel:                      s.getUserResponseModels,
+			Query:                        s.getGlobalUsersQuery,
+			InitialLatestFirst:           s.getGlobalUsersInitialLatestFirst,
+			InitialOldestFirst:           s.getGlobalUsersInitialOldestFirst,
+			GreaterThanCursorLatestFirst: s.getGlobalUsersGreaterThanCursorLatestFirst,
+			GreaterThanCursorOldestFirst: s.getGlobalUsersGreaterThanCursorOldestFirst,
+			LesserThanCursorLatestFirst:  s.getGlobalUsersLesserThanCursorLatestFirst,
+			LesserThanCursorOldestFirst:  s.getGlobalUsersLesserThanCursorOldestFirst,
+		},
+	)
 }
 
 func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
