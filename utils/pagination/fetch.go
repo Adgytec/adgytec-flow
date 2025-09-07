@@ -15,7 +15,7 @@ func GetPaginatedData[T any, M PaginationItem](
 ) (*ResponsePagination[M], error) {
 	actionErr := actions.checkEssentials()
 	if actionErr != nil {
-		return nil, nil
+		return nil, actionErr
 	}
 
 	res, resErr := actions.Cache.Get(reqParams.cacheID(), func() (ResponsePagination[M], error) {
