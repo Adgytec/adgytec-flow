@@ -13,15 +13,45 @@ func GetPaginatedData[T any, M PaginationItem](
 	reqParams PaginationRequestParams,
 	actions *PaginationActions[T, M],
 ) (*ResponsePagination[M], error) {
+	actionErr := actions.checkEssentials()
+	if actionErr != nil {
+		return nil, nil
+	}
+
 	res, resErr := actions.Cache.Get(reqParams.cacheID(), func() (ResponsePagination[M], error) {
+		var zero ResponsePagination[M]
 		switch {
 		case reqParams.SearchQuery != "":
+			if actions.Query == nil {
+				return zero, &PaginationActionNotImplementedError{
+					Action: "Search",
+				}
+			}
+
 			return getPageByQuery(ctx, reqParams.SearchQuery, reqParams.Sorting, actions)
 		case reqParams.NextCursor != "":
+			if actions.LesserThanCursorLatestFirst == nil || actions.GreaterThanCursorOldestFirst == nil {
+				return zero, &PaginationActionNotImplementedError{
+					Action: "Next Page List",
+				}
+			}
+
 			return getNextPage(ctx, reqParams.NextCursor, reqParams.Sorting, actions)
 		case reqParams.PrevCursor != "":
+			if actions.LesserThanCursorOldestFirst == nil || actions.GreaterThanCursorLatestFirst == nil {
+				return zero, &PaginationActionNotImplementedError{
+					Action: "Previous Page List",
+				}
+			}
+
 			return getPrevPage(ctx, reqParams.PrevCursor, reqParams.Sorting, actions)
 		default:
+			if actions.InitialLatestFirst == nil || actions.InitialOldestFirst == nil {
+				return zero, &PaginationActionNotImplementedError{
+					Action: "List",
+				}
+			}
+
 			return getInitialPage(ctx, reqParams.Sorting, actions)
 		}
 	})
@@ -101,13 +131,15 @@ func getNextPage[T any, M PaginationItem](
 		}
 	}
 
+	// prevPageAction latest first and oldest first doesn't matter as only one record is checked
+	// so reusing the methods that are used for fetchPageAction
 	var fetchPageAction, prevPageAction PaginationFuncCursor[T]
 	if sort == paginationRequestSortingLatestFirst {
 		fetchPageAction = actions.LesserThanCursorLatestFirst
-		prevPageAction = actions.GreaterThanCursorLatestFirst
+		prevPageAction = actions.GreaterThanCursorOldestFirst
 	} else {
 		fetchPageAction = actions.GreaterThanCursorOldestFirst
-		prevPageAction = actions.LesserThanCursorOldestFirst
+		prevPageAction = actions.LesserThanCursorLatestFirst
 	}
 
 	// requires items created after next cursor
@@ -175,13 +207,15 @@ func getPrevPage[T any, M PaginationItem](
 		}
 	}
 
+	// nextPageAction latest first and oldest first doesn't matter as only one record is checked
+	// so reusing the methods that are used for fetchPageAction
 	var fetchPageAction, nextPageAction PaginationFuncCursor[T]
 	if sort == paginationRequestSortingLatestFirst {
 		fetchPageAction = actions.GreaterThanCursorLatestFirst
-		nextPageAction = actions.LesserThanCursorLatestFirst
+		nextPageAction = actions.LesserThanCursorOldestFirst
 	} else {
 		fetchPageAction = actions.LesserThanCursorOldestFirst
-		nextPageAction = actions.GreaterThanCursorOldestFirst
+		nextPageAction = actions.GreaterThanCursorLatestFirst
 	}
 
 	// requires items created before prev cursor

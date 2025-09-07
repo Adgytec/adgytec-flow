@@ -96,3 +96,12 @@ type PaginationActions[T any, M PaginationItem] struct {
 	ToModel                      PaginationFuncToModel[T, M]
 	Cache                        cache.Cache[ResponsePagination[M]]
 }
+
+func (a *PaginationActions[T, M]) checkEssentials() error {
+	// using ErrpaginationActionNotImplemented because we are only checking essential method that should always be present and this will create 500 respose
+	if a.ToModel == nil || a.Cache == nil {
+		return ErrPaginationActionNotImplemented
+	}
+
+	return nil
+}
