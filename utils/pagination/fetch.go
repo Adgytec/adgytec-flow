@@ -101,15 +101,13 @@ func getNextPage[T any, M PaginationItem](
 		}
 	}
 
+	var fetchPageAction, prevPageAction PaginationFuncCursor[T]
 	if sort == paginationRequestSortingLatestFirst {
-		// require item created before next cursor
-		return getNextPageUtil(
-			ctx,
-			*nextCursorVal,
-			actions.ToModel,
-			actions.LesserThanCursorLatestFirst,
-			actions.GreaterThanCursorLatestFirst,
-		)
+		fetchPageAction = actions.LesserThanCursorLatestFirst
+		prevPageAction = actions.GreaterThanCursorLatestFirst
+	} else {
+		fetchPageAction = actions.GreaterThanCursorOldestFirst
+		prevPageAction = actions.LesserThanCursorOldestFirst
 	}
 
 	// requires items created after next cursor
@@ -117,8 +115,8 @@ func getNextPage[T any, M PaginationItem](
 		ctx,
 		*nextCursorVal,
 		actions.ToModel,
-		actions.GreaterThanCursorOldestFirst,
-		actions.LesserThanCursorOldestFirst,
+		fetchPageAction,
+		prevPageAction,
 	)
 }
 
@@ -177,15 +175,13 @@ func getPrevPage[T any, M PaginationItem](
 		}
 	}
 
+	var fetchPageAction, nextPageAction PaginationFuncCursor[T]
 	if sort == paginationRequestSortingLatestFirst {
-		// require item created after prev cursor
-		return getPrevPageUtil(
-			ctx,
-			*prevCursorVal,
-			actions.ToModel,
-			actions.GreaterThanCursorLatestFirst,
-			actions.LesserThanCursorLatestFirst,
-		)
+		fetchPageAction = actions.GreaterThanCursorLatestFirst
+		nextPageAction = actions.LesserThanCursorLatestFirst
+	} else {
+		fetchPageAction = actions.LesserThanCursorOldestFirst
+		nextPageAction = actions.GreaterThanCursorOldestFirst
 	}
 
 	// requires items created before prev cursor
@@ -193,8 +189,8 @@ func getPrevPage[T any, M PaginationItem](
 		ctx,
 		*prevCursorVal,
 		actions.ToModel,
-		actions.LesserThanCursorOldestFirst,
-		actions.GreaterThanCursorOldestFirst,
+		fetchPageAction,
+		nextPageAction,
 	)
 }
 
