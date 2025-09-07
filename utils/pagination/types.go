@@ -98,7 +98,7 @@ type PaginationActions[T any, M PaginationItem] struct {
 }
 
 func (a *PaginationActions[T, M]) checkEssentials() error {
-	// using ErrpaginationActionNotImplemented because we are only checking essential method that should always be present and this will create 500 respose
+	// using ErrpaginationActionNotImplemented because we are only checking essential method that should always be present and should always lead to 500 response
 	if a.ToModel == nil || a.Cache == nil {
 		return ErrPaginationActionNotImplemented
 	}
