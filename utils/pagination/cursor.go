@@ -11,11 +11,11 @@ func encodeTimeToBase64(payload time.Time) string {
 		return ""
 	}
 
-	return base64.StdEncoding.EncodeToString(bytePayload)
+	return base64.URLEncoding.EncodeToString(bytePayload)
 }
 
 func decodeCursorValue(cursor string) *time.Time {
-	byteCursor, decodeErr := base64.RawStdEncoding.DecodeString(cursor)
+	byteCursor, decodeErr := base64.URLEncoding.DecodeString(cursor)
 	if decodeErr != nil {
 		return nil
 	}
