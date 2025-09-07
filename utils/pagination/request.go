@@ -5,25 +5,25 @@ import (
 	"strings"
 )
 
-type PaginationKey string
+type paginationKey string
 
 const (
-	NextCursor  PaginationKey = "next-cursor"
-	PrevCursor  PaginationKey = "prev-cursor"
-	Sort        PaginationKey = "sort"
-	SearchQuery PaginationKey = "search"
+	NextCursor  paginationKey = "next-cursor"
+	PrevCursor  paginationKey = "prev-cursor"
+	Sort        paginationKey = "sort"
+	SearchQuery paginationKey = "search"
 )
 
-func GetRequestQueryValue(r *http.Request, key PaginationKey) string {
+func getRequestQueryValue(r *http.Request, key paginationKey) string {
 	queryVal := r.URL.Query().Get(string(key))
 	return strings.TrimSpace(queryVal)
 }
 
 func GetPaginationParamsFromRequest(r *http.Request) PaginationRequestParams {
 	return PaginationRequestParams{
-		NextCursor:  GetRequestQueryValue(r, NextCursor),
-		PrevCursor:  GetRequestQueryValue(r, PrevCursor),
-		Sorting:     PaginationRequestSorting(GetRequestQueryValue(r, Sort)).Value(),
-		SearchQuery: GetRequestQueryValue(r, SearchQuery),
+		NextCursor:  getRequestQueryValue(r, NextCursor),
+		PrevCursor:  getRequestQueryValue(r, PrevCursor),
+		Sorting:     paginationRequestSorting(getRequestQueryValue(r, Sort)).Value(),
+		SearchQuery: getRequestQueryValue(r, SearchQuery),
 	}
 }
