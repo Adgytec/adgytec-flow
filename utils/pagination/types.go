@@ -44,6 +44,8 @@ const (
 // SearchQuery
 // NextCursor
 // PrevCursor
+// Note: Sorting defines the sorting for the actual data that is stored in persistent storage
+// if only the current set of result is required in sorting than this should be done by client by simply reversing the response list
 type PaginationRequestParams struct {
 	NextCursor  string
 	PrevCursor  string
