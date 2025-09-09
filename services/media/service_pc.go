@@ -1,8 +1,14 @@
 package media
 
-import "log"
+import (
+	"log"
 
-type MediaServicePC interface{}
+	"github.com/google/uuid"
+)
+
+type MediaServicePC interface {
+	UploadSuccess(mediaIDs []uuid.UUID) error
+}
 
 type mediaServicePC struct {
 	service *mediaService
