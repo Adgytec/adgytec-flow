@@ -45,13 +45,14 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.Glob
 		About:       user.About,
 		DateOfBirth: user.DateOfBirth,
 		CreatedAt:   user.CreatedAt,
+		Status:      user.Status,
 	}
 
 	if user.ProfilePictureID != nil {
 		profilePictureModel := &models.Image{
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
-			Status:        pointer.New(string(user.Status.GlobalMediaStatus)),
+			Status:        pointer.New(string(user.ProfilePictureStatus.GlobalMediaStatus)),
 			Thumbnail:     s.cdn.GetSignedUrl(user.Thumbnail),
 			Small:         s.cdn.GetSignedUrl(user.Small),
 			Medium:        s.cdn.GetSignedUrl(user.Medium),

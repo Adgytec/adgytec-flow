@@ -621,9 +621,10 @@ type GlobalUserDetail struct {
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`
 	ProfilePictureID           *uuid.UUID            `json:"profilePictureId"`
+	Status                     GlobalUserStatus      `json:"status"`
 	UncompressedProfilePicture *string               `json:"uncompressedProfilePicture"`
 	ProfilePictureSize         *int64                `json:"profilePictureSize"`
-	Status                     NullGlobalMediaStatus `json:"status"`
+	ProfilePictureStatus       NullGlobalMediaStatus `json:"profilePictureStatus"`
 	Thumbnail                  *string               `json:"thumbnail"`
 	Small                      *string               `json:"small"`
 	Medium                     *string               `json:"medium"`
