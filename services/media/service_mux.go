@@ -1,6 +1,8 @@
 package media
 
 import (
+	"log"
+
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
@@ -22,6 +24,7 @@ func (m *mediaServiceMux) Router() *chi.Mux {
 }
 
 func NewMediaServiceMux(params mediaServiceMuxParams) services.Mux {
+	log.Println("adding media-service mux")
 	return &mediaServiceMux{
 		service:    newMediaService(params),
 		middleware: params.Middleware(),

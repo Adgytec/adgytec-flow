@@ -7,6 +7,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/iam"
+	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -22,6 +23,9 @@ type serviceFactory func(params app.App) services.Mux
 var appServices = []serviceFactory{
 	func(appConfig app.App) services.Mux {
 		return iam.NewIAMMux(appConfig)
+	},
+	func(appConfig app.App) services.Mux {
+		return media.NewMediaServiceMux(appConfig)
 	},
 	func(appConfig app.App) services.Mux {
 		return user.NewUserServiceMux(appConfig)
