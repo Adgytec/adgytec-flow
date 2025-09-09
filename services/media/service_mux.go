@@ -24,7 +24,7 @@ func (m *mediaServiceMux) Router() *chi.Mux {
 }
 
 func NewMediaServiceMux(params mediaServiceMuxParams) services.Mux {
-	log.Println("adding media-service mux")
+	log.Printf("adding %s-service mux", serviceName)
 	return &mediaServiceMux{
 		service:    newMediaService(params),
 		middleware: params.Middleware(),

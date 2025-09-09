@@ -15,7 +15,7 @@ type mediaServicePC struct {
 }
 
 func NewMediaServicePC(params mediaServiceParams) MediaServicePC {
-	log.Println("creating media-service PC")
+	log.Printf("creating %s-service PC", serviceName)
 	return &mediaServicePC{
 		service: newMediaService(params),
 	}
