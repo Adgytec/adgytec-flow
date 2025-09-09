@@ -1,9 +1,9 @@
 package app
 
 import (
+	"github.com/Adgytec/adgytec-flow/services/appmiddleware"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
-	app_middleware "github.com/Adgytec/adgytec-flow/services/middleware"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
@@ -43,7 +43,7 @@ func newInternalService(externalService appExternalServices) appInternalServices
 	internalService.mediaService = media.NewMediaServicePC(externalService)
 
 	internalService.userService = user.NewUserServicePC(appInstance)
-	internalService.middleware = app_middleware.NewAppMiddlewarePC(appInstance)
+	internalService.middleware = appmiddleware.NewAppMiddlewarePC(appInstance)
 
 	return &internalService
 }

@@ -1,4 +1,4 @@
-package app_middleware
+package appmiddleware
 
 import (
 	"github.com/Adgytec/adgytec-flow/config/auth"
