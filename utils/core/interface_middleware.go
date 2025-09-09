@@ -19,7 +19,7 @@ type MiddlewarePC interface {
 	// validates organization current status and check if request method is allowed
 	CheckOrganizationStatusAndRequestMethod(http.Handler) http.Handler
 
-	// check if current actor is part of management access
+	// check if current actor is part of management schema
 	ActorManagementAccessCheck(http.Handler) http.Handler
 
 	// this checks whether actor is part of the organization whose resources its working on
