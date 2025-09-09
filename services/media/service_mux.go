@@ -20,6 +20,8 @@ func (m *mediaServiceMux) BasePath() string {
 func (m *mediaServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
+	// add webhooks methods for media pipeline
+
 	return mux
 }
 

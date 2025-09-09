@@ -8,6 +8,9 @@ import (
 
 type MediaServicePC interface {
 	UploadSuccess(mediaIDs []uuid.UUID) error
+
+	// TODO: this method parameter and return type will be updated when actual implementation are added
+	NewPresignRequest(key string) error
 }
 
 type mediaServicePC struct {
