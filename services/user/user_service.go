@@ -11,6 +11,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/pagination"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/google/uuid"
 )
 
@@ -47,10 +48,10 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.Glob
 	}
 
 	if user.ProfilePictureID != nil {
-		profilePictureModel := &models.ImageQueryType{
+		profilePictureModel := &models.Image{
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
-			Status:        string(user.Status.GlobalMediaStatus),
+			Status:        pointer.New(string(user.Status.GlobalMediaStatus)),
 			Thumbnail:     s.cdn.GetSignedUrl(user.Thumbnail),
 			Small:         s.cdn.GetSignedUrl(user.Small),
 			Medium:        s.cdn.GetSignedUrl(user.Medium),

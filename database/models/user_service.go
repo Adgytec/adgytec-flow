@@ -8,13 +8,13 @@ import (
 )
 
 type GlobalUser struct {
-	ID             uuid.UUID       `json:"id"`
-	Email          string          `json:"email"`
-	Name           string          `json:"name"`
-	About          *string         `json:"about,omitempty"`
-	DateOfBirth    pgtype.Date     `json:"dateOfBirth"`
-	CreatedAt      time.Time       `json:"createdAt"`
-	ProfilePicture *ImageQueryType `json:"profilePicture,omitempty"`
+	ID             uuid.UUID   `json:"id"`
+	Email          string      `json:"email"`
+	Name           string      `json:"name"`
+	About          *string     `json:"about,omitempty"`
+	DateOfBirth    pgtype.Date `json:"dateOfBirth"`
+	CreatedAt      time.Time   `json:"createdAt"`
+	ProfilePicture *Image      `json:"profilePicture,omitempty"`
 }
 
 func (u GlobalUser) GetCreatedAt() time.Time {
