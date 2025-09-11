@@ -15,7 +15,7 @@ CREATE TYPE global.media_status AS ENUM(
 CREATE TABLE IF NOT EXISTS global.media (
 	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
 	bucket_path TEXT NOT NULL UNIQUE,
-	size BIGINT NOT NULL CHECK (size >= 0),
+	size BIGINT NOT NULL CHECK (size > 0),
 	media_type global.media_type NOT NULL,
 	content_type TEXT,
 	status global.media_status NOT NULL DEFAULT 'processing',

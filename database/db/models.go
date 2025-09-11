@@ -276,6 +276,57 @@ func (e GlobalMediaType) Valid() bool {
 	return false
 }
 
+type GlobalMediaUploadType string
+
+const (
+	GlobalMediaUploadTypeSinglepart GlobalMediaUploadType = "singlepart"
+	GlobalMediaUploadTypeMultipart  GlobalMediaUploadType = "multipart"
+)
+
+func (e *GlobalMediaUploadType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalMediaUploadType(s)
+	case string:
+		*e = GlobalMediaUploadType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalMediaUploadType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalMediaUploadType struct {
+	GlobalMediaUploadType GlobalMediaUploadType `json:"globalMediaUploadType"`
+	Valid                 bool                  `json:"valid"` // Valid is true if GlobalMediaUploadType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalMediaUploadType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalMediaUploadType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalMediaUploadType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalMediaUploadType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalMediaUploadType), nil
+}
+
+func (e GlobalMediaUploadType) Valid() bool {
+	switch e {
+	case GlobalMediaUploadTypeSinglepart,
+		GlobalMediaUploadTypeMultipart:
+		return true
+	}
+	return false
+}
+
 type GlobalServiceHierarchyResult string
 
 const (
@@ -597,6 +648,15 @@ type GlobalServiceHierarchyDetail struct {
 	HierarchyName   string                       `json:"hierarchyName"`
 	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
 	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
+}
+
+type GlobalTemporaryMedium struct {
+	ID          uuid.UUID             `json:"id"`
+	BucketPath  string                `json:"bucketPath"`
+	Size        int64                 `json:"size"`
+	UploadType  GlobalMediaUploadType `json:"uploadType"`
+	UploadID    *string               `json:"uploadId"`
+	ContentType *string               `json:"contentType"`
 }
 
 type GlobalUser struct {
