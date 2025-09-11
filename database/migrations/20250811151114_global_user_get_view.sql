@@ -12,7 +12,7 @@ SELECT
 	users.status,
 	media.bucket_path AS uncompressed_profile_picture,
 	media.size AS profile_picture_size,
-	image.status AS profile_picture_status,
+	media.status AS profile_picture_status,
 	image.thumbnail,
 	image.small,
 	image.medium,

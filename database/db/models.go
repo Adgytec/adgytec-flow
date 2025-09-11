@@ -173,9 +173,9 @@ func (e GlobalAssignableActorType) Valid() bool {
 type GlobalMediaStatus string
 
 const (
-	GlobalMediaStatusPending   GlobalMediaStatus = "pending"
-	GlobalMediaStatusFailed    GlobalMediaStatus = "failed"
-	GlobalMediaStatusCompleted GlobalMediaStatus = "completed"
+	GlobalMediaStatusProcessing GlobalMediaStatus = "processing"
+	GlobalMediaStatusFailed     GlobalMediaStatus = "failed"
+	GlobalMediaStatusCompleted  GlobalMediaStatus = "completed"
 )
 
 func (e *GlobalMediaStatus) Scan(src interface{}) error {
@@ -215,7 +215,7 @@ func (ns NullGlobalMediaStatus) Value() (driver.Value, error) {
 
 func (e GlobalMediaStatus) Valid() bool {
 	switch e {
-	case GlobalMediaStatusPending,
+	case GlobalMediaStatusProcessing,
 		GlobalMediaStatusFailed,
 		GlobalMediaStatusCompleted:
 		return true
@@ -559,30 +559,29 @@ type ArchiveUpdatedRecord struct {
 }
 
 type GlobalMediaImage struct {
-	MediaID    uuid.UUID         `json:"mediaId"`
-	Thumbnail  *string           `json:"thumbnail"`
-	Small      *string           `json:"small"`
-	Medium     *string           `json:"medium"`
-	Large      *string           `json:"large"`
-	ExtraLarge *string           `json:"extraLarge"`
-	Status     GlobalMediaStatus `json:"status"`
+	MediaID    uuid.UUID `json:"mediaId"`
+	Thumbnail  *string   `json:"thumbnail"`
+	Small      *string   `json:"small"`
+	Medium     *string   `json:"medium"`
+	Large      *string   `json:"large"`
+	ExtraLarge *string   `json:"extraLarge"`
 }
 
 type GlobalMediaVideo struct {
-	MediaID          uuid.UUID         `json:"mediaId"`
-	Thumbnail        *string           `json:"thumbnail"`
-	AdaptiveManifest *string           `json:"adaptiveManifest"`
-	Preview          *string           `json:"preview"`
-	Status           GlobalMediaStatus `json:"status"`
+	MediaID          uuid.UUID `json:"mediaId"`
+	Thumbnail        *string   `json:"thumbnail"`
+	AdaptiveManifest *string   `json:"adaptiveManifest"`
+	Preview          *string   `json:"preview"`
 }
 
 type GlobalMedium struct {
-	ID          uuid.UUID       `json:"id"`
-	BucketPath  string          `json:"bucketPath"`
-	Size        int64           `json:"size"`
-	MediaType   GlobalMediaType `json:"mediaType"`
-	ContentType *string         `json:"contentType"`
-	CreatedAt   time.Time       `json:"createdAt"`
+	ID          uuid.UUID         `json:"id"`
+	BucketPath  string            `json:"bucketPath"`
+	Size        int64             `json:"size"`
+	MediaType   GlobalMediaType   `json:"mediaType"`
+	ContentType *string           `json:"contentType"`
+	Status      GlobalMediaStatus `json:"status"`
+	CreatedAt   time.Time         `json:"createdAt"`
 }
 
 type GlobalService struct {
