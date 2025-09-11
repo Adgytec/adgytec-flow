@@ -8,7 +8,6 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
-	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -64,11 +63,11 @@ func (c *pgxConnection) Queries() *db.Queries {
 	return db.New(c.connPool)
 }
 
-func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
+func (c *pgxConnection) WithTransaction(ctx context.Context) (*db.Queries, Tx, error) {
 	// Use context.Background() for transaction rollback and commit to ensure these operations complete even if the original request context is cancelled.
 	tx, txErr := c.connPool.Begin(ctx)
 	if txErr != nil {
-		return nil, txErr
+		return nil, nil, txErr
 	}
 
 	// actor should be present in all the scenarios
@@ -76,7 +75,7 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 	actorDetails, actorDetailsErr := actor.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		tx.Rollback(context.Background())
-		return nil, actorDetailsErr
+		return nil, nil, actorDetailsErr
 	}
 
 	_, err := tx.Exec(ctx, `
@@ -85,10 +84,10 @@ func (c *pgxConnection) NewTransaction(ctx context.Context) (pgx.Tx, error) {
 			set_config('global.actor_type', $2, true)`, actorDetails.ID, actorDetails.Type)
 	if err != nil {
 		tx.Rollback(context.Background())
-		return nil, err
+		return nil, nil, err
 	}
 
-	return tx, nil
+	return c.Queries().WithTx(tx), tx, nil
 }
 
 func (c *pgxConnection) Shutdown() {

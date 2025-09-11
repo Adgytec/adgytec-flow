@@ -12,12 +12,11 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 	var zero uuid.UUID
 	userID := core.GetIDFromPayload([]byte(email))
 
-	tx, txErr := s.db.NewTransaction(ctx)
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
 		return zero, txErr
 	}
 	defer tx.Rollback(context.Background())
-	qtx := s.db.Queries().WithTx(tx)
 
 	inserted, dbErr := qtx.CreateGlobalUser(
 		ctx,

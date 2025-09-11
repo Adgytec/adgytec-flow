@@ -32,12 +32,11 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	}
 
 	// start transaction
-	tx, txErr := s.db.NewTransaction(ctx)
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
 		return txErr
 	}
 	defer tx.Rollback(context.Background())
-	qtx := s.db.Queries().WithTx(tx)
 
 	userData, dbErr := qtx.UpdateGlobalUserStatus(
 		ctx,
