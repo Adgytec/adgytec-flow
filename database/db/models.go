@@ -657,6 +657,7 @@ type GlobalTemporaryMedium struct {
 	UploadType  GlobalMediaUploadType `json:"uploadType"`
 	UploadID    *string               `json:"uploadId"`
 	ContentType *string               `json:"contentType"`
+	ExpiresAt   time.Time             `json:"expiresAt"`
 }
 
 type GlobalUser struct {
