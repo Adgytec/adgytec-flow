@@ -12,6 +12,7 @@ type Auth interface {
 	// further validation like if this api key actually exists is done later on
 	ValidateAPIKey(apiKey string) (uuid.UUID, error)
 	NewSignedHash(payload ...[]byte) string
+	CompareSignedHash(hash string, payload ...[]byte) error
 }
 
 // authCommon contains method impl that are independent of external authentication provider
@@ -23,6 +24,10 @@ func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
 
 func (a *authCommon) NewSignedHash(payload ...[]byte) string {
 	return ""
+}
+
+func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
+	return nil
 }
 
 func newAuthCommon() authCommon {
