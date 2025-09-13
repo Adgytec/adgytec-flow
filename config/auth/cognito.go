@@ -35,6 +35,10 @@ func (a *authCognito) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
 	return uuid.UUID{}, nil
 }
 
+func (a *authCognito) NewSignedHash(payload ...[]byte) string {
+	return ""
+}
+
 func NewCognitoAuthClient(awsConfig aws.Config) Auth {
 	log.Println("init authentication cognito")
 	return &authCognito{
