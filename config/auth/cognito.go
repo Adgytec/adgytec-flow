@@ -10,6 +10,7 @@ import (
 )
 
 type authCognito struct {
+	authCommon
 	client         *cognitoidentityprovider.Client
 	userPoolID     string
 	userPoolRegion string
@@ -31,17 +32,10 @@ func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, er
 	return uuid.UUID{}, nil
 }
 
-func (a *authCognito) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
-	return uuid.UUID{}, nil
-}
-
-func (a *authCognito) NewSignedHash(payload ...[]byte) string {
-	return ""
-}
-
 func NewCognitoAuthClient(awsConfig aws.Config) Auth {
 	log.Println("init authentication cognito")
 	return &authCognito{
+		authCommon:     newAuthCommon(),
 		client:         cognitoidentityprovider.NewFromConfig(awsConfig),
 		userPoolID:     os.Getenv("AWS_USER_POOL_ID"),
 		userPoolRegion: os.Getenv("AWS_USER_POOL_REGION"),

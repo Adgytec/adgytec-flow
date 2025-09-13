@@ -14,6 +14,21 @@ type Auth interface {
 	NewSignedHash(payload ...[]byte) string
 }
 
+// authCommon contains method impl that are independent of external authentication provider
+type authCommon struct{}
+
+func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
+	return uuid.Nil, nil
+}
+
+func (a *authCommon) NewSignedHash(payload ...[]byte) string {
+	return ""
+}
+
+func newAuthCommon() authCommon {
+	return authCommon{}
+}
+
 // used in auth errors
 type authActionType string
 
