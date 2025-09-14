@@ -2,13 +2,11 @@ package media
 
 import (
 	"log"
-
-	"github.com/google/uuid"
 )
 
 type MediaServicePC interface {
-	NewMediaItem(mediaIDs []uuid.UUID) error
-	CompleteMediaUpload(key string) error
+	NewMediaItems() error
+	CompleteMediaItemsUpload() error
 }
 
 type mediaServicePC struct {
