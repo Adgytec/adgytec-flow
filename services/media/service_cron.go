@@ -7,7 +7,7 @@ type mediaServiceCron struct {
 }
 
 func (c *mediaServiceCron) Trigger() {
-	go c.service.cleanInvalidMediaItems()
+	c.service.cleanInvalidMediaItems()
 }
 
 func NewMediaServiceCron(params mediaServiceParams) services.Cron {
