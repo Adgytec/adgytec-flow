@@ -52,6 +52,7 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.Glob
 	}
 
 	if user.ProfilePictureID != nil {
+		// all the media fields will always be present
 		profilePictureModel := &models.ImageDetails{
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
