@@ -63,6 +63,6 @@ func ServicesCronJobs(ctx context.Context, appConfig app.App) {
 func triggerServicesCron(cronServices []services.Cron) {
 	log.Println("services cron jobs triggered")
 	for _, cron := range cronServices {
-		cron.Trigger()
+		go cron.Trigger()
 	}
 }
