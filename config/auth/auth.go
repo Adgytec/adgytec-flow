@@ -14,7 +14,7 @@ type Auth interface {
 	// this only checks if the API key is in required format as described in the application doc
 	// further validation like if this api key actually exists is done later on
 	ValidateAPIKey(apiKey string) (uuid.UUID, error)
-	NewSignedHash(payload ...[]byte) string
+	NewSignedHash(payload ...[]byte) (string, error)
 	CompareSignedHash(hash string, payload ...[]byte) error
 }
 
@@ -25,8 +25,8 @@ func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
 	return uuid.Nil, core.ErrNotImplemented
 }
 
-func (a *authCommon) NewSignedHash(payload ...[]byte) string {
-	panic("not implemented: NewSignedHash provides no security guarantees")
+func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
+	return "", core.ErrNotImplemented
 }
 
 func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
