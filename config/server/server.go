@@ -64,6 +64,9 @@ func NewHttpServer(port string) Server {
 		Protocols:         &protocols,
 	}
 
+	// note: currently multiple services are not implemented, it is intentional
+	// current development focus is in creating robust application skeleton for core services communication and methods identification
+	// than the implementation will be added
 	return &httpServer{
 		server:   &appServer,
 		app:      appConfig,
