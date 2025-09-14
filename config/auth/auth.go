@@ -1,6 +1,9 @@
 package auth
 
-import "github.com/google/uuid"
+import (
+	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/google/uuid"
+)
 
 type Auth interface {
 	NewUser(username string) error
@@ -19,7 +22,7 @@ type Auth interface {
 type authCommon struct{}
 
 func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
-	return uuid.Nil, nil
+	return uuid.Nil, core.ErrNotImplemented
 }
 
 func (a *authCommon) NewSignedHash(payload ...[]byte) string {
@@ -27,7 +30,7 @@ func (a *authCommon) NewSignedHash(payload ...[]byte) string {
 }
 
 func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
-	return nil
+	return core.ErrNotImplemented
 }
 
 func newAuthCommon() authCommon {

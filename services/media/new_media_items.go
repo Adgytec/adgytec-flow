@@ -1,7 +1,9 @@
 package media
 
+import "github.com/Adgytec/adgytec-flow/utils/core"
+
 func (s *mediaService) newMediaItems(input []NewMediaItemInput) ([]NewMediaItemOutput, error) {
-	return nil, nil
+	return nil, core.ErrNotImplemented
 }
 
 func (pc *mediaServicePC) NewMediaItems(input []NewMediaItemInput) ([]NewMediaItemOutput, error) {
