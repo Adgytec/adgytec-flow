@@ -42,6 +42,7 @@ func ServicesCronJobs(ctx context.Context, appConfig app.App) {
 		triggerServicesCron(cronServices)
 	})
 	if err != nil {
+		// this is not fatal for application to crash so simply logging the error
 		log.Printf("failed to add cron job: %v", err)
 	}
 
