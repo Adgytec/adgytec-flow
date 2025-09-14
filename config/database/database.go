@@ -4,12 +4,16 @@ import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/jackc/pgx/v5"
 )
+
+type Tx interface {
+	Commit(ctx context.Context) error
+	Rollback(ctx context.Context) error
+}
 
 type Database interface {
 	Queries() *db.Queries
-	NewTransaction(context.Context) (pgx.Tx, error)
+	WithTransaction(ctx context.Context) (*db.Queries, Tx, error)
 }
 
 type DatabaseWithShutdown interface {

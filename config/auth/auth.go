@@ -1,16 +1,40 @@
 package auth
 
-import "github.com/google/uuid"
+import (
+	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/google/uuid"
+)
 
 type Auth interface {
-	NewUser(string) error
-	DisableUser(string) error
-	EnableUser(string) error
-	ValidateUserAccessToken(string) (uuid.UUID, error)
+	NewUser(username string) error
+	DisableUser(username string) error
+	EnableUser(username string) error
+	ValidateUserAccessToken(accessToken string) (uuid.UUID, error)
 
 	// this only checks if the API key is in required format as described in the application doc
 	// further validation like if this api key actually exists is done later on
-	ValidateAPIKey(string) (uuid.UUID, error)
+	ValidateAPIKey(apiKey string) (uuid.UUID, error)
+	NewSignedHash(payload ...[]byte) (string, error)
+	CompareSignedHash(hash string, payload ...[]byte) error
+}
+
+// authCommon contains method impl that are independent of external authentication provider
+type authCommon struct{}
+
+func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
+	return uuid.Nil, core.ErrNotImplemented
+}
+
+func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
+	return "", core.ErrNotImplemented
+}
+
+func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
+	return core.ErrNotImplemented
+}
+
+func newAuthCommon() authCommon {
+	return authCommon{}
 }
 
 // used in auth errors

@@ -6,12 +6,19 @@ CREATE TYPE global.media_type AS ENUM(
 	'other'
 );
 
+CREATE TYPE global.media_status AS ENUM(
+	'processing',
+	'failed',
+	'completed'
+);
+
 CREATE TABLE IF NOT EXISTS global.media (
 	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
 	bucket_path TEXT NOT NULL UNIQUE,
-	size BIGINT NOT NULL CHECK (size >= 0),
+	size BIGINT NOT NULL CHECK (size > 0),
 	media_type global.media_type NOT NULL,
 	content_type TEXT,
+	status global.media_status NOT NULL DEFAULT 'processing',
 	created_at TIMESTAMPTZ NOT NULL
 );
 
@@ -24,18 +31,11 @@ UPDATE ON global.media FOR each ROW WHEN (
 )
 EXECUTE function global.created_at_update ();
 
-CREATE TYPE global.media_status AS ENUM(
-	'pending',
-	'failed',
-	'completed'
-);
-
 CREATE TABLE IF NOT EXISTS global.media_video (
 	media_id UUID NOT NULL REFERENCES global.media (id) ON DELETE CASCADE,
 	thumbnail TEXT,
 	adaptive_manifest TEXT,
-	preview TEXT,
-	status global.media_status NOT NULL DEFAULT 'pending'
+	preview TEXT
 );
 
 CREATE TABLE IF NOT EXISTS global.media_image (
@@ -44,8 +44,7 @@ CREATE TABLE IF NOT EXISTS global.media_image (
 	small TEXT,
 	medium TEXT,
 	large TEXT,
-	extra_large TEXT,
-	status global.media_status NOT NULL DEFAULT 'pending'
+	extra_large TEXT
 );
 
 -- +goose StatementEnd
@@ -55,13 +54,13 @@ DROP TABLE IF EXISTS global.media_image;
 
 DROP TABLE IF EXISTS global.media_video;
 
-DROP TYPE if EXISTS global.media_status;
-
 DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON global.media;
 
 DROP TRIGGER if EXISTS on_insert_set_created_at ON global.media;
 
 DROP TABLE IF EXISTS global.media;
+
+DROP TYPE if EXISTS global.media_status;
 
 DROP TYPE if EXISTS global.media_type;
 

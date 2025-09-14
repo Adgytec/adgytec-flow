@@ -8,6 +8,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
 	"github.com/Adgytec/adgytec-flow/services/iam"
+	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
@@ -26,6 +27,7 @@ type appInternalServices interface {
 	IAMService() iam.IAMServicePC
 	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC
+	Media() media.MediaServicePC
 }
 
 type App interface {
