@@ -26,7 +26,9 @@ func ServicesCronJobs(ctx context.Context, appConfig app.App) {
 		cronExpr = "@every 4h"
 	}
 
-	c := cron.New()
+ 	c := cron.New(cron.WithChain(
+ 		cron.SkipIfStillRunning(cron.DefaultLogger),
+ 	))
 
 	// build services
 	cronServices := make([]services.Cron, len(appServices))
