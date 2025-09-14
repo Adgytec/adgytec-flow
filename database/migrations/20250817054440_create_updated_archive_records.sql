@@ -1,6 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE global.actor_type AS ENUM('api-key', 'user');
+CREATE TYPE global.actor_type AS ENUM(
+	'api-key',
+	'user',
+	'signed'
+);
 
 CREATE TABLE IF NOT EXISTS archive.updated_records (
 	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),

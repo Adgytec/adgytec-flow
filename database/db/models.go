@@ -71,6 +71,7 @@ type GlobalActorType string
 const (
 	GlobalActorTypeApiKey GlobalActorType = "api-key"
 	GlobalActorTypeUser   GlobalActorType = "user"
+	GlobalActorTypeSigned GlobalActorType = "signed"
 )
 
 func (e *GlobalActorType) Scan(src interface{}) error {
@@ -111,7 +112,8 @@ func (ns NullGlobalActorType) Value() (driver.Value, error) {
 func (e GlobalActorType) Valid() bool {
 	switch e {
 	case GlobalActorTypeApiKey,
-		GlobalActorTypeUser:
+		GlobalActorTypeUser,
+		GlobalActorTypeSigned:
 		return true
 	}
 	return false
