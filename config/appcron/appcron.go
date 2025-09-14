@@ -16,7 +16,7 @@ type serviceFactory func(params app.App) services.Cron
 
 var appServices = []serviceFactory{
 	func(appConfig app.App) services.Cron {
-		return media.NewMediaServiceCorn(appConfig)
+		return media.NewMediaServiceCron(appConfig)
 	},
 }
 

@@ -10,7 +10,7 @@ func (c *mediaServiceCron) Trigger() {
 	go c.service.cleanInvalidMediaItems()
 }
 
-func NewMediaServiceCorn(params mediaServiceParams) services.Cron {
+func NewMediaServiceCron(params mediaServiceParams) services.Cron {
 	return &mediaServiceCron{
 		service: newMediaService(params),
 	}
