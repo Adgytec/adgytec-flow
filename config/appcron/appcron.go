@@ -52,6 +52,8 @@ loop:
 func triggerServicesCron(cronServices []services.Cron) {
 	log.Println("services cron jobs triggered")
 	for _, cron := range cronServices {
+		// all cron jobs do is some basic db calls and update the field
+		// this will be done in short amount of time so no need to use sync mechanisms
 		go cron.Trigger()
 	}
 }
