@@ -26,9 +26,10 @@ func ServicesCronJobs(ctx context.Context, appConfig app.App) {
 		cronExpr = "@every 4h"
 	}
 
- 	c := cron.New(cron.WithChain(
- 		cron.SkipIfStillRunning(cron.DefaultLogger),
- 	))
+	c := cron.New(cron.WithChain(
+		cron.SkipIfStillRunning(cron.DefaultLogger),
+		cron.Recover(cron.DefaultLogger),
+	))
 
 	// build services
 	cronServices := make([]services.Cron, len(appServices))
@@ -61,16 +62,6 @@ func ServicesCronJobs(ctx context.Context, appConfig app.App) {
 func triggerServicesCron(cronServices []services.Cron) {
 	log.Println("services cron jobs triggered")
 	for _, cron := range cronServices {
-		// all cron jobs do is some basic db calls and update the field
-		// this will be done in short amount of time so no need to use sync mechanisms
-		go func(c services.Cron) {
-			defer func() {
-				if r := recover(); r != nil {
-					log.Printf("recovered from panic in cron job: %v", r)
-				}
-			}()
-
-			c.Trigger()
-		}(cron)
+		cron.Trigger()
 	}
 }
