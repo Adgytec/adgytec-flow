@@ -9,8 +9,10 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
+	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/pagination"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/google/uuid"
 )
 
@@ -20,6 +22,7 @@ type userServiceParams interface {
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
 	CacheClient() cache.CacheClient
+	Media() media.MediaServicePC
 }
 
 type userServiceMuxParams interface {
@@ -32,6 +35,7 @@ type userService struct {
 	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
+	media            media.MediaServicePC
 	getUserCache     cache.Cache[models.GlobalUser]
 	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
@@ -44,13 +48,15 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.Glob
 		About:       user.About,
 		DateOfBirth: user.DateOfBirth,
 		CreatedAt:   user.CreatedAt,
+		Status:      user.Status,
 	}
 
 	if user.ProfilePictureID != nil {
-		profilePictureModel := &models.ImageQueryType{
+		// all the media fields will always be present
+		profilePictureModel := &models.ImageDetails{
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
-			Status:        string(user.Status.GlobalMediaStatus),
+			Status:        pointer.New(string(user.ProfilePictureStatus.GlobalMediaStatus)),
 			Thumbnail:     s.cdn.GetSignedUrl(user.Thumbnail),
 			Small:         s.cdn.GetSignedUrl(user.Small),
 			Medium:        s.cdn.GetSignedUrl(user.Medium),
@@ -93,6 +99,7 @@ func newUserService(params userServiceParams) *userService {
 		auth:             params.Auth(),
 		iam:              params.IAMService(),
 		cdn:              params.CDN(),
+		media:            params.Media(),
 		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
 		getUserListCache: cache.NewCache[pagination.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}

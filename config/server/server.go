@@ -7,7 +7,8 @@ import (
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
-	app_init "github.com/Adgytec/adgytec-flow/config/init"
+	"github.com/Adgytec/adgytec-flow/config/appcron"
+	"github.com/Adgytec/adgytec-flow/config/appinit"
 	"github.com/Adgytec/adgytec-flow/config/router"
 )
 
@@ -17,8 +18,9 @@ type Server interface {
 }
 
 type httpServer struct {
-	server *http.Server
-	app    app.App
+	server   *http.Server
+	app      app.App
+	cronStop context.CancelFunc
 }
 
 func (s *httpServer) ListenAndServe() error {
@@ -31,6 +33,10 @@ func (s *httpServer) Shutdown() error {
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	if s.cronStop != nil {
+		s.cronStop()
+	}
+
 	s.app.Shutdown()
 	err := s.server.Shutdown(shutdownCtx)
 
@@ -39,8 +45,11 @@ func (s *httpServer) Shutdown() error {
 
 func NewHttpServer(port string) Server {
 	appConfig := app.NewApp()
-	app_init.EnsureServicesInitialization(appConfig)
+	appinit.EnsureServicesInitialization(appConfig)
 	mux := router.NewApplicationRouter(appConfig)
+
+	cronCtx, cronCancel := context.WithCancel(context.Background())
+	go appcron.ServicesCronJobs(cronCtx, appConfig)
 
 	var protocols http.Protocols
 	protocols.SetUnencryptedHTTP2(true)
@@ -55,8 +64,13 @@ func NewHttpServer(port string) Server {
 		Protocols:         &protocols,
 	}
 
+	// note: currently multiple services are not implemented, it is intentional
+	// current development focus is in creating robust application skeleton for core services communication and methods identification
+	// than the implementation will be added
+	// Logger will also be changed before moving into production
 	return &httpServer{
-		server: &appServer,
-		app:    appConfig,
+		server:   &appServer,
+		app:      appConfig,
+		cronStop: cronCancel,
 	}
 }

@@ -1,4 +1,4 @@
-package app_init
+package appinit
 
 import (
 	"log"

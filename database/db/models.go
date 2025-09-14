@@ -71,6 +71,7 @@ type GlobalActorType string
 const (
 	GlobalActorTypeApiKey GlobalActorType = "api-key"
 	GlobalActorTypeUser   GlobalActorType = "user"
+	GlobalActorTypeSigned GlobalActorType = "signed"
 )
 
 func (e *GlobalActorType) Scan(src interface{}) error {
@@ -111,7 +112,8 @@ func (ns NullGlobalActorType) Value() (driver.Value, error) {
 func (e GlobalActorType) Valid() bool {
 	switch e {
 	case GlobalActorTypeApiKey,
-		GlobalActorTypeUser:
+		GlobalActorTypeUser,
+		GlobalActorTypeSigned:
 		return true
 	}
 	return false
@@ -173,9 +175,9 @@ func (e GlobalAssignableActorType) Valid() bool {
 type GlobalMediaStatus string
 
 const (
-	GlobalMediaStatusPending   GlobalMediaStatus = "pending"
-	GlobalMediaStatusFailed    GlobalMediaStatus = "failed"
-	GlobalMediaStatusCompleted GlobalMediaStatus = "completed"
+	GlobalMediaStatusProcessing GlobalMediaStatus = "processing"
+	GlobalMediaStatusFailed     GlobalMediaStatus = "failed"
+	GlobalMediaStatusCompleted  GlobalMediaStatus = "completed"
 )
 
 func (e *GlobalMediaStatus) Scan(src interface{}) error {
@@ -215,7 +217,7 @@ func (ns NullGlobalMediaStatus) Value() (driver.Value, error) {
 
 func (e GlobalMediaStatus) Valid() bool {
 	switch e {
-	case GlobalMediaStatusPending,
+	case GlobalMediaStatusProcessing,
 		GlobalMediaStatusFailed,
 		GlobalMediaStatusCompleted:
 		return true
@@ -271,6 +273,57 @@ func (e GlobalMediaType) Valid() bool {
 	case GlobalMediaTypeImage,
 		GlobalMediaTypeVideo,
 		GlobalMediaTypeOther:
+		return true
+	}
+	return false
+}
+
+type GlobalMediaUploadType string
+
+const (
+	GlobalMediaUploadTypeSinglepart GlobalMediaUploadType = "singlepart"
+	GlobalMediaUploadTypeMultipart  GlobalMediaUploadType = "multipart"
+)
+
+func (e *GlobalMediaUploadType) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalMediaUploadType(s)
+	case string:
+		*e = GlobalMediaUploadType(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalMediaUploadType: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalMediaUploadType struct {
+	GlobalMediaUploadType GlobalMediaUploadType `json:"globalMediaUploadType"`
+	Valid                 bool                  `json:"valid"` // Valid is true if GlobalMediaUploadType is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalMediaUploadType) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalMediaUploadType, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalMediaUploadType.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalMediaUploadType) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalMediaUploadType), nil
+}
+
+func (e GlobalMediaUploadType) Valid() bool {
+	switch e {
+	case GlobalMediaUploadTypeSinglepart,
+		GlobalMediaUploadTypeMultipart:
 		return true
 	}
 	return false
@@ -559,30 +612,29 @@ type ArchiveUpdatedRecord struct {
 }
 
 type GlobalMediaImage struct {
-	MediaID    uuid.UUID         `json:"mediaId"`
-	Thumbnail  *string           `json:"thumbnail"`
-	Small      *string           `json:"small"`
-	Medium     *string           `json:"medium"`
-	Large      *string           `json:"large"`
-	ExtraLarge *string           `json:"extraLarge"`
-	Status     GlobalMediaStatus `json:"status"`
+	MediaID    uuid.UUID `json:"mediaId"`
+	Thumbnail  *string   `json:"thumbnail"`
+	Small      *string   `json:"small"`
+	Medium     *string   `json:"medium"`
+	Large      *string   `json:"large"`
+	ExtraLarge *string   `json:"extraLarge"`
 }
 
 type GlobalMediaVideo struct {
-	MediaID          uuid.UUID         `json:"mediaId"`
-	Thumbnail        *string           `json:"thumbnail"`
-	AdaptiveManifest *string           `json:"adaptiveManifest"`
-	Preview          *string           `json:"preview"`
-	Status           GlobalMediaStatus `json:"status"`
+	MediaID          uuid.UUID `json:"mediaId"`
+	Thumbnail        *string   `json:"thumbnail"`
+	AdaptiveManifest *string   `json:"adaptiveManifest"`
+	Preview          *string   `json:"preview"`
 }
 
 type GlobalMedium struct {
-	ID          uuid.UUID       `json:"id"`
-	BucketPath  string          `json:"bucketPath"`
-	Size        int64           `json:"size"`
-	MediaType   GlobalMediaType `json:"mediaType"`
-	ContentType *string         `json:"contentType"`
-	CreatedAt   time.Time       `json:"createdAt"`
+	ID          uuid.UUID         `json:"id"`
+	BucketPath  string            `json:"bucketPath"`
+	Size        int64             `json:"size"`
+	MediaType   GlobalMediaType   `json:"mediaType"`
+	ContentType *string           `json:"contentType"`
+	Status      GlobalMediaStatus `json:"status"`
+	CreatedAt   time.Time         `json:"createdAt"`
 }
 
 type GlobalService struct {
@@ -598,6 +650,16 @@ type GlobalServiceHierarchyDetail struct {
 	HierarchyName   string                       `json:"hierarchyName"`
 	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
 	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
+}
+
+type GlobalTemporaryMedium struct {
+	ID          uuid.UUID             `json:"id"`
+	BucketPath  string                `json:"bucketPath"`
+	Size        int64                 `json:"size"`
+	UploadType  GlobalMediaUploadType `json:"uploadType"`
+	UploadID    *string               `json:"uploadId"`
+	ContentType *string               `json:"contentType"`
+	ExpiresAt   time.Time             `json:"expiresAt"`
 }
 
 type GlobalUser struct {
@@ -621,9 +683,10 @@ type GlobalUserDetail struct {
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`
 	ProfilePictureID           *uuid.UUID            `json:"profilePictureId"`
+	Status                     GlobalUserStatus      `json:"status"`
 	UncompressedProfilePicture *string               `json:"uncompressedProfilePicture"`
 	ProfilePictureSize         *int64                `json:"profilePictureSize"`
-	Status                     NullGlobalMediaStatus `json:"status"`
+	ProfilePictureStatus       NullGlobalMediaStatus `json:"profilePictureStatus"`
 	Thumbnail                  *string               `json:"thumbnail"`
 	Small                      *string               `json:"small"`
 	Medium                     *string               `json:"medium"`

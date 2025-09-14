@@ -11,7 +11,6 @@ func GetActorDetailsFromContext(ctx context.Context) (ActorDetails, error) {
 	var zero ActorDetails
 
 	// empty actor id and actor type are also considered errors
-	// and is part of ErrInvalidActorDetails
 	actorID, actorIDOk := ctx.Value(ActorKeyID).(string)
 	if !actorIDOk {
 		return zero, ErrInvalidActorID
