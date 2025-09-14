@@ -4,11 +4,11 @@ import (
 	"context"
 	"log"
 	"os"
-	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/services"
+	"github.com/robfig/cron/v3"
 )
 
 type serviceFactory func(params app.App) services.Cron
@@ -20,38 +20,40 @@ var appServices = []serviceFactory{
 }
 
 func ServicesCronJobs(ctx context.Context, appConfig app.App) {
-	cronIntervalString := os.Getenv("CRON_INTERVAL")
-	cronInterval, durationErr := time.ParseDuration(cronIntervalString)
-	if durationErr != nil {
-		cronInterval = 4 * time.Hour
+	cronExpr := os.Getenv("CRON_EXPR")
+	if cronExpr == "" {
+		// default every 4 hours
+		cronExpr = "@every 4h"
 	}
 
+	c := cron.New()
+
+	// build services
 	cronServices := make([]services.Cron, len(appServices))
 	for i, factory := range appServices {
 		cronServices[i] = factory(appConfig)
 	}
 
-	ticker := time.NewTicker(cronInterval)
-	defer ticker.Stop()
-
-	// initally trigger immediately
-	triggerServicesCron(cronServices)
-
-loop:
-	for {
-		select {
-		case <-ctx.Done():
-			{
-				break loop
-			}
-		case <-ticker.C:
-			{
-				triggerServicesCron(cronServices)
-			}
-		}
+	// schedule jobs
+	_, err := c.AddFunc(cronExpr, func() {
+		triggerServicesCron(cronServices)
+	})
+	if err != nil {
+		log.Fatalf("failed to add cron job: %v", err)
 	}
 
-	log.Println("cron jobs ticker cancelled")
+	// run once immediately
+	triggerServicesCron(cronServices)
+
+	// start scheduler
+	c.Start()
+
+	// wait for cancellation
+	<-ctx.Done()
+
+	// stop scheduler gracefully
+	c.Stop()
+	log.Println("cron jobs stopped")
 }
 
 func triggerServicesCron(cronServices []services.Cron) {
