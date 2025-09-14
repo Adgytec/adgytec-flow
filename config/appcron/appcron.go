@@ -21,11 +21,16 @@ var appServices = []serviceFactory{
 }
 
 func ServicesCronJobs(ctx context.Context, appConfig app.App) {
+	cronServices := make([]services.Cron, len(appServices))
+	for i, factory := range appServices {
+		cronServices[i] = factory(appConfig)
+	}
+
 	ticker := time.NewTicker(cronInterval)
 	defer ticker.Stop()
 
 	// initally trigger immediately
-	triggerServicesCron(appConfig)
+	triggerServicesCron(cronServices)
 
 loop:
 	for {
@@ -36,7 +41,7 @@ loop:
 			}
 		case <-ticker.C:
 			{
-				triggerServicesCron(appConfig)
+				triggerServicesCron(cronServices)
 			}
 		}
 	}
@@ -44,10 +49,9 @@ loop:
 	log.Println("cron jobs ticker cancelled")
 }
 
-func triggerServicesCron(appConfig app.App) {
+func triggerServicesCron(cronServices []services.Cron) {
 	log.Println("services cron jobs triggered")
-	for _, factory := range appServices {
-		appCron := factory(appConfig)
-		go appCron.Trigger()
+	for _, cron := range cronServices {
+		go cron.Trigger()
 	}
 }
