@@ -26,7 +26,7 @@ func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
 }
 
 func (a *authCommon) NewSignedHash(payload ...[]byte) string {
-	return ""
+	panic("not implemented: NewSignedHash provides no security guarantees")
 }
 
 func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
