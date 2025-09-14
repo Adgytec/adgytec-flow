@@ -3,14 +3,13 @@ package appcron
 import (
 	"context"
 	"log"
+	"os"
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 )
-
-const cronInterval = 4 * time.Hour
 
 type serviceFactory func(params app.App) services.Cron
 
@@ -21,6 +20,12 @@ var appServices = []serviceFactory{
 }
 
 func ServicesCronJobs(ctx context.Context, appConfig app.App) {
+	cronIntervalString := os.Getenv("CRON_INTERVAL")
+	cronInterval, durationErr := time.ParseDuration(cronIntervalString)
+	if durationErr != nil {
+		cronInterval = 4 * time.Hour
+	}
+
 	cronServices := make([]services.Cron, len(appServices))
 	for i, factory := range appServices {
 		cronServices[i] = factory(appConfig)
