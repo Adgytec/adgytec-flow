@@ -12,5 +12,5 @@ func (s *mediaService) postProcessingMediaItems(mediaID uuid.UUID) error {
 }
 
 func (m *mediaServiceMux) postProcessingMediaItems(w http.ResponseWriter, r *http.Request) {
-
+payload.EncodeError(w, core.ErrNotImplemented)
 }
