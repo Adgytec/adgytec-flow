@@ -42,7 +42,7 @@ func ServicesCronJobs(ctx context.Context, appConfig app.App) {
 		triggerServicesCron(cronServices)
 	})
 	if err != nil {
-		log.Fatalf("failed to add cron job: %v", err)
+		log.Printf("failed to add cron job: %v", err)
 	}
 
 	// run once immediately
