@@ -21,7 +21,7 @@ EXECUTE function global.set_expires_at ();
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-DROP TRIGGER if EXISTS on_insert_set_expirest_at ON global.temporary_media;
+DROP TRIGGER if EXISTS on_insert_set_expires_at ON global.temporary_media;
 
 DROP TABLE IF EXISTS global.temporary_media;
 
