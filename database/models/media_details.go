@@ -1,6 +1,6 @@
 package models
 
-type Image struct {
+type ImageDetails struct {
 	OriginalImage *string `json:"originalImage"`
 	Size          *int64  `json:"size"`
 	Status        *string `json:"status,omitempty"`
@@ -11,7 +11,7 @@ type Image struct {
 	ExtraLarge    *string `json:"extraLarge,omitempty"`
 }
 
-type Video struct {
+type VideoDetails struct {
 	OriginalVideo    *string `json:"originalVideo"`
 	Size             *int64  `json:"size"`
 	Status           *string `json:"status,omitempty"`

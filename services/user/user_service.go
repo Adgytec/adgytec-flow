@@ -52,7 +52,7 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.Glob
 	}
 
 	if user.ProfilePictureID != nil {
-		profilePictureModel := &models.Image{
+		profilePictureModel := &models.ImageDetails{
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
 			Status:        pointer.New(string(user.ProfilePictureStatus.GlobalMediaStatus)),
