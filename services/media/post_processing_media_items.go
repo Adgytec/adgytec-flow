@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/google/uuid"
 )
 
@@ -12,5 +13,5 @@ func (s *mediaService) postProcessingMediaItems(mediaID uuid.UUID) error {
 }
 
 func (m *mediaServiceMux) postProcessingMediaItems(w http.ResponseWriter, r *http.Request) {
-payload.EncodeError(w, core.ErrNotImplemented)
+	payload.EncodeError(w, core.ErrNotImplemented)
 }
