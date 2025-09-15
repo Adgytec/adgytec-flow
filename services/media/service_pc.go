@@ -1,16 +1,17 @@
 package media
 
 import (
+	"context"
 	"log"
 
 	"github.com/google/uuid"
 )
 
 type MediaServicePC interface {
-	NewMediaItem(input NewMediaItemInput) (NewMediaItemOutput, error)
-	NewMediaItems(input []NewMediaItemInput) ([]NewMediaItemOutput, error)
-	CompleteMediaItemUpload(mediaID uuid.UUID) error
-	CompleteMediaItemsUpload(mediaIDs []uuid.UUID) error
+	NewMediaItem(ctx context.Context, input NewMediaItemInput) (NewMediaItemOutput, error)
+	NewMediaItems(ctx context.Context, input []NewMediaItemInput) ([]NewMediaItemOutput, error)
+	CompleteMediaItemUpload(ctx context.Context, mediaID uuid.UUID) error
+	CompleteMediaItemsUpload(ctx context.Context, mediaIDs []uuid.UUID) error
 }
 
 type mediaServicePC struct {

@@ -32,7 +32,7 @@ func (s *userService) newProfilePicture(ctx context.Context, userID uuid.UUID, p
 		return nil, permissionErr
 	}
 
-	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(profilePictureDetails)
+	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetails)
 	if mediaErr != nil {
 		return nil, mediaErr
 	}
