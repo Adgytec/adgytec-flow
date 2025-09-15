@@ -7,7 +7,9 @@ import (
 )
 
 type MediaServicePC interface {
+	NewMediaItem(input NewMediaItemInput) (NewMediaItemOutput, error)
 	NewMediaItems(input []NewMediaItemInput) ([]NewMediaItemOutput, error)
+	CompleteMediaItemUplod(mediaID uuid.UUID) error
 	CompleteMediaItemsUpload(mediaIDs []uuid.UUID) error
 }
 
