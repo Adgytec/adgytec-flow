@@ -111,13 +111,12 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	}
 	txCommitErr := tx.Commit(context.Background())
 	if txCommitErr != nil {
+		// TODO: when media service is implemented will also clean complete media upload for failed profile update
 		return nil, txCommitErr
 	}
 
 	updatedUserProfileModel := s.getUserResponseModel(updatedUserProfileView)
-	// TODO: update user cache
-
-	// TODO: when media service is implemented will also clean complete media upload for failed profile update
+	s.getUserCache.Set(userID.String(), updatedUserProfileModel)
 
 	return &updatedUserProfileModel, nil
 }
