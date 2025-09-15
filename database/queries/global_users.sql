@@ -107,3 +107,24 @@ INSERT INTO
 VALUES
 	($1, $2)
 ON CONFLICT (id) DO NOTHING;
+
+-- name: UpdateGlobalUserProfile :one
+WITH
+	updated AS (
+		UPDATE global.users u
+		SET
+			name = $1,
+			about = $2,
+			profile_picture_id = $3,
+			date_of_birth = $4
+		WHERE
+			u.id = $5
+		RETURNING
+			u.id
+	)
+SELECT
+	*
+FROM
+	global.user_details d
+WHERE
+	d.id = $5;
