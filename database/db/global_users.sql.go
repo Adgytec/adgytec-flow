@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createGlobalUser = `-- name: CreateGlobalUser :execrows
@@ -420,6 +421,66 @@ WHERE
 
 func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetail, error) {
 	row := q.db.QueryRow(ctx, getUserById, userID)
+	var i GlobalUserDetail
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Name,
+		&i.About,
+		&i.DateOfBirth,
+		&i.CreatedAt,
+		&i.ProfilePictureID,
+		&i.Status,
+		&i.UncompressedProfilePicture,
+		&i.ProfilePictureSize,
+		&i.ProfilePictureStatus,
+		&i.Thumbnail,
+		&i.Small,
+		&i.Medium,
+		&i.Large,
+		&i.ExtraLarge,
+	)
+	return i, err
+}
+
+const updateGlobalUserProfile = `-- name: UpdateGlobalUserProfile :one
+WITH
+	updated AS (
+		UPDATE global.users u
+		SET
+			name = $1,
+			about = $2,
+			profile_picture_id = $3,
+			date_of_birth = $4
+		WHERE
+			u.id = $5
+		RETURNING
+			u.id
+	)
+SELECT
+	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+FROM
+	global.user_details d
+WHERE
+	d.id = $5
+`
+
+type UpdateGlobalUserProfileParams struct {
+	Name             string      `json:"name"`
+	About            *string     `json:"about"`
+	ProfilePictureID *uuid.UUID  `json:"profilePictureId"`
+	DateOfBirth      pgtype.Date `json:"dateOfBirth"`
+	ID               uuid.UUID   `json:"id"`
+}
+
+func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalUserProfileParams) (GlobalUserDetail, error) {
+	row := q.db.QueryRow(ctx, updateGlobalUserProfile,
+		arg.Name,
+		arg.About,
+		arg.ProfilePictureID,
+		arg.DateOfBirth,
+		arg.ID,
+	)
 	var i GlobalUserDetail
 	err := row.Scan(
 		&i.ID,
