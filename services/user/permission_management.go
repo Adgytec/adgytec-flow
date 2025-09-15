@@ -60,7 +60,7 @@ var getUserProfilePermission = db.AddManagementPermissionParams{
 	Description: pointer.New(`
 ### Get User Profile
 
-Grants the ability to individual user profile details.`),
+Grants the ability to get individual user profile details.`),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }

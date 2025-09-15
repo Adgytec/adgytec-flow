@@ -5,7 +5,7 @@ type ErrorResponse interface {
 }
 
 type ErrorDetails struct {
-	HTTPStatusCode int                `json:"-"`
-	Message        *string            `json:"message,omitempty"`
-	FieldErrors    *map[string]string `json:"fieldErrors,omitempty"`
+	HTTPStatusCode int     `json:"-"`
+	Message        *string `json:"message,omitempty"`
+	FieldErrors    error   `json:"fieldErrors,omitempty"`
 }
