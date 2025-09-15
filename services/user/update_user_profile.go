@@ -117,6 +117,8 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	updatedUserProfileModel := s.getUserResponseModel(updatedUserProfileView)
 	// TODO: update user cache
 
+	// TODO: when media service is implemented will also clean complete media upload for failed profile update
+
 	return &updatedUserProfileModel, nil
 }
 
