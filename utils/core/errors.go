@@ -9,8 +9,9 @@ import (
 )
 
 var (
-	ErrNotImplemented  = errors.New("error not implemented")
-	ErrFieldValidation = errors.New("invalid field values")
+	ErrNotImplemented           = errors.New("error not implemented")
+	ErrFieldValidation          = errors.New("invalid field values")
+	ErrRequestBodyParsingFailed = errors.New("request body parsing failed")
 )
 
 type FieldValidationError struct {
