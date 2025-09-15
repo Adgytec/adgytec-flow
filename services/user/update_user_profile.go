@@ -1,29 +1,38 @@
 package user
 
 import (
+	"context"
+	"errors"
 	"net/http"
+	"time"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type updateUserProfileData struct {
 	Name           string
-	ProfilePicture string
-	About          string
+	ProfilePicture *string
+	About          *string
 	DateOfBirth    string
 }
 
 func (userProfile updateUserProfileData) Validate() error {
 	validationErr := validation.ValidateStruct(&userProfile,
 		validation.Field(&userProfile.Name, validation.Required, validation.Length(3, 100)),
-		validation.Field(&userProfile.ProfilePicture, is.UUID),
-		validation.Field(&userProfile.About, validation.Length(1, 1024)),
+		validation.Field(&userProfile.ProfilePicture, validation.NilOrNotEmpty, is.UUID),
+		validation.Field(&userProfile.About, validation.NilOrNotEmpty, validation.Length(1, 1024)),
 		validation.Field(&userProfile.DateOfBirth, validation.Required, validation.Date("2006-01-02")),
 	)
 
@@ -36,12 +45,95 @@ func (userProfile updateUserProfileData) Validate() error {
 	return nil
 }
 
+func (userProfile updateUserProfileData) GetProfilePicture() *uuid.UUID {
+	if userProfile.ProfilePicture == nil {
+		return nil
+	}
+
+	return pointer.New(uuid.MustParse(*userProfile.ProfilePicture))
+}
+
+func (userProfile updateUserProfileData) GetDateOfBirth() pgtype.Date {
+	timeVal, parsingErr := time.Parse("2006-01-02", userProfile.DateOfBirth)
+	if parsingErr != nil {
+		// panic the current request as calling Validate() is required before proceeding
+		panic("call userProfile.Validate() before getting field values")
+	}
+
+	return pgtype.Date{Time: timeVal, Valid: true}
+}
+
+func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, userProfile updateUserProfileData) (*models.GlobalUser, error) {
+	requiredPermissions := []iam.PermissionProvider{
+		iam.NewPermissionRequiredFromSelfPermission(
+			updateSelfProfilePermission,
+			iam.PermissionRequiredResources{
+				UserID: pointer.New(userID),
+			},
+		),
+		iam.NewPermissionRequiredFromManagementPermission(
+			updateUserProfilePermission,
+			iam.PermissionRequiredResources{},
+		),
+	}
+
+	permissionErr := s.iam.CheckPermissions(ctx, requiredPermissions)
+	if permissionErr != nil {
+		return nil, permissionErr
+	}
+
+	if userProfile.ProfilePicture != nil {
+		// complete media upload
+		mediaUploadErr := s.media.CompleteMediaItemUpload(ctx, *userProfile.GetProfilePicture())
+		if mediaUploadErr != nil {
+			return nil, mediaUploadErr
+		}
+	}
+
+	// start transaction
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
+	if txErr != nil {
+		return nil, txErr
+	}
+	defer tx.Rollback(context.Background())
+
+	updatedUserProfileView, dbErr := qtx.UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
+		Name:             userProfile.Name,
+		ProfilePictureID: userProfile.GetProfilePicture(),
+		About:            userProfile.About,
+		DateOfBirth:      userProfile.GetDateOfBirth(),
+	})
+	if dbErr != nil {
+		if errors.Is(dbErr, pgx.ErrNoRows) {
+			return nil, &UserNotFoundError{}
+		}
+		return nil, dbErr
+	}
+	txCommitErr := tx.Commit(context.Background())
+	if txCommitErr != nil {
+		return nil, txCommitErr
+	}
+
+	updatedUserProfileModel := s.getUserResponseModel(updatedUserProfileView)
+	// TODO: update user cache
+
+	return &updatedUserProfileModel, nil
+}
+
 func (m *userServiceMux) updateUserProfileUtil(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	userProfieDetails, payloadErr := payload.DecodeRequestBodyAndValidate[updateUserProfileData](w, r)
 	if payloadErr != nil {
 		payload.EncodeError(w, payloadErr)
 		return
 	}
+
+	updatedUserProfile, updateProfileErr := m.service.updateUserProfile(r.Context(), userID, userProfieDetails)
+	if updateProfileErr != nil {
+		payload.EncodeError(w, updateProfileErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, updatedUserProfile)
 }
 
 func (m *userServiceMux) updateSelfProfile(w http.ResponseWriter, r *http.Request) {
