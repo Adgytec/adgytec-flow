@@ -4,15 +4,40 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
 func (s *userService) newProfilePicture(ctx context.Context, userID uuid.UUID, profilePictureDetails media.NewMediaItemInput) (*media.NewMediaItemOutput, error) {
-	return nil, nil
+	requiredPermissions := []iam.PermissionProvider{
+		iam.NewPermissionRequiredFromSelfPermission(
+			updateSelfProfilePermission,
+			iam.PermissionRequiredResources{
+				UserID: pointer.New(userID),
+			},
+		),
+		iam.NewPermissionRequiredFromManagementPermission(
+			updateUserProfilePermission,
+			iam.PermissionRequiredResources{},
+		),
+	}
+
+	permissionErr := s.iam.CheckPermissions(ctx, requiredPermissions)
+	if permissionErr != nil {
+		return nil, permissionErr
+	}
+
+	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(profilePictureDetails)
+	if mediaErr != nil {
+		return nil, mediaErr
+	}
+
+	return &profilePictureDetailsOutput, nil
 }
 
 func (m *userServiceMux) newProfilePictureUtil(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
