@@ -8,8 +8,7 @@ import (
 )
 
 var (
-	ErrRequestDecode     = errors.New("request decoding failed")
-	ErrRequestValidation = errors.New("request validation failed")
+	ErrRequestDecode = errors.New("request decoding failed")
 )
 
 type RequestDecodeError struct {
