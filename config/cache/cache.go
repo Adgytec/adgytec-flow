@@ -9,14 +9,14 @@ import (
 )
 
 type Cache[T any] interface {
-	Get(string, func() (T, error)) (T, error)
-	Delete(string)
+	Get(id string, getDataFromPersistentStorage func() (T, error)) (T, error)
+	Delete(id string)
 }
 
 type CacheClient interface {
-	Get(string) ([]byte, bool)
-	Set(string, []byte)
-	Delete(string)
+	Get(key string) ([]byte, bool)
+	Set(key string, data []byte)
+	Delete(key string)
 }
 
 type implCache[T any] struct {
