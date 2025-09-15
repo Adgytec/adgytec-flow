@@ -9,3 +9,8 @@ func (s *mediaService) newMediaItems(input []NewMediaItemInput) ([]NewMediaItemO
 func (pc *mediaServicePC) NewMediaItems(input []NewMediaItemInput) ([]NewMediaItemOutput, error) {
 	return pc.service.newMediaItems(input)
 }
+
+func (pc *mediaServicePC) NewMediaItem(input NewMediaItemInput) (NewMediaItemOutput, error) {
+	var zero NewMediaItemOutput
+	return zero, core.ErrNotImplemented
+}
