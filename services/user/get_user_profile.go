@@ -83,9 +83,9 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 	reqCtx := r.Context()
 	userID := chi.URLParam(r, "userID")
 
-	userUUID, userIdErr := m.service.getUserUUIDFromString(userID)
-	if userIdErr != nil {
-		payload.EncodeError(w, userIdErr)
+	userUUID, userIDErr := m.service.getUserUUIDFromString(userID)
+	if userIDErr != nil {
+		payload.EncodeError(w, userIDErr)
 		return
 	}
 
