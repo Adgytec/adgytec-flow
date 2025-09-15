@@ -24,6 +24,8 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Use(m.middleware.EnsureActorTypeUserOnly)
 
 		router.Get("/profile", m.getUserSelfProfileHandler)
+		router.Post("/profile/new-profile-picture", m.newSelfProfilePicture)
+		router.Post("/profile/update", m.updateSelfProfile)
 	})
 
 	mux.Group(func(router chi.Router) {
