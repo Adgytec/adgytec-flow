@@ -45,22 +45,28 @@ func (userProfile updateUserProfileData) Validate() error {
 	return nil
 }
 
-func (userProfile updateUserProfileData) GetProfilePicture() *uuid.UUID {
+func (userProfile updateUserProfileData) GetProfilePicture() (*uuid.UUID, error) {
 	if userProfile.ProfilePicture == nil {
-		return nil
+		return nil, nil
 	}
 
-	return pointer.New(uuid.MustParse(*userProfile.ProfilePicture))
+	profilePictureUUID, parseErr := uuid.Parse(*userProfile.ProfilePicture)
+	if parseErr != nil {
+		return nil, core.ErrRequestBodyParsingFailed
+	}
+
+	return &profilePictureUUID, nil
 }
 
-func (userProfile updateUserProfileData) GetDateOfBirth() pgtype.Date {
+func (userProfile updateUserProfileData) GetDateOfBirth() (pgtype.Date, error) {
+	var zero pgtype.Date
+
 	timeVal, parsingErr := time.Parse("2006-01-02", userProfile.DateOfBirth)
 	if parsingErr != nil {
-		// panic the current request as calling Validate() is required before proceeding
-		panic("call userProfile.Validate() before getting field values")
+		return zero, core.ErrRequestBodyParsingFailed
 	}
 
-	return pgtype.Date{Time: timeVal, Valid: true}
+	return pgtype.Date{Time: timeVal, Valid: true}, nil
 }
 
 func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, userProfile updateUserProfileData) (*models.GlobalUser, error) {
@@ -82,9 +88,20 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		return nil, permissionErr
 	}
 
+	// get parsed value
+	profilePicture, profilePictureParsingErr := userProfile.GetProfilePicture()
+	if profilePictureParsingErr != nil {
+		return nil, profilePictureParsingErr
+	}
+
+	dob, dobParsingErr := userProfile.GetDateOfBirth()
+	if dobParsingErr != nil {
+		return nil, dobParsingErr
+	}
+
 	if userProfile.ProfilePicture != nil {
 		// complete media upload
-		mediaUploadErr := s.media.CompleteMediaItemUpload(ctx, *userProfile.GetProfilePicture())
+		mediaUploadErr := s.media.CompleteMediaItemUpload(ctx, *profilePicture)
 		if mediaUploadErr != nil {
 			return nil, mediaUploadErr
 		}
@@ -100,9 +117,9 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	updatedUserProfileView, dbErr := qtx.UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
 		ID:               userID,
 		Name:             userProfile.Name,
-		ProfilePictureID: userProfile.GetProfilePicture(),
+		ProfilePictureID: profilePicture,
 		About:            userProfile.About,
-		DateOfBirth:      userProfile.GetDateOfBirth(),
+		DateOfBirth:      dob,
 	})
 	if dbErr != nil {
 		if errors.Is(dbErr, pgx.ErrNoRows) {
