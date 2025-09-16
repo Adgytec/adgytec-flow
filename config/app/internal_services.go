@@ -31,10 +31,6 @@ func (s *internalServices) MediaWithTransaction() media.MediaServicePCWithTransa
 	return s.mediaService
 }
 
-func (s *internalServices) Media() media.MediaServicePC {
-	return s.mediaService
-}
-
 func newInternalService(externalService appExternalServices) appInternalServices {
 	internalService := internalServices{}
 	appInstance := &app{
