@@ -21,12 +21,12 @@ type mediaServicePC struct {
 }
 
 func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServicePC {
-	mediaServicePCWithTx := &mediaServicePC{
-		service: pc.service,
-	}
-	mediaServicePCWithTx.service.database = db
+	mediaServiceCopy := *pc.service
+	mediaServiceCopy.database = db
 
-	return mediaServicePCWithTx
+	return &mediaServicePC{
+		service: &mediaServiceCopy,
+	}
 }
 
 func NewMediaServicePC(params mediaServiceParams) MediaServicePC {
