@@ -17,7 +17,7 @@ func (c *pgxTx) Queries() *db.Queries {
 }
 
 func (c *pgxTx) WithTransaction(_ context.Context) (Database, Tx, error) {
-	return nil, nil, ErrRequestingTransactionInsideTransaction
+	return c, nil, nil
 }
 
 func newPgxTx(conn pgx.Tx, queries *db.Queries) Database {
