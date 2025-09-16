@@ -99,14 +99,6 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		return nil, dobParsingErr
 	}
 
-	if userProfile.ProfilePicture != nil {
-		// complete media upload
-		mediaUploadErr := s.media.CompleteMediaItemUpload(ctx, *profilePicture)
-		if mediaUploadErr != nil {
-			return nil, mediaUploadErr
-		}
-	}
-
 	// start transaction
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
@@ -114,7 +106,15 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	}
 	defer tx.Rollback(context.Background())
 
-	updatedUserProfileView, dbErr := qtx.UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
+	if userProfile.ProfilePicture != nil {
+		// complete media upload
+		mediaUploadErr := s.media.WithTransaction(qtx).CompleteMediaItemUpload(ctx, *profilePicture)
+		if mediaUploadErr != nil {
+			return nil, mediaUploadErr
+		}
+	}
+
+	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
 		ID:               userID,
 		Name:             userProfile.Name,
 		ProfilePictureID: profilePicture,
@@ -129,7 +129,6 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	}
 	txCommitErr := tx.Commit(context.Background())
 	if txCommitErr != nil {
-		// TODO: when media service is implemented will also clean complete media upload for failed profile update
 		return nil, txCommitErr
 	}
 

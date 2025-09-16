@@ -17,11 +17,13 @@ type mediaServiceMuxParams interface {
 }
 
 type mediaService struct {
-	storage storage.Storage
+	storage  storage.Storage
+	database database.Database
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {
 	return &mediaService{
-		storage: params.Storage(),
+		storage:  params.Storage(),
+		database: params.Database(),
 	}
 }
