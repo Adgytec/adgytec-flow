@@ -31,11 +31,10 @@ type mediaServicePC struct {
 }
 
 func (pc *mediaServicePC) WithTransaction(db database.Database) TransactionalMediaServicePC {
+	serviceCopy := *pc.service
+	serviceCopy.database = db
 	return &mediaServicePC{
-		service: &mediaService{
-			storage:  pc.service.storage,
-			database: db,
-		},
+		service: &serviceCopy,
 	}
 }
 
