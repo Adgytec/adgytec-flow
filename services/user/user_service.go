@@ -22,7 +22,7 @@ type userServiceParams interface {
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
 	CacheClient() cache.CacheClient
-	Media() media.MediaServicePC
+	MediaWithTransaction() media.MediaServicePCWithTransaction
 }
 
 type userServiceMuxParams interface {
@@ -35,7 +35,7 @@ type userService struct {
 	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
-	media            media.MediaServicePC
+	media            media.MediaServicePCWithTransaction
 	getUserCache     cache.Cache[models.GlobalUser]
 	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
@@ -99,7 +99,7 @@ func newUserService(params userServiceParams) *userService {
 		auth:             params.Auth(),
 		iam:              params.IAMService(),
 		cdn:              params.CDN(),
-		media:            params.Media(),
+		media:            params.MediaWithTransaction(),
 		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
 		getUserListCache: cache.NewCache[pagination.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}

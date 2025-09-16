@@ -13,6 +13,10 @@ type MediaServicePC interface {
 	NewMediaItems(ctx context.Context, input []NewMediaItemInput) ([]NewMediaItemOutput, error)
 	CompleteMediaItemUpload(ctx context.Context, mediaID uuid.UUID) error
 	CompleteMediaItemsUpload(ctx context.Context, mediaIDs []uuid.UUID) error
+}
+
+type MediaServicePCWithTransaction interface {
+	MediaServicePC
 	WithTransaction(db database.Database) MediaServicePC
 }
 
@@ -29,7 +33,7 @@ func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServicePC {
 	}
 }
 
-func NewMediaServicePC(params mediaServiceParams) MediaServicePC {
+func NewMediaServicePC(params mediaServiceParams) MediaServicePCWithTransaction {
 	log.Printf("creating %s-service PC", serviceName)
 	return &mediaServicePC{
 		service: newMediaService(params),
