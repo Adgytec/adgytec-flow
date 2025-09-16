@@ -56,11 +56,12 @@ func newPgxConnPool() *pgxpool.Pool {
 }
 
 type pgxConnection struct {
+	queries  *db.Queries
 	connPool *pgxpool.Pool
 }
 
 func (c *pgxConnection) Queries() *db.Queries {
-	return db.New(c.connPool)
+	return c.queries
 }
 
 func (c *pgxConnection) WithTransaction(ctx context.Context) (Database, Tx, error) {
@@ -96,7 +97,10 @@ func (c *pgxConnection) Shutdown() {
 
 func NewPgxDbConnectionPool() DatabaseWithShutdown {
 	log.Println("init db pgx pool")
+
+	connPool := newPgxConnPool()
 	return &pgxConnection{
-		connPool: newPgxConnPool(),
+		connPool: connPool,
+		queries:  db.New(connPool),
 	}
 }
