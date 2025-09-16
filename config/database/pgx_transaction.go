@@ -16,8 +16,10 @@ func (c *pgxTx) Queries() *db.Queries {
 	return c.queries.WithTx(c.conn)
 }
 
+// WithTransaction() will always return error
+// when working with this if error is ErrRequestingTransactionInsideTransaction the method can proceed normally without transaction
 func (c *pgxTx) WithTransaction(_ context.Context) (Database, Tx, error) {
-	return c, nil, nil
+	return nil, nil, ErrRequestingTransactionInsideTransaction
 }
 
 func newPgxTx(conn pgx.Tx, queries *db.Queries) Database {
