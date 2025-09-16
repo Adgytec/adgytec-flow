@@ -47,6 +47,12 @@ func (m *userServiceMux) newProfilePictureUtil(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	profilePictureErr := profilePictureDetails.EnsureMediaItemIsImage()
+	if profilePictureErr != nil {
+		payload.EncodeError(w, profilePictureErr)
+		return
+	}
+
 	profilePictureDetailsOutput, uploadReqErr := m.service.newProfilePicture(r.Context(), userID, profilePictureDetails)
 	if uploadReqErr != nil {
 		payload.EncodeError(w, uploadReqErr)
