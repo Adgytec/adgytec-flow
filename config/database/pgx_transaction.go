@@ -16,8 +16,8 @@ func (c *pgxTx) Queries() *db.Queries {
 	return c.queries.WithTx(c.conn)
 }
 
-// WithTransaction() will always return error
-// when working with this if error is ErrRequestingTransactionInsideTransaction the method can proceed normally without transaction
+// WithTransaction prevents nested transactions by always returning ErrRequestingTransactionInsideTransaction.
+// Callers can check for this error to know they are already within a transaction.
 func (c *pgxTx) WithTransaction(_ context.Context) (Database, Tx, error) {
 	return nil, nil, ErrRequestingTransactionInsideTransaction
 }
