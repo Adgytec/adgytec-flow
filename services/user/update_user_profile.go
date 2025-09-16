@@ -114,7 +114,7 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	}
 	defer tx.Rollback(context.Background())
 
-	updatedUserProfileView, dbErr := qtx.UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
+	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
 		ID:               userID,
 		Name:             userProfile.Name,
 		ProfilePictureID: profilePicture,

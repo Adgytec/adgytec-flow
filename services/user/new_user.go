@@ -18,7 +18,7 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 	}
 	defer tx.Rollback(context.Background())
 
-	inserted, dbErr := qtx.CreateGlobalUser(
+	inserted, dbErr := qtx.Queries().CreateGlobalUser(
 		ctx,
 		db.CreateGlobalUserParams{
 			ID:    userID,

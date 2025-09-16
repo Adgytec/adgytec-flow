@@ -38,7 +38,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	}
 	defer tx.Rollback(context.Background())
 
-	userData, dbErr := qtx.UpdateGlobalUserStatus(
+	userData, dbErr := qtx.Queries().UpdateGlobalUserStatus(
 		ctx,
 		db.UpdateGlobalUserStatusParams{
 			ID:     userID,
