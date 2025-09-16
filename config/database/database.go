@@ -13,7 +13,7 @@ type Tx interface {
 
 type Database interface {
 	Queries() *db.Queries
-	WithTransaction(ctx context.Context) (*db.Queries, Tx, error)
+	WithTransaction(ctx context.Context) (Database, Tx, error)
 }
 
 type DatabaseWithShutdown interface {

@@ -63,7 +63,7 @@ func (c *pgxConnection) Queries() *db.Queries {
 	return db.New(c.connPool)
 }
 
-func (c *pgxConnection) WithTransaction(ctx context.Context) (*db.Queries, Tx, error) {
+func (c *pgxConnection) WithTransaction(ctx context.Context) (Database, Tx, error) {
 	// Use context.Background() for transaction rollback and commit to ensure these operations complete even if the original request context is cancelled.
 	tx, txErr := c.connPool.Begin(ctx)
 	if txErr != nil {
@@ -87,7 +87,7 @@ func (c *pgxConnection) WithTransaction(ctx context.Context) (*db.Queries, Tx, e
 		return nil, nil, err
 	}
 
-	return c.Queries().WithTx(tx), tx, nil
+	return newPgxTx(tx, c.Queries()), tx, nil
 }
 
 func (c *pgxConnection) Shutdown() {
