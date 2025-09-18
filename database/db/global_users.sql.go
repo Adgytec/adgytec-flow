@@ -503,15 +503,12 @@ func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalU
 	return i, err
 }
 
-const updateGlobalUserStatus = `-- name: UpdateGlobalUserStatus :one
+const updateGlobalUserStatus = `-- name: UpdateGlobalUserStatus :exec
 UPDATE global.users
 SET
 	status = $1
 WHERE
 	id = $2
-RETURNING
-	id,
-	email AS username
 `
 
 type UpdateGlobalUserStatusParams struct {
@@ -519,14 +516,7 @@ type UpdateGlobalUserStatusParams struct {
 	ID     uuid.UUID        `json:"id"`
 }
 
-type UpdateGlobalUserStatusRow struct {
-	ID       uuid.UUID `json:"id"`
-	Username string    `json:"username"`
-}
-
-func (q *Queries) UpdateGlobalUserStatus(ctx context.Context, arg UpdateGlobalUserStatusParams) (UpdateGlobalUserStatusRow, error) {
-	row := q.db.QueryRow(ctx, updateGlobalUserStatus, arg.Status, arg.ID)
-	var i UpdateGlobalUserStatusRow
-	err := row.Scan(&i.ID, &i.Username)
-	return i, err
+func (q *Queries) UpdateGlobalUserStatus(ctx context.Context, arg UpdateGlobalUserStatusParams) error {
+	_, err := q.db.Exec(ctx, updateGlobalUserStatus, arg.Status, arg.ID)
+	return err
 }
