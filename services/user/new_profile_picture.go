@@ -37,9 +37,9 @@ func (s *userService) newProfilePicture(ctx context.Context, userID uuid.UUID, p
 	profilePictureDetailsWithBucketPrefix := media.NewMediaItemInputWithBucketPrefix{
 		NewMediaItemInput: profilePictureDetails,
 		BucketPrefix: fmt.Sprintf(
-			"/%s/profile_%s",
+			"/%s/profile_%d",
 			userID.String(),
-			time.Now().String(),
+			time.Now().UnixNano(),
 		),
 	}
 	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetailsWithBucketPrefix)
