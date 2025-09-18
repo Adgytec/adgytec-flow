@@ -47,24 +47,40 @@ func (mediaItemInput NewMediaItemInput) Validate() error {
 	return nil
 }
 
-// EnsureMediaItemIsImage() ensures the item that will be uploaded is image
-func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsImage() error {
+func (mediaItemInput NewMediaItemInput) ensureMediaTypeValue(value db.GlobalMediaType) error {
 	validationErr := mediaItemInput.Validate()
 	if validationErr != nil {
 		return validationErr
 	}
 
-	return core.ErrNotImplemented
+	mediaTypeValidationErr := validation.ValidateStruct(
+		&mediaItemInput,
+		validation.Field(
+			&mediaItemInput.MediaType,
+			validation.In(
+				value,
+			),
+		),
+	)
+
+	if mediaTypeValidationErr != nil {
+		return &core.FieldValidationError{
+			ValidationErrors: mediaTypeValidationErr,
+		}
+	}
+
+	return nil
+
+}
+
+// EnsureMediaItemIsImage() ensures the item that will be uploaded is image
+func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsImage() error {
+	return mediaItemInput.ensureMediaTypeValue(db.GlobalMediaTypeImage)
 }
 
 // EnsureMediaItemIsVideo() ensures the item that will be uploaded is video
 func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsVideo() error {
-	validationErr := mediaItemInput.Validate()
-	if validationErr != nil {
-		return validationErr
-	}
-
-	return core.ErrNotImplemented
+	return mediaItemInput.ensureMediaTypeValue(db.GlobalMediaTypeVideo)
 }
 
 type NewMediaItemOutput struct{}
