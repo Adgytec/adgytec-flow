@@ -9,6 +9,14 @@ import (
 // 16 mega byte
 const singlepartUploadLimit = 16 * (1 << 20)
 
+// 1 giga byte
+const multipartUploadLimit = 1 * (1 << 30)
+
+// 5 mega byte
+const mulitpartPartSize = 5 * (1 << 20)
+
+const mediaUploadLimit = 50
+
 type mediaServiceParams interface {
 	Storage() storage.Storage
 	Database() database.Database
