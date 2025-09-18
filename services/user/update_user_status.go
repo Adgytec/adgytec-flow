@@ -63,6 +63,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		return authErr
 	}
 
+	// using context background here to avoid reverting auth provider status on request cancellation
 	return tx.Commit(context.Background())
 }
 
