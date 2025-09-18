@@ -632,7 +632,7 @@ type GlobalMedium struct {
 	BucketPath  string            `json:"bucketPath"`
 	Size        int64             `json:"size"`
 	MediaType   GlobalMediaType   `json:"mediaType"`
-	ContentType *string           `json:"contentType"`
+	ContentType string            `json:"contentType"`
 	Status      GlobalMediaStatus `json:"status"`
 	CreatedAt   time.Time         `json:"createdAt"`
 }
@@ -653,13 +653,12 @@ type GlobalServiceHierarchyDetail struct {
 }
 
 type GlobalTemporaryMedium struct {
-	ID          uuid.UUID             `json:"id"`
-	BucketPath  string                `json:"bucketPath"`
-	Size        int64                 `json:"size"`
-	UploadType  GlobalMediaUploadType `json:"uploadType"`
-	UploadID    *string               `json:"uploadId"`
-	ContentType *string               `json:"contentType"`
-	ExpiresAt   time.Time             `json:"expiresAt"`
+	ID         uuid.UUID             `json:"id"`
+	BucketPath string                `json:"bucketPath"`
+	UploadType GlobalMediaUploadType `json:"uploadType"`
+	MediaType  GlobalMediaType       `json:"mediaType"`
+	UploadID   *string               `json:"uploadId"`
+	ExpiresAt  time.Time             `json:"expiresAt"`
 }
 
 type GlobalUser struct {

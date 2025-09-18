@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS global.media (
 	bucket_path TEXT NOT NULL UNIQUE,
 	size BIGINT NOT NULL CHECK (size > 0),
 	media_type global.media_type NOT NULL,
-	content_type TEXT,
+	content_type TEXT NOT NULL,
 	status global.media_status NOT NULL DEFAULT 'processing',
 	created_at TIMESTAMPTZ NOT NULL
 );

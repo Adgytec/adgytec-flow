@@ -8,11 +8,20 @@ CREATE TYPE global.media_upload_type AS ENUM(
 CREATE TABLE IF NOT EXISTS global.temporary_media (
 	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
 	bucket_path TEXT NOT NULL,
-	size BIGINT NOT NULL CHECK (size > 0),
 	upload_type global.media_upload_type NOT NULL,
+	media_type global.media_type NOT NULL,
 	upload_id TEXT,
-	content_type TEXT,
-	expires_at TIMESTAMPTZ NOT NULL
+	expires_at TIMESTAMPTZ NOT NULL,
+	CHECK (
+		(
+			upload_type = 'multipart'
+			AND upload_id IS NOT NULL
+		)
+		OR (
+			upload_type <> 'multipart'
+			AND upload_id IS NULL
+		)
+	)
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_expires_at before insert ON global.temporary_media FOR each ROW
