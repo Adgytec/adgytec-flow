@@ -52,11 +52,6 @@ func (mediaItemInput NewMediaItemInput) Validate() error {
 }
 
 func (mediaItemInput NewMediaItemInput) ensureMediaTypeValue(value db.GlobalMediaType) error {
-	validationErr := mediaItemInput.Validate()
-	if validationErr != nil {
-		return validationErr
-	}
-
 	mediaTypeValidationErr := validation.ValidateStruct(
 		&mediaItemInput,
 		validation.Field(
