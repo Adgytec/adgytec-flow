@@ -1,7 +1,7 @@
 package media
 
 import (
-	"fmt"
+	"path"
 	"path/filepath"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
@@ -98,11 +98,9 @@ type NewMediaItemInputWithBucketPrefix struct {
 }
 
 func (mediaItemInput NewMediaItemInputWithBucketPrefix) getMediaItemKey() string {
-	return fmt.Sprintf(
-		"%s/%s%s",
+	return path.Join(
 		mediaItemInput.BucketPrefix,
-		uuid.NewString(),
-		mediaItemInput.getMediaItemExtension(),
+		uuid.NewString()+mediaItemInput.getMediaItemExtension(),
 	)
 }
 
