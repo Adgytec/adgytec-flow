@@ -4,6 +4,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/google/uuid"
 )
 
 type NewMediaItemInput struct {
@@ -84,4 +85,9 @@ func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsVideo() error {
 	return mediaItemInput.ensureMediaTypeValue(db.GlobalMediaTypeVideo)
 }
 
-type NewMediaItemOutput struct{}
+type NewMediaItemOutput struct {
+	MediaID             uuid.UUID                `json:"mediaID"`
+	UploadType          db.GlobalMediaUploadType `json:"uploadType"`
+	PresignPut          *string                  `json:"presignPut,omitempty"`
+	MulipartPresignPart []string                 `json:"multipartPresignPart,omitempty"`
+}
