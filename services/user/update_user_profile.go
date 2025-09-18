@@ -92,7 +92,7 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		}
 		return nil, dbErr
 	}
-	txCommitErr := tx.Commit(context.Background())
+	txCommitErr := tx.Commit(ctx)
 	if txCommitErr != nil {
 		return nil, txCommitErr
 	}
