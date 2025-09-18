@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
@@ -35,7 +36,11 @@ func (s *userService) newProfilePicture(ctx context.Context, userID uuid.UUID, p
 
 	profilePictureDetailsWithBucketPrefix := media.NewMediaItemInputWithBucketPrefix{
 		NewMediaItemInput: profilePictureDetails,
-		BucketPrefix:      fmt.Sprintf("/%s/profile", userID.String()),
+		BucketPrefix: fmt.Sprintf(
+			"/%s/profile_%s",
+			userID.String(),
+			time.Now().String(),
+		),
 	}
 	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetailsWithBucketPrefix)
 	if mediaErr != nil {
