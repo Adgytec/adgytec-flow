@@ -8,6 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// unfinished uploads and multipart upload are manged using s3 lifecycle methods
 func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
 	if len(input) < 1 || len(input) > mediaUploadLimit {
 		return nil, ErrInvalidNumberOfNewMediaItem
