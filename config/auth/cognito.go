@@ -20,14 +20,6 @@ func (a *authCognito) NewUser(username string) error {
 	return nil
 }
 
-func (a *authCognito) DisableUser(username string) error {
-	return nil
-}
-
-func (a *authCognito) EnableUser(username string) error {
-	return nil
-}
-
 func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, error) {
 	return uuid.UUID{}, nil
 }

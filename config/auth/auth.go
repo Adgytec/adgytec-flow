@@ -7,8 +7,6 @@ import (
 
 type Auth interface {
 	NewUser(username string) error
-	DisableUser(username string) error
-	EnableUser(username string) error
 	ValidateUserAccessToken(accessToken string) (uuid.UUID, error)
 
 	// this only checks if the API key is in required format as described in the application doc
