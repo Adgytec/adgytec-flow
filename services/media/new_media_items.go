@@ -8,108 +8,169 @@ import (
 	"github.com/google/uuid"
 )
 
-// unfinished uploads and multipart upload are manged using s3 lifecycle methods
-func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
+func (s *mediaService) validateNewMediaItemCount(input []NewMediaItemInputWithBucketPrefix) error {
 	if len(input) < 1 || len(input) > mediaUploadLimit {
-		return nil, ErrInvalidNumberOfNewMediaItem
+		return ErrInvalidNumberOfNewMediaItem
 	}
+	return nil
+}
 
-	var newMediaItemOuput []NewMediaItemOutput
-	var tempMediaParams []db.NewTemporaryMediaParams
+func (s *mediaService) prepareMediaItems(
+	input []NewMediaItemInputWithBucketPrefix,
+) ([]NewMediaItemOutput, []db.NewTemporaryMediaParams, error) {
+
+	var outputs []NewMediaItemOutput
+	var dbParams []db.NewTemporaryMediaParams
 
 	for _, val := range input {
-
+		// check size
 		if val.Size > multipartUploadLimit {
-			return nil, &MediaTooLargeError{
+			return nil, nil, &MediaTooLargeError{
 				Size: val.Size,
 			}
 		}
 
-		mediaItemKey := val.getMediaItemKey()
-		var uploadID *string
-
-		mediaID, idErr := uuid.NewV7()
-		if idErr != nil {
-			return nil, ErrMediaIDGeneration
+		// generate IDs
+		mediaID, err := uuid.NewV7()
+		if err != nil {
+			return nil, nil, ErrMediaIDGeneration
 		}
-		itemOutput := NewMediaItemOutput{
-			MediaID: mediaID,
-		}
+		mediaKey := val.getMediaItemKey()
 
-		if val.Size >= singlepartUploadLimit {
-			itemOutput.UploadType = db.GlobalMediaUploadTypeMultipart
-			multipartUploadID, multipartErr := s.storage.NewMultipartUpload(mediaItemKey)
-			if multipartErr != nil {
-				return nil, multipartErr
-			}
-
-			uploadID = &multipartUploadID
-			var uploadParts []MultipartPartUploadOutput
-			partsCount := (val.Size + multipartPartSize - 1) / multipartPartSize
-			valSize := val.Size
-
-			for part := 1; part <= int(partsCount); part++ {
-				if valSize < 1 {
-					return nil, ErrInvalidMediaSize
-				}
-
-				partSize := multipartPartSize
-				if valSize < multipartPartSize {
-					partSize = int(valSize)
-				}
-				valSize -= int64(partSize)
-				partDetail := MultipartPartUploadOutput{
-					PartNumber: int32(part),
-					PartSize:   int64(partSize),
-				}
-
-				presignURL, presignErr := s.storage.NewPresignUploadPart(mediaItemKey, multipartUploadID, int32(part))
-				if presignErr != nil {
-					return nil, presignErr
-				}
-
-				partDetail.PresignPut = presignURL
-
-				uploadParts = append(uploadParts, partDetail)
-			}
-
-			itemOutput.MultipartPresignPart = uploadParts
-		} else {
-			itemOutput.UploadType = db.GlobalMediaUploadTypeSinglepart
-			presignURL, presignErr := s.storage.NewPresignPut(mediaItemKey)
-			if presignErr != nil {
-				return nil, presignErr
-			}
-
-			itemOutput.PresignPut = pointer.New(presignURL)
+		// decide upload type
+		output, param, err := s.prepareSingleMediaItem(mediaID, mediaKey, val)
+		if err != nil {
+			return nil, nil, err
 		}
 
-		tempMediaParams = append(tempMediaParams, db.NewTemporaryMediaParams{
-			ID:         mediaID,
-			BucketPath: mediaItemKey,
-			UploadType: itemOutput.UploadType,
-			MediaType:  val.MediaType,
-			UploadID:   uploadID,
-		})
-		newMediaItemOuput = append(newMediaItemOuput, itemOutput)
+		outputs = append(outputs, output)
+		dbParams = append(dbParams, param)
 	}
 
+	return outputs, dbParams, nil
+}
+
+func (s *mediaService) prepareSingleMediaItem(
+	mediaID uuid.UUID,
+	mediaKey string,
+	val NewMediaItemInputWithBucketPrefix,
+) (NewMediaItemOutput, db.NewTemporaryMediaParams, error) {
+	output := NewMediaItemOutput{
+		MediaID: mediaID,
+	}
+	var uploadID *string
+
+	if val.Size >= singlepartUploadLimit {
+		// multipart upload
+		output.UploadType = db.GlobalMediaUploadTypeMultipart
+		upload, err := s.prepareMultipartUpload(mediaKey, val.Size)
+		if err != nil {
+			return output, db.NewTemporaryMediaParams{}, err
+		}
+
+		output.MultipartPresignPart = upload.parts
+		uploadID = &upload.id
+
+	} else {
+		// singlepart upload
+		output.UploadType = db.GlobalMediaUploadTypeSinglepart
+		presignURL, err := s.storage.NewPresignPut(mediaKey)
+		if err != nil {
+			return output, db.NewTemporaryMediaParams{}, err
+		}
+
+		output.PresignPut = pointer.New(presignURL)
+	}
+
+	param := db.NewTemporaryMediaParams{
+		ID:         mediaID,
+		BucketPath: mediaKey,
+		UploadType: output.UploadType,
+		MediaType:  val.MediaType,
+		UploadID:   uploadID,
+	}
+
+	return output, param, nil
+}
+
+type multipartUploadResult struct {
+	id    string
+	parts []MultipartPartUploadOutput
+}
+
+func (s *mediaService) prepareMultipartUpload(
+	mediaKey string,
+	size int64,
+) (multipartUploadResult, error) {
+	uploadID, err := s.storage.NewMultipartUpload(mediaKey)
+	if err != nil {
+		return multipartUploadResult{}, err
+	}
+
+	var parts []MultipartPartUploadOutput
+	valSize := size
+	partsCount := (size + multipartPartSize - 1) / multipartPartSize
+
+	for part := 1; part <= int(partsCount); part++ {
+		if valSize < 1 {
+			return multipartUploadResult{}, ErrInvalidMediaSize
+		}
+
+		partSize := multipartPartSize
+		if valSize < multipartPartSize {
+			partSize = int(valSize)
+		}
+		valSize -= int64(partSize)
+
+		presignURL, err := s.storage.NewPresignUploadPart(mediaKey, uploadID, int32(part))
+		if err != nil {
+			return multipartUploadResult{}, err
+		}
+
+		parts = append(parts, MultipartPartUploadOutput{
+			PartNumber: int32(part),
+			PartSize:   int64(partSize),
+			PresignPut: presignURL,
+		})
+	}
+
+	return multipartUploadResult{id: uploadID, parts: parts}, nil
+}
+
+func (s *mediaService) saveTemporaryMedia(
+	ctx context.Context,
+	params []db.NewTemporaryMediaParams,
+) error {
 	qtx, tx, err := s.database.WithTransaction(ctx)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer tx.Rollback(ctx)
 
-	_, dbErr := qtx.Queries().NewTemporaryMedia(ctx, tempMediaParams)
-	if dbErr != nil {
-		return nil, dbErr
+	if _, err := qtx.Queries().NewTemporaryMedia(ctx, params); err != nil {
+		return err
 	}
 
-	commitErr := tx.Commit(ctx)
-	if commitErr != nil {
-		return nil, commitErr
+	return tx.Commit(ctx)
+}
+
+// unfinished uploads and multipart upload are manged using s3 lifecycle methods
+func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
+	itemCountErr := s.validateNewMediaItemCount(input)
+	if itemCountErr != nil {
+		return nil, itemCountErr
 	}
-	return newMediaItemOuput, nil
+
+	outputs, dbParams, err := s.prepareMediaItems(input)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.saveTemporaryMedia(ctx, dbParams); err != nil {
+		return nil, err
+	}
+
+	return outputs, nil
 }
 
 func (pc *mediaServicePC) NewMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
