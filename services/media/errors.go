@@ -23,7 +23,7 @@ type MediaTooLargeError struct {
 }
 
 func (e *MediaTooLargeError) Error() string {
-return fmt.Sprintf("Max upload limit of %d bytes, but got size of %d bytes", multipartUploadLimit, e.Size)
+	return fmt.Sprintf("Max upload limit of %d bytes, but got size of %d bytes", multipartUploadLimit, e.Size)
 }
 
 func (e *MediaTooLargeError) Is(target error) bool {
