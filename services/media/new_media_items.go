@@ -97,14 +97,14 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 	if err != nil {
 		return nil, err
 	}
-	defer tx.Rollback(context.Background())
+	defer tx.Rollback(ctx)
 
 	_, dbErr := qtx.Queries().NewTemporaryMedia(ctx, tempMediaParams)
 	if dbErr != nil {
 		return nil, dbErr
 	}
 
-	commitErr := tx.Commit(context.Background())
+	commitErr := tx.Commit(ctx)
 	if commitErr != nil {
 		return nil, commitErr
 	}
