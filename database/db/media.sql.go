@@ -6,23 +6,8 @@
 package db
 
 import (
-	"context"
-
 	"github.com/google/uuid"
 )
-
-const newTemporaryMedia = `-- name: NewTemporaryMedia :exec
-INSERT INTO
-	global.temporary_media (
-		id,
-		bucket_path,
-		upload_type,
-		media_type,
-		upload_id
-	)
-VALUES
-	($1, $2, $3, $4, $5)
-`
 
 type NewTemporaryMediaParams struct {
 	ID         uuid.UUID             `json:"id"`
@@ -30,15 +15,4 @@ type NewTemporaryMediaParams struct {
 	UploadType GlobalMediaUploadType `json:"uploadType"`
 	MediaType  GlobalMediaType       `json:"mediaType"`
 	UploadID   *string               `json:"uploadId"`
-}
-
-func (q *Queries) NewTemporaryMedia(ctx context.Context, arg NewTemporaryMediaParams) error {
-	_, err := q.db.Exec(ctx, newTemporaryMedia,
-		arg.ID,
-		arg.BucketPath,
-		arg.UploadType,
-		arg.MediaType,
-		arg.UploadID,
-	)
-	return err
 }

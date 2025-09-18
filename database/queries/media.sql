@@ -1,4 +1,4 @@
--- name: NewTemporaryMedia :exec
+-- name: NewTemporaryMedia :copyfrom
 INSERT INTO
 	global.temporary_media (
 		id,
