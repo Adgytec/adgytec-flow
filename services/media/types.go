@@ -1,6 +1,9 @@
 package media
 
 import (
+	"fmt"
+	"path/filepath"
+
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
@@ -83,6 +86,24 @@ func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsImage() error {
 // EnsureMediaItemIsVideo() ensures the item that will be uploaded is video
 func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsVideo() error {
 	return mediaItemInput.ensureMediaTypeValue(db.GlobalMediaTypeVideo)
+}
+
+func (mediaItemInput NewMediaItemInput) getMediaItemExtension() string {
+	return filepath.Ext(mediaItemInput.Name)
+}
+
+type NewMediaItemInputWithBucketPrefix struct {
+	NewMediaItemInput
+	BucketPrefix string
+}
+
+func (mediaItemInput NewMediaItemInputWithBucketPrefix) getMediaItemKey() string {
+	return fmt.Sprintf(
+		"%s/%s%s",
+		mediaItemInput.BucketPrefix,
+		uuid.NewString(),
+		mediaItemInput.getMediaItemExtension(),
+	)
 }
 
 type NewMediaItemOutput struct {
