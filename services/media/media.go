@@ -13,7 +13,7 @@ const singlepartUploadLimit = 16 * (1 << 20)
 const multipartUploadLimit = 1 * (1 << 30)
 
 // 5 mega byte
-const mulitpartPartSize = 5 * (1 << 20)
+const multipartPartSize = 5 * (1 << 20)
 
 const mediaUploadLimit = 50
 

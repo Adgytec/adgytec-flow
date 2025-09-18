@@ -37,7 +37,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 
 			uploadID = &multipartUploadID
 			var uploadParts []MultipartPartUploadOutput
-			partsCount := (val.Size + mulitpartPartSize - 1) / mulitpartPartSize
+			partsCount := (val.Size + multipartPartSize - 1) / multipartPartSize
 			valSize := val.Size
 
 			for part := 1; part <= int(partsCount); part++ {
@@ -45,8 +45,8 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 					return nil, ErrInvalidMediaSize
 				}
 
-				partSize := mulitpartPartSize
-				if valSize < mulitpartPartSize {
+				partSize := multipartPartSize
+				if valSize < multipartPartSize {
 					partSize = int(valSize)
 				}
 				valSize -= int64(partSize)
