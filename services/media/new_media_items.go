@@ -9,7 +9,7 @@ import (
 )
 
 func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
-	if len(input) < 1 && len(input) < mediaUploadLimit {
+	if len(input) < 1 || len(input) > mediaUploadLimit {
 		return nil, ErrInvalidNumberOfNewMediaItem
 	}
 
