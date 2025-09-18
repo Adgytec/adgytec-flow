@@ -112,10 +112,6 @@ func (s *mediaService) prepareMultipartUpload(
 	parts := make([]MultipartPartUploadOutput, 0, partsCount)
 
 	for part := 1; part <= int(partsCount); part++ {
-		if valSize < 1 {
-			return multipartUploadResult{}, ErrInvalidMediaSize
-		}
-
 		partSize := min(multipartPartSize, valSize)
 		valSize -= partSize
 
