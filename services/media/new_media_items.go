@@ -17,6 +17,13 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 	var tempMediaParams []db.NewTemporaryMediaParams
 
 	for _, val := range input {
+
+		if val.Size > multipartUploadLimit {
+			return nil, &MediaTooLargeError{
+				Size: val.Size,
+			}
+		}
+
 		mediaItemKey := val.getMediaItemKey()
 		var uploadID *string
 
