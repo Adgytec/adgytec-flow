@@ -6,16 +6,16 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInput) ([]NewMediaItemOutput, error) {
+func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
 	return nil, core.ErrNotImplemented
 }
 
-func (pc *mediaServicePC) NewMediaItems(ctx context.Context, input []NewMediaItemInput) ([]NewMediaItemOutput, error) {
+func (pc *mediaServicePC) NewMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error) {
 	return pc.service.newMediaItems(ctx, input)
 }
 
-func (pc *mediaServicePC) NewMediaItem(ctx context.Context, input NewMediaItemInput) (*NewMediaItemOutput, error) {
-	output, err := pc.service.newMediaItems(ctx, []NewMediaItemInput{input})
+func (pc *mediaServicePC) NewMediaItem(ctx context.Context, input NewMediaItemInputWithBucketPrefix) (*NewMediaItemOutput, error) {
+	output, err := pc.service.newMediaItems(ctx, []NewMediaItemInputWithBucketPrefix{input})
 	if err != nil {
 		return nil, err
 	}

@@ -10,8 +10,8 @@ import (
 
 // Contains methods that can be run without a transaction.
 type MediaServicePC interface {
-	NewMediaItem(ctx context.Context, input NewMediaItemInput) (NewMediaItemOutput, error)
-	NewMediaItems(ctx context.Context, input []NewMediaItemInput) ([]NewMediaItemOutput, error)
+	NewMediaItem(ctx context.Context, input NewMediaItemInputWithBucketPrefix) (*NewMediaItemOutput, error)
+	NewMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error)
 }
 
 // Contains methods that MUST be run within a transaction.

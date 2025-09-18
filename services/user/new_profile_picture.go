@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/services/iam"
@@ -32,12 +33,16 @@ func (s *userService) newProfilePicture(ctx context.Context, userID uuid.UUID, p
 		return nil, permissionErr
 	}
 
-	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetails)
+	profilePictureDetailsWithBucketPrefix := media.NewMediaItemInputWithBucketPrefix{
+		NewMediaItemInput: profilePictureDetails,
+		BucketPrefix:      fmt.Sprintf("/%s/profile", userID.String()),
+	}
+	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetailsWithBucketPrefix)
 	if mediaErr != nil {
 		return nil, mediaErr
 	}
 
-	return &profilePictureDetailsOutput, nil
+	return profilePictureDetailsOutput, nil
 }
 
 func (m *userServiceMux) newProfilePictureUtil(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
