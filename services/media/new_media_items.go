@@ -14,7 +14,15 @@ func (pc *mediaServicePC) NewMediaItems(ctx context.Context, input []NewMediaIte
 	return pc.service.newMediaItems(ctx, input)
 }
 
-func (pc *mediaServicePC) NewMediaItem(ctx context.Context, input NewMediaItemInput) (NewMediaItemOutput, error) {
-	var zero NewMediaItemOutput
-	return zero, core.ErrNotImplemented
+func (pc *mediaServicePC) NewMediaItem(ctx context.Context, input NewMediaItemInput) (*NewMediaItemOutput, error) {
+	output, err := pc.service.newMediaItems(ctx, []NewMediaItemInput{input})
+	if err != nil {
+		return nil, err
+	}
+
+	if len(output) != 1 {
+		return nil, ErrCreatingNewMediaItem
+	}
+
+	return &output[0], nil
 }
