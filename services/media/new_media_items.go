@@ -107,7 +107,7 @@ func (s *mediaService) prepareMultipartUpload(
 		return multipartUploadResult{}, err
 	}
 
-	var parts []MultipartPartUploadOutput
+    parts := make([]MultipartPartUploadOutput, 0, int(partsCount))
 	valSize := size
 	partsCount := (size + multipartPartSize - 1) / multipartPartSize
 
