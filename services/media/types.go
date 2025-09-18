@@ -52,6 +52,11 @@ func (mediaItemInput NewMediaItemInput) Validate() error {
 }
 
 func (mediaItemInput NewMediaItemInput) ensureMediaTypeValue(value db.GlobalMediaType) error {
+	validationErr := mediaItemInput.Validate()
+	if validationErr != nil {
+		return validationErr
+	}
+
 	mediaTypeValidationErr := validation.ValidateStruct(
 		&mediaItemInput,
 		validation.Field(
@@ -74,7 +79,6 @@ func (mediaItemInput NewMediaItemInput) ensureMediaTypeValue(value db.GlobalMedi
 
 // EnsureMediaItemIsImage() ensures the item that will be uploaded is image
 // this just validated mediaType value later when CompleteMediaItemUpload() is called than the uploaded file bytes are checked for the acutal media type
-// NOTE: The input struct should be validated using Validate() before calling this method.
 func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsImage() error {
 	return mediaItemInput.ensureMediaTypeValue(db.GlobalMediaTypeImage)
 }
