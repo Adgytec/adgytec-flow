@@ -19,8 +19,8 @@ func (s *mediaService) prepareMediaItems(
 	input []NewMediaItemInputWithBucketPrefix,
 ) ([]NewMediaItemOutput, []db.NewTemporaryMediaParams, error) {
 
-	var outputs []NewMediaItemOutput
-	var dbParams []db.NewTemporaryMediaParams
+    outputs := make([]NewMediaItemOutput, 0, len(input))
+    dbParams := make([]db.NewTemporaryMediaParams, 0, len(input))
 
 	for _, val := range input {
 		// check size
