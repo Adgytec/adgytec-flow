@@ -142,7 +142,7 @@ func (s *mediaService) saveTemporaryMedia(
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(context.Background())
 
 	if _, err := qtx.Queries().NewTemporaryMedia(ctx, params); err != nil {
 		return err
