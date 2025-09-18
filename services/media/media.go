@@ -7,15 +7,15 @@ import (
 )
 
 // 16 mega byte
-const singlepartUploadLimit = 16 * (1 << 20)
+const singlepartUploadLimit int64 = 16 * (1 << 20)
 
 // 1 giga byte
-const multipartUploadLimit = 1 * (1 << 30)
+const multipartUploadLimit int64 = 1 * (1 << 30)
 
 // 5 mega byte
-const multipartPartSize = 5 * (1 << 20)
+const multipartPartSize int64 = 5 * (1 << 20)
 
-const mediaUploadLimit = 50
+const mediaUploadLimit int = 50
 
 type mediaServiceParams interface {
 	Storage() storage.Storage

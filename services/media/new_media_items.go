@@ -19,8 +19,8 @@ func (s *mediaService) prepareMediaItems(
 	input []NewMediaItemInputWithBucketPrefix,
 ) ([]NewMediaItemOutput, []db.NewTemporaryMediaParams, error) {
 
-    outputs := make([]NewMediaItemOutput, 0, len(input))
-    dbParams := make([]db.NewTemporaryMediaParams, 0, len(input))
+	outputs := make([]NewMediaItemOutput, 0, len(input))
+	dbParams := make([]db.NewTemporaryMediaParams, 0, len(input))
 
 	for _, val := range input {
 		// check size
@@ -107,20 +107,17 @@ func (s *mediaService) prepareMultipartUpload(
 		return multipartUploadResult{}, err
 	}
 
-    parts := make([]MultipartPartUploadOutput, 0, int(partsCount))
 	valSize := size
 	partsCount := (size + multipartPartSize - 1) / multipartPartSize
+	parts := make([]MultipartPartUploadOutput, 0, partsCount)
 
 	for part := 1; part <= int(partsCount); part++ {
 		if valSize < 1 {
 			return multipartUploadResult{}, ErrInvalidMediaSize
 		}
 
-		partSize := multipartPartSize
-		if valSize < multipartPartSize {
-			partSize = int(valSize)
-		}
-		valSize -= int64(partSize)
+		partSize := min(multipartPartSize, valSize)
+		valSize -= partSize
 
 		presignURL, err := s.storage.NewPresignUploadPart(mediaKey, uploadID, int32(part))
 		if err != nil {
@@ -129,7 +126,7 @@ func (s *mediaService) prepareMultipartUpload(
 
 		parts = append(parts, MultipartPartUploadOutput{
 			PartNumber: int32(part),
-			PartSize:   int64(partSize),
+			PartSize:   partSize,
 			PresignPut: presignURL,
 		})
 	}
