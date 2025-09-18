@@ -106,9 +106,15 @@ func (mediaItemInput NewMediaItemInputWithBucketPrefix) getMediaItemKey() string
 	)
 }
 
+type MultipartPartUploadOutput struct {
+	PresignPut string `json:"presignPut"`
+	PartNumber int32  `json:"partNumber"`
+	PartSize   int64  `json:"partSize"`
+}
+
 type NewMediaItemOutput struct {
-	MediaID             uuid.UUID                `json:"mediaID"`
-	UploadType          db.GlobalMediaUploadType `json:"uploadType"`
-	PresignPut          *string                  `json:"presignPut,omitempty"`
-	MulipartPresignPart []string                 `json:"multipartPresignPart,omitempty"`
+	MediaID             uuid.UUID                   `json:"mediaID"`
+	UploadType          db.GlobalMediaUploadType    `json:"uploadType"`
+	PresignPut          *string                     `json:"presignPut,omitempty"`
+	MulipartPresignPart []MultipartPartUploadOutput `json:"multipartPresignPart,omitempty"`
 }
