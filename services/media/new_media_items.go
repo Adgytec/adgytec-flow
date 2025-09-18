@@ -16,9 +16,6 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 	var newMediaItemOuput []NewMediaItemOutput
 	var tempMediaParams []db.NewTemporaryMediaParams
 
-	qtx, tx, err := s.database.WithTransaction(ctx)
-	defer tx.Rollback(context.Background())
-
 	for _, val := range input {
 		mediaItemKey := val.getMediaItemKey()
 		var uploadID *string
@@ -89,13 +86,19 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 		newMediaItemOuput = append(newMediaItemOuput, itemOutput)
 	}
 
+	qtx, tx, err := s.database.WithTransaction(ctx)
+	if err != nil {
+		return nil, err
+	}
+	defer tx.Rollback(context.Background())
+
 	_, dbErr := qtx.Queries().NewTemporaryMedia(ctx, tempMediaParams)
 	if dbErr != nil {
 		return nil, dbErr
 	}
 
 	commitErr := tx.Commit(context.Background())
-	if err != nil {
+	if commitErr != nil {
 		return nil, commitErr
 	}
 	return newMediaItemOuput, nil
