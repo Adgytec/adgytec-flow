@@ -49,7 +49,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 				if valSize < mulitpartPartSize {
 					partSize = int(valSize)
 				}
-				valSize -= mulitpartPartSize
+				valSize -= int64(partSize)
 				partDetail := MultipartPartUploadOutput{
 					PartNumber: int32(part),
 					PartSize:   int64(partSize),
