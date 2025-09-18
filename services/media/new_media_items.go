@@ -72,7 +72,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 				uploadParts = append(uploadParts, partDetail)
 			}
 
-			itemOutput.MulipartPresignPart = uploadParts
+			itemOutput.MultipartPresignPart = uploadParts
 		} else {
 			itemOutput.UploadType = db.GlobalMediaUploadTypeSinglepart
 			presignURL, presignErr := s.storage.NewPresignPut(mediaItemKey)

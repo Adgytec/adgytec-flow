@@ -113,8 +113,8 @@ type MultipartPartUploadOutput struct {
 }
 
 type NewMediaItemOutput struct {
-	MediaID             uuid.UUID                   `json:"mediaID"`
-	UploadType          db.GlobalMediaUploadType    `json:"uploadType"`
-	PresignPut          *string                     `json:"presignPut,omitempty"`
-	MulipartPresignPart []MultipartPartUploadOutput `json:"multipartPresignPart,omitempty"`
+	MediaID              uuid.UUID                   `json:"mediaID"`
+	UploadType           db.GlobalMediaUploadType    `json:"uploadType"`
+	PresignPut           *string                     `json:"presignPut,omitempty"`
+	MultipartPresignPart []MultipartPartUploadOutput `json:"multipartPresignPart,omitempty"`
 }
