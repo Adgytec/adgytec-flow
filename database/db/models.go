@@ -172,6 +172,57 @@ func (e GlobalAssignableActorType) Valid() bool {
 	return false
 }
 
+type GlobalMediaOutboxStatus string
+
+const (
+	GlobalMediaOutboxStatusPending   GlobalMediaOutboxStatus = "pending"
+	GlobalMediaOutboxStatusCompleted GlobalMediaOutboxStatus = "completed"
+)
+
+func (e *GlobalMediaOutboxStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = GlobalMediaOutboxStatus(s)
+	case string:
+		*e = GlobalMediaOutboxStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for GlobalMediaOutboxStatus: %T", src)
+	}
+	return nil
+}
+
+type NullGlobalMediaOutboxStatus struct {
+	GlobalMediaOutboxStatus GlobalMediaOutboxStatus `json:"globalMediaOutboxStatus"`
+	Valid                   bool                    `json:"valid"` // Valid is true if GlobalMediaOutboxStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullGlobalMediaOutboxStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.GlobalMediaOutboxStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.GlobalMediaOutboxStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullGlobalMediaOutboxStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.GlobalMediaOutboxStatus), nil
+}
+
+func (e GlobalMediaOutboxStatus) Valid() bool {
+	switch e {
+	case GlobalMediaOutboxStatusPending,
+		GlobalMediaOutboxStatusCompleted:
+		return true
+	}
+	return false
+}
+
 type GlobalMediaStatus string
 
 const (
@@ -618,6 +669,11 @@ type GlobalMediaImage struct {
 	Medium     *string   `json:"medium"`
 	Large      *string   `json:"large"`
 	ExtraLarge *string   `json:"extraLarge"`
+}
+
+type GlobalMediaOutbox struct {
+	MediaID uuid.UUID               `json:"mediaId"`
+	Status  GlobalMediaOutboxStatus `json:"status"`
 }
 
 type GlobalMediaVideo struct {
