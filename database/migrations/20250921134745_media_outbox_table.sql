@@ -15,6 +15,6 @@ CREATE TABLE global.media_outbox (
 -- +goose StatementBegin
 DROP TABLE IF EXISTS global.media_outbox;
 
-DROP TRIGGER if EXISTS global.media_outbox_status;
+DROP TYPE if EXISTS global.media_outbox_status;
 
 -- +goose StatementEnd

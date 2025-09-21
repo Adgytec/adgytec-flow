@@ -1,24 +1,18 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE global.media_type AS ENUM(
-	'image',
-	'video',
-	'other'
-);
-
 CREATE TYPE global.media_status AS ENUM(
+	'pending',
 	'processing',
 	'failed',
 	'completed'
 );
 
 CREATE TABLE IF NOT EXISTS global.media (
-	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
+	id UUID PRIMARY KEY,
 	bucket_path TEXT NOT NULL UNIQUE,
 	size BIGINT NOT NULL CHECK (size > 0),
-	media_type global.media_type NOT NULL,
-	content_type TEXT NOT NULL,
-	status global.media_status NOT NULL DEFAULT 'processing',
+	mime_type TEXT NOT NULL,
+	status global.media_status NOT NULL DEFAULT 'pending',
 	created_at TIMESTAMPTZ NOT NULL
 );
 
@@ -61,7 +55,5 @@ DROP TRIGGER if EXISTS on_insert_set_created_at ON global.media;
 DROP TABLE IF EXISTS global.media;
 
 DROP TYPE if EXISTS global.media_status;
-
-DROP TYPE if EXISTS global.media_type;
 
 -- +goose StatementEnd

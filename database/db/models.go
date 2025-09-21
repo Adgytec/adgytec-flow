@@ -226,6 +226,7 @@ func (e GlobalMediaOutboxStatus) Valid() bool {
 type GlobalMediaStatus string
 
 const (
+	GlobalMediaStatusPending    GlobalMediaStatus = "pending"
 	GlobalMediaStatusProcessing GlobalMediaStatus = "processing"
 	GlobalMediaStatusFailed     GlobalMediaStatus = "failed"
 	GlobalMediaStatusCompleted  GlobalMediaStatus = "completed"
@@ -268,7 +269,8 @@ func (ns NullGlobalMediaStatus) Value() (driver.Value, error) {
 
 func (e GlobalMediaStatus) Valid() bool {
 	switch e {
-	case GlobalMediaStatusProcessing,
+	case GlobalMediaStatusPending,
+		GlobalMediaStatusProcessing,
 		GlobalMediaStatusFailed,
 		GlobalMediaStatusCompleted:
 		return true
@@ -684,13 +686,12 @@ type GlobalMediaVideo struct {
 }
 
 type GlobalMedium struct {
-	ID          uuid.UUID         `json:"id"`
-	BucketPath  string            `json:"bucketPath"`
-	Size        int64             `json:"size"`
-	MediaType   GlobalMediaType   `json:"mediaType"`
-	ContentType string            `json:"contentType"`
-	Status      GlobalMediaStatus `json:"status"`
-	CreatedAt   time.Time         `json:"createdAt"`
+	ID         uuid.UUID         `json:"id"`
+	BucketPath string            `json:"bucketPath"`
+	Size       int64             `json:"size"`
+	MimeType   string            `json:"mimeType"`
+	Status     GlobalMediaStatus `json:"status"`
+	CreatedAt  time.Time         `json:"createdAt"`
 }
 
 type GlobalService struct {
