@@ -31,7 +31,13 @@ UPDATE ON global.users FOR each ROW WHEN (
 )
 EXECUTE function global.created_at_update ();
 
-CREATE OR REPLACE FUNCTION global.normalize_user_fields () returns trigger AS $$ begin new.normalized_name := lower(unaccent(new.name)); new.normalized_email := lower(unaccent(new.email)); return new; end; $$ language plpgsql;
+CREATE OR REPLACE FUNCTION global.normalize_user_fields () returns trigger AS $$ 
+begin
+    new.normalized_name := lower(unaccent(new.name)); 
+    new.normalized_email := lower(unaccent(new.email)); 
+    return new;
+end; 
+$$ language plpgsql;
 
 CREATE OR REPLACE TRIGGER add_normalized_fields before insert
 OR
