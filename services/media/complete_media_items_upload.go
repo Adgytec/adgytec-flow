@@ -15,6 +15,6 @@ func (pc *mediaServicePC) CompleteMediaItemsUpload(ctx context.Context, mediaIDs
 	return pc.service.completeMediaItemsUpload(ctx, mediaIDs)
 }
 
-func (pc *mediaServicePC) CompleteMediaItemUpload(ctx context.Context, mediaIDs uuid.UUID) error {
-	return core.ErrNotImplemented
+func (pc *mediaServicePC) CompleteMediaItemUpload(ctx context.Context, mediaID uuid.UUID) error {
+	return pc.service.completeMediaItemsUpload(ctx, []uuid.UUID{mediaID})
 }
