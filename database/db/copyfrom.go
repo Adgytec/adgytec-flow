@@ -31,6 +31,7 @@ func (r iteratorForNewMediaItems) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
 		r.rows[0].BucketPath,
+		r.rows[0].MimeType,
 		r.rows[0].UploadType,
 		r.rows[0].UploadID,
 	}, nil
@@ -41,5 +42,5 @@ func (r iteratorForNewMediaItems) Err() error {
 }
 
 func (q *Queries) NewMediaItems(ctx context.Context, arg []NewMediaItemsParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"global", "media"}, []string{"id", "bucket_path", "upload_type", "upload_id"}, &iteratorForNewMediaItems{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"global", "media"}, []string{"id", "bucket_path", "mime_type", "upload_type", "upload_id"}, &iteratorForNewMediaItems{rows: arg})
 }

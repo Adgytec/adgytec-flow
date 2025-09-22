@@ -12,6 +12,7 @@ import (
 type NewMediaItemsParams struct {
 	ID         uuid.UUID             `json:"id"`
 	BucketPath string                `json:"bucketPath"`
+	MimeType   string                `json:"mimeType"`
 	UploadType GlobalMediaUploadType `json:"uploadType"`
 	UploadID   *string               `json:"uploadId"`
 }
