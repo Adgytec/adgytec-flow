@@ -278,59 +278,6 @@ func (e GlobalMediaStatus) Valid() bool {
 	return false
 }
 
-type GlobalMediaType string
-
-const (
-	GlobalMediaTypeImage GlobalMediaType = "image"
-	GlobalMediaTypeVideo GlobalMediaType = "video"
-	GlobalMediaTypeOther GlobalMediaType = "other"
-)
-
-func (e *GlobalMediaType) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = GlobalMediaType(s)
-	case string:
-		*e = GlobalMediaType(s)
-	default:
-		return fmt.Errorf("unsupported scan type for GlobalMediaType: %T", src)
-	}
-	return nil
-}
-
-type NullGlobalMediaType struct {
-	GlobalMediaType GlobalMediaType `json:"globalMediaType"`
-	Valid           bool            `json:"valid"` // Valid is true if GlobalMediaType is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullGlobalMediaType) Scan(value interface{}) error {
-	if value == nil {
-		ns.GlobalMediaType, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.GlobalMediaType.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullGlobalMediaType) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.GlobalMediaType), nil
-}
-
-func (e GlobalMediaType) Valid() bool {
-	switch e {
-	case GlobalMediaTypeImage,
-		GlobalMediaTypeVideo,
-		GlobalMediaTypeOther:
-		return true
-	}
-	return false
-}
-
 type GlobalMediaUploadType string
 
 const (
@@ -686,12 +633,14 @@ type GlobalMediaVideo struct {
 }
 
 type GlobalMedium struct {
-	ID         uuid.UUID         `json:"id"`
-	BucketPath string            `json:"bucketPath"`
-	Size       int64             `json:"size"`
-	MimeType   string            `json:"mimeType"`
-	Status     GlobalMediaStatus `json:"status"`
-	CreatedAt  time.Time         `json:"createdAt"`
+	ID         uuid.UUID             `json:"id"`
+	BucketPath string                `json:"bucketPath"`
+	Size       int64                 `json:"size"`
+	MimeType   string                `json:"mimeType"`
+	Status     GlobalMediaStatus     `json:"status"`
+	UploadType GlobalMediaUploadType `json:"uploadType"`
+	UploadID   *string               `json:"uploadId"`
+	CreatedAt  time.Time             `json:"createdAt"`
 }
 
 type GlobalService struct {
@@ -707,15 +656,6 @@ type GlobalServiceHierarchyDetail struct {
 	HierarchyName   string                       `json:"hierarchyName"`
 	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
 	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
-}
-
-type GlobalTemporaryMedium struct {
-	ID         uuid.UUID             `json:"id"`
-	BucketPath string                `json:"bucketPath"`
-	UploadType GlobalMediaUploadType `json:"uploadType"`
-	MediaType  GlobalMediaType       `json:"mediaType"`
-	UploadID   *string               `json:"uploadId"`
-	ExpiresAt  time.Time             `json:"expiresAt"`
 }
 
 type GlobalUser struct {

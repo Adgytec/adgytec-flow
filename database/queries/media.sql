@@ -1,11 +1,10 @@
--- name: NewTemporaryMedia :copyfrom
+-- name: NewMediaItems :copyfrom
 INSERT INTO
-	global.temporary_media (
+	global.media (
 		id,
 		bucket_path,
 		upload_type,
-		media_type,
 		upload_id
 	)
 VALUES
-	($1, $2, $3, $4, $5);
+	($1, $2, $3, $4);

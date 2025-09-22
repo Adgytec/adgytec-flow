@@ -9,10 +9,9 @@ import (
 	"github.com/google/uuid"
 )
 
-type NewTemporaryMediaParams struct {
+type NewMediaItemsParams struct {
 	ID         uuid.UUID             `json:"id"`
 	BucketPath string                `json:"bucketPath"`
 	UploadType GlobalMediaUploadType `json:"uploadType"`
-	MediaType  GlobalMediaType       `json:"mediaType"`
 	UploadID   *string               `json:"uploadId"`
 }
