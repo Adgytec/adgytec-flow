@@ -6,7 +6,7 @@ CREATE TYPE global.media_outbox_status AS ENUM(
 );
 
 CREATE TABLE global.media_outbox (
-	media_id UUID NOT NULL REFERENCES global.media (id),
+	media_id UUID NOT NULL REFERENCES global.media (id) ON DELETE CASCADE,
 	status global.media_outbox_status NOT NULL DEFAULT 'pending'
 );
 
