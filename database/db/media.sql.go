@@ -11,50 +11,48 @@ import (
 	"github.com/google/uuid"
 )
 
-const getMediaDetails = `-- name: GetMediaDetails :many
-SELECT
-	id, bucket_path, size, mime_type, status, upload_type, upload_id, created_at
-FROM
-	global.media
-WHERE
-	id = ANY (
-		$1::UUID[]
-	)
-`
-
-func (q *Queries) GetMediaDetails(ctx context.Context, mediaIds []uuid.UUID) ([]GlobalMedia, error) {
-	rows, err := q.db.Query(ctx, getMediaDetails, mediaIds)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []GlobalMedia
-	for rows.Next() {
-		var i GlobalMedia
-		if err := rows.Scan(
-			&i.ID,
-			&i.BucketPath,
-			&i.Size,
-			&i.MimeType,
-			&i.Status,
-			&i.UploadType,
-			&i.UploadID,
-			&i.CreatedAt,
-		); err != nil {
-			return nil, err
-		}
-		items = append(items, i)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
 type NewMediaItemsParams struct {
 	ID         uuid.UUID             `json:"id"`
 	BucketPath string                `json:"bucketPath"`
 	MimeType   string                `json:"mimeType"`
 	UploadType GlobalMediaUploadType `json:"uploadType"`
 	UploadID   *string               `json:"uploadId"`
+}
+
+const updateMediaItemStatus = `-- name: UpdateMediaItemStatus :exec
+UPDATE global.media
+SET
+	status = $1
+WHERE
+	id = $2
+`
+
+type UpdateMediaItemStatusParams struct {
+	Status GlobalMediaStatus `json:"status"`
+	ID     uuid.UUID         `json:"id"`
+}
+
+func (q *Queries) UpdateMediaItemStatus(ctx context.Context, arg UpdateMediaItemStatusParams) error {
+	_, err := q.db.Exec(ctx, updateMediaItemStatus, arg.Status, arg.ID)
+	return err
+}
+
+const updateMediaItemsStatus = `-- name: UpdateMediaItemsStatus :exec
+UPDATE global.media
+SET
+	status = $1
+WHERE
+	id = ANY (
+		$2::UUID[]
+	)
+`
+
+type UpdateMediaItemsStatusParams struct {
+	Status   GlobalMediaStatus `json:"status"`
+	MediaIds []uuid.UUID       `json:"mediaIds"`
+}
+
+func (q *Queries) UpdateMediaItemsStatus(ctx context.Context, arg UpdateMediaItemsStatusParams) error {
+	_, err := q.db.Exec(ctx, updateMediaItemsStatus, arg.Status, arg.MediaIds)
+	return err
 }

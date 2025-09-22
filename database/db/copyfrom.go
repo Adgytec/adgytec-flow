@@ -7,7 +7,41 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
+
+// iteratorForAddMediaItemsToOutbox implements pgx.CopyFromSource.
+type iteratorForAddMediaItemsToOutbox struct {
+	rows                 []uuid.UUID
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForAddMediaItemsToOutbox) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForAddMediaItemsToOutbox) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0],
+	}, nil
+}
+
+func (r iteratorForAddMediaItemsToOutbox) Err() error {
+	return nil
+}
+
+func (q *Queries) AddMediaItemsToOutbox(ctx context.Context, mediaID []uuid.UUID) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"global", "media_outbox"}, []string{"media_id"}, &iteratorForAddMediaItemsToOutbox{rows: mediaID})
+}
 
 // iteratorForNewMediaItems implements pgx.CopyFromSource.
 type iteratorForNewMediaItems struct {
