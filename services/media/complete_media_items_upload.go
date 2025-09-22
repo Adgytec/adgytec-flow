@@ -12,7 +12,7 @@ func (s *mediaService) completeMediaItemsUpload(ctx context.Context, mediaIDs []
 	if err != nil {
 		return err
 	}
-	defer tx.Rollback(ctx)
+	defer tx.Rollback(context.Background())
 
 	mediaStatusUpdateErr := qtx.Queries().UpdateMediaItemsStatus(
 		ctx,
