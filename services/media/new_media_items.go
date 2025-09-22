@@ -130,7 +130,7 @@ func (s *mediaService) prepareMultipartUpload(
 	return multipartUploadResult{id: uploadID, parts: parts}, nil
 }
 
-func (s *mediaService) saveTemporaryMedia(
+func (s *mediaService) saveMediaItems(
 	ctx context.Context,
 	params []db.NewMediaItemsParams,
 ) error {
@@ -159,7 +159,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 		return nil, err
 	}
 
-	if err := s.saveTemporaryMedia(ctx, dbParams); err != nil {
+	if err := s.saveMediaItems(ctx, dbParams); err != nil {
 		return nil, err
 	}
 
