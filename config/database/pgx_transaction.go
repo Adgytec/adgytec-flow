@@ -25,8 +25,8 @@ func (c *pgxTx) Queries() *db.Queries {
 	return c.queries
 }
 
-// WithTransaction() return parent transaction with stub for Tx interface
-// actual transaction methods will be handled by parent action
+// WithTransaction returns the parent transaction database connection and a no-op Tx stub.
+// This is to prevent nested transactions, as the actual commit/rollback will be handled by the parent transaction.
 func (c *pgxTx) WithTransaction(_ context.Context) (Database, Tx, error) {
 	return c, txStub{}, nil
 }
