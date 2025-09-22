@@ -22,15 +22,15 @@ WHERE
 	)
 `
 
-func (q *Queries) GetMediaDetails(ctx context.Context, mediaIds []uuid.UUID) ([]GlobalMedium, error) {
+func (q *Queries) GetMediaDetails(ctx context.Context, mediaIds []uuid.UUID) ([]GlobalMedia, error) {
 	rows, err := q.db.Query(ctx, getMediaDetails, mediaIds)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalMedium
+	var items []GlobalMedia
 	for rows.Next() {
-		var i GlobalMedium
+		var i GlobalMedia
 		if err := rows.Scan(
 			&i.ID,
 			&i.BucketPath,

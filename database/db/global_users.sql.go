@@ -57,15 +57,15 @@ type GetGlobalUsersByQueryParams struct {
 	Query string `json:"query"`
 }
 
-func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersByQueryParams) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersByQueryParams) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersByQuery, arg.Limit, arg.Query)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -105,15 +105,15 @@ LIMIT
 	$1
 `
 
-func (q *Queries) GetGlobalUsersLatestFirst(ctx context.Context, limit int32) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersLatestFirst(ctx context.Context, limit int32) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersLatestFirst, limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -160,15 +160,15 @@ type GetGlobalUsersLatestFirstGreaterThanCursorParams struct {
 	Cursor time.Time `json:"cursor"`
 }
 
-func (q *Queries) GetGlobalUsersLatestFirstGreaterThanCursor(ctx context.Context, arg GetGlobalUsersLatestFirstGreaterThanCursorParams) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersLatestFirstGreaterThanCursor(ctx context.Context, arg GetGlobalUsersLatestFirstGreaterThanCursorParams) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersLatestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -215,15 +215,15 @@ type GetGlobalUsersLatestFirstLesserThanCursorParams struct {
 	Cursor time.Time `json:"cursor"`
 }
 
-func (q *Queries) GetGlobalUsersLatestFirstLesserThanCursor(ctx context.Context, arg GetGlobalUsersLatestFirstLesserThanCursorParams) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersLatestFirstLesserThanCursor(ctx context.Context, arg GetGlobalUsersLatestFirstLesserThanCursorParams) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersLatestFirstLesserThanCursor, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -263,15 +263,15 @@ LIMIT
 	$1
 `
 
-func (q *Queries) GetGlobalUsersOldestFirst(ctx context.Context, limit int32) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersOldestFirst(ctx context.Context, limit int32) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersOldestFirst, limit)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -318,15 +318,15 @@ type GetGlobalUsersOldestFirstGreaterThanCursorParams struct {
 	Cursor time.Time `json:"cursor"`
 }
 
-func (q *Queries) GetGlobalUsersOldestFirstGreaterThanCursor(ctx context.Context, arg GetGlobalUsersOldestFirstGreaterThanCursorParams) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersOldestFirstGreaterThanCursor(ctx context.Context, arg GetGlobalUsersOldestFirstGreaterThanCursorParams) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersOldestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -373,15 +373,15 @@ type GetGlobalUsersOldestFirstLesserThanCursorParams struct {
 	Cursor time.Time `json:"cursor"`
 }
 
-func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context, arg GetGlobalUsersOldestFirstLesserThanCursorParams) ([]GlobalUserDetail, error) {
+func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context, arg GetGlobalUsersOldestFirstLesserThanCursorParams) ([]GlobalUserDetails, error) {
 	rows, err := q.db.Query(ctx, getGlobalUsersOldestFirstLesserThanCursor, arg.Limit, arg.Cursor)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []GlobalUserDetail
+	var items []GlobalUserDetails
 	for rows.Next() {
-		var i GlobalUserDetail
+		var i GlobalUserDetails
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
@@ -419,9 +419,9 @@ WHERE
 	id = $1::UUID
 `
 
-func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetail, error) {
+func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetails, error) {
 	row := q.db.QueryRow(ctx, getUserById, userID)
-	var i GlobalUserDetail
+	var i GlobalUserDetails
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
@@ -473,7 +473,7 @@ type UpdateGlobalUserProfileParams struct {
 	ID               uuid.UUID   `json:"id"`
 }
 
-func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalUserProfileParams) (GlobalUserDetail, error) {
+func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalUserProfileParams) (GlobalUserDetails, error) {
 	row := q.db.QueryRow(ctx, updateGlobalUserProfile,
 		arg.Name,
 		arg.About,
@@ -481,7 +481,7 @@ func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalU
 		arg.DateOfBirth,
 		arg.ID,
 	)
-	var i GlobalUserDetail
+	var i GlobalUserDetails
 	err := row.Scan(
 		&i.ID,
 		&i.Email,

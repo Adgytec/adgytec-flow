@@ -40,7 +40,7 @@ type userService struct {
 	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
 
-func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.GlobalUser {
+func (s *userService) getUserResponseModel(user db.GlobalUserDetails) models.GlobalUser {
 	userModel := models.GlobalUser{
 		ID:          user.ID,
 		Email:       user.Email,
@@ -69,7 +69,7 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetail) models.Glob
 	return userModel
 }
 
-func (s *userService) getUserResponseModels(users []db.GlobalUserDetail) []models.GlobalUser {
+func (s *userService) getUserResponseModels(users []db.GlobalUserDetails) []models.GlobalUser {
 	usersLen := len(users)
 	if usersLen == 0 {
 		return nil

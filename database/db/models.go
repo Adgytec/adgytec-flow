@@ -582,7 +582,7 @@ func (e ManagementPermissionResourceType) Valid() bool {
 	return false
 }
 
-type ApplicationPermission struct {
+type ApplicationPermissions struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
 	Key               string                    `json:"key"`
@@ -594,14 +594,14 @@ type ApplicationPermission struct {
 	UpdatedAt         time.Time                 `json:"updatedAt"`
 }
 
-type ArchiveDeletedRecord struct {
+type ArchiveDeletedRecords struct {
 	ID        uuid.UUID `json:"id"`
 	TableName string    `json:"tableName"`
 	Record    []byte    `json:"record"`
 	DeletedAt time.Time `json:"deletedAt"`
 }
 
-type ArchiveUpdatedRecord struct {
+type ArchiveUpdatedRecords struct {
 	ID            uuid.UUID       `json:"id"`
 	TableName     string          `json:"tableName"`
 	Old           []byte          `json:"old"`
@@ -609,6 +609,17 @@ type ArchiveUpdatedRecord struct {
 	UpdatedAt     time.Time       `json:"updatedAt"`
 	UpdatedByType GlobalActorType `json:"updatedByType"`
 	UpdatedBy     uuid.UUID       `json:"updatedBy"`
+}
+
+type GlobalMedia struct {
+	ID         uuid.UUID             `json:"id"`
+	BucketPath string                `json:"bucketPath"`
+	Size       int64                 `json:"size"`
+	MimeType   string                `json:"mimeType"`
+	Status     GlobalMediaStatus     `json:"status"`
+	UploadType GlobalMediaUploadType `json:"uploadType"`
+	UploadID   *string               `json:"uploadId"`
+	CreatedAt  time.Time             `json:"createdAt"`
 }
 
 type GlobalMediaImage struct {
@@ -632,18 +643,14 @@ type GlobalMediaVideo struct {
 	Preview          *string   `json:"preview"`
 }
 
-type GlobalMedium struct {
-	ID         uuid.UUID             `json:"id"`
-	BucketPath string                `json:"bucketPath"`
-	Size       int64                 `json:"size"`
-	MimeType   string                `json:"mimeType"`
-	Status     GlobalMediaStatus     `json:"status"`
-	UploadType GlobalMediaUploadType `json:"uploadType"`
-	UploadID   *string               `json:"uploadId"`
-	CreatedAt  time.Time             `json:"createdAt"`
+type GlobalServiceHierarchyDetails struct {
+	ServiceID       uuid.UUID                    `json:"serviceId"`
+	HierarchyName   string                       `json:"hierarchyName"`
+	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
+	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
 }
 
-type GlobalService struct {
+type GlobalServices struct {
 	ID               uuid.UUID                         `json:"id"`
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
@@ -651,27 +658,7 @@ type GlobalService struct {
 	CreatedAt        time.Time                         `json:"createdAt"`
 }
 
-type GlobalServiceHierarchyDetail struct {
-	ServiceID       uuid.UUID                    `json:"serviceId"`
-	HierarchyName   string                       `json:"hierarchyName"`
-	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
-	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
-}
-
-type GlobalUser struct {
-	ID               uuid.UUID        `json:"id"`
-	Email            string           `json:"email"`
-	NormalizedEmail  string           `json:"normalizedEmail"`
-	Name             string           `json:"name"`
-	NormalizedName   string           `json:"normalizedName"`
-	ProfilePictureID *uuid.UUID       `json:"profilePictureId"`
-	About            *string          `json:"about"`
-	DateOfBirth      pgtype.Date      `json:"dateOfBirth"`
-	Status           GlobalUserStatus `json:"status"`
-	CreatedAt        time.Time        `json:"createdAt"`
-}
-
-type GlobalUserDetail struct {
+type GlobalUserDetails struct {
 	ID                         uuid.UUID             `json:"id"`
 	Email                      string                `json:"email"`
 	Name                       string                `json:"name"`
@@ -690,7 +677,20 @@ type GlobalUserDetail struct {
 	ExtraLarge                 *string               `json:"extraLarge"`
 }
 
-type ManagementPermission struct {
+type GlobalUsers struct {
+	ID               uuid.UUID        `json:"id"`
+	Email            string           `json:"email"`
+	NormalizedEmail  string           `json:"normalizedEmail"`
+	Name             string           `json:"name"`
+	NormalizedName   string           `json:"normalizedName"`
+	ProfilePictureID *uuid.UUID       `json:"profilePictureId"`
+	About            *string          `json:"about"`
+	DateOfBirth      pgtype.Date      `json:"dateOfBirth"`
+	Status           GlobalUserStatus `json:"status"`
+	CreatedAt        time.Time        `json:"createdAt"`
+}
+
+type ManagementPermissions struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
 	Key               string                    `json:"key"`
