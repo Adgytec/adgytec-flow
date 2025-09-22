@@ -6,8 +6,50 @@
 package db
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 )
+
+const getMediaDetails = `-- name: GetMediaDetails :many
+SELECT
+	id, bucket_path, size, mime_type, status, upload_type, upload_id, created_at
+FROM
+	global.media
+WHERE
+	id = ANY (
+		$1::UUID[]
+	)
+`
+
+func (q *Queries) GetMediaDetails(ctx context.Context, mediaIds []uuid.UUID) ([]GlobalMedium, error) {
+	rows, err := q.db.Query(ctx, getMediaDetails, mediaIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalMedium
+	for rows.Next() {
+		var i GlobalMedium
+		if err := rows.Scan(
+			&i.ID,
+			&i.BucketPath,
+			&i.Size,
+			&i.MimeType,
+			&i.Status,
+			&i.UploadType,
+			&i.UploadID,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
 
 type NewMediaItemsParams struct {
 	ID         uuid.UUID             `json:"id"`
