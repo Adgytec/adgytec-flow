@@ -38,7 +38,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	}
 	defer tx.Rollback(context.Background())
 
-	userData, dbErr := qtx.Queries().UpdateGlobalUserStatus(
+	dbErr := qtx.Queries().UpdateGlobalUserStatus(
 		ctx,
 		db.UpdateGlobalUserStatusParams{
 			ID:     userID,
@@ -52,18 +52,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		return dbErr
 	}
 
-	// update cognito
-	var authErr error
-	if status == db.GlobalUserStatusDisabled {
-		authErr = s.auth.DisableUser(userData.Username)
-	} else {
-		authErr = s.auth.EnableUser(userData.Username)
-	}
-	if authErr != nil {
-		return authErr
-	}
-
-	return tx.Commit(context.Background())
+	return tx.Commit(ctx)
 }
 
 func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db.GlobalUserStatus) {

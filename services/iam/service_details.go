@@ -7,7 +7,7 @@ import (
 
 var serviceName = "iam"
 
-var iamServiceDetails = db.AddServiceParams{
+var iamServiceDetails = db.AddServiceDetailsParams{
 	ID:               core.GetIDFromPayload([]byte(serviceName)),
 	Name:             serviceName,
 	Assignable:       false,

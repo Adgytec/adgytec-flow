@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
@@ -15,7 +14,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/go-chi/chi/v5"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
-	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -23,17 +21,16 @@ import (
 
 type updateUserProfileData struct {
 	Name           string
-	ProfilePicture *string
+	ProfilePicture *uuid.UUID
 	About          *string
-	DateOfBirth    string
+	DateOfBirth    pgtype.Date
 }
 
 func (userProfile updateUserProfileData) Validate() error {
 	validationErr := validation.ValidateStruct(&userProfile,
 		validation.Field(&userProfile.Name, validation.Required, validation.Length(3, 100)),
-		validation.Field(&userProfile.ProfilePicture, validation.NilOrNotEmpty, is.UUID),
 		validation.Field(&userProfile.About, validation.NilOrNotEmpty, validation.Length(1, 1024)),
-		validation.Field(&userProfile.DateOfBirth, validation.Required, validation.Date("2006-01-02")),
+		validation.Field(&userProfile.DateOfBirth, validation.Required),
 	)
 
 	if validationErr != nil {
@@ -43,30 +40,6 @@ func (userProfile updateUserProfileData) Validate() error {
 	}
 
 	return nil
-}
-
-func (userProfile updateUserProfileData) GetProfilePicture() (*uuid.UUID, error) {
-	if userProfile.ProfilePicture == nil {
-		return nil, nil
-	}
-
-	profilePictureUUID, parseErr := uuid.Parse(*userProfile.ProfilePicture)
-	if parseErr != nil {
-		return nil, core.ErrRequestBodyParsingFailed
-	}
-
-	return &profilePictureUUID, nil
-}
-
-func (userProfile updateUserProfileData) GetDateOfBirth() (pgtype.Date, error) {
-	var zero pgtype.Date
-
-	timeVal, parsingErr := time.Parse("2006-01-02", userProfile.DateOfBirth)
-	if parsingErr != nil {
-		return zero, core.ErrRequestBodyParsingFailed
-	}
-
-	return pgtype.Date{Time: timeVal, Valid: true}, nil
 }
 
 func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, userProfile updateUserProfileData) (*models.GlobalUser, error) {
@@ -88,17 +61,6 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		return nil, permissionErr
 	}
 
-	// get parsed value
-	profilePicture, profilePictureParsingErr := userProfile.GetProfilePicture()
-	if profilePictureParsingErr != nil {
-		return nil, profilePictureParsingErr
-	}
-
-	dob, dobParsingErr := userProfile.GetDateOfBirth()
-	if dobParsingErr != nil {
-		return nil, dobParsingErr
-	}
-
 	// start transaction
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
@@ -108,26 +70,29 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 
 	if userProfile.ProfilePicture != nil {
 		// complete media upload
-		mediaUploadErr := s.media.WithTransaction(qtx).CompleteMediaItemUpload(ctx, *profilePicture)
+		mediaUploadErr := s.media.WithTransaction(qtx).CompleteMediaItemUpload(ctx, *userProfile.ProfilePicture)
 		if mediaUploadErr != nil {
 			return nil, mediaUploadErr
 		}
 	}
 
-	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(ctx, db.UpdateGlobalUserProfileParams{
-		ID:               userID,
-		Name:             userProfile.Name,
-		ProfilePictureID: profilePicture,
-		About:            userProfile.About,
-		DateOfBirth:      dob,
-	})
+	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(
+		ctx,
+		db.UpdateGlobalUserProfileParams{
+			ID:               userID,
+			Name:             userProfile.Name,
+			ProfilePictureID: userProfile.ProfilePicture,
+			About:            userProfile.About,
+			DateOfBirth:      userProfile.DateOfBirth,
+		},
+	)
 	if dbErr != nil {
 		if errors.Is(dbErr, pgx.ErrNoRows) {
 			return nil, &UserNotFoundError{}
 		}
 		return nil, dbErr
 	}
-	txCommitErr := tx.Commit(context.Background())
+	txCommitErr := tx.Commit(ctx)
 	if txCommitErr != nil {
 		return nil, txCommitErr
 	}

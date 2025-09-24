@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"net/http"
+	"path"
 
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
@@ -32,18 +33,28 @@ func (s *userService) newProfilePicture(ctx context.Context, userID uuid.UUID, p
 		return nil, permissionErr
 	}
 
-	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetails)
+	profilePictureDetailsWithBucketPrefix := media.NewMediaItemInputWithBucketPrefix{
+		NewMediaItemInput: profilePictureDetails,
+		BucketPrefix:      path.Join(userID.String(), "profile"),
+	}
+	profilePictureDetailsOutput, mediaErr := s.media.NewMediaItem(ctx, profilePictureDetailsWithBucketPrefix)
 	if mediaErr != nil {
 		return nil, mediaErr
 	}
 
-	return &profilePictureDetailsOutput, nil
+	return profilePictureDetailsOutput, nil
 }
 
 func (m *userServiceMux) newProfilePictureUtil(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
 	profilePictureDetails, reqBodyErr := payload.DecodeRequestBodyAndValidate[media.NewMediaItemInput](w, r)
 	if reqBodyErr != nil {
 		payload.EncodeError(w, reqBodyErr)
+		return
+	}
+
+	profilePictureErr := profilePictureDetails.EnsureMediaItemIsImage()
+	if profilePictureErr != nil {
+		payload.EncodeError(w, profilePictureErr)
 		return
 	}
 
