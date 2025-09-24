@@ -23,21 +23,21 @@ func EnsureServicesInitialization(appConfig app.App) {
 	for _, factory := range appServices {
 		details, managementPermissions, applicationPermissions := factory()
 
-		if err := appConfig.Database().Queries().AddServiceDetails(context.TODO(), details); err != nil {
-			log.Fatal(err)
+		if err := appConfig.Database().Queries().AddServiceDetails(context.Background(), details); err != nil {
+			log.Fatalf("failed to add service details for service %s: %v", details.Name, err)
 		}
 
 		for _, perm := range managementPermissions {
 			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
-			if err := appConfig.Database().Queries().AddManagementPermission(context.TODO(), perm); err != nil {
-				log.Fatal(err)
+			if err := appConfig.Database().Queries().AddManagementPermission(context.Background(), perm); err != nil {
+				log.Fatalf("failed to add management permission %s for service %s: %v", perm.Key, details.Name, err)
 			}
 		}
 
 		for _, perm := range applicationPermissions {
 			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
-			if err := appConfig.Database().Queries().AddApplicationPermission(context.TODO(), perm); err != nil {
-				log.Fatal(err)
+			if err := appConfig.Database().Queries().AddApplicationPermission(context.Background(), perm); err != nil {
+				log.Fatalf("failed to add application permission %s for service %s: %v", perm.Key, details.Name, err)
 			}
 		}
 
