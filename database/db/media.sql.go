@@ -6,13 +6,53 @@
 package db
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 )
 
-type NewTemporaryMediaParams struct {
+type NewMediaItemsParams struct {
 	ID         uuid.UUID             `json:"id"`
 	BucketPath string                `json:"bucketPath"`
+	MimeType   string                `json:"mimeType"`
 	UploadType GlobalMediaUploadType `json:"uploadType"`
-	MediaType  GlobalMediaType       `json:"mediaType"`
 	UploadID   *string               `json:"uploadId"`
+}
+
+const updateMediaItemStatus = `-- name: UpdateMediaItemStatus :exec
+UPDATE global.media
+SET
+	status = $1
+WHERE
+	id = $2
+`
+
+type UpdateMediaItemStatusParams struct {
+	Status GlobalMediaStatus `json:"status"`
+	ID     uuid.UUID         `json:"id"`
+}
+
+func (q *Queries) UpdateMediaItemStatus(ctx context.Context, arg UpdateMediaItemStatusParams) error {
+	_, err := q.db.Exec(ctx, updateMediaItemStatus, arg.Status, arg.ID)
+	return err
+}
+
+const updateMediaItemsStatus = `-- name: UpdateMediaItemsStatus :exec
+UPDATE global.media
+SET
+	status = $1
+WHERE
+	id = ANY (
+		$2::UUID[]
+	)
+`
+
+type UpdateMediaItemsStatusParams struct {
+	Status   GlobalMediaStatus `json:"status"`
+	MediaIds []uuid.UUID       `json:"mediaIds"`
+}
+
+func (q *Queries) UpdateMediaItemsStatus(ctx context.Context, arg UpdateMediaItemsStatusParams) error {
+	_, err := q.db.Exec(ctx, updateMediaItemsStatus, arg.Status, arg.MediaIds)
+	return err
 }

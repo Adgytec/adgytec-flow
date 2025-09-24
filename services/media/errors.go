@@ -36,3 +36,23 @@ func (e *MediaTooLargeError) HTTPResponse() apires.ErrorDetails {
 		Message:        pointer.New(e.Error()),
 	}
 }
+
+type InvalidMediaTypeValueError struct {
+	Required string
+	Got      string
+}
+
+func (e *InvalidMediaTypeValueError) Error() string {
+	return fmt.Sprintf("Required media type: %s, got: %s", e.Required, e.Got)
+}
+
+func (e *InvalidMediaTypeValueError) Is(target error) bool {
+	return target == ErrInvalidMediaTypeValue
+}
+
+func (e *InvalidMediaTypeValueError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}

@@ -30,7 +30,7 @@ func (s *userService) getGlobalUsers(
 		ctx,
 		params,
 		&pagination.PaginationActions[
-			db.GlobalUserDetail,
+			db.GlobalUserDetails,
 			models.GlobalUser,
 		]{
 			Cache:                        s.getUserListCache,

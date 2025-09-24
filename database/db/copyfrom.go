@@ -7,15 +7,17 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
 
-// iteratorForNewTemporaryMedia implements pgx.CopyFromSource.
-type iteratorForNewTemporaryMedia struct {
-	rows                 []NewTemporaryMediaParams
+// iteratorForAddMediaItemsToOutbox implements pgx.CopyFromSource.
+type iteratorForAddMediaItemsToOutbox struct {
+	rows                 []uuid.UUID
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForNewTemporaryMedia) Next() bool {
+func (r *iteratorForAddMediaItemsToOutbox) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -27,20 +29,52 @@ func (r *iteratorForNewTemporaryMedia) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForNewTemporaryMedia) Values() ([]interface{}, error) {
+func (r iteratorForAddMediaItemsToOutbox) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0],
+	}, nil
+}
+
+func (r iteratorForAddMediaItemsToOutbox) Err() error {
+	return nil
+}
+
+func (q *Queries) AddMediaItemsToOutbox(ctx context.Context, mediaID []uuid.UUID) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"global", "media_outbox"}, []string{"media_id"}, &iteratorForAddMediaItemsToOutbox{rows: mediaID})
+}
+
+// iteratorForNewMediaItems implements pgx.CopyFromSource.
+type iteratorForNewMediaItems struct {
+	rows                 []NewMediaItemsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForNewMediaItems) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForNewMediaItems) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].ID,
 		r.rows[0].BucketPath,
+		r.rows[0].MimeType,
 		r.rows[0].UploadType,
-		r.rows[0].MediaType,
 		r.rows[0].UploadID,
 	}, nil
 }
 
-func (r iteratorForNewTemporaryMedia) Err() error {
+func (r iteratorForNewMediaItems) Err() error {
 	return nil
 }
 
-func (q *Queries) NewTemporaryMedia(ctx context.Context, arg []NewTemporaryMediaParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"global", "temporary_media"}, []string{"id", "bucket_path", "upload_type", "media_type", "upload_id"}, &iteratorForNewTemporaryMedia{rows: arg})
+func (q *Queries) NewMediaItems(ctx context.Context, arg []NewMediaItemsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"global", "media"}, []string{"id", "bucket_path", "mime_type", "upload_type", "upload_id"}, &iteratorForNewMediaItems{rows: arg})
 }

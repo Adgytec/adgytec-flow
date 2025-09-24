@@ -11,7 +11,7 @@ func (s *userService) getGlobalUsersQuery(
 	ctx context.Context,
 	searchQuery string,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersByQuery(
 		ctx,
 		db.GetGlobalUsersByQueryParams{
@@ -24,7 +24,7 @@ func (s *userService) getGlobalUsersQuery(
 func (s *userService) getGlobalUsersInitialLatestFirst(
 	ctx context.Context,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersLatestFirst(
 		ctx,
 		limit,
@@ -34,7 +34,7 @@ func (s *userService) getGlobalUsersInitialLatestFirst(
 func (s *userService) getGlobalUsersInitialOldestFirst(
 	ctx context.Context,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersOldestFirst(
 		ctx,
 		limit,
@@ -45,7 +45,7 @@ func (s *userService) getGlobalUsersGreaterThanCursorLatestFirst(
 	ctx context.Context,
 	cursor time.Time,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersLatestFirstGreaterThanCursor(
 		ctx,
 		db.GetGlobalUsersLatestFirstGreaterThanCursorParams{
@@ -59,7 +59,7 @@ func (s *userService) getGlobalUsersGreaterThanCursorOldestFirst(
 	ctx context.Context,
 	cursor time.Time,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersOldestFirstGreaterThanCursor(
 		ctx,
 		db.GetGlobalUsersOldestFirstGreaterThanCursorParams{
@@ -73,7 +73,7 @@ func (s *userService) getGlobalUsersLesserThanCursorLatestFirst(
 	ctx context.Context,
 	cursor time.Time,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersLatestFirstLesserThanCursor(
 		ctx,
 		db.GetGlobalUsersLatestFirstLesserThanCursorParams{
@@ -87,7 +87,7 @@ func (s *userService) getGlobalUsersLesserThanCursorOldestFirst(
 	ctx context.Context,
 	cursor time.Time,
 	limit int32,
-) ([]db.GlobalUserDetail, error) {
+) ([]db.GlobalUserDetails, error) {
 	return s.db.Queries().GetGlobalUsersOldestFirstLesserThanCursor(
 		ctx,
 		db.GetGlobalUsersOldestFirstLesserThanCursorParams{

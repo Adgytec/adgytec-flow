@@ -17,10 +17,9 @@ func (s *mediaService) validateNewMediaItemCount(input []NewMediaItemInputWithBu
 
 func (s *mediaService) prepareMediaItems(
 	input []NewMediaItemInputWithBucketPrefix,
-) ([]NewMediaItemOutput, []db.NewTemporaryMediaParams, error) {
-
+) ([]NewMediaItemOutput, []db.NewMediaItemsParams, error) {
 	outputs := make([]NewMediaItemOutput, 0, len(input))
-	dbParams := make([]db.NewTemporaryMediaParams, 0, len(input))
+	dbParams := make([]db.NewMediaItemsParams, 0, len(input))
 
 	for _, val := range input {
 		// check size
@@ -54,7 +53,8 @@ func (s *mediaService) prepareSingleMediaItem(
 	mediaID uuid.UUID,
 	mediaKey string,
 	val NewMediaItemInputWithBucketPrefix,
-) (NewMediaItemOutput, db.NewTemporaryMediaParams, error) {
+) (NewMediaItemOutput, db.NewMediaItemsParams, error) {
+	var zero db.NewMediaItemsParams
 	output := NewMediaItemOutput{
 		MediaID: mediaID,
 	}
@@ -65,7 +65,7 @@ func (s *mediaService) prepareSingleMediaItem(
 		output.UploadType = db.GlobalMediaUploadTypeMultipart
 		upload, err := s.prepareMultipartUpload(mediaKey, val.Size)
 		if err != nil {
-			return output, db.NewTemporaryMediaParams{}, err
+			return output, zero, err
 		}
 
 		output.MultipartPresignPart = upload.parts
@@ -76,17 +76,17 @@ func (s *mediaService) prepareSingleMediaItem(
 		output.UploadType = db.GlobalMediaUploadTypeSinglepart
 		presignURL, err := s.storage.NewPresignPut(mediaKey)
 		if err != nil {
-			return output, db.NewTemporaryMediaParams{}, err
+			return output, zero, err
 		}
 
 		output.PresignPut = pointer.New(presignURL)
 	}
 
-	param := db.NewTemporaryMediaParams{
+	param := db.NewMediaItemsParams{
 		ID:         mediaID,
 		BucketPath: mediaKey,
+		MimeType:   val.MimeType,
 		UploadType: output.UploadType,
-		MediaType:  val.MediaType,
 		UploadID:   uploadID,
 	}
 
@@ -130,9 +130,9 @@ func (s *mediaService) prepareMultipartUpload(
 	return multipartUploadResult{id: uploadID, parts: parts}, nil
 }
 
-func (s *mediaService) saveTemporaryMedia(
+func (s *mediaService) saveMediaItems(
 	ctx context.Context,
-	params []db.NewTemporaryMediaParams,
+	params []db.NewMediaItemsParams,
 ) error {
 	qtx, tx, err := s.database.WithTransaction(ctx)
 	if err != nil {
@@ -140,7 +140,7 @@ func (s *mediaService) saveTemporaryMedia(
 	}
 	defer tx.Rollback(context.Background())
 
-	if _, err := qtx.Queries().NewTemporaryMedia(ctx, params); err != nil {
+	if _, err := qtx.Queries().NewMediaItems(ctx, params); err != nil {
 		return err
 	}
 
@@ -159,7 +159,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 		return nil, err
 	}
 
-	if err := s.saveTemporaryMedia(ctx, dbParams); err != nil {
+	if err := s.saveMediaItems(ctx, dbParams); err != nil {
 		return nil, err
 	}
 
