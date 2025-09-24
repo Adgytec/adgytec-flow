@@ -12,7 +12,7 @@ import (
 
 type iamServiceInit struct {
 	db                     database.Database
-	serviceDetails         db.AddServiceParams
+	serviceDetails         db.AddServiceDetailsParams
 	managementPermissions  []db.AddManagementPermissionParams
 	applicationPermissions []db.AddApplicationPermissionParams
 }
@@ -35,7 +35,7 @@ func (i *iamServiceInit) InitService() error {
 
 func (i *iamServiceInit) initServiceDetails() error {
 	log.Printf("adding %s-service details", serviceName)
-	return i.db.Queries().AddService(context.TODO(), i.serviceDetails)
+	return i.db.Queries().AddServiceDetails(context.TODO(), i.serviceDetails)
 }
 
 func (i *iamServiceInit) initServiceManagementPermissions() error {
