@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const addService = `-- name: AddService :exec
+const addServiceDetails = `-- name: AddServiceDetails :exec
 INSERT INTO
 	global.services (
 		id,
@@ -27,15 +27,15 @@ SET
 	logical_partition = excluded.logical_partition
 `
 
-type AddServiceParams struct {
+type AddServiceDetailsParams struct {
 	ID               uuid.UUID                         `json:"id"`
 	Name             string                            `json:"name"`
 	Assignable       bool                              `json:"assignable"`
 	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
 }
 
-func (q *Queries) AddService(ctx context.Context, arg AddServiceParams) error {
-	_, err := q.db.Exec(ctx, addService,
+func (q *Queries) AddServiceDetails(ctx context.Context, arg AddServiceDetailsParams) error {
+	_, err := q.db.Exec(ctx, addServiceDetails,
 		arg.ID,
 		arg.Name,
 		arg.Assignable,

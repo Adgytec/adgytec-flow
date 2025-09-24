@@ -1,4 +1,4 @@
--- name: AddService :exec
+-- name: AddServiceDetails :exec
 INSERT INTO
 	global.services (
 		id,

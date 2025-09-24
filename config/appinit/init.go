@@ -1,32 +1,46 @@
 package appinit
 
 import (
+	"context"
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
-	"github.com/Adgytec/adgytec-flow/utils/services"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-type serviceFactory func(params app.App) services.Init
+type serviceFactory func() (db.AddServiceDetailsParams, []db.AddManagementPermissionParams, []db.AddApplicationPermissionParams)
 
 var appServices = []serviceFactory{
-	func(appConfig app.App) services.Init {
-		return iam.InitIAMService(appConfig)
-	},
-	func(appConfig app.App) services.Init {
-		return user.InitUserService(appConfig)
-	},
+	iam.InitIAMService,
+	user.InitUserService,
 }
 
 func EnsureServicesInitialization(appConfig app.App) {
 	log.Println("Ensuring application initialization.")
 	for _, factory := range appServices {
-		serviceInit := factory(appConfig)
-		if err := serviceInit.InitService(); err != nil {
-			log.Fatalf("error initializaing services. Can't proceed without resolving: %v", err)
+		details, managementPermissions, applicationPermissions := factory()
+
+		if err := appConfig.Database().Queries().AddServiceDetails(context.Background(), details); err != nil {
+			log.Fatalf("failed to add service details for service %s: %v", details.Name, err)
 		}
+
+		for _, perm := range managementPermissions {
+			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
+			if err := appConfig.Database().Queries().AddManagementPermission(context.Background(), perm); err != nil {
+				log.Fatalf("failed to add management permission %s for service %s: %v", perm.Key, details.Name, err)
+			}
+		}
+
+		for _, perm := range applicationPermissions {
+			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
+			if err := appConfig.Database().Queries().AddApplicationPermission(context.Background(), perm); err != nil {
+				log.Fatalf("failed to add application permission %s for service %s: %v", perm.Key, details.Name, err)
+			}
+		}
+
 	}
 
 }
