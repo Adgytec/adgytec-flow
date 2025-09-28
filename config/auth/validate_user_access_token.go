@@ -27,10 +27,8 @@ func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, er
 		}
 	}
 
-	invalidTokenErr := &AuthActionFailedError{
-		cause:      ErrInvalidAccessToken,
-		reason:     ErrInvalidAccessToken.Error(),
-		actionType: authActionTypeValidateAccessToken,
+	invalidTokenErr := &InvalidAccessTokenError{
+		cause: ErrInvalidAccessToken,
 	}
 
 	if !jwtToken.Valid {
