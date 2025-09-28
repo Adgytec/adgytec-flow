@@ -138,3 +138,11 @@ func (e *InvalidHashError) HTTPResponse() apires.ErrorDetails {
 		Message:        pointer.New(e.Error()),
 	}
 }
+
+type JwtKeyFuncError struct {
+	cause error
+}
+
+func (e *JwtKeyFuncError) Error() string {
+	return fmt.Sprintf("failed to create keyfunc from JWK set URL: %s", e.cause)
+}

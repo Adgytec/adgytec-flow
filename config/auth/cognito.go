@@ -32,7 +32,9 @@ func NewCognitoAuthClient(awsConfig aws.Config) (Auth, error) {
 
 	jwtKeyfunc, keyFuncErr := keyfunc.NewDefault([]string{jwkSetEndpoint})
 	if keyFuncErr != nil {
-		return nil, ErrInvalidAuthConfig
+		return nil, &JwtKeyFuncError{
+			cause: keyFuncErr,
+		}
 	}
 
 	authCommon, authCommonErr := newAuthCommon()
