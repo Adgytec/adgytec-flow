@@ -2,6 +2,8 @@ package auth
 
 import (
 	"context"
+	"log"
+	"os"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
@@ -19,10 +21,8 @@ type Auth interface {
 }
 
 // authCommon contains method impl that are independent of external authentication provider
-type authCommon struct{}
-
-func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
-	return "", core.ErrNotImplemented
+type authCommon struct {
+	secret []byte
 }
 
 func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
@@ -30,7 +30,14 @@ func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
 }
 
 func newAuthCommon() authCommon {
-	return authCommon{}
+	hmacSecret := os.Getenv("HMAC_SECRET")
+	if hmacSecret == "" {
+		log.Fatal("can't find hmac secret")
+	}
+
+	return authCommon{
+		secret: []byte(hmacSecret),
+	}
 }
 
 // used in auth errors
