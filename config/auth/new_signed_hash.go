@@ -3,6 +3,7 @@ package auth
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 )
 
 func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
@@ -17,5 +18,5 @@ func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
 	}
 
 	hashBytes := mac.Sum(nil)
-	return string(hashBytes), nil
+	return hex.EncodeToString(hashBytes), nil
 }

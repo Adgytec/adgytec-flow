@@ -3,6 +3,7 @@ package auth
 import (
 	"crypto/hmac"
 	"crypto/sha256"
+	"encoding/hex"
 )
 
 func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
@@ -17,7 +18,13 @@ func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
 	}
 
 	expectedHash := mac.Sum(nil)
-	if !hmac.Equal([]byte(hash), expectedHash) {
+
+	decodedHash, decodeErr := hex.DecodeString(hash)
+	if decodeErr != nil {
+		return &InvalidHashError{}
+	}
+
+	if !hmac.Equal(decodedHash, expectedHash) {
 		return &HashMismatchError{}
 	}
 

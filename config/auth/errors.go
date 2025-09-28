@@ -15,6 +15,7 @@ var (
 	ErrInvalidAccessToken = errors.New("invalid access token")
 	ErrInvalidAPIKey      = errors.New("invalid api key")
 	ErrHashMismatch       = errors.New("hash mismatch")
+	ErrInvalidHash        = errors.New("invalid hash")
 )
 
 type UserExistsError struct {
@@ -113,6 +114,23 @@ func (e *HashMismatchError) Is(target error) bool {
 }
 
 func (e *HashMismatchError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidHashError struct{}
+
+func (e *InvalidHashError) Error() string {
+	return ErrInvalidHash.Error()
+}
+
+func (e *InvalidHashError) Is(target error) bool {
+	return target == ErrInvalidHash
+}
+
+func (e *InvalidHashError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
