@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
 )
 
@@ -23,10 +22,6 @@ type Auth interface {
 // authCommon contains method impl that are independent of external authentication provider
 type authCommon struct {
 	secret []byte
-}
-
-func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
-	return core.ErrNotImplemented
 }
 
 func newAuthCommon() authCommon {
