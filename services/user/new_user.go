@@ -31,7 +31,7 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 
 	// for newly inserted users also create the useraccount in auth service
 	if inserted == 1 {
-		authErr := s.auth.NewUser(email)
+		authErr := s.auth.NewUser(ctx, email)
 		if authErr != nil {
 			return zero, authErr
 		}
