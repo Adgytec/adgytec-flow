@@ -37,7 +37,7 @@ func (s *httpServer) Shutdown() error {
 		s.cronStop()
 	}
 
-	s.app.Shutdown()
+	s.app.Shutdown(shutdownCtx)
 	err := s.server.Shutdown(shutdownCtx)
 
 	return err
