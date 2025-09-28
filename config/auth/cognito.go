@@ -18,27 +18,35 @@ type authCognito struct {
 	jwtKeyfunc     keyfunc.Keyfunc
 }
 
-func NewCognitoAuthClient(awsConfig aws.Config) Auth {
+func NewCognitoAuthClient(awsConfig aws.Config) (Auth, error) {
 	log.Println("init authentication cognito")
 
 	userPoolID := os.Getenv("AWS_USER_POOL_ID")
 	userPoolRegion := os.Getenv("AWS_USER_POOL_REGION")
 
 	if userPoolID == "" || userPoolRegion == "" {
-		log.Fatal("can't find env values for AWS_USER_POOL_ID or AWS_USER_POOL_REGION")
+		return nil, ErrInvalidAuthConfig
 	}
 
 	jwkSetEndpoint := fmt.Sprintf("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", userPoolRegion, userPoolID)
 
 	jwtKeyfunc, keyFuncErr := keyfunc.NewDefault([]string{jwkSetEndpoint})
 	if keyFuncErr != nil {
-		log.Fatalf("Failed to create a keyfunc.Keyfunc from the server's URL.\nError: %s", keyFuncErr)
+		return nil, &JwtKeyFuncError{
+			cause: keyFuncErr,
+		}
 	}
+
+	authCommon, authCommonErr := newAuthCommon()
+	if authCommonErr != nil {
+		return nil, authCommonErr
+	}
+
 	return &authCognito{
-		authCommon:     newAuthCommon(),
+		authCommon:     *authCommon,
 		client:         cognitoidentityprovider.NewFromConfig(awsConfig),
 		userPoolID:     userPoolID,
 		userPoolRegion: userPoolRegion,
 		jwtKeyfunc:     jwtKeyfunc,
-	}
+	}, nil
 }

@@ -22,7 +22,6 @@ func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, er
 
 		return uuid.Nil, &AuthActionFailedError{
 			cause:      jwtParseErr,
-			reason:     jwtParseErr.Error(),
 			actionType: authActionTypeValidateAccessToken,
 		}
 	}

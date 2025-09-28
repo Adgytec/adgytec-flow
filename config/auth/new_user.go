@@ -28,7 +28,6 @@ func (a *authCognito) NewUser(ctx context.Context, username string) error {
 		return &AuthActionFailedError{
 			username:   username,
 			cause:      newUserErr,
-			reason:     newUserErr.Error(),
 			actionType: authActionTypeCreate,
 		}
 	}

@@ -16,6 +16,8 @@ var (
 	ErrInvalidAPIKey      = errors.New("invalid api key")
 	ErrHashMismatch       = errors.New("hash mismatch")
 	ErrInvalidHash        = errors.New("invalid hash")
+	ErrInvalidHMACSecret  = errors.New("invalid hmac secret")
+	ErrInvalidAuthConfig  = errors.New("invalid auth config")
 )
 
 type UserExistsError struct {
@@ -39,13 +41,12 @@ func (e *UserExistsError) HTTPResponse() apires.ErrorDetails {
 
 type AuthActionFailedError struct {
 	username   string
-	reason     string
 	actionType authActionType
 	cause      error
 }
 
 func (e *AuthActionFailedError) Error() string {
-	return fmt.Sprintf("Auth action failed.\nAction Type: '%s' \nUsername: %s\nReason: %s", e.actionType, e.username, e.reason)
+	return fmt.Sprintf("Auth action failed: Action Type: '%s', Username: %s, Reason: %v", e.actionType, e.username, e.cause)
 }
 
 func (e *AuthActionFailedError) Is(target error) bool {
@@ -135,4 +136,12 @@ func (e *InvalidHashError) HTTPResponse() apires.ErrorDetails {
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
+}
+
+type JwtKeyFuncError struct {
+	cause error
+}
+
+func (e *JwtKeyFuncError) Error() string {
+	return fmt.Sprintf("failed to create keyfunc from JWK set URL: %v", e.cause)
 }

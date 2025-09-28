@@ -42,22 +42,40 @@ func (s *externalServices) CDN() cdn.CDN {
 }
 
 func (s *externalServices) Shutdown(ctx context.Context) {
-	s.database.Shutdown(ctx)
+	s.database.Shutdown()
 }
 
 func (s *externalServices) CacheClient() cache.CacheClient {
 	return s.cacheClient
 }
 
-func newExternalServices() appExternalServices {
-	awsConfig := configAWS.NewAWSConfig()
+func newExternalServices() (appExternalServices, error) {
+	awsConfig, awsConfigErr := configAWS.NewAWSConfig()
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
+
+	authClient, authErr := auth.NewCognitoAuthClient(awsConfig)
+	if authErr != nil {
+		return nil, authErr
+	}
+
+	dbPool, dbErr := database.NewPgxDbConnectionPool()
+	if dbErr != nil {
+		return nil, dbErr
+	}
+
+	cdnClient, cdnErr := cdn.NewCloudfrontCDNSigner()
+	if cdnErr != nil {
+		return nil, cdnErr
+	}
 
 	return &externalServices{
-		auth:          auth.NewCognitoAuthClient(awsConfig),
-		database:      database.NewPgxDbConnectionPool(),
+		auth:          authClient,
+		database:      dbPool,
 		communication: communication.NewAWSCommunicationClient(awsConfig),
 		storage:       storage.NewS3Client(awsConfig),
-		cdn:           cdn.NewCloudfrontCDNSigner(),
+		cdn:           cdnClient,
 		cacheClient:   cache.NewInMemoryCacheClient(),
-	}
+	}, nil
 }

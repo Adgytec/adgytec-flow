@@ -15,15 +15,18 @@ func checkCircumfixBytes(payload []byte, apiKey string) ([]byte, error) {
 		return nil, invalidApiKeyErr
 	}
 
-	prefixByte, suffixByte := apiKeyCircumfix()
+	circumfixVal, circumfixErr := apiKeyCircumfix()
+	if circumfixErr != nil {
+		return nil, circumfixErr
+	}
 
 	// check prefix
-	if payload[0] != prefixByte {
+	if payload[0] != circumfixVal.prefix {
 		return nil, invalidApiKeyErr
 	}
 
 	// check suffix
-	if payload[len(payload)-1] != suffixByte {
+	if payload[len(payload)-1] != circumfixVal.suffix {
 		return nil, invalidApiKeyErr
 	}
 
