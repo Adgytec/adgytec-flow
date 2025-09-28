@@ -18,5 +18,5 @@ type Database interface {
 
 type DatabaseWithShutdown interface {
 	Database
-	Shutdown()
+	Shutdown(ctx context.Context)
 }

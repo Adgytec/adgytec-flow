@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	configAWS "github.com/Adgytec/adgytec-flow/config/aws"
 	"github.com/Adgytec/adgytec-flow/config/cache"
@@ -39,8 +41,8 @@ func (s *externalServices) CDN() cdn.CDN {
 	return s.cdn
 }
 
-func (s *externalServices) Shutdown() {
-	s.database.Shutdown()
+func (s *externalServices) Shutdown(ctx context.Context) {
+	s.database.Shutdown(ctx)
 }
 
 func (s *externalServices) CacheClient() cache.CacheClient {
