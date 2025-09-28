@@ -29,13 +29,13 @@ func apiKeyCircumfix() (byte, byte) {
 
 		prefixByte, prefixErr := hex.DecodeString(prefixString)
 		if prefixErr != nil || len(prefixByte) != 1 {
-			log.Fatal("invalid hex value for api key prefix. Only single byte value is required")
+			log.Fatal("invalid hex value for API_KEY_PREFIX. Only single byte value is required")
 		}
 		apiKeyPrefix = prefixByte[0]
 
 		suffixByte, suffixErr := hex.DecodeString(suffixString)
 		if suffixErr != nil || len(suffixByte) != 1 {
-			log.Fatal("invalid hex value for api key suffix. Only single byte value is required")
+			log.Fatal("invalid hex value for API_KEY_SUFFIX. Only single byte value is required")
 		}
 		apiKeySuffix = suffixByte[0]
 	})
