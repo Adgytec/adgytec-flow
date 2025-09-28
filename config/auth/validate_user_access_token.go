@@ -41,6 +41,7 @@ func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, er
 		return uuid.Nil, invalidTokenErr
 	}
 
+	// cognito access token contains claim 'username' for user's username field
 	username, usernameOK := claims["username"].(string)
 	if !usernameOK {
 		return uuid.Nil, invalidTokenErr
