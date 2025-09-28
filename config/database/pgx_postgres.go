@@ -91,7 +91,7 @@ func (c *pgxConnection) WithTransaction(ctx context.Context) (Database, Tx, erro
 	return newPgxTx(tx, c.Queries()), tx, nil
 }
 
-func (c *pgxConnection) Shutdown(_ context.Context) {
+func (c *pgxConnection) Shutdown() {
 	c.connPool.Close()
 }
 

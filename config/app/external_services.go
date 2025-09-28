@@ -42,7 +42,7 @@ func (s *externalServices) CDN() cdn.CDN {
 }
 
 func (s *externalServices) Shutdown(ctx context.Context) {
-	s.database.Shutdown(ctx)
+	s.database.Shutdown()
 }
 
 func (s *externalServices) CacheClient() cache.CacheClient {
