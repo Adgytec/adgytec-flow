@@ -41,10 +41,10 @@ func EnsureServicesInitialization(appConfig app.App) error {
 			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
 			if err := appConfig.Database().Queries().AddManagementPermission(context.Background(), perm); err != nil {
 				return &AddingPermissionError{
-					serviceName:     details.Name,
-					cause:           err,
-					permissionKey:   perm.Key,
-					permmissionType: permissionTypeManagement,
+					serviceName:    details.Name,
+					cause:          err,
+					permissionKey:  perm.Key,
+					permissionType: permissionTypeManagement,
 				}
 			}
 		}
@@ -53,10 +53,10 @@ func EnsureServicesInitialization(appConfig app.App) error {
 			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
 			if err := appConfig.Database().Queries().AddApplicationPermission(context.Background(), perm); err != nil {
 				return &AddingPermissionError{
-					serviceName:     details.Name,
-					cause:           err,
-					permissionKey:   perm.Key,
-					permmissionType: permissionTypeApplication,
+					serviceName:    details.Name,
+					cause:          err,
+					permissionKey:  perm.Key,
+					permissionType: permissionTypeApplication,
 				}
 			}
 		}
