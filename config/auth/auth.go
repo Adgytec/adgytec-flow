@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"log"
 	"os"
 
 	"github.com/google/uuid"
@@ -24,15 +23,15 @@ type authCommon struct {
 	secret []byte
 }
 
-func newAuthCommon() authCommon {
+func newAuthCommon() (*authCommon, error) {
 	hmacSecret := os.Getenv("HMAC_SECRET")
 	if hmacSecret == "" {
-		log.Fatal("can't find hmac secret")
+		return nil, ErrInvalidHMACSecret
 	}
 
-	return authCommon{
+	return &authCommon{
 		secret: []byte(hmacSecret),
-	}
+	}, nil
 }
 
 // used in auth errors

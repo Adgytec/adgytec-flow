@@ -23,7 +23,11 @@ func main() {
 	rootCtx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer stop()
 
-	httpServer := server.NewHttpServer(port)
+	httpServer, serverErr := server.NewHttpServer(port)
+	if serverErr != nil {
+		log.Fatalf("Error creating new http server. Cause: %s", serverErr)
+	}
+
 	go func() {
 		log.Printf("Server starting on port %s.", port)
 		if err := httpServer.ListenAndServe(); err != nil && err != http.ErrServerClosed {

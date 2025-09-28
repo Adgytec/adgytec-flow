@@ -49,15 +49,20 @@ func (s *externalServices) CacheClient() cache.CacheClient {
 	return s.cacheClient
 }
 
-func newExternalServices() appExternalServices {
+func newExternalServices() (appExternalServices, error) {
 	awsConfig := configAWS.NewAWSConfig()
 
+	authClient, authErr := auth.NewCognitoAuthClient(awsConfig)
+	if authErr != nil {
+		return nil, authErr
+	}
+
 	return &externalServices{
-		auth:          auth.NewCognitoAuthClient(awsConfig),
+		auth:          authClient,
 		database:      database.NewPgxDbConnectionPool(),
 		communication: communication.NewAWSCommunicationClient(awsConfig),
 		storage:       storage.NewS3Client(awsConfig),
 		cdn:           cdn.NewCloudfrontCDNSigner(),
 		cacheClient:   cache.NewInMemoryCacheClient(),
-	}
+	}, nil
 }

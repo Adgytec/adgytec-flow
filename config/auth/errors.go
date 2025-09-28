@@ -16,6 +16,8 @@ var (
 	ErrInvalidAPIKey      = errors.New("invalid api key")
 	ErrHashMismatch       = errors.New("hash mismatch")
 	ErrInvalidHash        = errors.New("invalid hash")
+	ErrInvalidHMACSecret  = errors.New("invalid hmac secret")
+	ErrInvalidAuthConfig  = errors.New("invalid auth config")
 )
 
 type UserExistsError struct {
