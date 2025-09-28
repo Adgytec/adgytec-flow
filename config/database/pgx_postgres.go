@@ -26,7 +26,9 @@ func dbConfig() (*pgxpool.Config, error) {
 
 	dbConfig, err := pgxpool.ParseConfig(DATABASE_URL)
 	if err != nil {
-		return nil, ErrInvalidDBConfig
+		return nil, &InvalidDBConfigError{
+			cause: err,
+		}
 	}
 
 	dbConfig.MaxConns = defaultMaxConns
@@ -47,12 +49,16 @@ func newPgxConnPool() (*pgxpool.Pool, error) {
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
-		return nil, ErrCreatingDBConnectionPool
+		return nil, &CreatingDBConnectionPoolError{
+			cause: err,
+		}
 	}
 
 	err = pool.Ping(context.Background())
 	if err != nil {
-		return nil, ErrPingingDB
+		return nil, &PingingDBError{
+			cause: err,
+		}
 	}
 
 	return pool, nil
