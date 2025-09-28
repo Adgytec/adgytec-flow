@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	ErrInvalidApiKey = errors.New("invalid-api-key")
+	ErrInvalidApiKey = errors.New("invalid api key")
 )
 
 type InvalidApiKeyError struct {
