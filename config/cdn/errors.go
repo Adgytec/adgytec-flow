@@ -14,5 +14,5 @@ type InvalidCloudfrontPrivateKeyError struct {
 }
 
 func (e *InvalidCloudfrontPrivateKeyError) Error() string {
-	return fmt.Sprintf("invalid cloudfront private key: %s", e.cause)
+	return fmt.Sprintf("invalid cloudfront private key: %v", e.cause)
 }

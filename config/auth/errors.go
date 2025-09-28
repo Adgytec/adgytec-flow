@@ -41,13 +41,12 @@ func (e *UserExistsError) HTTPResponse() apires.ErrorDetails {
 
 type AuthActionFailedError struct {
 	username   string
-	reason     string
 	actionType authActionType
 	cause      error
 }
 
 func (e *AuthActionFailedError) Error() string {
-	return fmt.Sprintf("Auth action failed.\nAction Type: '%s' \nUsername: %s\nReason: %s", e.actionType, e.username, e.reason)
+	return fmt.Sprintf("Auth action failed.\nAction Type: '%s' \nUsername: %s\nReason: %v", e.actionType, e.username, e.cause)
 }
 
 func (e *AuthActionFailedError) Is(target error) bool {
@@ -144,5 +143,5 @@ type JwtKeyFuncError struct {
 }
 
 func (e *JwtKeyFuncError) Error() string {
-	return fmt.Sprintf("failed to create keyfunc from JWK set URL: %s", e.cause)
+	return fmt.Sprintf("failed to create keyfunc from JWK set URL: %v", e.cause)
 }

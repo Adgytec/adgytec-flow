@@ -7,5 +7,5 @@ type InvalidAWSConfigError struct {
 }
 
 func (e *InvalidAWSConfigError) Error() string {
-	return fmt.Sprintf("error loading AWS default config: %s", e.cause)
+	return fmt.Sprintf("error loading AWS default config: %v", e.cause)
 }

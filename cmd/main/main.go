@@ -25,7 +25,7 @@ func main() {
 
 	httpServer, serverErr := server.NewHttpServer(port)
 	if serverErr != nil {
-		log.Fatalf("Error creating new http server. Cause: %s", serverErr)
+		log.Fatalf("Error creating new http server. Cause: %v", serverErr)
 	}
 
 	go func() {

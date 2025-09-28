@@ -9,7 +9,7 @@ type InvalidDBConfigError struct {
 }
 
 func (e *InvalidDBConfigError) Error() string {
-	return fmt.Sprintf("error parsing db config: %s", e.cause)
+	return fmt.Sprintf("error parsing db config: %v", e.cause)
 }
 
 type CreatingDBConnectionPoolError struct {
@@ -17,7 +17,7 @@ type CreatingDBConnectionPoolError struct {
 }
 
 func (e *CreatingDBConnectionPoolError) Error() string {
-	return fmt.Sprintf("error creating db connection pool: %s", e.cause)
+	return fmt.Sprintf("error creating db connection pool: %v", e.cause)
 }
 
 type PingingDBError struct {
@@ -25,5 +25,5 @@ type PingingDBError struct {
 }
 
 func (e *PingingDBError) Error() string {
-	return fmt.Sprintf("error pinging db: %s", e.cause)
+	return fmt.Sprintf("error pinging db: %v", e.cause)
 }
