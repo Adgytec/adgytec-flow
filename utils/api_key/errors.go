@@ -10,8 +10,9 @@ import (
 )
 
 var (
-	ErrInvalidApiKey         = errors.New("invalid api key")
-	ErrInvalidCircumfixValue = errors.New("invalid api key circumfix value")
+	ErrInvalidApiKey            = errors.New("invalid api key")
+	ErrInvalidApiKeyPrefixValue = errors.New("invalid api key prefix value")
+	ErrInvalidApiKeySuffixValue = errors.New("invalid api key suffix value")
 )
 
 type InvalidApiKeyError struct {

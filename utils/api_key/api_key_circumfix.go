@@ -25,14 +25,14 @@ func apiKeyCircumfix() (apiKeyCircumfixValue, error) {
 
 		prefixByte, prefixErr := hex.DecodeString(prefixString)
 		if prefixErr != nil || len(prefixByte) != 1 {
-			apiKeyCircumfixErr = ErrInvalidCircumfixValue
+			apiKeyCircumfixErr = ErrInvalidApiKeyPrefixValue
 			return
 		}
 		circumfixValue.prefix = prefixByte[0]
 
 		suffixByte, suffixErr := hex.DecodeString(suffixString)
 		if suffixErr != nil || len(suffixByte) != 1 {
-			apiKeyCircumfixErr = ErrInvalidCircumfixValue
+			apiKeyCircumfixErr = ErrInvalidApiKeySuffixValue
 			return
 		}
 		circumfixValue.suffix = suffixByte[0]
