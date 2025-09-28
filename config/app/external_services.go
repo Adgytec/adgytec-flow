@@ -57,12 +57,17 @@ func newExternalServices() (appExternalServices, error) {
 		return nil, authErr
 	}
 
+	cdnClient, cdnErr := cdn.NewCloudfrontCDNSigner()
+	if cdnErr != nil {
+		return nil, cdnErr
+	}
+
 	return &externalServices{
 		auth:          authClient,
 		database:      database.NewPgxDbConnectionPool(),
 		communication: communication.NewAWSCommunicationClient(awsConfig),
 		storage:       storage.NewS3Client(awsConfig),
-		cdn:           cdn.NewCloudfrontCDNSigner(),
+		cdn:           cdnClient,
 		cacheClient:   cache.NewInMemoryCacheClient(),
 	}, nil
 }
