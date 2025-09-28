@@ -21,10 +21,6 @@ type Auth interface {
 // authCommon contains method impl that are independent of external authentication provider
 type authCommon struct{}
 
-func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
-	return uuid.Nil, core.ErrNotImplemented
-}
-
 func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
 	return "", core.ErrNotImplemented
 }
