@@ -41,5 +41,6 @@ func newAuthCommon() authCommon {
 type authActionType string
 
 const (
-	authActionTypeCreate authActionType = "auth-user-create"
+	authActionTypeCreate              authActionType = "auth-user-create"
+	authActionTypeValidateAccessToken authActionType = "auth-validate-user-access-token"
 )
