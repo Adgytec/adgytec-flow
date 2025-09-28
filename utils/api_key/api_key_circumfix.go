@@ -42,7 +42,3 @@ func apiKeyCircumfix() (byte, byte) {
 
 	return apiKeyPrefix, apiKeySuffix
 }
-
-func GetApiKeyCircumfix() (byte, byte) {
-	return apiKeyCircumfix()
-}
