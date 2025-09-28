@@ -60,6 +60,11 @@ func newExternalServices() (appExternalServices, error) {
 		return nil, authErr
 	}
 
+	dbPool, dbErr := database.NewPgxDbConnectionPool()
+	if dbErr != nil {
+		return nil, dbErr
+	}
+
 	cdnClient, cdnErr := cdn.NewCloudfrontCDNSigner()
 	if cdnErr != nil {
 		return nil, cdnErr
@@ -67,7 +72,7 @@ func newExternalServices() (appExternalServices, error) {
 
 	return &externalServices{
 		auth:          authClient,
-		database:      database.NewPgxDbConnectionPool(),
+		database:      dbPool,
 		communication: communication.NewAWSCommunicationClient(awsConfig),
 		storage:       storage.NewS3Client(awsConfig),
 		cdn:           cdnClient,
