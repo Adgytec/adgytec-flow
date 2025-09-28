@@ -26,12 +26,12 @@ func (e *AddingServiceDetailsError) Is(target error) bool {
 type AddingPermissionError struct {
 	serviceName     string
 	permissionKey   string
-	permmissionType permissionType
+	permissionType  permissionType
 	cause           error
 }
 
 func (e *AddingPermissionError) Error() string {
-	return fmt.Sprintf("failed to add %s permission '%s' for service %s: %v", e.permmissionType, e.permissionKey, e.serviceName, e.cause)
+	return fmt.Sprintf("failed to add %s permission '%s' for service %s: %v", e.permissionType, e.permissionKey, e.serviceName, e.cause)
 }
 
 func (e *AddingPermissionError) Is(target error) bool {
