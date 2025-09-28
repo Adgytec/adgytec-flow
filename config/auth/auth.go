@@ -1,12 +1,14 @@
 package auth
 
 import (
+	"context"
+
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
 )
 
 type Auth interface {
-	NewUser(username string) error
+	NewUser(ctx context.Context, username string) error
 	ValidateUserAccessToken(accessToken string) (uuid.UUID, error)
 
 	// this only checks if the API key is in required format as described in the application doc
