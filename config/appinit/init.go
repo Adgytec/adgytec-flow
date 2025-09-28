@@ -14,7 +14,7 @@ import (
 type permissionType string
 
 const (
-	permissionTypeManagement  permissionType = "managment"
+	permissionTypeManagement  permissionType = "management"
 	permissionTypeApplication permissionType = "application"
 )
 
