@@ -14,6 +14,7 @@ var (
 	ErrAuthActionFailed   = errors.New("auth action failed")
 	ErrInvalidAccessToken = errors.New("invalid access token")
 	ErrInvalidAPIKey      = errors.New("invalid api key")
+	ErrHashMismatch       = errors.New("hash mismatch")
 )
 
 type UserExistsError struct {
@@ -55,9 +56,9 @@ func (e *AuthActionFailedError) Unwrap() error {
 }
 
 func (e *AuthActionFailedError) HTTPResponse() apires.ErrorDetails {
-	// TODO: handle status based on e.cause
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusInternalServerError,
+		Message:        pointer.New(http.StatusText(http.StatusInternalServerError)),
 	}
 }
 
@@ -95,6 +96,23 @@ func (e *InvalidAPIKeyError) Is(target error) bool {
 }
 
 func (e *InvalidAPIKeyError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type HashMismatchError struct{}
+
+func (e *HashMismatchError) Error() string {
+	return ErrHashMismatch.Error()
+}
+
+func (e *HashMismatchError) Is(target error) bool {
+	return target == ErrHashMismatch
+}
+
+func (e *HashMismatchError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
