@@ -50,7 +50,10 @@ func (s *externalServices) CacheClient() cache.CacheClient {
 }
 
 func newExternalServices() (appExternalServices, error) {
-	awsConfig := configAWS.NewAWSConfig()
+	awsConfig, awsConfigErr := configAWS.NewAWSConfig()
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
 
 	authClient, authErr := auth.NewCognitoAuthClient(awsConfig)
 	if authErr != nil {
