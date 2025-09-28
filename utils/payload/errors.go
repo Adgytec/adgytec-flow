@@ -8,23 +8,23 @@ import (
 )
 
 var (
-	ErrRequestDecode = errors.New("request decoding failed")
+	ErrRequestBodyDecode = errors.New("request decoding failed")
 )
 
-type RequestDecodeError struct {
+type RequestBodyDecodeError struct {
 	Status  int
 	Message string
 }
 
-func (e *RequestDecodeError) Error() string {
+func (e *RequestBodyDecodeError) Error() string {
 	return e.Message
 }
 
-func (e *RequestDecodeError) Is(target error) bool {
-	return target == ErrRequestDecode
+func (e *RequestBodyDecodeError) Is(target error) bool {
+	return target == ErrRequestBodyDecode
 }
 
-func (e *RequestDecodeError) HTTPResponse() apires.ErrorDetails {
+func (e *RequestBodyDecodeError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: e.Status,
 		Message:        pointer.New(e.Error()),
