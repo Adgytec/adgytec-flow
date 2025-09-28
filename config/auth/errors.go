@@ -61,7 +61,9 @@ func (e *AuthActionFailedError) HTTPResponse() apires.ErrorDetails {
 	}
 }
 
-type InvalidAccessTokenError struct{}
+type InvalidAccessTokenError struct {
+	cause error
+}
 
 func (e *InvalidAccessTokenError) Error() string {
 	return "Invalid access token."
@@ -69,6 +71,10 @@ func (e *InvalidAccessTokenError) Error() string {
 
 func (e *InvalidAccessTokenError) Is(target error) bool {
 	return target == ErrInvalidAccessToken
+}
+
+func (e *InvalidAccessTokenError) Unwrap() error {
+	return e.cause
 }
 
 func (e *InvalidAccessTokenError) HTTPResponse() apires.ErrorDetails {
