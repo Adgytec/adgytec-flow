@@ -29,7 +29,9 @@ func NewCloudfrontCDNSigner() (CDN, error) {
 
 	privKey, err := sign.LoadPEMPrivKeyPKCS8AsSigner(strings.NewReader(key))
 	if err != nil {
-		return nil, ErrInvalidCloudfrontPrivateKey
+		return nil, &InvalidCloudfrontPrivateKeyError{
+			cause: err,
+		}
 	}
 
 	return &cdnCloudfront{

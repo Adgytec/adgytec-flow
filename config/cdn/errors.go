@@ -1,8 +1,18 @@
 package cdn
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+)
 
 var (
-	ErrInvalidCloudfrontConfig     = errors.New("invalid cloudfront config")
-	ErrInvalidCloudfrontPrivateKey = errors.New("invalid cloudfront private key")
+	ErrInvalidCloudfrontConfig = errors.New("invalid cloudfront config")
 )
+
+type InvalidCloudfrontPrivateKeyError struct {
+	cause error
+}
+
+func (e *InvalidCloudfrontPrivateKeyError) Error() string {
+	return fmt.Sprintf("invalid cloudfront private key: %s", e.cause)
+}
