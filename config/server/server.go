@@ -49,7 +49,11 @@ func NewHttpServer(port string) (Server, error) {
 		return nil, appConfigErr
 	}
 
-	appinit.EnsureServicesInitialization(appConfig)
+	appInitErr := appinit.EnsureServicesInitialization(appConfig)
+	if appInitErr != nil {
+		return nil, appInitErr
+	}
+
 	mux := router.NewApplicationRouter(appConfig)
 
 	cronCtx, cronCancel := context.WithCancel(context.Background())
