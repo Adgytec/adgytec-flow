@@ -22,7 +22,7 @@ func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID strin
 		},
 	)
 	if presignErr != nil {
-		log.Printf("error generating presing upload part url for '%s', part-number: %d, cause: %v", key, partNumber, presignErr)
+		log.Printf("error generating presign upload part url for '%s', part-number: %d, cause: %v", key, partNumber, presignErr)
 		return "", presignErr
 	}
 

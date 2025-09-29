@@ -15,5 +15,5 @@ type Storage interface {
 	NewMultipartUpload(ctx context.Context, key string) (string, error)
 	NewPresignUploadPart(ctx context.Context, key, uploadID string, partNumber int32) (string, error)
 	CompleteMultipartUpload(ctx context.Context, key, uploadID string, partsInfo types.CompletedMultipartUpload) error
-	DeleteObjectTempTag(ctx context.Context, key string) error
+	DeleteObjectTags(ctx context.Context, key string) error
 }
