@@ -11,8 +11,9 @@ func (s *s3Client) NewMultipartUpload(ctx context.Context, key string) (string, 
 	newMultipartUploadOutput, newMultipartUploadErr := s.client.CreateMultipartUpload(
 		ctx,
 		&s3.CreateMultipartUploadInput{
-			Bucket: aws.String(s.bucket),
-			Key:    aws.String(key),
+			Bucket:  aws.String(s.bucket),
+			Key:     aws.String(key),
+			Tagging: aws.String("status=temp"),
 		},
 	)
 	if newMultipartUploadErr != nil {
