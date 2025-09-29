@@ -3,16 +3,18 @@ package storage
 import (
 	"log"
 	"os"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 type s3Client struct {
-	client        *s3.Client
-	presignClient *s3.PresignClient
-	bucket        string
-	bucketRegion  string
+	client            *s3.Client
+	presignClient     *s3.PresignClient
+	bucket            string
+	bucketRegion      string
+	presignExpiration time.Duration
 }
 
 func NewS3Client(awsConfig aws.Config) (Storage, error) {
@@ -27,9 +29,10 @@ func NewS3Client(awsConfig aws.Config) (Storage, error) {
 
 	client := s3.NewFromConfig(awsConfig)
 	return &s3Client{
-		client:        client,
-		presignClient: s3.NewPresignClient(client),
-		bucket:        bucket,
-		bucketRegion:  bucketRegion,
+		client:            client,
+		presignClient:     s3.NewPresignClient(client),
+		bucket:            bucket,
+		bucketRegion:      bucketRegion,
+		presignExpiration: time.Hour,
 	}, nil
 }
