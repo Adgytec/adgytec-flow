@@ -1,7 +1,11 @@
 package storage
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"context"
 
-func (s *s3Client) NewMultipartUpload(key string) (string, error) {
+	"github.com/Adgytec/adgytec-flow/utils/core"
+)
+
+func (s *s3Client) NewMultipartUpload(ctx context.Context, key string) (string, error) {
 	return "", core.ErrNotImplemented
 }

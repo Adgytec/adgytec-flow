@@ -65,7 +65,7 @@ func (s *mediaService) prepareSingleMediaItem(
 	if val.Size >= singlepartUploadLimit {
 		// multipart upload
 		output.UploadType = db.GlobalMediaUploadTypeMultipart
-		upload, err := s.prepareMultipartUpload(mediaKey, val.Size)
+		upload, err := s.prepareMultipartUpload(ctx, mediaKey, val.Size)
 		if err != nil {
 			return output, zero, err
 		}
@@ -101,10 +101,11 @@ type multipartUploadResult struct {
 }
 
 func (s *mediaService) prepareMultipartUpload(
+	ctx context.Context,
 	mediaKey string,
 	size int64,
 ) (multipartUploadResult, error) {
-	uploadID, err := s.storage.NewMultipartUpload(mediaKey)
+	uploadID, err := s.storage.NewMultipartUpload(ctx, mediaKey)
 	if err != nil {
 		return multipartUploadResult{}, err
 	}
