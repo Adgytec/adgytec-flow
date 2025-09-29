@@ -118,7 +118,7 @@ func (s *mediaService) prepareMultipartUpload(
 		partSize := min(multipartPartSize, valSize)
 		valSize -= partSize
 
-		presignURL, err := s.storage.NewPresignUploadPart(mediaKey, uploadID, int32(part))
+		presignURL, err := s.storage.NewPresignUploadPart(ctx, mediaKey, uploadID, int32(part))
 		if err != nil {
 			return multipartUploadResult{}, err
 		}
