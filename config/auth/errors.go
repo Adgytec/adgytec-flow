@@ -46,7 +46,10 @@ type AuthActionFailedError struct {
 }
 
 func (e *AuthActionFailedError) Error() string {
-	return fmt.Sprintf("Auth action failed: Action Type: '%s', Username: %s, Reason: %v", e.actionType, e.username, e.cause)
+	if e.username != "" {
+		return fmt.Sprintf("Auth action failed: Action Type: '%s', Username: %s, Reason: %v", e.actionType, e.username, e.cause)
+	}
+	return fmt.Sprintf("Auth action failed: Action Type: '%s', Reason: %v", e.actionType, e.cause)
 }
 
 func (e *AuthActionFailedError) Is(target error) bool {
