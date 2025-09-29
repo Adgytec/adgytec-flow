@@ -13,10 +13,10 @@ func (s *s3Client) NewPresignPut(ctx context.Context, key string) (string, error
 		&s3.PutObjectInput{
 			Bucket:  aws.String(s.bucket),
 			Key:     aws.String(key),
-			Tagging: aws.String("status=temp"),
+			Tagging: aws.String(tempObjectTag),
 		},
 		func(po *s3.PresignOptions) {
-			po.Expires = s.presignExpiration
+			po.Expires = presignExpiration
 		},
 	)
 	if presignErr != nil {

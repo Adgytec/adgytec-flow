@@ -1,6 +1,12 @@
 package storage
 
-import "context"
+import (
+	"context"
+	"time"
+)
+
+const tempObjectTag = "status=temp"
+const presignExpiration = time.Hour
 
 type Storage interface {
 	NewPresignPut(ctx context.Context, key string) (string, error)

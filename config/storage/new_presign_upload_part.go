@@ -8,7 +8,7 @@ import (
 )
 
 func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID string, partNumber int32) (string, error) {
-	presignHTTPReq, presingErr := s.presignClient.PresignUploadPart(
+	presignHTTPReq, presignErr := s.presignClient.PresignUploadPart(
 		ctx,
 		&s3.UploadPartInput{
 			Bucket:     aws.String(s.bucket),
@@ -17,11 +17,11 @@ func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID strin
 			UploadId:   aws.String(uploadID),
 		},
 		func(po *s3.PresignOptions) {
-			po.Expires = s.presignExpiration
+			po.Expires = presignExpiration
 		},
 	)
-	if presingErr != nil {
-		return "", presingErr
+	if presignErr != nil {
+		return "", presignErr
 	}
 
 	return presignHTTPReq.URL, nil
