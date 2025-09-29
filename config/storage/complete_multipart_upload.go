@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -18,5 +19,10 @@ func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID st
 			MultipartUpload: &partsInfo,
 		},
 	)
-	return completeUploadErr
+	if completeUploadErr != nil {
+		log.Printf("error completing multipart upload for '%s': %v", key, completeUploadErr)
+		return completeUploadErr
+	}
+
+	return nil
 }

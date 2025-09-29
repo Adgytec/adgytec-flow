@@ -2,6 +2,7 @@ package storage
 
 import (
 	"context"
+	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -15,5 +16,9 @@ func (s *s3Client) DeleteObjectTempTag(ctx context.Context, key string) error {
 			Key:    aws.String(key),
 		},
 	)
-	return deleteTagErr
+	if deleteTagErr != nil {
+		log.Printf("error deleting s3 object '%s': %v", key, deleteTagErr)
+		return deleteTagErr
+	}
+	return nil
 }
