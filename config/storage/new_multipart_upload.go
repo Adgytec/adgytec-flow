@@ -3,9 +3,21 @@ package storage
 import (
 	"context"
 
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 func (s *s3Client) NewMultipartUpload(ctx context.Context, key string) (string, error) {
-	return "", core.ErrNotImplemented
+	newMultipartUploadOutput, newMultipartUploadErr := s.client.CreateMultipartUpload(
+		ctx,
+		&s3.CreateMultipartUploadInput{
+			Bucket: aws.String(s.bucket),
+			Key:    aws.String(key),
+		},
+	)
+	if newMultipartUploadErr != nil {
+		return "", newMultipartUploadErr
+	}
+
+	return *newMultipartUploadOutput.UploadId, nil
 }
