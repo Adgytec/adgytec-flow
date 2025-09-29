@@ -21,12 +21,14 @@ const (
 	defaultConnectTimeout    = time.Second * 5
 )
 
-func dbConfig() *pgxpool.Config {
+func dbConfig() (*pgxpool.Config, error) {
 	DATABASE_URL := os.Getenv("DB_STRING")
 
 	dbConfig, err := pgxpool.ParseConfig(DATABASE_URL)
 	if err != nil {
-		log.Fatalf("error getting database config: %s", err)
+		return nil, &InvalidDBConfigError{
+			cause: err,
+		}
 	}
 
 	dbConfig.MaxConns = defaultMaxConns
@@ -36,23 +38,30 @@ func dbConfig() *pgxpool.Config {
 	dbConfig.HealthCheckPeriod = defaultHealthCheckPeriod
 	dbConfig.ConnConfig.ConnectTimeout = defaultConnectTimeout
 
-	return dbConfig
+	return dbConfig, nil
 }
 
-func newPgxConnPool() *pgxpool.Pool {
-	config := dbConfig()
+func newPgxConnPool() (*pgxpool.Pool, error) {
+	config, configErr := dbConfig()
+	if configErr != nil {
+		return nil, configErr
+	}
 
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 	if err != nil {
-		log.Fatalf("error creating coneection pool: %s", err)
+		return nil, &CreatingDBConnectionPoolError{
+			cause: err,
+		}
 	}
 
 	err = pool.Ping(context.Background())
 	if err != nil {
-		log.Fatalf("error pinging database: %s", err)
+		return nil, &PingingDBError{
+			cause: err,
+		}
 	}
 
-	return pool
+	return pool, nil
 }
 
 type pgxConnection struct {
@@ -95,12 +104,16 @@ func (c *pgxConnection) Shutdown() {
 	c.connPool.Close()
 }
 
-func NewPgxDbConnectionPool() DatabaseWithShutdown {
+func NewPgxDbConnectionPool() (DatabaseWithShutdown, error) {
 	log.Println("init db pgx pool")
 
-	connPool := newPgxConnPool()
+	connPool, connecErr := newPgxConnPool()
+	if connecErr != nil {
+		return nil, connecErr
+	}
+
 	return &pgxConnection{
 		connPool: connPool,
 		queries:  db.New(connPool),
-	}
+	}, nil
 }

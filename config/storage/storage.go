@@ -1,10 +1,19 @@
 package storage
 
+import (
+	"context"
+	"time"
+
+	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+)
+
+const tempObjectTag = "status=temp"
+const presignExpiration = time.Hour
+
 type Storage interface {
-	NewPresignPut(key string) (string, error)
-	NewMultipartUpload(key string) (string, error)
-	NewPresignUploadPart(key, uploadID string, partNumber int32) (string, error)
-	CompleteMultipartUpload(key, uploadID string) error
-	AbortMultipartUpload(key, uploadID string) error
-	DeleteObject(key string) error
+	NewPresignPut(ctx context.Context, key string) (string, error)
+	NewMultipartUpload(ctx context.Context, key string) (string, error)
+	NewPresignUploadPart(ctx context.Context, key, uploadID string, partNumber int32) (string, error)
+	CompleteMultipartUpload(ctx context.Context, key, uploadID string, partsInfo types.CompletedMultipartUpload) error
+	DeleteObjectTags(ctx context.Context, key string) error
 }

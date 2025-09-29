@@ -14,6 +14,10 @@ var (
 	ErrAuthActionFailed   = errors.New("auth action failed")
 	ErrInvalidAccessToken = errors.New("invalid access token")
 	ErrInvalidAPIKey      = errors.New("invalid api key")
+	ErrHashMismatch       = errors.New("hash mismatch")
+	ErrInvalidHash        = errors.New("invalid hash")
+	ErrInvalidHMACSecret  = errors.New("invalid hmac secret")
+	ErrInvalidAuthConfig  = errors.New("invalid auth config")
 )
 
 type UserExistsError struct {
@@ -37,13 +41,15 @@ func (e *UserExistsError) HTTPResponse() apires.ErrorDetails {
 
 type AuthActionFailedError struct {
 	username   string
-	reason     string
 	actionType authActionType
 	cause      error
 }
 
 func (e *AuthActionFailedError) Error() string {
-	return fmt.Sprintf("Auth action failed.\nAction Type: '%s' \nUsername: %s\nReason: %s", e.actionType, e.username, e.reason)
+	if e.username != "" {
+		return fmt.Sprintf("Auth action failed: Action Type: '%s', Username: %s, Reason: %v", e.actionType, e.username, e.cause)
+	}
+	return fmt.Sprintf("Auth action failed: Action Type: '%s', Reason: %v", e.actionType, e.cause)
 }
 
 func (e *AuthActionFailedError) Is(target error) bool {
@@ -55,13 +61,15 @@ func (e *AuthActionFailedError) Unwrap() error {
 }
 
 func (e *AuthActionFailedError) HTTPResponse() apires.ErrorDetails {
-	// TODO: handle status based on e.cause
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusInternalServerError,
+		Message:        pointer.New(http.StatusText(http.StatusInternalServerError)),
 	}
 }
 
-type InvalidAccessTokenError struct{}
+type InvalidAccessTokenError struct {
+	cause error
+}
 
 func (e *InvalidAccessTokenError) Error() string {
 	return "Invalid access token."
@@ -69,6 +77,10 @@ func (e *InvalidAccessTokenError) Error() string {
 
 func (e *InvalidAccessTokenError) Is(target error) bool {
 	return target == ErrInvalidAccessToken
+}
+
+func (e *InvalidAccessTokenError) Unwrap() error {
+	return e.cause
 }
 
 func (e *InvalidAccessTokenError) HTTPResponse() apires.ErrorDetails {
@@ -93,4 +105,46 @@ func (e *InvalidAPIKeyError) HTTPResponse() apires.ErrorDetails {
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
+}
+
+type HashMismatchError struct{}
+
+func (e *HashMismatchError) Error() string {
+	return ErrHashMismatch.Error()
+}
+
+func (e *HashMismatchError) Is(target error) bool {
+	return target == ErrHashMismatch
+}
+
+func (e *HashMismatchError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidHashError struct{}
+
+func (e *InvalidHashError) Error() string {
+	return ErrInvalidHash.Error()
+}
+
+func (e *InvalidHashError) Is(target error) bool {
+	return target == ErrInvalidHash
+}
+
+func (e *InvalidHashError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type JwtKeyFuncError struct {
+	cause error
+}
+
+func (e *JwtKeyFuncError) Error() string {
+	return fmt.Sprintf("failed to create keyfunc from JWK set URL: %v", e.cause)
 }

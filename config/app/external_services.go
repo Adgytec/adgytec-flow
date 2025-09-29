@@ -1,6 +1,8 @@
 package app
 
 import (
+	"context"
+
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	configAWS "github.com/Adgytec/adgytec-flow/config/aws"
 	"github.com/Adgytec/adgytec-flow/config/cache"
@@ -39,7 +41,7 @@ func (s *externalServices) CDN() cdn.CDN {
 	return s.cdn
 }
 
-func (s *externalServices) Shutdown() {
+func (s *externalServices) Shutdown(ctx context.Context) {
 	s.database.Shutdown()
 }
 
@@ -47,15 +49,38 @@ func (s *externalServices) CacheClient() cache.CacheClient {
 	return s.cacheClient
 }
 
-func newExternalServices() appExternalServices {
-	awsConfig := configAWS.NewAWSConfig()
+func newExternalServices() (appExternalServices, error) {
+	awsConfig, awsConfigErr := configAWS.NewAWSConfig()
+	if awsConfigErr != nil {
+		return nil, awsConfigErr
+	}
+
+	authClient, authErr := auth.NewCognitoAuthClient(awsConfig)
+	if authErr != nil {
+		return nil, authErr
+	}
+
+	dbPool, dbErr := database.NewPgxDbConnectionPool()
+	if dbErr != nil {
+		return nil, dbErr
+	}
+
+	storageClient, storageErr := storage.NewS3Client(awsConfig)
+	if storageErr != nil {
+		return nil, storageErr
+	}
+
+	cdnClient, cdnErr := cdn.NewCloudfrontCDNSigner()
+	if cdnErr != nil {
+		return nil, cdnErr
+	}
 
 	return &externalServices{
-		auth:          auth.NewCognitoAuthClient(awsConfig),
-		database:      database.NewPgxDbConnectionPool(),
+		auth:          authClient,
+		database:      dbPool,
+		storage:       storageClient,
 		communication: communication.NewAWSCommunicationClient(awsConfig),
-		storage:       storage.NewS3Client(awsConfig),
-		cdn:           cdn.NewCloudfrontCDNSigner(),
+		cdn:           cdnClient,
 		cacheClient:   cache.NewInMemoryCacheClient(),
-	}
+	}, nil
 }

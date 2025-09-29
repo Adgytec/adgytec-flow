@@ -1,12 +1,14 @@
 package auth
 
 import (
-	"github.com/Adgytec/adgytec-flow/utils/core"
+	"context"
+	"os"
+
 	"github.com/google/uuid"
 )
 
 type Auth interface {
-	NewUser(username string) error
+	NewUser(ctx context.Context, username string) error
 	ValidateUserAccessToken(accessToken string) (uuid.UUID, error)
 
 	// this only checks if the API key is in required format as described in the application doc
@@ -17,27 +19,25 @@ type Auth interface {
 }
 
 // authCommon contains method impl that are independent of external authentication provider
-type authCommon struct{}
-
-func (a *authCommon) ValidateAPIKey(apiKey string) (uuid.UUID, error) {
-	return uuid.Nil, core.ErrNotImplemented
+type authCommon struct {
+	secret []byte
 }
 
-func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
-	return "", core.ErrNotImplemented
-}
+func newAuthCommon() (*authCommon, error) {
+	hmacSecret := os.Getenv("HMAC_SECRET")
+	if hmacSecret == "" {
+		return nil, ErrInvalidHMACSecret
+	}
 
-func (a *authCommon) CompareSignedHash(hash string, payload ...[]byte) error {
-	return core.ErrNotImplemented
-}
-
-func newAuthCommon() authCommon {
-	return authCommon{}
+	return &authCommon{
+		secret: []byte(hmacSecret),
+	}, nil
 }
 
 // used in auth errors
 type authActionType string
 
 const (
-	authActionTypeCreate authActionType = "auth-user-create"
+	authActionTypeCreate              authActionType = "auth-user-create"
+	authActionTypeValidateAccessToken authActionType = "auth-validate-user-access-token"
 )

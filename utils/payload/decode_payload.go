@@ -31,21 +31,21 @@ func decodeRequestBody[T any](w http.ResponseWriter, r *http.Request) (T, error)
 		switch {
 		case errors.As(err, &syntaxError):
 			message := fmt.Sprintf("Request body contains badly-formed JSON (at position %d)", syntaxError.Offset)
-			return zero, &RequestDecodeError{
+			return zero, &RequestBodyDecodeError{
 				Status:  http.StatusBadRequest,
 				Message: message,
 			}
 
 		case errors.Is(err, io.ErrUnexpectedEOF):
 			message := "Request body contains badly-formed JSON"
-			return zero, &RequestDecodeError{
+			return zero, &RequestBodyDecodeError{
 				Status:  http.StatusBadRequest,
 				Message: message,
 			}
 
 		case errors.As(err, &unmarshalTypeError):
 			message := fmt.Sprintf("Request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
-			return zero, &RequestDecodeError{
+			return zero, &RequestBodyDecodeError{
 				Status:  http.StatusBadRequest,
 				Message: message,
 			}
@@ -53,21 +53,21 @@ func decodeRequestBody[T any](w http.ResponseWriter, r *http.Request) (T, error)
 		case strings.HasPrefix(err.Error(), "json: unknown field "):
 			fieldName := strings.TrimPrefix(err.Error(), "json: unknown field ")
 			message := fmt.Sprintf("Request body contains unknown field %s", fieldName)
-			return zero, &RequestDecodeError{
+			return zero, &RequestBodyDecodeError{
 				Status:  http.StatusBadRequest,
 				Message: message,
 			}
 
 		case errors.Is(err, io.EOF):
 			message := "Request body must not be empty"
-			return zero, &RequestDecodeError{
+			return zero, &RequestBodyDecodeError{
 				Status:  http.StatusBadRequest,
 				Message: message,
 			}
 
 		case err.Error() == "http: request body too large":
 			message := "Request body must not be larger than 8 kilobyte."
-			return zero, &RequestDecodeError{
+			return zero, &RequestBodyDecodeError{
 				Status:  http.StatusRequestEntityTooLarge,
 				Message: message,
 			}
@@ -81,7 +81,7 @@ func decodeRequestBody[T any](w http.ResponseWriter, r *http.Request) (T, error)
 	err = jsonDecoder.Decode(&struct{}{})
 	if !errors.Is(err, io.EOF) {
 		message := "Request body must only contain a single JSON object"
-		return zero, &RequestDecodeError{
+		return zero, &RequestBodyDecodeError{
 			Status:  http.StatusBadRequest,
 			Message: message,
 		}

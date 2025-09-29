@@ -37,15 +37,23 @@ func (s *httpServer) Shutdown() error {
 		s.cronStop()
 	}
 
-	s.app.Shutdown()
+	s.app.Shutdown(shutdownCtx)
 	err := s.server.Shutdown(shutdownCtx)
 
 	return err
 }
 
-func NewHttpServer(port string) Server {
-	appConfig := app.NewApp()
-	appinit.EnsureServicesInitialization(appConfig)
+func NewHttpServer(port string) (Server, error) {
+	appConfig, appConfigErr := app.NewApp()
+	if appConfigErr != nil {
+		return nil, appConfigErr
+	}
+
+	appInitErr := appinit.EnsureServicesInitialization(appConfig)
+	if appInitErr != nil {
+		return nil, appInitErr
+	}
+
 	mux := router.NewApplicationRouter(appConfig)
 
 	cronCtx, cronCancel := context.WithCancel(context.Background())
@@ -72,5 +80,5 @@ func NewHttpServer(port string) Server {
 		server:   &appServer,
 		app:      appConfig,
 		cronStop: cronCancel,
-	}
+	}, nil
 }
