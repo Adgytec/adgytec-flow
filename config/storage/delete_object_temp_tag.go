@@ -17,7 +17,7 @@ func (s *s3Client) DeleteObjectTempTag(ctx context.Context, key string) error {
 		},
 	)
 	if deleteTagErr != nil {
-		log.Printf("error deleting s3 object '%s': %v", key, deleteTagErr)
+log.Printf("error deleting s3 object tags for '%s': %v", key, deleteTagErr)
 		return deleteTagErr
 	}
 	return nil
