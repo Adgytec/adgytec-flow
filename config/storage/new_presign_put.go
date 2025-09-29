@@ -1,7 +1,29 @@
 package storage
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"context"
+	"log"
 
-func (s *s3Client) NewPresignPut(key string) (string, error) {
-	return "", core.ErrNotImplemented
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+)
+
+func (s *s3Client) NewPresignPut(ctx context.Context, key string) (string, error) {
+	presignHTTPReq, presignErr := s.presignClient.PresignPutObject(
+		ctx,
+		&s3.PutObjectInput{
+			Bucket:  aws.String(s.bucket),
+			Key:     aws.String(key),
+			Tagging: aws.String(tempObjectTag),
+		},
+		func(po *s3.PresignOptions) {
+			po.Expires = presignExpiration
+		},
+	)
+	if presignErr != nil {
+		log.Printf("error creating new presign put url for '%s': %v", key, presignErr)
+		return "", presignErr
+	}
+
+	return presignHTTPReq.URL, nil
 }

@@ -65,6 +65,11 @@ func newExternalServices() (appExternalServices, error) {
 		return nil, dbErr
 	}
 
+	storageClient, storageErr := storage.NewS3Client(awsConfig)
+	if storageErr != nil {
+		return nil, storageErr
+	}
+
 	cdnClient, cdnErr := cdn.NewCloudfrontCDNSigner()
 	if cdnErr != nil {
 		return nil, cdnErr
@@ -73,8 +78,8 @@ func newExternalServices() (appExternalServices, error) {
 	return &externalServices{
 		auth:          authClient,
 		database:      dbPool,
+		storage:       storageClient,
 		communication: communication.NewAWSCommunicationClient(awsConfig),
-		storage:       storage.NewS3Client(awsConfig),
 		cdn:           cdnClient,
 		cacheClient:   cache.NewInMemoryCacheClient(),
 	}, nil
