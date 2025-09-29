@@ -1,7 +1,9 @@
 package storage
 
+import "context"
+
 type Storage interface {
-	NewPresignPut(key string) (string, error)
+	NewPresignPut(ctx context.Context, key string) (string, error)
 	NewMultipartUpload(key string) (string, error)
 	NewPresignUploadPart(key, uploadID string, partNumber int32) (string, error)
 	CompleteMultipartUpload(key, uploadID string) error

@@ -16,6 +16,7 @@ func (s *mediaService) validateNewMediaItemCount(input []NewMediaItemInputWithBu
 }
 
 func (s *mediaService) prepareMediaItems(
+	ctx context.Context,
 	input []NewMediaItemInputWithBucketPrefix,
 ) ([]NewMediaItemOutput, []db.NewMediaItemsParams, error) {
 	outputs := make([]NewMediaItemOutput, 0, len(input))
@@ -37,7 +38,7 @@ func (s *mediaService) prepareMediaItems(
 		mediaKey := val.getMediaItemKey()
 
 		// decide upload type
-		output, param, err := s.prepareSingleMediaItem(mediaID, mediaKey, val)
+		output, param, err := s.prepareSingleMediaItem(ctx, mediaID, mediaKey, val)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -50,6 +51,7 @@ func (s *mediaService) prepareMediaItems(
 }
 
 func (s *mediaService) prepareSingleMediaItem(
+	ctx context.Context,
 	mediaID uuid.UUID,
 	mediaKey string,
 	val NewMediaItemInputWithBucketPrefix,
@@ -74,7 +76,7 @@ func (s *mediaService) prepareSingleMediaItem(
 	} else {
 		// singlepart upload
 		output.UploadType = db.GlobalMediaUploadTypeSinglepart
-		presignURL, err := s.storage.NewPresignPut(mediaKey)
+		presignURL, err := s.storage.NewPresignPut(ctx, mediaKey)
 		if err != nil {
 			return output, zero, err
 		}
@@ -154,7 +156,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 		return nil, itemCountErr
 	}
 
-	outputs, dbParams, err := s.prepareMediaItems(input)
+	outputs, dbParams, err := s.prepareMediaItems(ctx, input)
 	if err != nil {
 		return nil, err
 	}
