@@ -1,7 +1,20 @@
 package storage
 
-import "github.com/Adgytec/adgytec-flow/utils/core"
+import (
+	"context"
 
-func (s *s3Client) CompleteMultipartUpload(key, uploadID string) error {
-	return core.ErrNotImplemented
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+)
+
+func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID string) error {
+	_, completeUploadErr := s.client.CompleteMultipartUpload(
+		ctx,
+		&s3.CompleteMultipartUploadInput{
+			Bucket:   aws.String(s.bucket),
+			Key:      aws.String(key),
+			UploadId: aws.String(uploadID),
+		},
+	)
+	return completeUploadErr
 }
