@@ -7,7 +7,7 @@ CREATE TYPE global.actor_type AS ENUM(
 );
 
 CREATE TABLE IF NOT EXISTS archive.updated_records (
-	id UUID PRIMARY KEY DEFAULT global.uuid_generate_v7 (),
+	id UUID PRIMARY KEY DEFAULT uuidv7 (),
 	table_name TEXT NOT NULL,
 	old JSONB NOT NULL,
 	new JSONB NOT NULL,
