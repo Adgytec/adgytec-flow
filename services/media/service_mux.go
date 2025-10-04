@@ -21,6 +21,7 @@ func (m *mediaServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
 	mux.Post("/{mediaID}/post-processing", m.postProcessingMediaItems)
+	mux.Post("/{mediaID}/complete", mediaUploadComplete)
 
 	return mux
 }
