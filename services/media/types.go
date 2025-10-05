@@ -1,6 +1,7 @@
 package media
 
 import (
+	"fmt"
 	"path"
 	"path/filepath"
 
@@ -11,6 +12,7 @@ import (
 )
 
 type NewMediaItem struct {
+	ID           uuid.UUID
 	Size         int64
 	Name         string
 	RequiredMime []string
@@ -19,6 +21,17 @@ type NewMediaItem struct {
 // Validate() validates the input values
 func (mediaItem NewMediaItem) Validate() error {
 	validationErr := validation.ValidateStruct(&mediaItem,
+		validation.Field(
+			&mediaItem.ID,
+			validation.Required,
+			validation.By(func(val any) error {
+				id := val.(uuid.UUID)
+				if id == uuid.Nil {
+					return fmt.Errorf("id cannot be nil UUID")
+				}
+				return nil
+			}),
+		),
 		validation.Field(
 			&mediaItem.Size,
 			validation.Required,
@@ -66,7 +79,7 @@ type MultipartPartUpload struct {
 }
 
 type MediaUploadDetails struct {
-	MediaID               uuid.UUID                  `json:"mediaID"`
+	ID                    uuid.UUID                  `json:"mediaID"`
 	UploadType            db.GlobalMediaUploadType   `json:"uploadType"`
 	PresignPut            *string                    `json:"presignPut,omitempty"`
 	MultipartPresignPart  []MultipartPartUpload      `json:"multipartPresignPart,omitempty"`
