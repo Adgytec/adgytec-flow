@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"path"
 	"path/filepath"
+	"strings"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -12,10 +13,9 @@ import (
 )
 
 type NewMediaItem struct {
-	ID           uuid.UUID
-	Size         int64
-	Name         string
-	RequiredMime []string
+	ID   uuid.UUID
+	Size int64
+	Name string
 }
 
 // Validate() validates the input values
@@ -41,11 +41,7 @@ func (mediaItem NewMediaItem) Validate() error {
 			&mediaItem.Name,
 			validation.Required,
 		),
-		validation.Field(
-			&mediaItem.RequiredMime,
-			validation.Required,
-			validation.Each(validation.Required),
-		))
+	)
 
 	if validationErr != nil {
 		return &core.FieldValidationError{
@@ -56,20 +52,37 @@ func (mediaItem NewMediaItem) Validate() error {
 	return nil
 }
 
-func (mediaItem NewMediaItem) getMediaItemExtension() string {
-	return filepath.Ext(mediaItem.Name)
-}
-
-type NewMediaItemWithBucketPrefix struct {
+type NewMediaItemWithStorageDetails struct {
 	NewMediaItem
 	BucketPrefix string
+	RequiredMime []string
 }
 
-func (mediaItem NewMediaItemWithBucketPrefix) getMediaItemKey() string {
+func (mediaItem NewMediaItemWithStorageDetails) getMediaItemKey() string {
 	return path.Join(
 		mediaItem.BucketPrefix,
-		uuid.NewString()+mediaItem.getMediaItemExtension(),
+		uuid.NewString()+filepath.Ext(mediaItem.Name),
 	)
+}
+
+func (mediaItem NewMediaItemWithStorageDetails) getRequiredMime() []string {
+	zero := []string{zeroMime}
+	requiredMime := make([]string, 0, len(mediaItem.RequiredMime))
+
+	for _, m := range mediaItem.RequiredMime {
+		m = strings.TrimSpace(m)
+		if m == "" {
+			continue // skip empty
+		}
+
+		requiredMime = append(requiredMime, m)
+	}
+
+	if len(requiredMime) == 0 {
+		return zero
+	}
+
+	return requiredMime
 }
 
 type MultipartPartUpload struct {

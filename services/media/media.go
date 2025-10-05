@@ -18,6 +18,8 @@ const multipartPartSize int64 = 5 * (1 << 20)
 
 const mediaUploadLimit int = 50
 
+const zeroMime string = "application/octet-stream"
+
 type mediaServiceParams interface {
 	Storage() storage.Storage
 	Database() database.Database
