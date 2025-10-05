@@ -94,3 +94,16 @@ type NewMediaItemOutput struct {
 	PresignPut           *string                     `json:"presignPut,omitempty"`
 	MultipartPresignPart []MultipartPartUploadOutput `json:"multipartPresignPart,omitempty"`
 }
+
+type MediaUploadDetails struct {
+	MediaID               uuid.UUID                   `json:"mediaID"`
+	UploadType            db.GlobalMediaUploadType    `json:"uploadType"`
+	PresignPut            *string                     `json:"presignPut,omitempty"`
+	MultipartPresignPart  []MultipartPartUploadOutput `json:"multipartPresignPart,omitempty"`
+	CompleteUploadActions MediaUploadCompleteActions  `json:"completeUploadActions"`
+}
+
+type MediaUploadCompleteActions struct {
+	Success string `json:"success"`
+	Failed  string `json:"failed"`
+}
