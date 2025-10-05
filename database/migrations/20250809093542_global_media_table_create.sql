@@ -7,8 +7,11 @@ CREATE TYPE global.media_upload_type AS ENUM(
 
 CREATE TYPE global.media_status AS ENUM(
 	'pending',
+	'upload-failed',
+	'complete-multipart-failed',
+	'failed-validation',
 	'processing',
-	'failed',
+	'processing-failed',
 	'completed'
 );
 
