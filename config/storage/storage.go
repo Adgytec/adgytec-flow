@@ -8,7 +8,6 @@ import (
 	"github.com/google/uuid"
 )
 
-const tempObjectTag = "status=temp"
 const presignExpiration = time.Hour
 
 type Storage interface {
