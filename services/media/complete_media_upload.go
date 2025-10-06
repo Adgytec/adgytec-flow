@@ -2,4 +2,4 @@ package media
 
 import "net/http"
 
-func completeMediaUpload(w http.ResponseWriter, r *http.Request) {}
+func (s *mediaService) completeMultipartUpload(w http.ResponseWriter, r *http.Request) {}
