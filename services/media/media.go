@@ -7,17 +7,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-// 16 mega byte
-const singlepartUploadLimit int64 = 16 * (1 << 20)
-
-// 1 giga byte
-const multipartUploadLimit int64 = 1 * (1 << 30)
-
-// 5 mega byte
-const multipartPartSize int64 = 5 * (1 << 20)
-
-const mediaUploadLimit int = 50
-
 const zeroMime string = "application/octet-stream"
 
 type mediaServiceParams interface {
