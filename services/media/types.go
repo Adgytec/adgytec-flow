@@ -61,7 +61,7 @@ type NewMediaItemWithStorageDetails struct {
 func (mediaItem NewMediaItemWithStorageDetails) getMediaItemKey() string {
 	return path.Join(
 		mediaItem.BucketPrefix,
-		uuid.NewString()+filepath.Ext(mediaItem.Name),
+		mediaItem.ID.String()+filepath.Ext(mediaItem.Name),
 	)
 }
 
