@@ -12,14 +12,14 @@ import (
 	"github.com/google/uuid"
 )
 
-type NewMediaItem struct {
+type NewMediaItemInfo struct {
 	ID   uuid.UUID
 	Size int64
 	Name string
 }
 
 // Validate() validates the input values
-func (mediaItem NewMediaItem) Validate() error {
+func (mediaItem NewMediaItemInfo) Validate() error {
 	validationErr := validation.ValidateStruct(&mediaItem,
 		validation.Field(
 			&mediaItem.ID,
@@ -52,20 +52,20 @@ func (mediaItem NewMediaItem) Validate() error {
 	return nil
 }
 
-type NewMediaItemWithStorageDetails struct {
-	NewMediaItem
+type NewMediaItemInfoWithStorageDetails struct {
+	NewMediaItemInfo
 	BucketPrefix string
 	RequiredMime []string
 }
 
-func (mediaItem NewMediaItemWithStorageDetails) getMediaItemKey() string {
+func (mediaItem NewMediaItemInfoWithStorageDetails) getMediaItemKey() string {
 	return path.Join(
 		mediaItem.BucketPrefix,
 		mediaItem.ID.String()+filepath.Ext(mediaItem.Name),
 	)
 }
 
-func (mediaItem NewMediaItemWithStorageDetails) getRequiredMime() []string {
+func (mediaItem NewMediaItemInfoWithStorageDetails) getRequiredMime() []string {
 	zero := []string{zeroMime}
 	requiredMime := make([]string, 0, len(mediaItem.RequiredMime))
 
