@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS global.media (
 	upload_id TEXT,
 	created_at TIMESTAMPTZ NOT NULL,
 	CHECK (
+		upload_type = 'multipart'
+		OR status <> 'complete-multipart-failed'
+	),
+	CHECK (
 		(
 			upload_type = 'multipart'
 			AND upload_id IS NOT NULL
