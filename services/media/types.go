@@ -14,7 +14,7 @@ import (
 
 type NewMediaItemInfo struct {
 	ID   uuid.UUID
-	Size int64
+	Size uint64
 	Name string
 }
 
@@ -95,6 +95,6 @@ type MediaUploadDetails struct {
 
 type MultipartPartUpload struct {
 	PresignPut string `json:"presignPut"`
-	PartNumber int32  `json:"partNumber"`
-	PartSize   int64  `json:"partSize"`
+	PartNumber uint16 `json:"partNumber"`
+	PartSize   uint32 `json:"partSize"`
 }
