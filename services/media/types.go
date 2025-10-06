@@ -85,21 +85,16 @@ func (mediaItem NewMediaItemInfoWithStorageDetails) getRequiredMime() []string {
 	return requiredMime
 }
 
+type MediaUploadDetails struct {
+	ID                       uuid.UUID                `json:"mediaID"`
+	UploadType               db.GlobalMediaUploadType `json:"uploadType"`
+	PresignPut               *string                  `json:"presignPut,omitempty"`
+	MultipartPresignPart     []MultipartPartUpload    `json:"multipartPresignPart,omitempty"`
+	MultipartSuccessCallback *string                  `json:"multipartSuccessCallback,omitempty"`
+}
+
 type MultipartPartUpload struct {
 	PresignPut string `json:"presignPut"`
 	PartNumber int32  `json:"partNumber"`
 	PartSize   int64  `json:"partSize"`
-}
-
-type MediaUploadDetails struct {
-	ID                    uuid.UUID                  `json:"mediaID"`
-	UploadType            db.GlobalMediaUploadType   `json:"uploadType"`
-	PresignPut            *string                    `json:"presignPut,omitempty"`
-	MultipartPresignPart  []MultipartPartUpload      `json:"multipartPresignPart,omitempty"`
-	CompleteUploadActions MediaUploadCompleteActions `json:"completeUploadActions"`
-}
-
-type MediaUploadCompleteActions struct {
-	Success string `json:"success"`
-	Failed  string `json:"failed"`
 }
