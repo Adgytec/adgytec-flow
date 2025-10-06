@@ -20,7 +20,7 @@ var (
 )
 
 type MediaTooLargeError struct {
-	Size int
+	Size uint64
 }
 
 func (e *MediaTooLargeError) Error() string {
