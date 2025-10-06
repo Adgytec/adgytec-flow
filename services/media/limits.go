@@ -7,3 +7,9 @@ const (
 	maximumPartsCount     int = 10000
 	mediaUploadLimit      int = 100
 )
+
+type partDetails struct {
+	partSize     int
+	lastPartSize int
+	partCount    int
+}
