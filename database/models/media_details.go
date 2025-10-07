@@ -2,20 +2,20 @@ package models
 
 type ImageDetails struct {
 	OriginalImage *string `json:"originalImage"`
-	Size          *int64  `json:"size"`
-	Status        *string `json:"status,omitempty"`
-	Thumbnail     *string `json:"thumbnail,omitempty"`
-	Small         *string `json:"small,omitempty"`
-	Medium        *string `json:"medium,omitempty"`
-	Large         *string `json:"large,omitempty"`
-	ExtraLarge    *string `json:"extraLarge,omitempty"`
+	Size          *uint64 `json:"size"`
+	Status        *string `json:"status"`
+	Thumbnail     *string `json:"thumbnail"`
+	Small         *string `json:"small"`
+	Medium        *string `json:"medium"`
+	Large         *string `json:"large"`
+	ExtraLarge    *string `json:"extraLarge"`
 }
 
 type VideoDetails struct {
 	OriginalVideo    *string `json:"originalVideo"`
-	Size             *int64  `json:"size"`
-	Status           *string `json:"status,omitempty"`
-	Thumbnail        *string `json:"thumbnail,omitempty"`
-	AdaptiveManifest *string `json:"adaptiveManifest,omitempty"`
-	Preview          *string `json:"preview,omitempty"`
+	Size             *uint64 `json:"size"`
+	Status           *string `json:"status"`
+	Thumbnail        *string `json:"thumbnail"`
+	AdaptiveManifest *string `json:"adaptiveManifest"`
+	Preview          *string `json:"preview"`
 }
