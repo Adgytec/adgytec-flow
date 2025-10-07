@@ -16,7 +16,7 @@ type partDetails struct {
 }
 
 func getPartDetails(size uint64) (*partDetails, error) {
-	if size <= singlepartUploadLimit {
+	if size < singlepartUploadLimit {
 		return nil, ErrMultipartTooSmall
 	}
 
