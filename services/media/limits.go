@@ -2,9 +2,10 @@ package media
 
 const (
 	singlepartUploadLimit uint64 = 16 * (1 << 20) // 16 mega byte
-	multipartUploadLimit  uint64 = 10 * (1 << 30) // 10 giga byte
 	minimumPartSize       uint64 = 5 * (1 << 20)  // 5 mega byte
+	maximumPartSize       uint64 = singlepartUploadLimit
 	maximumPartsCount     uint16 = 10000
+	multipartUploadLimit  uint64 = uint64(maximumPartsCount) * maximumPartSize
 	mediaUploadLimit      uint16 = 100
 )
 
@@ -15,7 +16,7 @@ type partDetails struct {
 }
 
 func getPartDetails(size uint64) (*partDetails, error) {
-	if size < singlepartUploadLimit {
+	if size <= singlepartUploadLimit {
 		return nil, ErrMultipartTooSmall
 	}
 
@@ -25,5 +26,24 @@ func getPartDetails(size uint64) (*partDetails, error) {
 		}
 	}
 
-	return &partDetails{}, nil
+	// Start with minimum part size
+	partSize := minimumPartSize
+	partCount := uint16((size + partSize - 1) / partSize) // ceil division
+
+	// Increase part size if partCount exceeds maximumPartsCount
+	if partCount > maximumPartsCount {
+		partSize = (size + uint64(maximumPartsCount) - 1) / uint64(maximumPartsCount)
+		partCount = uint16((size + partSize - 1) / partSize)
+	}
+
+	lastPartSize := partSize
+	if size%partSize != 0 {
+		lastPartSize = size % partSize
+	}
+
+	return &partDetails{
+		partSize:     partSize,
+		lastPartSize: lastPartSize,
+		partCount:    partCount,
+	}, nil
 }
