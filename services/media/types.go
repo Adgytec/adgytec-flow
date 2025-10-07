@@ -20,7 +20,7 @@ type NewMediaItemInfo struct {
 }
 
 // NullableNewMediaItemInfo is used with request bodies
-type NullableNewMediaItemInfo types.Nullable[NewMediaItemInfo]
+type NullableNewMediaItemInfo = types.Nullable[NewMediaItemInfo]
 
 // Validate() validates the input values
 func (mediaItem NewMediaItemInfo) Validate() error {
