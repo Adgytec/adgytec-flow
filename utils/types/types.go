@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 )
 
+// Nullable is generic type for null values
 type Nullable[T any] struct {
 	Value T
 	Set   bool // if set is false means missing this field in req body
