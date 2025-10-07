@@ -25,7 +25,6 @@ func (m *userServiceMux) Router() *chi.Mux {
 
 		router.Get("/profile", m.getUserSelfProfileHandler)
 
-		router.Post("/profile/new-profile-picture", m.newSelfProfilePicture)
 		router.Post("/profile/update", m.updateSelfProfile)
 	})
 
@@ -38,7 +37,6 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Patch("/{userID}/enable", m.enableGlobalUser)
 		router.Patch("/{userID}/disable", m.disableGlobalUser)
 
-		router.Post("/{userID}/new-profile-picture", m.newUserProfilePicture)
 		router.Post("/{userID}/update", m.updateUserProfile)
 	})
 
