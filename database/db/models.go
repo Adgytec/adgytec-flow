@@ -176,7 +176,6 @@ type GlobalMediaStatus string
 
 const (
 	GlobalMediaStatusPending                 GlobalMediaStatus = "pending"
-	GlobalMediaStatusUploadFailed            GlobalMediaStatus = "upload-failed"
 	GlobalMediaStatusCompleteMultipartFailed GlobalMediaStatus = "complete-multipart-failed"
 	GlobalMediaStatusFailedValidation        GlobalMediaStatus = "failed-validation"
 	GlobalMediaStatusProcessing              GlobalMediaStatus = "processing"
@@ -222,7 +221,6 @@ func (ns NullGlobalMediaStatus) Value() (driver.Value, error) {
 func (e GlobalMediaStatus) Valid() bool {
 	switch e {
 	case GlobalMediaStatusPending,
-		GlobalMediaStatusUploadFailed,
 		GlobalMediaStatusCompleteMultipartFailed,
 		GlobalMediaStatusFailedValidation,
 		GlobalMediaStatusProcessing,

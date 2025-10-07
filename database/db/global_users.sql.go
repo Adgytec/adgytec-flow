@@ -450,10 +450,9 @@ WITH
 		SET
 			name = $1,
 			about = $2,
-			profile_picture_id = $3,
-			date_of_birth = $4
+			date_of_birth = $3
 		WHERE
-			u.id = $5
+			u.id = $4
 		RETURNING
 			u.id
 	)
@@ -462,22 +461,20 @@ SELECT
 FROM
 	global.user_details d
 WHERE
-	d.id = $5
+	d.id = $4
 `
 
 type UpdateGlobalUserProfileParams struct {
-	Name             string      `json:"name"`
-	About            *string     `json:"about"`
-	ProfilePictureID *uuid.UUID  `json:"profilePictureId"`
-	DateOfBirth      pgtype.Date `json:"dateOfBirth"`
-	ID               uuid.UUID   `json:"id"`
+	Name        string      `json:"name"`
+	About       *string     `json:"about"`
+	DateOfBirth pgtype.Date `json:"dateOfBirth"`
+	ID          uuid.UUID   `json:"id"`
 }
 
 func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalUserProfileParams) (GlobalUserDetails, error) {
 	row := q.db.QueryRow(ctx, updateGlobalUserProfile,
 		arg.Name,
 		arg.About,
-		arg.ProfilePictureID,
 		arg.DateOfBirth,
 		arg.ID,
 	)
