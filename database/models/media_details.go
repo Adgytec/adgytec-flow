@@ -2,7 +2,7 @@ package models
 
 type ImageDetails struct {
 	OriginalImage *string `json:"originalImage"`
-	Size          *uint64 `json:"size"`
+	Size          *int64  `json:"size"`
 	Status        *string `json:"status"`
 	Thumbnail     *string `json:"thumbnail"`
 	Small         *string `json:"small"`
@@ -13,7 +13,7 @@ type ImageDetails struct {
 
 type VideoDetails struct {
 	OriginalVideo    *string `json:"originalVideo"`
-	Size             *uint64 `json:"size"`
+	Size             *int64  `json:"size"`
 	Status           *string `json:"status"`
 	Thumbnail        *string `json:"thumbnail"`
 	AdaptiveManifest *string `json:"adaptiveManifest"`
