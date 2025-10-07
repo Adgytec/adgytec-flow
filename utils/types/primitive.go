@@ -1,5 +1,7 @@
 package types
 
+import "github.com/google/uuid"
+
 type (
 	NullableBool   = Nullable[bool]
 	NullableString = Nullable[string]
@@ -24,4 +26,6 @@ type (
 
 	NullableComplex64  = Nullable[complex64]
 	NullableComplex128 = Nullable[complex128]
+
+	NullableUUID = Nullable[uuid.UUID]
 )
