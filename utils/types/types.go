@@ -32,3 +32,15 @@ func (n Nullable[T]) MarshalJSON() ([]byte, error) {
 
 	return json.Marshal(n.Value)
 }
+
+func (n Nullable[T]) Present() bool {
+	return n.Set
+}
+
+func (n Nullable[T]) Missing() bool {
+	return !n.Present()
+}
+
+func (n Nullable[T]) Null() bool {
+	return !n.Set || !n.Valid
+}
