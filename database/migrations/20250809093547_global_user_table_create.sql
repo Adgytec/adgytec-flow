@@ -11,13 +11,17 @@ CREATE TABLE IF NOT EXISTS global.users (
 	id UUID PRIMARY KEY,
 	email TEXT NOT NULL,
 	normalized_email TEXT NOT NULL,
-	name TEXT NOT NULL,
-	normalized_name TEXT NOT NULL,
+	name TEXT,
+	normalized_name TEXT,
 	profile_picture_id UUID REFERENCES global.media (id),
 	about TEXT,
 	date_of_birth date,
 	status global.user_status NOT NULL DEFAULT 'enabled',
-	created_at TIMESTAMPTZ NOT NULL
+	created_at TIMESTAMPTZ NOT NULL,
+	CHECK (
+		name = NULL
+		OR normalized_name <> NULL
+	)
 );
 
 CREATE UNIQUE INDEX global_users_email_unique_idx ON global.users (lower(email));

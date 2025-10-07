@@ -610,7 +610,7 @@ type GlobalServices struct {
 type GlobalUserDetails struct {
 	ID                         uuid.UUID             `json:"id"`
 	Email                      string                `json:"email"`
-	Name                       string                `json:"name"`
+	Name                       *string               `json:"name"`
 	About                      *string               `json:"about"`
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`
@@ -630,8 +630,8 @@ type GlobalUsers struct {
 	ID               uuid.UUID        `json:"id"`
 	Email            string           `json:"email"`
 	NormalizedEmail  string           `json:"normalizedEmail"`
-	Name             string           `json:"name"`
-	NormalizedName   string           `json:"normalizedName"`
+	Name             *string          `json:"name"`
+	NormalizedName   *string          `json:"normalizedName"`
 	ProfilePictureID *uuid.UUID       `json:"profilePictureId"`
 	About            *string          `json:"about"`
 	DateOfBirth      pgtype.Date      `json:"dateOfBirth"`

@@ -465,7 +465,7 @@ WHERE
 `
 
 type UpdateGlobalUserProfileParams struct {
-	Name        string      `json:"name"`
+	Name        *string     `json:"name"`
 	About       *string     `json:"about"`
 	DateOfBirth pgtype.Date `json:"dateOfBirth"`
 	ID          uuid.UUID   `json:"id"`
