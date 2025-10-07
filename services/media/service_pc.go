@@ -7,13 +7,12 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 )
 
-// Contains methods that can be run without a transaction.
 type MediaServicePC interface {
-	NewMediaItem(ctx context.Context, input NewMediaItemInputWithBucketPrefix) (*NewMediaItemOutput, error)
-	NewMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error)
+	NewMediaItem(ctx context.Context, input NewMediaItemInfoWithStorageDetails) (*MediaUploadDetails, error)
+	NewMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error)
 }
 
-// The main service interface that provides access to both.
+// this is created inorder to avoid calling multiple transaction inside a transaction
 type MediaServicePCWithTransaction interface {
 	MediaServicePC
 	WithTransaction(db database.Database) MediaServicePC
