@@ -7,16 +7,15 @@ import (
 	"strings"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/types"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
 
 type NewMediaItemInfo struct {
-	ID   uuid.UUID
-	Size uint64
-	Name string
+	ID   uuid.UUID `json:"id"`
+	Size uint64    `json:"size"`
+	Name string    `json:"name"`
 }
 
 // NullableNewMediaItemInfo is used with request bodies
@@ -37,20 +36,13 @@ func (mediaItem NewMediaItemInfo) Validate() error {
 			}),
 		),
 		validation.Field(
-			&mediaItem.Size,
-			validation.Required,
-			validation.Min(0),
-		),
-		validation.Field(
 			&mediaItem.Name,
 			validation.Required,
 		),
 	)
 
 	if validationErr != nil {
-		return &core.FieldValidationError{
-			ValidationErrors: validationErr,
-		}
+		return validationErr
 	}
 
 	return nil
