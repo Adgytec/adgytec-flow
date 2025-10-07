@@ -8,6 +8,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/types"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
@@ -17,6 +18,9 @@ type NewMediaItemInfo struct {
 	Size uint64
 	Name string
 }
+
+// NullableNewMediaItemInfo is used with request bodies
+type NullableNewMediaItemInfo types.Nullable[NewMediaItemInfo]
 
 // Validate() validates the input values
 func (mediaItem NewMediaItemInfo) Validate() error {
