@@ -20,10 +20,9 @@ import (
 )
 
 type updateUserProfileData struct {
-	Name           string
-	ProfilePicture *uuid.UUID
-	About          *string
-	DateOfBirth    pgtype.Date
+	Name        string
+	About       *string
+	DateOfBirth pgtype.Date
 }
 
 func (userProfile updateUserProfileData) Validate() error {
@@ -67,14 +66,6 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		return nil, txErr
 	}
 	defer tx.Rollback(context.Background())
-
-	if userProfile.ProfilePicture != nil {
-		// complete media upload
-		mediaUploadErr := s.media.WithTransaction(qtx).CompleteMediaItemUpload(ctx, *userProfile.ProfilePicture)
-		if mediaUploadErr != nil {
-			return nil, mediaUploadErr
-		}
-	}
 
 	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(
 		ctx,

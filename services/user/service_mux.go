@@ -25,7 +25,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 
 		router.Get("/profile", m.getUserSelfProfileHandler)
 
-		router.Post("/profile/update", m.updateSelfProfile)
+		router.Patch("/profile/update", m.updateSelfProfile)
 	})
 
 	mux.Group(func(router chi.Router) {
@@ -37,7 +37,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Patch("/{userID}/enable", m.enableGlobalUser)
 		router.Patch("/{userID}/disable", m.disableGlobalUser)
 
-		router.Post("/{userID}/update", m.updateUserProfile)
+		router.Patch("/{userID}/update", m.updateUserProfile)
 	})
 
 	return mux
