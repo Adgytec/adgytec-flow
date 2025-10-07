@@ -112,9 +112,10 @@ WITH
 		SET
 			name = $1,
 			about = $2,
-			date_of_birth = $3
+			profile_picture_id = $3,
+			date_of_birth = $4
 		WHERE
-			u.id = $4
+			u.id = $5
 		RETURNING
 			u.id
 	)
@@ -123,4 +124,4 @@ SELECT
 FROM
 	global.user_details d
 WHERE
-	d.id = $4;
+	d.id = $5;
