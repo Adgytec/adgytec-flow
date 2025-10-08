@@ -1,17 +1,25 @@
 package user
 
 import (
+	"context"
+	"errors"
 	"net/http"
+	"path"
 	"unicode/utf8"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/database/models"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/Adgytec/adgytec-flow/utils/types"
 	"github.com/go-chi/chi/v5"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
@@ -48,6 +56,10 @@ func (userProfile updateUserProfileData) Validate() error {
 			validation.By(
 				func(val any) error {
 					about := val.(types.NullableString)
+					// handle new profile picture
+					if !userProfile.ProfilePicture.Null() {
+						profilePictureUploadDetails := s.media.NewMediaItem(ctx)
+					}
 					if about.Null() {
 						return nil
 					}
@@ -106,73 +118,137 @@ func (userProfile updateUserProfileData) Validate() error {
 	return nil
 }
 
-// func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, userProfile updateUserProfileData) (*models.GlobalUser, error) {
-// 	requiredPermissions := []iam.PermissionProvider{
-// 		iam.NewPermissionRequiredFromSelfPermission(
-// 			updateSelfProfilePermission,
-// 			iam.PermissionRequiredResources{
-// 				UserID: pointer.New(userID),
-// 			},
-// 		),
-// 		iam.NewPermissionRequiredFromManagementPermission(
-// 			updateUserProfilePermission,
-// 			iam.PermissionRequiredResources{},
-// 		),
-// 	}
-//
-// 	permissionErr := s.iam.CheckPermissions(ctx, requiredPermissions)
-// 	if permissionErr != nil {
-// 		return nil, permissionErr
-// 	}
-//
-// 	// start transaction
-// 	qtx, tx, txErr := s.db.WithTransaction(ctx)
-// 	if txErr != nil {
-// 		return nil, txErr
-// 	}
-// 	defer tx.Rollback(context.Background())
-//
-// 	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(
-// 		ctx,
-// 		db.UpdateGlobalUserProfileParams{
-// 			ID:               userID,
-// 			Name:             userProfile.Name,
-// 			ProfilePictureID: userProfile.ProfilePicture,
-// 			About:            userProfile.About,
-// 			DateOfBirth:      userProfile.DateOfBirth,
-// 		},
-// 	)
-// 	if dbErr != nil {
-// 		if errors.Is(dbErr, pgx.ErrNoRows) {
-// 			return nil, &UserNotFoundError{}
-// 		}
-// 		return nil, dbErr
-// 	}
-// 	txCommitErr := tx.Commit(ctx)
-// 	if txCommitErr != nil {
-// 		return nil, txCommitErr
-// 	}
-//
-// 	updatedUserProfileModel := s.getUserResponseModel(updatedUserProfileView)
-// 	s.getUserCache.Set(userID.String(), updatedUserProfileModel)
-//
-// 	return &updatedUserProfileModel, nil
-// }
+func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, userProfile updateUserProfileData) (*models.GlobalUser, *media.MediaUploadDetails, error) {
+	requiredPermissions := []iam.PermissionProvider{
+		iam.NewPermissionRequiredFromSelfPermission(
+			updateSelfProfilePermission,
+			iam.PermissionRequiredResources{
+				UserID: pointer.New(userID),
+			},
+		),
+		iam.NewPermissionRequiredFromManagementPermission(
+			updateUserProfilePermission,
+			iam.PermissionRequiredResources{},
+		),
+	}
+
+	permissionErr := s.iam.CheckPermissions(ctx, requiredPermissions)
+	if permissionErr != nil {
+		return nil, nil, permissionErr
+	}
+
+	// get existing user detail
+	existingUser, existingUserErr := s.getUserProfile(ctx, userID)
+	if existingUserErr != nil {
+		return nil, nil, existingUserErr
+	}
+
+	// start transaction
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
+	if txErr != nil {
+		return nil, nil, txErr
+	}
+	defer tx.Rollback(context.Background())
+
+	// update user obj
+	updatedUser := db.UpdateGlobalUserProfileParams{
+		ID: userID,
+	}
+
+	// name check
+	if userProfile.Name.Missing() {
+		updatedUser.Name = existingUser.Name
+	} else if !userProfile.Name.Null() {
+		updatedUser.Name = &userProfile.Name.Value
+	}
+
+	// about check
+	if userProfile.About.Missing() {
+		updatedUser.About = existingUser.About
+	} else if !userProfile.About.Null() {
+		updatedUser.About = &userProfile.About.Value
+	}
+
+	// dob check
+	if userProfile.DateOfBirth.Missing() {
+		updatedUser.DateOfBirth = existingUser.DateOfBirth
+	} else if !userProfile.DateOfBirth.Null() {
+		updatedUser.DateOfBirth = userProfile.DateOfBirth.Value
+	}
+
+	// profile picture check
+	var profilePictureUploadDetails *media.MediaUploadDetails
+	if userProfile.ProfilePicture.Missing() {
+		updatedUser.ProfilePictureID = &existingUser.ProfilePicture.MediaID
+	} else if !userProfile.ProfilePicture.Null() {
+		// new profile picture
+		updatedUser.ProfilePictureID = &userProfile.ProfilePicture.Value.ID
+
+		// create new profile picture upload details
+		uploadDetails, profilePictureUploadErr := s.media.NewMediaItem(
+			ctx,
+			media.NewMediaItemInfoWithStorageDetails{
+				NewMediaItemInfo: userProfile.ProfilePicture.Value,
+				RequiredMime:     media.ImageMime,
+				BucketPrefix:     path.Join(userID.String(), "profile"),
+			},
+		)
+		if profilePictureUploadErr != nil {
+			return nil, nil, profilePictureUploadErr
+		}
+		profilePictureUploadDetails = uploadDetails
+	}
+
+	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(
+		ctx,
+		updatedUser,
+	)
+	if dbErr != nil {
+		if errors.Is(dbErr, pgx.ErrNoRows) {
+			return nil, nil, &UserNotFoundError{}
+		}
+		return nil, nil, dbErr
+	}
+	txCommitErr := tx.Commit(ctx)
+	if txCommitErr != nil {
+		return nil, nil, txCommitErr
+	}
+
+	updatedUserProfileModel := s.getUserResponseModel(updatedUserProfileView)
+	s.getUserCache.Set(userID.String(), updatedUserProfileModel)
+
+	return &updatedUserProfileModel, profilePictureUploadDetails, nil
+}
 
 func (m *userServiceMux) updateUserProfileUtil(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {
-	// userProfieDetails, payloadErr := payload.DecodeRequestBodyAndValidate[updateUserProfileData](w, r)
-	// if payloadErr != nil {
-	// 	payload.EncodeError(w, payloadErr)
-	// 	return
-	// }
+	userProfieDetails, payloadErr := payload.DecodeRequestBodyAndValidate[updateUserProfileData](w, r)
+	if payloadErr != nil {
+		payload.EncodeError(w, payloadErr)
+		return
+	}
 
-	// updatedUserProfile, updateProfileErr := m.service.updateUserProfile(r.Context(), userID, userProfieDetails)
-	// if updateProfileErr != nil {
-	// 	payload.EncodeError(w, updateProfileErr)
-	// 	return
-	// }
-	//
-	// payload.EncodeJSON(w, http.StatusOK, updatedUserProfile)
+	updatedUserProfile, profilePictureUpdateDetails, updateProfileErr := m.service.updateUserProfile(r.Context(), userID, userProfieDetails)
+	if updateProfileErr != nil {
+		payload.EncodeError(w, updateProfileErr)
+		return
+	}
+
+	updateProfileNextStep := "Done"
+	if profilePictureUpdateDetails != nil {
+		updateProfileNextStep = "Upload profile picture"
+	}
+
+	updateProfileResponse := struct {
+		User                 *models.GlobalUser        `json:"user"`
+		NextStep             string                    `json:"nextStep"`
+		ProfileUploadDetails *media.MediaUploadDetails `json:"profileUploadDetails,omitempty"`
+	}{
+		User:                 updatedUserProfile,
+		ProfileUploadDetails: profilePictureUpdateDetails,
+		NextStep:             updateProfileNextStep,
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, updateProfileResponse)
 }
 
 func (m *userServiceMux) updateSelfProfile(w http.ResponseWriter, r *http.Request) {
