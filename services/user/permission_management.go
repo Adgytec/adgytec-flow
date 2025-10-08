@@ -72,7 +72,8 @@ var updateUserProfilePermission = db.AddManagementPermissionParams{
 	Description: pointer.New(`
 ### Update User Profile
 
-Grants the ability to update individual user profile.`),
+Grants the ability to update individual user profile.
+*Note: This also require 'Get User Profile' permission.*`),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
