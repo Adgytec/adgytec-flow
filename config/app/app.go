@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"net/url"
 
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/cache"
@@ -26,6 +27,7 @@ type appExternalServices interface {
 }
 
 type appInternalServices interface {
+	ApiURL() *url.URL
 	IAMService() iam.IAMServicePC
 	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC

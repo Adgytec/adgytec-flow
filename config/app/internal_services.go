@@ -1,6 +1,11 @@
 package app
 
 import (
+	"errors"
+	"net/url"
+	"os"
+	"strings"
+
 	"github.com/Adgytec/adgytec-flow/services/appmiddleware"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
@@ -13,6 +18,7 @@ type internalServices struct {
 	userService  user.UserServicePC
 	middleware   core.MiddlewarePC
 	mediaService media.MediaServicePC
+	apiURL       *url.URL
 }
 
 func (s *internalServices) IAMService() iam.IAMServicePC {
@@ -31,8 +37,25 @@ func (s *internalServices) MediaWithTransaction() media.MediaServicePC {
 	return s.mediaService
 }
 
-func newInternalService(externalService appExternalServices) appInternalServices {
-	internalService := internalServices{}
+func (s *internalServices) ApiURL() *url.URL {
+	return s.apiURL
+}
+
+func newInternalService(externalService appExternalServices) (appInternalServices, error) {
+	// parse api endpoint
+	urlString := os.Getenv("API_ENDPOINT")
+	if strings.TrimSpace(urlString) == "" {
+		return nil, errors.New("missing API_ENDPOINT env variable")
+	}
+
+	apiURL, parseErr := url.Parse(urlString)
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	internalService := internalServices{
+		apiURL: apiURL,
+	}
 	appInstance := &app{
 		appExternalServices: externalService,
 		appInternalServices: &internalService,
@@ -45,5 +68,5 @@ func newInternalService(externalService appExternalServices) appInternalServices
 	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = appmiddleware.NewAppMiddlewarePC(appInstance)
 
-	return &internalService
+	return &internalService, nil
 }
