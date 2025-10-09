@@ -3,6 +3,7 @@ package auth
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 
 	"github.com/MicahParks/keyfunc/v3"
@@ -18,7 +19,7 @@ type authCognito struct {
 	jwtKeyfunc     keyfunc.Keyfunc
 }
 
-func NewCognitoAuthClient(awsConfig aws.Config) (Auth, error) {
+func NewCognitoAuthClient(awsConfig aws.Config, apiURL *url.URL) (Auth, error) {
 	log.Println("init authentication cognito")
 
 	userPoolID := os.Getenv("AWS_USER_POOL_ID")
@@ -37,7 +38,7 @@ func NewCognitoAuthClient(awsConfig aws.Config) (Auth, error) {
 		}
 	}
 
-	authCommon, authCommonErr := newAuthCommon()
+	authCommon, authCommonErr := newAuthCommon(apiURL)
 	if authCommonErr != nil {
 		return nil, authCommonErr
 	}

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"net/url"
 	"os"
 
 	"github.com/google/uuid"
@@ -21,9 +22,10 @@ type Auth interface {
 // authCommon contains method impl that are independent of external authentication provider
 type authCommon struct {
 	secret []byte
+	apiURL *url.URL
 }
 
-func newAuthCommon() (*authCommon, error) {
+func newAuthCommon(apiURL *url.URL) (*authCommon, error) {
 	hmacSecret := os.Getenv("HMAC_SECRET")
 	if hmacSecret == "" {
 		return nil, ErrInvalidHMACSecret
@@ -31,6 +33,7 @@ func newAuthCommon() (*authCommon, error) {
 
 	return &authCommon{
 		secret: []byte(hmacSecret),
+		apiURL: apiURL,
 	}, nil
 }
 

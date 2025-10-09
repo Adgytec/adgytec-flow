@@ -2,6 +2,10 @@ package app
 
 import (
 	"context"
+	"errors"
+	"net/url"
+	"os"
+	"strings"
 
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	configAWS "github.com/Adgytec/adgytec-flow/config/aws"
@@ -55,7 +59,18 @@ func newExternalServices() (appExternalServices, error) {
 		return nil, awsConfigErr
 	}
 
-	authClient, authErr := auth.NewCognitoAuthClient(awsConfig)
+	// parse api endpoint
+	urlString := os.Getenv("API_ENDPOINT")
+	if strings.TrimSpace(urlString) == "" {
+		return nil, errors.New("missing API_ENDPOINT env variable")
+	}
+
+	apiURL, parseErr := url.Parse(urlString)
+	if parseErr != nil {
+		return nil, parseErr
+	}
+
+	authClient, authErr := auth.NewCognitoAuthClient(awsConfig, apiURL)
 	if authErr != nil {
 		return nil, authErr
 	}
