@@ -56,10 +56,6 @@ func (userProfile updateUserProfileData) Validate() error {
 			validation.By(
 				func(val any) error {
 					about := val.(types.NullableString)
-					// handle new profile picture
-					if !userProfile.ProfilePicture.Null() {
-						profilePictureUploadDetails := s.media.NewMediaItem(ctx)
-					}
 					if about.Null() {
 						return nil
 					}
@@ -185,7 +181,8 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		updatedUser.ProfilePictureID = &userProfile.ProfilePicture.Value.ID
 
 		// create new profile picture upload details
-		uploadDetails, profilePictureUploadErr := s.media.NewMediaItem(
+		mediaService := s.media.WithTransaction(qtx)
+		uploadDetails, profilePictureUploadErr := mediaService.NewMediaItem(
 			ctx,
 			media.NewMediaItemInfoWithStorageDetails{
 				NewMediaItemInfo: userProfile.ProfilePicture.Value,

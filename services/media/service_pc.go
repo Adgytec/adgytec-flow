@@ -12,9 +12,7 @@ type MediaServicePC interface {
 	NewMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error)
 }
 
-// this is created inorder to avoid calling multiple transaction inside a transaction
-type MediaServicePCWithTransaction interface {
-	MediaServicePC
+type MediaServicePCTransaction interface {
 	WithTransaction(db database.Database) MediaServicePC
 }
 
@@ -31,7 +29,7 @@ func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServicePC {
 	}
 }
 
-func NewMediaServicePC(params mediaServiceParams) MediaServicePCWithTransaction {
+func NewMediaServicePC(params mediaServiceParams) MediaServicePCTransaction {
 	log.Printf("creating %s-service PC", serviceName)
 	return &mediaServicePC{
 		service: newMediaService(params),
