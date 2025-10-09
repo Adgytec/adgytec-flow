@@ -1,12 +1,18 @@
 package media
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 )
+
+func getCompleteMultipartEndpoint(mediaID uuid.UUID) string {
+	return fmt.Sprintf("/media/%s/complete-multipart", mediaID.String())
+}
 
 type mediaServiceMux struct {
 	service    *mediaService
