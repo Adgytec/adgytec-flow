@@ -22,7 +22,7 @@ type userServiceParams interface {
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
 	CacheClient() cache.CacheClient
-	MediaWithTransaction() media.MediaServicePCTransaction
+	MediaWithTransaction() media.MediaServicePC
 }
 
 type userServiceMuxParams interface {
@@ -35,7 +35,7 @@ type userService struct {
 	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
-	media            media.MediaServicePCTransaction
+	media            media.MediaServicePC
 	getUserCache     cache.Cache[models.GlobalUser]
 	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }

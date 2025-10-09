@@ -12,7 +12,7 @@ type internalServices struct {
 	iamService   iam.IAMServicePC
 	userService  user.UserServicePC
 	middleware   core.MiddlewarePC
-	mediaService media.MediaServicePCTransaction
+	mediaService media.MediaServicePC
 }
 
 func (s *internalServices) IAMService() iam.IAMServicePC {
@@ -27,7 +27,7 @@ func (s *internalServices) Middleware() core.MiddlewarePC {
 	return s.middleware
 }
 
-func (s *internalServices) MediaWithTransaction() media.MediaServicePCTransaction {
+func (s *internalServices) MediaWithTransaction() media.MediaServicePC {
 	return s.mediaService
 }
 
