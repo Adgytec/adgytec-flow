@@ -19,6 +19,10 @@ const (
 // NewSignedURL() is using query for cases where other query params are necessary to complete the action
 // for majority of request only expire and signature query params are added and rest of the action details are validated using url path and request context
 func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, expireAfter time.Duration) (*url.URL, error) {
+	if query == nil {
+		query = make(map[string]string)
+	}
+
 	expire := time.Now().Add(expireAfter).Unix()
 	expireString := strconv.FormatInt(expire, 10)
 
@@ -71,6 +75,10 @@ func (a *authCommon) NewSignedURLWithActor(ctx context.Context, actionPath strin
 	actorID, actorErr := actor.GetActorIdFromContext(ctx)
 	if actorErr != nil {
 		return nil, actorErr
+	}
+
+	if query == nil {
+		query = make(map[string]string)
 	}
 
 	query[queryKeyActor] = actorID.String()
