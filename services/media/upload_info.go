@@ -1,14 +1,19 @@
 package media
 
-type partDetails struct {
+import "github.com/Adgytec/adgytec-flow/database/db"
+
+type uploadInfo struct {
+	uploadType   db.GlobalMediaUploadType
 	partSize     uint64
 	lastPartSize uint64
 	partCount    uint16
 }
 
-func getPartDetails(size uint64) (*partDetails, error) {
-	if size < singlepartUploadLimit {
-		return nil, ErrMultipartTooSmall
+func getUploadInfo(size uint64) (*uploadInfo, error) {
+	if size <= singlepartUploadLimit {
+		return &uploadInfo{
+			uploadType: db.GlobalMediaUploadTypeSinglepart,
+		}, nil
 	}
 
 	if size > multipartUploadLimit {
@@ -32,7 +37,8 @@ func getPartDetails(size uint64) (*partDetails, error) {
 		lastPartSize = size % partSize
 	}
 
-	return &partDetails{
+	return &uploadInfo{
+		uploadType:   db.GlobalMediaUploadTypeMultipart,
 		partSize:     partSize,
 		lastPartSize: lastPartSize,
 		partCount:    partCount,
