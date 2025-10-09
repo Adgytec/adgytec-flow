@@ -2,12 +2,9 @@ package media
 
 import (
 	"context"
-	"encoding/binary"
-	"strconv"
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/google/uuid"
 )
 
@@ -63,45 +60,23 @@ func (s *mediaService) getUploadDetails(ctx context.Context, newMediaItem NewMed
 			partUploadDetails = append(partUploadDetails, part)
 		}
 
-		completeMultipartPresign, presignErr := s.newCompleteMultipartPresignGeneration(ctx, newMediaItem.ID)
+		completeMultipartSignedURL, presignErr := s.newCompleteMultipartSignedURL(ctx, newMediaItem.ID)
 		if presignErr != nil {
 			return nil, presignErr
 		}
 
 		uploadDetails.MultipartPresignPart = partUploadDetails
-		uploadDetails.MultipartSuccessCallback = &completeMultipartPresign
+		uploadDetails.MultipartSuccessCallback = &completeMultipartSignedURL
 	}
 
 	return &uploadDetails, nil
 }
 
-func (s *mediaService) newCompleteMultipartPresignGeneration(ctx context.Context, mediaID uuid.UUID) (string, error) {
-	actorID, actorErr := actor.GetActorIdFromContext(ctx)
-	if actorErr != nil {
-		return "", actorErr
+func (s *mediaService) newCompleteMultipartSignedURL(ctx context.Context, mediaID uuid.UUID) (string, error) {
+	signedURL, err := s.auth.NewSignedURLWithActor(ctx, getCompleteMultipartPath(mediaID), nil, completeMultipartPresignValidDuration)
+	if err != nil {
+		return "", err
 	}
 
-	expire := time.Now().Add(completeMultipartPresignValidDuration).Unix()
-
-	expireString := strconv.FormatInt(expire, 10)
-
-	expireBytes := make([]byte, 8)
-	binary.BigEndian.PutUint64(expireBytes, uint64(expire))
-
-	presignSignature, signatureErr := s.auth.NewSignedHash(actorID[:], []byte(completeMultipartAction), mediaID[:], expireBytes)
-	if signatureErr != nil {
-		return "", signatureErr
-	}
-
-	// create action endpoint
-	apiURL := s.apiURL.JoinPath(getCompleteMultipartEndpoint(mediaID))
-
-	// add query params
-	urlQuery := apiURL.Query()
-	urlQuery.Add("action", completeMultipartAction)
-	urlQuery.Add("expires", expireString)
-	urlQuery.Add("signature", presignSignature)
-
-	apiURL.RawQuery = urlQuery.Encode()
-	return apiURL.String(), nil
+	return signedURL.String(), nil
 }
