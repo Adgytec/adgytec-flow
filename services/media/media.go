@@ -15,6 +15,7 @@ type mediaServiceParams interface {
 	Storage() storage.Storage
 	Database() database.Database
 	Auth() auth.Auth
+	ApiURL() *url.URL
 }
 
 type mediaServiceMuxParams interface {
@@ -26,7 +27,7 @@ type mediaService struct {
 	storage  storage.Storage
 	database database.Database
 	auth     auth.Auth
-	apiURL   url.URL
+	apiURL   *url.URL
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {
@@ -34,5 +35,6 @@ func newMediaService(params mediaServiceParams) *mediaService {
 		storage:  params.Storage(),
 		database: params.Database(),
 		auth:     params.Auth(),
+		apiURL:   params.ApiURL(),
 	}
 }

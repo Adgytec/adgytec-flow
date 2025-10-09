@@ -63,7 +63,7 @@ func newInternalService(externalService appExternalServices) (appInternalService
 
 	// Initialize internal services. The order of initialization is important.
 	internalService.iamService = iam.NewIAMServicePC(externalService)
-	internalService.mediaService = media.NewMediaServicePC(externalService)
+	internalService.mediaService = media.NewMediaServicePC(appInstance)
 
 	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = appmiddleware.NewAppMiddlewarePC(appInstance)
