@@ -1,9 +1,49 @@
 package media
 
-import "context"
+import (
+	"context"
+	"log"
+
+	"github.com/Adgytec/adgytec-flow/database/db"
+)
 
 func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error) {
-	return nil, nil
+	// check new media limit per action
+	if len(input) < 1 || len(input) > int(mediaUploadLimit) {
+		return nil, &InvalidNumberOfNewMediaItemsError{
+			itemLength: len(input),
+		}
+	}
+
+	// get upload details
+	uploadDetails := make([]MediaUploadDetails, 0, len(input))
+	mediaItemsParams := make([]db.AddMediaItemsParams, 0, len(input))
+	for _, mediaItem := range input {
+		mediaUploadDetail, mediaUploadDetailErr := s.getUploadDetails(ctx, mediaItem)
+		if mediaUploadDetailErr != nil {
+			return nil, mediaUploadDetailErr
+		}
+
+		newMediaItemParams := db.AddMediaItemsParams{
+			ID:               mediaUploadDetail.ID,
+			BucketPath:       mediaItem.getMediaItemKey(),
+			RequiredMimeType: mediaItem.getRequiredMime(),
+			UploadType:       mediaUploadDetail.UploadType,
+			UploadID:         mediaUploadDetail.multipartUploadID,
+		}
+
+		uploadDetails = append(uploadDetails, *mediaUploadDetail)
+		mediaItemsParams = append(mediaItemsParams, newMediaItemParams)
+	}
+
+	// add details to db
+	_, dbErr := s.database.Queries().AddMediaItems(ctx, mediaItemsParams)
+	if dbErr != nil {
+		log.Printf("error added new media items details to db: %v", dbErr)
+		return nil, dbErr
+	}
+
+	return uploadDetails, nil
 }
 
 func (a *mediaServiceActions) NewMediaItem(ctx context.Context, input NewMediaItemInfoWithStorageDetails) (*MediaUploadDetails, error) {
