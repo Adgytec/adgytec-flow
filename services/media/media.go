@@ -33,17 +33,3 @@ func newMediaService(params mediaServiceParams) *mediaService {
 		auth:     params.Auth(),
 	}
 }
-
-type mediaServiceActions struct {
-	storage  storage.Storage
-	database database.Database
-	auth     auth.Auth
-}
-
-func newMediaServiceActions(params mediaServiceParams) *mediaServiceActions {
-	return &mediaServiceActions{
-		storage:  params.Storage(),
-		database: params.Database(),
-		auth:     params.Auth(),
-	}
-}

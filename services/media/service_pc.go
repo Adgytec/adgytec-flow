@@ -7,28 +7,32 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 )
 
-type MediaServicePC interface {
+type MediaServiceActions interface {
 	NewMediaItem(ctx context.Context, input NewMediaItemInfoWithStorageDetails) (*MediaUploadDetails, error)
 	NewMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error)
 }
 
-type MediaServicePCTransaction interface {
-	WithTransaction(db database.Database) MediaServicePC
+type mediaServiceActions struct {
+	service *mediaService
+}
+
+type MediaServicePC interface {
+	WithTransaction(db database.Database) MediaServiceActions
 }
 
 type mediaServicePC struct {
-	service *mediaService
-	params  mediaServiceParams
+	params mediaServiceParams
 }
 
-func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServicePC {
-	return newMediaServiceActions(pc.params)
+func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServiceActions {
+	return &mediaServiceActions{
+		service: newMediaService(pc.params),
+	}
 }
 
-func NewMediaServicePC(params mediaServiceParams) MediaServicePCTransaction {
+func NewMediaServicePC(params mediaServiceParams) MediaServicePC {
 	log.Printf("creating %s-service PC", serviceName)
 	return &mediaServicePC{
-		service: newMediaService(params),
-		params:  params,
+		params: params,
 	}
 }
