@@ -6,7 +6,7 @@ import (
 	"encoding/hex"
 )
 
-func (a *authCommon) NewSignedHash(payload ...[]byte) (string, error) {
+func (a *authCommon) newSignedHash(payload ...[]byte) (string, error) {
 	mac := hmac.New(sha256.New, a.secret)
 
 	// write data sequentially

@@ -15,8 +15,8 @@ type Auth interface {
 	// this only checks if the API key is in required format as described in the application doc
 	// further validation like if this api key actually exists is done later on
 	ValidateAPIKey(apiKey string) (uuid.UUID, error)
-	NewSignedHash(payload ...[]byte) (string, error)
-	CompareSignedHash(hash string, payload ...[]byte) error
+	NewSignedURL(path string, query map[string]string)
+	NewSignedURLWithActor(ctx context.Context, path string, query map[string]string)
 }
 
 // authCommon contains method impl that are independent of external authentication provider
