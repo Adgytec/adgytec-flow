@@ -87,6 +87,7 @@ type MediaUploadDetails struct {
 	PresignPut               *string                  `json:"presignPut,omitempty"`
 	MultipartPresignPart     []MultipartPartUpload    `json:"multipartPresignPart,omitempty"`
 	MultipartSuccessCallback *string                  `json:"multipartSuccessCallback,omitempty"`
+	multipartUploadID        *string
 }
 
 type MultipartPartUpload struct {
