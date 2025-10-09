@@ -29,5 +29,5 @@ type MiddlewarePC interface {
 
 	// signed url check
 	ValidateSignedURL(http.Handler) http.Handler
-	ValidateSigendURLWithActor(http.Handler) http.Handler
+	ValidateSignedURLWithActor(http.Handler) http.Handler
 }
