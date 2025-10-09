@@ -19,8 +19,3 @@ type Mux interface {
 // each service will have their own PC(procedural call) interface
 // this interface is just to tell there are 3 things each service must provide
 type PC any
-
-// Cron is used by services to perform actions on regular intervals
-type Cron interface {
-	Trigger()
-}
