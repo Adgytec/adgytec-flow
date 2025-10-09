@@ -18,20 +18,17 @@ type MediaServicePCTransaction interface {
 
 type mediaServicePC struct {
 	service *mediaService
+	params  mediaServiceParams
 }
 
 func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServicePC {
-	serviceCopy := *pc.service
-	serviceCopy.database = db
-
-	return &mediaServicePC{
-		service: &serviceCopy,
-	}
+	return newMediaServiceActions(pc.params)
 }
 
 func NewMediaServicePC(params mediaServiceParams) MediaServicePCTransaction {
 	log.Printf("creating %s-service PC", serviceName)
 	return &mediaServicePC{
 		service: newMediaService(params),
+		params:  params,
 	}
 }
