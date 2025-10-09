@@ -13,8 +13,11 @@ import (
 const (
 	queryKeyExpire    = "expire"
 	queryKeySignature = "signature"
+	queryKeyActor     = "actor"
 )
 
+// NewSignedURL() is using query for cases where other query params are necessary to complete the action
+// for majority of request only expire and signature query params are added and rest of the action details are validated using url path and request context
 func (a *authCommon) NewSignedURL(path string, query map[string]string, expireAfter time.Duration) (*url.URL, error) {
 	expire := time.Now().Add(expireAfter).Unix()
 	expireString := strconv.FormatInt(expire, 10)
@@ -39,7 +42,7 @@ func (a *authCommon) NewSignedURL(path string, query map[string]string, expireAf
 		hashPayload = append(hashPayload, []byte(query[key])...)
 	}
 
-	signedHash, signingErr := a.newSignedHash(hashPayload)
+	signedHash, signingErr := a.newSignedHash([]byte(path), hashPayload)
 	if signingErr != nil {
 		return nil, signingErr
 	}
@@ -53,6 +56,11 @@ func (a *authCommon) NewSignedURL(path string, query map[string]string, expireAf
 	// add query params
 	urlQuery := baseURL.Query()
 	for _, key := range queryKeys {
+		// don't add actor to query params
+		// actor details are always added using request context
+		if key == queryKeyActor {
+			continue
+		}
 		urlQuery.Add(key, query[key])
 	}
 
@@ -65,6 +73,6 @@ func (a *authCommon) NewSignedURLWithActor(ctx context.Context, path string, que
 		return nil, actorErr
 	}
 
-	query["actor"] = actorID.String()
+	query[queryKeyActor] = actorID.String()
 	return a.NewSignedURL(path, query, expireAfter)
 }
