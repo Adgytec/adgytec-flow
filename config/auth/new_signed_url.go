@@ -33,7 +33,7 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 	delete(query, queryKeySignature)
 
 	queryKeys := make([]string, 0, len(query))
-	for key, _ := range query {
+	for key := range query {
 		queryKeys = append(queryKeys, key)
 	}
 	sort.Strings(queryKeys)

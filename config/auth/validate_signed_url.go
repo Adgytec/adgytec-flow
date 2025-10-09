@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"maps"
 	"net/url"
 	"sort"
 	"strconv"
@@ -25,7 +26,7 @@ func validateExpiry(epochString string) error {
 }
 
 // validateSignedURL() baseQuery contains extra query params that are not directly included in url
-func (a *authCommon) validateSignedURL(signedURL url.URL, baseQuery map[string]string) error {
+func (a *authCommon) validateSignedURL(signedURL *url.URL, baseQuery map[string]string) error {
 	queryParams := signedURL.Query()
 
 	hashSignatureSlice := queryParams[queryKeySignature]
@@ -56,13 +57,11 @@ func (a *authCommon) validateSignedURL(signedURL url.URL, baseQuery map[string]s
 	}
 
 	// add base query to query
-	for key, value := range baseQuery {
-		query[key] = value
-	}
+	maps.Copy(query, baseQuery)
 
 	// sort query keys
 	queryKeys := make([]string, 0, len(query))
-	for key, _ := range query {
+	for key := range query {
 		queryKeys = append(queryKeys, key)
 	}
 	sort.Strings(queryKeys)
@@ -81,11 +80,11 @@ func (a *authCommon) validateSignedURL(signedURL url.URL, baseQuery map[string]s
 	return nil
 }
 
-func (a *authCommon) ValidateSignedURL(signedURL url.URL) error {
+func (a *authCommon) ValidateSignedURL(signedURL *url.URL) error {
 	return a.validateSignedURL(signedURL, nil)
 }
 
-func (a *authCommon) ValidateSignedURLWithActor(ctx context.Context, signedURL url.URL) error {
+func (a *authCommon) ValidateSignedURLWithActor(ctx context.Context, signedURL *url.URL) error {
 	actorID, actorErr := actor.GetActorIdFromContext(ctx)
 	if actorErr != nil {
 		return actorErr

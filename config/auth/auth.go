@@ -18,8 +18,8 @@ type Auth interface {
 	ValidateAPIKey(apiKey string) (uuid.UUID, error)
 	NewSignedURL(path string, query map[string]string, expireAfter time.Duration) (*url.URL, error)
 	NewSignedURLWithActor(ctx context.Context, path string, query map[string]string, expireAfter time.Duration) (*url.URL, error)
-	ValidateSignedURL(signedURL url.URL) error
-	ValidateSignedURLWithActor(ctx context.Context, signedURL url.URL) error
+	ValidateSignedURL(signedURL *url.URL) error
+	ValidateSignedURLWithActor(ctx context.Context, signedURL *url.URL) error
 }
 
 // authCommon contains method impl that are independent of external authentication provider
