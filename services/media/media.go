@@ -21,9 +21,10 @@ type mediaServiceMuxParams interface {
 }
 
 type mediaService struct {
-	storage  storage.Storage
-	database database.Database
-	auth     auth.Auth
+	storage     storage.Storage
+	database    database.Database
+	auth        auth.Auth
+	apiEndpoint string
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {
