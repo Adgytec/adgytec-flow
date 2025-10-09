@@ -16,7 +16,6 @@ var (
 	ErrInvalidNumberOfNewMediaItem = errors.New("invalid number of new media item")
 	ErrInvalidMediaSize            = errors.New("invalid media size")
 	ErrMediaTooLarge               = errors.New("media too large")
-	ErrMultipartTooSmall           = errors.New("media too small for multipart upload")
 )
 
 type MediaTooLargeError struct {
