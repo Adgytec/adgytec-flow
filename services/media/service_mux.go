@@ -10,6 +10,8 @@ import (
 	"github.com/google/uuid"
 )
 
+const completeMultipartAction = "complete-multipart"
+
 func getCompleteMultipartEndpoint(mediaID uuid.UUID) string {
 	return fmt.Sprintf("/media/%s/complete-multipart", mediaID.String())
 }
