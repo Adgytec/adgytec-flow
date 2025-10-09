@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	ErrInvalidMediaTypeValue       = errors.New("invalid media type value")
-	ErrCreatingNewMediaItem        = errors.New("error creating new media item")
-	ErrMediaIDGeneration           = errors.New("error generating media id")
-	ErrInvalidNumberOfNewMediaItem = errors.New("invalid number of new media item")
-	ErrInvalidMediaSize            = errors.New("invalid media size")
-	ErrMediaTooLarge               = errors.New("media too large")
+	ErrInvalidMediaTypeValue        = errors.New("invalid media type value")
+	ErrCreatingNewMediaItem         = errors.New("error creating new media item")
+	ErrMediaIDGeneration            = errors.New("error generating media id")
+	ErrInvalidNumberOfNewMediaItems = errors.New("invalid number of new media item")
+	ErrInvalidMediaSize             = errors.New("invalid media size")
+	ErrMediaTooLarge                = errors.New("media too large")
 )
 
 type MediaTooLargeError struct {
@@ -51,6 +51,25 @@ func (e *InvalidMediaTypeValueError) Is(target error) bool {
 }
 
 func (e *InvalidMediaTypeValueError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidNumberOfNewMediaItemsError struct {
+	itemLength int
+}
+
+func (e *InvalidNumberOfNewMediaItemsError) Error() string {
+	return fmt.Sprintf("supported new media item per action in range of %d to %d, but got %d", 1, mediaUploadLimit, e.itemLength)
+}
+
+func (e *InvalidNumberOfNewMediaItemsError) Is(target error) bool {
+	return target == ErrInvalidNumberOfNewMediaItems
+}
+
+func (e *InvalidNumberOfNewMediaItemsError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
