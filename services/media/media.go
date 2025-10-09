@@ -1,6 +1,8 @@
 package media
 
 import (
+	"net/url"
+
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
@@ -21,10 +23,10 @@ type mediaServiceMuxParams interface {
 }
 
 type mediaService struct {
-	storage     storage.Storage
-	database    database.Database
-	auth        auth.Auth
-	apiEndpoint string
+	storage  storage.Storage
+	database database.Database
+	auth     auth.Auth
+	apiURL   url.URL
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {
