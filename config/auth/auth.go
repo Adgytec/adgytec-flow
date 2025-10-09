@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/url"
 	"os"
+	"time"
 
 	"github.com/google/uuid"
 )
@@ -15,8 +16,8 @@ type Auth interface {
 	// this only checks if the API key is in required format as described in the application doc
 	// further validation like if this api key actually exists is done later on
 	ValidateAPIKey(apiKey string) (uuid.UUID, error)
-	NewSignedURL(path string, query map[string]string) (*url.URL, error)
-	NewSignedURLWithActor(ctx context.Context, path string, query map[string]string) (*url.URL, error)
+	NewSignedURL(path string, query map[string]string, expireAfter time.Duration) (*url.URL, error)
+	NewSignedURLWithActor(ctx context.Context, path string, query map[string]string, expireAfter time.Duration) (*url.URL, error)
 	ValidateSignedURL(signedURL url.URL) error
 	ValidateSignedURLWithActor(ctx context.Context, signedURL url.URL) error
 }
