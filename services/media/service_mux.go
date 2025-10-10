@@ -7,11 +7,10 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
-	"github.com/google/uuid"
 )
 
-func getCompleteMultipartPath(mediaID uuid.UUID) string {
-	return fmt.Sprintf("/media/%s/complete-multipart", mediaID.String())
+func getCompleteMultipartPath(uploadID string) string {
+	return fmt.Sprintf("/media/%s/complete-multipart", uploadID)
 }
 
 type mediaServiceMux struct {
@@ -37,7 +36,7 @@ func (m *mediaServiceMux) Router() *chi.Mux {
 		router.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
 		router.Use(m.middleware.ValidateSignedURLWithActor)
 
-		router.Post("/{mediaID}/complete-multipart", m.service.completeMultipartUpload)
+		router.Post("/{uploadID}/complete-multipart", m.service.completeMultipartUpload)
 	})
 
 	return mux
