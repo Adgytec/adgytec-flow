@@ -11,6 +11,7 @@ import (
 var (
 	ErrNotImplemented  = errors.New("error not implemented")
 	ErrFieldValidation = errors.New("invalid field values")
+	ErrInvalidURL      = errors.New("invalid url")
 )
 
 type FieldValidationError struct {

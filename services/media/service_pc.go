@@ -5,42 +5,34 @@ import (
 	"log"
 
 	"github.com/Adgytec/adgytec-flow/config/database"
-	"github.com/google/uuid"
 )
 
-// Contains methods that can be run without a transaction.
-type MediaServicePC interface {
-	NewMediaItem(ctx context.Context, input NewMediaItemInputWithBucketPrefix) (*NewMediaItemOutput, error)
-	NewMediaItems(ctx context.Context, input []NewMediaItemInputWithBucketPrefix) ([]NewMediaItemOutput, error)
+type MediaServiceActions interface {
+	NewMediaItem(ctx context.Context, input NewMediaItemInfoWithStorageDetails) (*MediaUploadDetails, error)
+	NewMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error)
 }
 
-// Contains methods that MUST be run within a transaction.
-type TransactionalMediaServicePC interface {
-	CompleteMediaItemUpload(ctx context.Context, mediaID uuid.UUID) error
-	CompleteMediaItemsUpload(ctx context.Context, mediaIDs []uuid.UUID) error
-}
-
-// The main service interface that provides access to both.
-type MediaServicePCWithTransaction interface {
-	MediaServicePC
-	WithTransaction(db database.Database) TransactionalMediaServicePC
-}
-
-type mediaServicePC struct {
+type mediaServiceActions struct {
 	service *mediaService
 }
 
-func (pc *mediaServicePC) WithTransaction(db database.Database) TransactionalMediaServicePC {
-	serviceCopy := *pc.service
-	serviceCopy.database = db
-	return &mediaServicePC{
-		service: &serviceCopy,
+type MediaServicePC interface {
+	WithTransaction(db database.Database) MediaServiceActions
+}
+
+type mediaServicePC struct {
+	params mediaServiceParams
+}
+
+func (pc *mediaServicePC) WithTransaction(tx database.Database) MediaServiceActions {
+	return &mediaServiceActions{
+		service: newMediaServiceWithTx(pc.params, tx),
 	}
 }
 
-func NewMediaServicePC(params mediaServiceParams) MediaServicePCWithTransaction {
+func NewMediaServicePC(params mediaServiceParams) MediaServicePC {
 	log.Printf("creating %s-service PC", serviceName)
 	return &mediaServicePC{
-		service: newMediaService(params),
+		params: params,
 	}
 }

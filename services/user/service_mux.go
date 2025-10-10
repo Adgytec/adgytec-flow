@@ -20,13 +20,15 @@ func (m *userServiceMux) BasePath() string {
 func (m *userServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
+	mux.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
+	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
+
 	mux.Group(func(router chi.Router) {
 		router.Use(m.middleware.EnsureActorTypeUserOnly)
 
 		router.Get("/profile", m.getUserSelfProfileHandler)
 
-		router.Post("/profile/new-profile-picture", m.newSelfProfilePicture)
-		router.Post("/profile/update", m.updateSelfProfile)
+		router.Patch("/profile/update", m.updateSelfProfile)
 	})
 
 	mux.Group(func(router chi.Router) {
@@ -38,8 +40,7 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Patch("/{userID}/enable", m.enableGlobalUser)
 		router.Patch("/{userID}/disable", m.disableGlobalUser)
 
-		router.Post("/{userID}/new-profile-picture", m.newUserProfilePicture)
-		router.Post("/{userID}/update", m.updateUserProfile)
+		router.Patch("/{userID}/update", m.updateUserProfile)
 	})
 
 	return mux

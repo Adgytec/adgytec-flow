@@ -22,7 +22,7 @@ type userServiceParams interface {
 	IAMService() iam.IAMServicePC
 	CDN() cdn.CDN
 	CacheClient() cache.CacheClient
-	MediaWithTransaction() media.MediaServicePCWithTransaction
+	MediaWithTransaction() media.MediaServicePC
 }
 
 type userServiceMuxParams interface {
@@ -35,7 +35,7 @@ type userService struct {
 	auth             auth.Auth
 	iam              iam.IAMServicePC
 	cdn              cdn.CDN
-	media            media.MediaServicePCWithTransaction
+	media            media.MediaServicePC
 	getUserCache     cache.Cache[models.GlobalUser]
 	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
@@ -54,6 +54,7 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetails) models.Glo
 	if user.ProfilePictureID != nil {
 		// all the media fields will always be present
 		profilePictureModel := &models.ImageDetails{
+			MediaID:       *user.ProfilePictureID,
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
 			Status:        pointer.New(string(user.ProfilePictureStatus.GlobalMediaStatus)),

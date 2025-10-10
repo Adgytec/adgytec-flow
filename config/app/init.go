@@ -10,7 +10,10 @@ func NewApp() (App, error) {
 	}
 
 	log.Println("Initializing application services PC.")
-	internalServices := newInternalService(externalServices)
+	internalServices, internalServiceErr := newInternalService(externalServices)
+	if internalServiceErr != nil {
+		return nil, internalServiceErr
+	}
 
 	return &app{
 		externalServices,

@@ -7,90 +7,91 @@ import (
 	"strings"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
 
-type NewMediaItemInput struct {
-	Size     int64
-	Name     string
-	MimeType string
+type NewMediaItemInfo struct {
+	ID   uuid.UUID `json:"id"`
+	Size uint64    `json:"size"`
+	Name string    `json:"name"`
 }
 
 // Validate() validates the input values
-func (mediaItemInput NewMediaItemInput) Validate() error {
-	validationErr := validation.ValidateStruct(&mediaItemInput,
+// this return raw validation error instead of wrapping it in core.FieldValidationError
+// as uploading media items is secondary action and the primary action require raw error instead of wrapped error
+func (mediaItem NewMediaItemInfo) Validate() error {
+	validationErr := validation.ValidateStruct(&mediaItem,
 		validation.Field(
-			&mediaItemInput.Size,
-			validation.Required,
-			validation.Min(0),
+			&mediaItem.ID,
+			validation.By(func(val any) error {
+				id := val.(uuid.UUID)
+
+				// nil uuid check is explictly required
+				// validation.required doesn't do anything for uuid
+				if id == uuid.Nil {
+					return fmt.Errorf("id cannot be nil UUID")
+				}
+				return nil
+			}),
 		),
 		validation.Field(
-			&mediaItemInput.Name,
-			validation.Required,
-		),
-		validation.Field(
-			&mediaItemInput.MimeType,
+			&mediaItem.Name,
 			validation.Required,
 		),
 	)
 
 	if validationErr != nil {
-		return &core.FieldValidationError{
-			ValidationErrors: validationErr,
-		}
+		return validationErr
 	}
 
 	return nil
 }
 
-func (mediaItemInput NewMediaItemInput) ensureMediaItemType(requiredType string) error {
-	if !strings.HasPrefix(mediaItemInput.MimeType, requiredType) {
-		return &InvalidMediaTypeValueError{
-			Required: fmt.Sprintf("%s/*", requiredType),
-			Got:      mediaItemInput.MimeType,
-		}
-	}
-
-	return nil
-}
-
-// EnsureMediaItemIsImage() ensures the item that will be uploaded is image
-func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsImage() error {
-	return mediaItemInput.ensureMediaItemType("image")
-}
-
-// EnsureMediaItemIsVideo() ensures the item that will be uploaded is video
-func (mediaItemInput NewMediaItemInput) EnsureMediaItemIsVideo() error {
-	return mediaItemInput.ensureMediaItemType("video")
-}
-
-func (mediaItemInput NewMediaItemInput) getMediaItemExtension() string {
-	return filepath.Ext(mediaItemInput.Name)
-}
-
-type NewMediaItemInputWithBucketPrefix struct {
-	NewMediaItemInput
+type NewMediaItemInfoWithStorageDetails struct {
+	NewMediaItemInfo
 	BucketPrefix string
+	RequiredMime []string
 }
 
-func (mediaItemInput NewMediaItemInputWithBucketPrefix) getMediaItemKey() string {
+func (mediaItem NewMediaItemInfoWithStorageDetails) getMediaItemKey() string {
 	return path.Join(
-		mediaItemInput.BucketPrefix,
-		uuid.NewString()+mediaItemInput.getMediaItemExtension(),
+		mediaItem.BucketPrefix,
+		mediaItem.ID.String()+filepath.Ext(mediaItem.Name),
 	)
 }
 
-type MultipartPartUploadOutput struct {
-	PresignPut string `json:"presignPut"`
-	PartNumber int32  `json:"partNumber"`
-	PartSize   int64  `json:"partSize"`
+func (mediaItem NewMediaItemInfoWithStorageDetails) getRequiredMime() []string {
+	zero := []string{zeroMime}
+	requiredMime := make([]string, 0, len(mediaItem.RequiredMime))
+
+	for _, m := range mediaItem.RequiredMime {
+		m = strings.TrimSpace(m)
+		if m == "" {
+			continue // skip empty
+		}
+
+		requiredMime = append(requiredMime, m)
+	}
+
+	if len(requiredMime) == 0 {
+		return zero
+	}
+
+	return requiredMime
 }
 
-type NewMediaItemOutput struct {
-	MediaID              uuid.UUID                   `json:"mediaID"`
-	UploadType           db.GlobalMediaUploadType    `json:"uploadType"`
-	PresignPut           *string                     `json:"presignPut,omitempty"`
-	MultipartPresignPart []MultipartPartUploadOutput `json:"multipartPresignPart,omitempty"`
+type MediaUploadDetails struct {
+	ID                       uuid.UUID                `json:"mediaID"`
+	UploadType               db.GlobalMediaUploadType `json:"uploadType"`
+	PresignPut               *string                  `json:"presignPut,omitempty"`
+	MultipartPresignPart     []MultipartPartUpload    `json:"multipartPresignPart,omitempty"`
+	MultipartSuccessCallback *string                  `json:"multipartSuccessCallback,omitempty"`
+	multipartUploadID        *string
+}
+
+type MultipartPartUpload struct {
+	PresignPut string `json:"presignPut"`
+	PartNumber uint16 `json:"partNumber"`
+	PartSize   uint64 `json:"partSize"`
 }

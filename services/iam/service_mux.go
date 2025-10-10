@@ -19,6 +19,10 @@ func (m *iamServiceMux) BasePath() string {
 
 func (m *iamServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
+
+	mux.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
+	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
+
 	return mux
 }
 

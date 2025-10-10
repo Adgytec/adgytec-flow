@@ -11,11 +11,11 @@ import (
 type GlobalUser struct {
 	ID             uuid.UUID           `json:"id"`
 	Email          string              `json:"email"`
-	Name           string              `json:"name"`
-	About          *string             `json:"about,omitempty"`
+	Name           *string             `json:"name"`
+	About          *string             `json:"about"`
 	DateOfBirth    pgtype.Date         `json:"dateOfBirth"`
 	CreatedAt      time.Time           `json:"createdAt"`
-	ProfilePicture *ImageDetails       `json:"profilePicture,omitempty"`
+	ProfilePicture *ImageDetails       `json:"profilePicture"`
 	Status         db.GlobalUserStatus `json:"status"`
 }
 

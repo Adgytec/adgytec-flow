@@ -1,25 +1,28 @@
 package media
 
 import (
+	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/google/uuid"
 )
 
-// 16 mega byte
-const singlepartUploadLimit int64 = 16 * (1 << 20)
-
-// 1 giga byte
-const multipartUploadLimit int64 = 1 * (1 << 30)
-
-// 5 mega byte
-const multipartPartSize int64 = 5 * (1 << 20)
-
-const mediaUploadLimit int = 50
+const zeroMime string = "application/octet-stream"
 
 type mediaServiceParams interface {
 	Storage() storage.Storage
 	Database() database.Database
+	Auth() auth.Auth
+}
+
+type mediaServiceParamsWithTx struct {
+	mediaServiceParams
+	tx database.Database
+}
+
+func (s *mediaServiceParamsWithTx) Database() database.Database {
+	return s.tx
 }
 
 type mediaServiceMuxParams interface {
@@ -30,11 +33,31 @@ type mediaServiceMuxParams interface {
 type mediaService struct {
 	storage  storage.Storage
 	database database.Database
+	auth     auth.Auth
+}
+
+func (s *mediaService) getMediaUUIDFromString(mediaID string) (uuid.UUID, error) {
+	mediaUUID, mediaIDErr := uuid.Parse(mediaID)
+	if mediaIDErr != nil {
+		return uuid.Nil, ErrInvalidMediaID
+	}
+
+	return mediaUUID, nil
+}
+
+func newMediaServiceWithTx(params mediaServiceParams, tx database.Database) *mediaService {
+	txParams := &mediaServiceParamsWithTx{
+		mediaServiceParams: params,
+		tx:                 tx,
+	}
+
+	return newMediaService(txParams)
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {
 	return &mediaService{
 		storage:  params.Storage(),
 		database: params.Database(),
+		auth:     params.Auth(),
 	}
 }

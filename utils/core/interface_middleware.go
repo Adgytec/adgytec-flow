@@ -26,4 +26,8 @@ type MiddlewarePC interface {
 	// these methods also checks whether the actor status for that organization, but its only used for individual organiztion related methods
 	ActorOrganizationAccessCheck(http.Handler) http.Handler
 	ActorOrganizationManagementAccessCheck(http.Handler) http.Handler
+
+	// signed url check
+	ValidateSignedURL(http.Handler) http.Handler
+	ValidateSignedURLWithActor(http.Handler) http.Handler
 }

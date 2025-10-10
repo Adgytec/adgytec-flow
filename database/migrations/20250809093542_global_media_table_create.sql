@@ -7,8 +7,10 @@ CREATE TYPE global.media_upload_type AS ENUM(
 
 CREATE TYPE global.media_status AS ENUM(
 	'pending',
+	'complete-multipart-failed',
+	'failed-validation',
 	'processing',
-	'failed',
+	'processing-failed',
 	'completed'
 );
 
@@ -16,11 +18,21 @@ CREATE TABLE IF NOT EXISTS global.media (
 	id UUID PRIMARY KEY,
 	bucket_path TEXT NOT NULL UNIQUE,
 	size BIGINT NOT NULL CHECK (size >= 0) DEFAULT 0,
-	mime_type TEXT NOT NULL,
+	mime_type TEXT NOT NULL DEFAULT 'application/octet-stream',
+	required_mime_type TEXT[] NOT NULL CHECK (
+		array_length(
+			required_mime_type,
+			1
+		) > 0
+	),
 	status global.media_status NOT NULL DEFAULT 'pending',
 	upload_type global.media_upload_type NOT NULL,
 	upload_id TEXT,
 	created_at TIMESTAMPTZ NOT NULL,
+	CHECK (
+		upload_type = 'multipart'
+		OR status <> 'complete-multipart-failed'
+	),
 	CHECK (
 		(
 			upload_type = 'multipart'

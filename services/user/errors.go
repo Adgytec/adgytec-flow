@@ -10,8 +10,11 @@ import (
 )
 
 var (
-	ErrInvalidUserId = errors.New("invalid user id")
-	ErrUserNotFound  = errors.New("user not found")
+	ErrInvalidUserId      = errors.New("invalid user id")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrNameLength         = errors.New("User name must be between 3 and 100 characters long.")
+	ErrAboutLength        = errors.New("User about must be between 8 and 1024 characters long.")
+	ErrInvalidDateOfBirth = errors.New("Invalid date of birth")
 )
 
 type InvalidUserIDError struct {
