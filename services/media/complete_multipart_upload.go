@@ -1,6 +1,7 @@
 package media
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -43,10 +44,22 @@ func (d *completeMultipartUploadData) Validate() error {
 	return nil
 }
 
+func (s *mediaService) completeMultipartUpload(ctx context.Context, multipartDetails completeMultipartUploadData) error {
+	return nil
+}
+
 func (s *mediaServiceMux) completeMultipartUpload(w http.ResponseWriter, r *http.Request) {
+	reqCtx := r.Context()
+
 	completeMultipartDetails, payloadErr := payload.DecodeRequestBodyAndValidate[*completeMultipartUploadData](w, r)
 	if payloadErr != nil {
 		payload.EncodeError(w, payloadErr)
+		return
+	}
+
+	completeMultipartErr := s.service.completeMultipartUpload(reqCtx, *completeMultipartDetails)
+	if completeMultipartErr != nil {
+		payload.EncodeError(w, completeMultipartErr)
 		return
 	}
 }
