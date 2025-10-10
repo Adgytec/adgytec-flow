@@ -174,7 +174,7 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 
 	// profile picture check
 	var profilePictureUploadDetails *media.MediaUploadDetails
-	if userProfile.ProfilePicture.Missing() {
+	if userProfile.ProfilePicture.Missing() && existingUser.ProfilePicture != nil {
 		updatedUser.ProfilePictureID = &existingUser.ProfilePicture.MediaID
 	} else if !userProfile.ProfilePicture.Null() {
 		// new profile picture
