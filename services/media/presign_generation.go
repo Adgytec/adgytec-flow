@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/google/uuid"
 )
 
 const (
@@ -59,7 +60,7 @@ func (s *mediaService) getUploadDetails(ctx context.Context, newMediaItem NewMed
 			partUploadDetails = append(partUploadDetails, part)
 		}
 
-		completeMultipartSignedURL, presignErr := s.newCompleteMultipartSignedURL(ctx, multipartUploadID)
+		completeMultipartSignedURL, presignErr := s.newCompleteMultipartSignedURL(ctx, newMediaItem.ID)
 		if presignErr != nil {
 			return nil, presignErr
 		}
@@ -71,8 +72,8 @@ func (s *mediaService) getUploadDetails(ctx context.Context, newMediaItem NewMed
 	return &uploadDetails, nil
 }
 
-func (s *mediaService) newCompleteMultipartSignedURL(ctx context.Context, uploadID string) (string, error) {
-	signedURL, err := s.auth.NewSignedURLWithActor(ctx, getCompleteMultipartPath(uploadID), nil, completeMultipartPresignValidDuration)
+func (s *mediaService) newCompleteMultipartSignedURL(ctx context.Context, mediaID uuid.UUID) (string, error) {
+	signedURL, err := s.auth.NewSignedURLWithActor(ctx, getCompleteMultipartPath(mediaID), nil, completeMultipartPresignValidDuration)
 	if err != nil {
 		return "", err
 	}
