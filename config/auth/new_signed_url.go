@@ -43,6 +43,7 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 
 	var hashPayload bytes.Buffer
 	for _, key := range queryKeys {
+		hashPayload.WriteString(key)
 		hashPayload.WriteString(query[key])
 	}
 
