@@ -31,6 +31,12 @@ const (
 	aboutMaxLength = 1024
 )
 
+type updateUserProfileResponse struct {
+	User                 *models.GlobalUser        `json:"user"`
+	NextStep             string                    `json:"nextStep"`
+	ProfileUploadDetails *media.MediaUploadDetails `json:"profileUploadDetails,omitempty"`
+}
+
 type updateUserProfileData struct {
 	Name           types.NullableString                   `json:"name"`
 	ProfilePicture types.Nullable[media.NewMediaItemInfo] `json:"profilePicture"`
@@ -243,11 +249,7 @@ func (m *userServiceMux) updateUserProfileUtil(w http.ResponseWriter, r *http.Re
 		updateProfileNextStep = "Upload profile picture"
 	}
 
-	updateProfileResponse := struct {
-		User                 *models.GlobalUser        `json:"user"`
-		NextStep             string                    `json:"nextStep"`
-		ProfileUploadDetails *media.MediaUploadDetails `json:"profileUploadDetails,omitempty"`
-	}{
+	updateProfileResponse := updateUserProfileResponse{
 		User:                 updatedUserProfile,
 		ProfileUploadDetails: profilePictureUpdateDetails,
 		NextStep:             updateProfileNextStep,
