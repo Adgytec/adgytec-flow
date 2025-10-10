@@ -20,6 +20,9 @@ func (m *userServiceMux) BasePath() string {
 func (m *userServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
+	mux.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
+	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
+
 	mux.Group(func(router chi.Router) {
 		router.Use(m.middleware.EnsureActorTypeUserOnly)
 
