@@ -15,6 +15,9 @@ const (
 	queryKeyExpire    = "expire"
 	queryKeySignature = "signature"
 	queryKeyActor     = "actor"
+
+	seperatorKey   uint8 = 0
+	seperatorValue uint8 = 255
 )
 
 // NewSignedURL() is using query for cases where other query params are necessary to complete the action
@@ -44,7 +47,10 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 	var hashPayload bytes.Buffer
 	for _, key := range queryKeys {
 		hashPayload.WriteString(key)
+		hashPayload.WriteByte(seperatorKey)
+
 		hashPayload.WriteString(query[key])
+		hashPayload.WriteByte(seperatorValue)
 	}
 
 	signedHash, signingErr := a.newSignedHash([]byte(baseURL.Path), hashPayload.Bytes())

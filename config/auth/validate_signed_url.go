@@ -70,7 +70,10 @@ func (a *authCommon) validateSignedURL(signedURL *url.URL, baseQuery map[string]
 	var hashPayload bytes.Buffer
 	for _, key := range queryKeys {
 		hashPayload.WriteString(key)
+		hashPayload.WriteByte(seperatorKey)
+
 		hashPayload.WriteString(query[key])
+		hashPayload.WriteByte(seperatorValue)
 	}
 
 	// compare hash
