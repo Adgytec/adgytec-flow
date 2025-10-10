@@ -53,7 +53,11 @@ func (a *authCommon) validateSignedURL(signedURL *url.URL, baseQuery map[string]
 
 	// add query params to query
 	for key, value := range queryParams {
-		// only consider first element
+		// url signing only allows unique keys only
+		if len(query[key]) != 1 {
+			return &InvalidSignedURLError{}
+		}
+
 		query[key] = value[0]
 	}
 
