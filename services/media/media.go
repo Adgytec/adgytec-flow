@@ -7,6 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/storage"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/google/uuid"
 )
 
 const zeroMime string = "application/octet-stream"
@@ -27,6 +28,15 @@ type mediaService struct {
 	database database.Database
 	auth     auth.Auth
 	apiURL   *url.URL
+}
+
+func (s *mediaService) getMediaUUIDFromString(mediaID string) (uuid.UUID, error) {
+	mediaUUID, mediaIDErr := uuid.Parse(mediaID)
+	if mediaIDErr != nil {
+		return uuid.Nil, ErrInvalidMediaID
+	}
+
+	return mediaUUID, nil
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {
