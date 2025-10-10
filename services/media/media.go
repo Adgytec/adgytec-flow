@@ -16,6 +16,15 @@ type mediaServiceParams interface {
 	Auth() auth.Auth
 }
 
+type mediaServiceParamsWithTx struct {
+	mediaServiceParams
+	tx database.Database
+}
+
+func (s *mediaServiceParamsWithTx) Database() database.Database {
+	return s.tx
+}
+
 type mediaServiceMuxParams interface {
 	mediaServiceParams
 	Middleware() core.MiddlewarePC
@@ -34,6 +43,15 @@ func (s *mediaService) getMediaUUIDFromString(mediaID string) (uuid.UUID, error)
 	}
 
 	return mediaUUID, nil
+}
+
+func newMediaServiceWithTx(params mediaServiceParams, tx database.Database) *mediaService {
+	txParams := &mediaServiceParamsWithTx{
+		mediaServiceParams: params,
+		tx:                 tx,
+	}
+
+	return newMediaService(txParams)
 }
 
 func newMediaService(params mediaServiceParams) *mediaService {

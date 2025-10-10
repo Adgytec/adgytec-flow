@@ -24,9 +24,9 @@ type mediaServicePC struct {
 	params mediaServiceParams
 }
 
-func (pc *mediaServicePC) WithTransaction(db database.Database) MediaServiceActions {
+func (pc *mediaServicePC) WithTransaction(tx database.Database) MediaServiceActions {
 	return &mediaServiceActions{
-		service: newMediaService(pc.params),
+		service: newMediaServiceWithTx(pc.params, tx),
 	}
 }
 
