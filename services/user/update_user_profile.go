@@ -61,7 +61,7 @@ func (userProfile updateUserProfileData) Validate() error {
 					}
 
 					aboutLen := utf8.RuneCountInString(about.Value)
-					if aboutLen < 8 && aboutLen > 1024 {
+					if aboutLen < 8 || aboutLen > 1024 {
 						return ErrAboutLength
 					}
 
