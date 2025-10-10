@@ -21,6 +21,12 @@ CREATE TABLE IF NOT EXISTS global.users (
 	CHECK (
 		name IS NULL
 		OR normalized_name IS NOT NULL
+	),
+	CHECK (
+		char_length(name) BETWEEN 3 AND 100
+	),
+	CHECK (
+		char_length(about) BETWEEN 8 AND 1024
 	)
 );
 

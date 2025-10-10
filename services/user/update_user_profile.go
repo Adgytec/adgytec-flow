@@ -23,6 +23,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const (
+	nameMinLength = 3
+	nameMaxLength = 100
+
+	aboutMinLength = 8
+	aboutMaxLength = 1024
+)
+
 type updateUserProfileData struct {
 	Name           types.NullableString                   `json:"name"`
 	ProfilePicture types.Nullable[media.NewMediaItemInfo] `json:"profilePicture"`
@@ -43,7 +51,7 @@ func (userProfile updateUserProfileData) Validate() error {
 					}
 
 					nameLen := utf8.RuneCountInString(name.Value)
-					if nameLen < 3 || nameLen > 100 {
+					if nameLen < nameMinLength || nameLen > nameMaxLength {
 						return ErrNameLength
 					}
 
@@ -61,7 +69,7 @@ func (userProfile updateUserProfileData) Validate() error {
 					}
 
 					aboutLen := utf8.RuneCountInString(about.Value)
-					if aboutLen < 8 || aboutLen > 1024 {
+					if aboutLen < aboutMinLength || aboutLen > aboutMaxLength {
 						return ErrAboutLength
 					}
 
