@@ -52,6 +52,7 @@ func (d completeMultipartUploadData) Validate() error {
 	validationErr := validation.ValidateStruct(
 		&d,
 		validation.Field(
+			// each slice item Validate() method is implicitly called
 			&d.PartsInfo,
 			validation.Required,
 			validation.Length(int(minimumPartsCount), int(maximumPartsCount)),

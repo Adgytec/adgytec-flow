@@ -28,9 +28,11 @@ func (mediaItem NewMediaItemInfo) Validate() error {
 	validationErr := validation.ValidateStruct(&mediaItem,
 		validation.Field(
 			&mediaItem.ID,
-			validation.Required,
 			validation.By(func(val any) error {
 				id := val.(uuid.UUID)
+
+				// nil uuid check is explictly required
+				// validation.required doesn't do anything for uuid
 				if id == uuid.Nil {
 					return fmt.Errorf("id cannot be nil UUID")
 				}
