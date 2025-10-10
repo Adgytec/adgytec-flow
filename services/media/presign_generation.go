@@ -67,6 +67,7 @@ func (s *mediaService) getUploadDetails(ctx context.Context, newMediaItem NewMed
 
 		uploadDetails.MultipartPresignPart = partUploadDetails
 		uploadDetails.MultipartSuccessCallback = &completeMultipartSignedURL
+		uploadDetails.multipartUploadID = &multipartUploadID
 	}
 
 	return &uploadDetails, nil
