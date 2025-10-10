@@ -26,8 +26,19 @@ func (m *mediaServiceMux) BasePath() string {
 func (m *mediaServiceMux) Router() *chi.Mux {
 	mux := chi.NewMux()
 
-	mux.Post("/{mediaID}/post-processing", m.postProcessingMediaItems)
-	mux.Post("/{mediaID}/complete-multipart", m.service.completeMultipartUpload)
+	mux.Group(func(router chi.Router) {
+		router.Use(m.middleware.ValidateSignedURL)
+
+		router.Post("/{mediaID}/post-processing", m.postProcessingMediaItems)
+	})
+
+	mux.Group(func(router chi.Router) {
+		router.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
+		router.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
+		router.Use(m.middleware.ValidateSignedURLWithActor)
+
+		router.Post("/{mediaID}/complete-multipart", m.service.completeMultipartUpload)
+	})
 
 	return mux
 }
