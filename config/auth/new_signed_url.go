@@ -66,6 +66,7 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 		}
 		urlQuery.Add(key, query[key])
 	}
+	baseURL.RawQuery = urlQuery.Encode()
 
 	return baseURL, nil
 }
