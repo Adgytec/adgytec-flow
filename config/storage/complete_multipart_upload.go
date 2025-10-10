@@ -18,7 +18,7 @@ func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID st
 
 	partDetails := make([]types.CompletedPart, 0, len(partsInfo))
 	for i := 1; i <= len(partsInfo); i++ {
-		part := partsInfo[i]
+		part := partsInfo[i-1]
 		if i != int(part.GetPartNumber()) {
 			return &InvalidPartNumbersError{}
 		}
