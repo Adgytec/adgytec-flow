@@ -22,6 +22,8 @@ type NewMediaItemInfo struct {
 type NullableNewMediaItemInfo = types.Nullable[NewMediaItemInfo]
 
 // Validate() validates the input values
+// this return raw validation error instead of wrapping it in core.FieldValidationError
+// as uploading media items is secondary action and the primary action require raw error instead of wrapped error
 func (mediaItem NewMediaItemInfo) Validate() error {
 	validationErr := validation.ValidateStruct(&mediaItem,
 		validation.Field(
