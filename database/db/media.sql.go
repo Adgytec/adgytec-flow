@@ -6,6 +6,8 @@
 package db
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 )
 
@@ -15,4 +17,28 @@ type AddMediaItemsParams struct {
 	RequiredMimeType []string              `json:"requiredMimeType"`
 	UploadType       GlobalMediaUploadType `json:"uploadType"`
 	UploadID         *string               `json:"uploadId"`
+}
+
+const getMediaItemDetails = `-- name: GetMediaItemDetails :one
+SELECT
+	bucket_path AS key,
+	upload_id,
+	upload_type
+FROM
+	global.media
+WHERE
+	id = $1
+`
+
+type GetMediaItemDetailsRow struct {
+	Key        string                `json:"key"`
+	UploadID   *string               `json:"uploadId"`
+	UploadType GlobalMediaUploadType `json:"uploadType"`
+}
+
+func (q *Queries) GetMediaItemDetails(ctx context.Context, id uuid.UUID) (GetMediaItemDetailsRow, error) {
+	row := q.db.QueryRow(ctx, getMediaItemDetails, id)
+	var i GetMediaItemDetailsRow
+	err := row.Scan(&i.Key, &i.UploadID, &i.UploadType)
+	return i, err
 }
