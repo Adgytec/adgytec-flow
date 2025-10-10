@@ -10,8 +10,8 @@ import (
 const presignExpiration = time.Hour
 
 type MultipartPartInfo interface {
-	Etag() string
-	PartNumber() int32
+	GetEtag() string
+	GetPartNumber() int32
 }
 
 type Storage interface {

@@ -13,19 +13,19 @@ import (
 func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID string, partsInfo []MultipartPartInfo) error {
 	// 1️⃣ Sort by PartNumber
 	sort.Slice(partsInfo, func(i, j int) bool {
-		return partsInfo[i].PartNumber() < partsInfo[j].PartNumber()
+		return partsInfo[i].GetPartNumber() < partsInfo[j].GetPartNumber()
 	})
 
 	partDetails := make([]types.CompletedPart, 0, len(partsInfo))
 	for i := 1; i <= len(partsInfo); i++ {
 		part := partsInfo[i]
-		if i != int(part.PartNumber()) {
+		if i != int(part.GetPartNumber()) {
 			return &InvalidPartNumbersError{}
 		}
 
 		partDetails = append(partDetails, types.CompletedPart{
-			ETag:       aws.String(part.Etag()),
-			PartNumber: aws.Int32(part.PartNumber()),
+			ETag:       aws.String(part.GetEtag()),
+			PartNumber: aws.Int32(part.GetPartNumber()),
 		})
 	}
 
