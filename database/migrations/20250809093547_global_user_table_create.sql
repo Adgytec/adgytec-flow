@@ -19,8 +19,8 @@ CREATE TABLE IF NOT EXISTS global.users (
 	status global.user_status NOT NULL DEFAULT 'enabled',
 	created_at TIMESTAMPTZ NOT NULL,
 	CHECK (
-		name = NULL
-		OR normalized_name <> NULL
+		name IS NULL
+		OR normalized_name IS NOT NULL
 	)
 );
 
