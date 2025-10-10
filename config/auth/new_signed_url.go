@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"bytes"
 	"context"
 	"net/url"
 	"sort"
@@ -40,12 +41,12 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 
 	baseURL := a.apiURL.JoinPath(actionPath)
 
-	hashPayload := make([]byte, 0)
+	var hashPayload bytes.Buffer
 	for _, key := range queryKeys {
-		hashPayload = append(hashPayload, []byte(query[key])...)
+		hashPayload.WriteString(query[key])
 	}
 
-	signedHash, signingErr := a.newSignedHash([]byte(baseURL.Path), hashPayload)
+	signedHash, signingErr := a.newSignedHash([]byte(baseURL.Path), hashPayload.Bytes())
 	if signingErr != nil {
 		return nil, signingErr
 	}

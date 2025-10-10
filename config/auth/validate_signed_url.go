@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"bytes"
 	"context"
 	"maps"
 	"net/url"
@@ -66,13 +67,13 @@ func (a *authCommon) validateSignedURL(signedURL *url.URL, baseQuery map[string]
 	}
 	sort.Strings(queryKeys)
 
-	hashPayload := make([]byte, 0)
+	var hashPayload bytes.Buffer
 	for _, key := range queryKeys {
-		hashPayload = append(hashPayload, []byte(query[key])...)
+		hashPayload.WriteString(query[key])
 	}
 
 	// compare hash
-	compareErr := a.compareSignedHash(hashSignature, []byte(signedURL.Path), hashPayload)
+	compareErr := a.compareSignedHash(hashSignature, []byte(signedURL.Path), hashPayload.Bytes())
 	if compareErr != nil {
 		return compareErr
 	}
