@@ -31,7 +31,7 @@ func (a *authCommon) validateSignedURL(signedURL *url.URL, baseQuery map[string]
 
 	hashSignatureSlice := queryParams[queryKeySignature]
 	expireSlice := queryParams[queryKeyExpire]
-	if len(hashSignatureSlice) != 1 && len(expireSlice) != 1 {
+	if len(hashSignatureSlice) != 1 || len(expireSlice) != 1 {
 		return &InvalidSignedURLError{}
 	}
 
