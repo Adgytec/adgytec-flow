@@ -38,8 +38,7 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 	}
 	sort.Strings(queryKeys)
 
-	baseURL := *a.apiURL
-	baseURL.JoinPath(actionPath)
+	baseURL := a.apiURL.JoinPath(actionPath)
 
 	hashPayload := make([]byte, 0)
 	for _, key := range queryKeys {
@@ -68,7 +67,7 @@ func (a *authCommon) NewSignedURL(actionPath string, query map[string]string, ex
 		urlQuery.Add(key, query[key])
 	}
 
-	return &baseURL, nil
+	return baseURL, nil
 }
 
 func (a *authCommon) NewSignedURLWithActor(ctx context.Context, actionPath string, query map[string]string, expireAfter time.Duration) (*url.URL, error) {
