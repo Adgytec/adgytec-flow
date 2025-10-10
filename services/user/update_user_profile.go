@@ -43,7 +43,7 @@ func (userProfile updateUserProfileData) Validate() error {
 					}
 
 					nameLen := utf8.RuneCountInString(name.Value)
-					if nameLen < 3 && nameLen > 100 {
+					if nameLen < 3 || nameLen > 100 {
 						return ErrNameLength
 					}
 
