@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -42,4 +43,10 @@ func (d *completeMultipartUploadData) Validate() error {
 	return nil
 }
 
-func (s *mediaService) completeMultipartUpload(w http.ResponseWriter, r *http.Request) {}
+func (s *mediaServiceMux) completeMultipartUpload(w http.ResponseWriter, r *http.Request) {
+	completeMultipartDetails, payloadErr := payload.DecodeRequestBodyAndValidate[*completeMultipartUploadData](w, r)
+	if payloadErr != nil {
+		payload.EncodeError(w, payloadErr)
+		return
+	}
+}

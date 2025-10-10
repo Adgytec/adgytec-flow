@@ -36,7 +36,7 @@ func (m *mediaServiceMux) Router() *chi.Mux {
 		router.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
 		router.Use(m.middleware.ValidateSignedURLWithActor)
 
-		router.Post("/{uploadID}/complete-multipart", m.service.completeMultipartUpload)
+		router.Post("/{uploadID}/complete-multipart", m.completeMultipartUpload)
 	})
 
 	return mux
