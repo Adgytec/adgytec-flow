@@ -24,10 +24,10 @@ import (
 )
 
 type updateUserProfileData struct {
-	Name           types.NullableString           `json:"name"`
-	ProfilePicture media.NullableNewMediaItemInfo `json:"profilePicture"`
-	About          types.NullableString           `json:"about"`
-	DateOfBirth    types.Nullable[pgtype.Date]    `json:"dateOfBirth"`
+	Name           types.NullableString                   `json:"name"`
+	ProfilePicture types.Nullable[media.NewMediaItemInfo] `json:"profilePicture"`
+	About          types.NullableString                   `json:"about"`
+	DateOfBirth    types.Nullable[pgtype.Date]            `json:"dateOfBirth"`
 }
 
 func (userProfile updateUserProfileData) Validate() error {
@@ -90,7 +90,7 @@ func (userProfile updateUserProfileData) Validate() error {
 			&userProfile.ProfilePicture,
 			validation.By(
 				func(val any) error {
-					profilePictureInfo := val.(media.NullableNewMediaItemInfo)
+					profilePictureInfo := val.(types.Nullable[media.NewMediaItemInfo])
 					if profilePictureInfo.Null() {
 						return nil
 					}

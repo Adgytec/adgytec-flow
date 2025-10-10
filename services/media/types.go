@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/Adgytec/adgytec-flow/utils/types"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 )
@@ -17,9 +16,6 @@ type NewMediaItemInfo struct {
 	Size uint64    `json:"size"`
 	Name string    `json:"name"`
 }
-
-// NullableNewMediaItemInfo is used with request bodies
-type NullableNewMediaItemInfo = types.Nullable[NewMediaItemInfo]
 
 // Validate() validates the input values
 // this return raw validation error instead of wrapping it in core.FieldValidationError
