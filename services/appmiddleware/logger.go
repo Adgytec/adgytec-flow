@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/utils/logger"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
@@ -20,7 +21,7 @@ func (pc *appMiddlewarePC) Logger(next http.Handler) http.Handler {
 		}
 
 		// wrap response writer to capture status code
-		rw := &responseWriter{ResponseWriter: w, statusCode: http.StatusOK}
+		rw := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 
 		// create logger with context
 		reqLogger := log.With().Str("request_id", reqID).Logger()
@@ -33,7 +34,8 @@ func (pc *appMiddlewarePC) Logger(next http.Handler) http.Handler {
 				Str("method", r.Method).
 				Str("url", r.URL.RequestURI()).
 				Str("path", r.URL.Path).
-				Int("status", rw.statusCode).
+				Int("status", rw.Status()).
+				Int("bytes_written", rw.BytesWritten()).
 				Str("user_agent", r.UserAgent()).
 				Str("remote_ip", r.RemoteAddr).
 				Dur("elapsed_ms", time.Since(start)).

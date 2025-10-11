@@ -36,6 +36,11 @@ func main() {
 		log.Logger = log.Output(zerolog.ConsoleWriter{
 			Out:        os.Stderr,
 			TimeFormat: time.RFC3339,
+			FieldsExclude: []string{
+				"user_agent",
+				"git_revision",
+				"go_version",
+			},
 		})
 	} else {
 		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
