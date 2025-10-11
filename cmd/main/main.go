@@ -6,10 +6,12 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/Adgytec/adgytec-flow/config/server"
 	"github.com/joho/godotenv"
+	"github.com/rs/zerolog"
 )
 
 func main() {
@@ -17,6 +19,15 @@ func main() {
 	if err != nil {
 		log.Println("error loading .env file")
 	}
+
+	// add logger details
+	logLevelStr := strings.ToLower(os.Getenv("LOG_LEVEL"))
+	logLevel, err := zerolog.ParseLevel(logLevelStr)
+	if err != nil {
+		logLevel = zerolog.InfoLevel // default
+	}
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.SetGlobalLevel(logLevel)
 
 	port := os.Getenv("PORT")
 
