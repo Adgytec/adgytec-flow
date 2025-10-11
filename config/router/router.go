@@ -54,6 +54,7 @@ func NewApplicationRouter(appConfig app.App) *chi.Mux {
 	log.Info().Msg("adding application mux")
 	mux := chi.NewMux()
 
+	mux.Use(middleware.RealIP)
 	mux.Use(appConfig.Middleware().Logger)
 	mux.Use(middleware.Heartbeat("/health"))
 	mux.Use(middleware.Recoverer)

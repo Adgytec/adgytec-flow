@@ -8,7 +8,6 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
-	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/server"
 	"github.com/joho/godotenv"
@@ -36,8 +35,7 @@ func main() {
 	var output io.Writer = os.Stderr
 	if os.Getenv("ENV") == "development" {
 		output = zerolog.ConsoleWriter{
-			Out:        os.Stderr,
-			TimeFormat: time.RFC3339,
+			Out: os.Stderr,
 			FieldsExclude: []string{
 				zerolog.TimestampFieldName,
 				"remote_ip",
