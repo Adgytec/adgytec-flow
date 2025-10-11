@@ -37,6 +37,8 @@ func main() {
 			Out:        os.Stderr,
 			TimeFormat: time.RFC3339,
 			FieldsExclude: []string{
+				zerolog.TimestampFieldName,
+				"remote_ip",
 				"user_agent",
 				"git_revision",
 				"go_version",
