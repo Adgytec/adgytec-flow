@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"io"
 	"net/http"
 	"os"
 	"os/signal"
@@ -30,10 +31,11 @@ func main() {
 		logLevel = zerolog.InfoLevel // default
 	}
 	zerolog.SetGlobalLevel(logLevel)
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 
+	var output io.Writer = os.Stderr
 	if os.Getenv("ENV") == "development" {
-		zerolog.TimeFieldFormat = time.RFC3339
-		log.Logger = log.Output(zerolog.ConsoleWriter{
+		output = zerolog.ConsoleWriter{
 			Out:        os.Stderr,
 			TimeFormat: time.RFC3339,
 			FieldsExclude: []string{
@@ -43,10 +45,9 @@ func main() {
 				"git_revision",
 				"go_version",
 			},
-		})
-	} else {
-		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+		}
 	}
+	log.Logger = log.Output(output)
 
 	port := os.Getenv("PORT")
 
