@@ -27,6 +27,10 @@ func main() {
 	logLevelStr := strings.ToLower(os.Getenv("LOG_LEVEL"))
 	logLevel, parseErr := zerolog.ParseLevel(logLevelStr)
 	if parseErr != nil {
+		log.Warn().
+			Err(parseErr).
+			Str("log_level_provided", logLevelStr).
+			Msg("invalid log level provided, defaulting to 'info'")
 		logLevel = zerolog.InfoLevel // default
 	}
 	zerolog.SetGlobalLevel(logLevel)
