@@ -26,7 +26,7 @@ var appServices = []serviceFactory{
 }
 
 func EnsureServicesInitialization(appConfig app.App) error {
-	log.Info().Msg("application service initialization")
+	log.Info().Msg("Ensuring all application services are initialized")
 	for _, factory := range appServices {
 		details, managementPermissions, applicationPermissions := factory()
 

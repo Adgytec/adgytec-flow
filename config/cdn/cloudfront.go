@@ -18,7 +18,7 @@ func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
 }
 
 func NewCloudfrontCDNSigner() (CDN, error) {
-	log.Info().Msg("new cloudfront cnd signer")
+	log.Info().Msg("new cloudfront cdn signer")
 	keyPairID := os.Getenv("CLOUDFRONT_KEY_PAIR_ID")
 	key := os.Getenv("CLOUDFRONT_PRIVATE_KEY")
 	cdnUrl := os.Getenv("CDN_URL")
