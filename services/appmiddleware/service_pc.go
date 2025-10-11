@@ -1,9 +1,8 @@
 package appmiddleware
 
 import (
-	"log"
-
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/rs/zerolog/log"
 )
 
 type appMiddlewarePC struct {
@@ -11,7 +10,9 @@ type appMiddlewarePC struct {
 }
 
 func NewAppMiddlewarePC(params appMiddlewareParams) core.MiddlewarePC {
-	log.Println("creating app-middleware PC")
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service pc")
 	return &appMiddlewarePC{
 		service: newAppMiddleware(params),
 	}

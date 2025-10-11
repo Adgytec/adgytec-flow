@@ -18,6 +18,8 @@ var (
 	ErrInvalidHash        = errors.New("invalid hash")
 	ErrInvalidHMACSecret  = errors.New("invalid hmac secret")
 	ErrInvalidAuthConfig  = errors.New("invalid auth config")
+	ErrInvalidSignedURL   = errors.New("invalid signed url")
+	ErrSignedURLExpired   = errors.New("signed url expired")
 )
 
 type UserExistsError struct {
@@ -85,7 +87,7 @@ func (e *InvalidAccessTokenError) Unwrap() error {
 
 func (e *InvalidAccessTokenError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
-		HTTPStatusCode: http.StatusBadRequest,
+		HTTPStatusCode: http.StatusUnauthorized,
 		Message:        pointer.New(e.Error()),
 	}
 }
@@ -102,7 +104,7 @@ func (e *InvalidAPIKeyError) Is(target error) bool {
 
 func (e *InvalidAPIKeyError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
-		HTTPStatusCode: http.StatusBadRequest,
+		HTTPStatusCode: http.StatusUnauthorized,
 		Message:        pointer.New(e.Error()),
 	}
 }
@@ -119,7 +121,7 @@ func (e *HashMismatchError) Is(target error) bool {
 
 func (e *HashMismatchError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
-		HTTPStatusCode: http.StatusBadRequest,
+		HTTPStatusCode: http.StatusForbidden,
 		Message:        pointer.New(e.Error()),
 	}
 }
@@ -136,7 +138,7 @@ func (e *InvalidHashError) Is(target error) bool {
 
 func (e *InvalidHashError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
-		HTTPStatusCode: http.StatusBadRequest,
+		HTTPStatusCode: http.StatusForbidden,
 		Message:        pointer.New(e.Error()),
 	}
 }
@@ -147,4 +149,38 @@ type JwtKeyFuncError struct {
 
 func (e *JwtKeyFuncError) Error() string {
 	return fmt.Sprintf("failed to create keyfunc from JWK set URL: %v", e.cause)
+}
+
+type InvalidSignedURLError struct{}
+
+func (e *InvalidSignedURLError) Error() string {
+	return ErrInvalidSignedURL.Error()
+}
+
+func (e *InvalidSignedURLError) Is(target error) bool {
+	return target == ErrInvalidSignedURL
+}
+
+func (e *InvalidSignedURLError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type SignedURLExpiredError struct{}
+
+func (e *SignedURLExpiredError) Error() string {
+	return ErrSignedURLExpired.Error()
+}
+
+func (e *SignedURLExpiredError) Is(target error) bool {
+	return target == ErrSignedURLExpired
+}
+
+func (e *SignedURLExpiredError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusUnauthorized,
+		Message:        pointer.New(e.Error()),
+	}
 }

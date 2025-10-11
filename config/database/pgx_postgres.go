@@ -2,13 +2,13 @@ package database
 
 import (
 	"context"
-	"log"
 	"os"
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/rs/zerolog/log"
 )
 
 // TODO: handle this using env variables
@@ -105,8 +105,7 @@ func (c *pgxConnection) Shutdown() {
 }
 
 func NewPgxDbConnectionPool() (DatabaseWithShutdown, error) {
-	log.Println("init db pgx pool")
-
+	log.Info().Msg("new pgx pool")
 	connPool, connecErr := newPgxConnPool()
 	if connecErr != nil {
 		return nil, connecErr

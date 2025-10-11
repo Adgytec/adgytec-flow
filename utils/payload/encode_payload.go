@@ -2,11 +2,11 @@ package payload
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
+	"github.com/rs/zerolog/log"
 )
 
 func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
@@ -17,7 +17,10 @@ func EncodeJSON[T any](w http.ResponseWriter, status int, data T) {
 	jsonEncoder.SetIndent("", "\t")
 
 	if err := jsonEncoder.Encode(data); err != nil {
-		log.Printf("Error encoding json: %v", err)
+		log.Error().
+			Err(err).
+			Str("action", "encode json").
+			Send()
 		http.Error(
 			w,
 			http.StatusText(http.StatusInternalServerError),

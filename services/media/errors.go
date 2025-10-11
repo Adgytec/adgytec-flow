@@ -10,16 +10,20 @@ import (
 )
 
 var (
-	ErrInvalidMediaTypeValue       = errors.New("invalid media type value")
-	ErrCreatingNewMediaItem        = errors.New("error creating new media item")
-	ErrMediaIDGeneration           = errors.New("error generating media id")
-	ErrInvalidNumberOfNewMediaItem = errors.New("invalid number of new media item")
-	ErrInvalidMediaSize            = errors.New("invalid media size")
-	ErrMediaTooLarge               = errors.New("media too large")
+	ErrInvalidMediaTypeValue        = errors.New("invalid media type value")
+	ErrCreatingNewMediaItem         = errors.New("error creating new media item")
+	ErrMediaIDGeneration            = errors.New("error generating media id")
+	ErrInvalidNumberOfNewMediaItems = errors.New("invalid number of new media item")
+	ErrInvalidMediaSize             = errors.New("invalid media size")
+	ErrMediaTooLarge                = errors.New("media too large")
+	ErrInvalidMediaID               = errors.New("invalid media id")
+	ErrUploadNotMultipart           = errors.New("upload not multipart")
+	ErrMediaItemNotFound            = errors.New("media item not found")
+	ErrMultipartUploadIDNotFound    = errors.New("multipart upload id not found")
 )
 
 type MediaTooLargeError struct {
-	Size int64
+	Size uint64
 }
 
 func (e *MediaTooLargeError) Error() string {
@@ -53,6 +57,42 @@ func (e *InvalidMediaTypeValueError) Is(target error) bool {
 func (e *InvalidMediaTypeValueError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidNumberOfNewMediaItemsError struct {
+	itemLength int
+}
+
+func (e *InvalidNumberOfNewMediaItemsError) Error() string {
+	return fmt.Sprintf("supported new media item per action in range of %d to %d, but got %d", 1, mediaUploadLimit, e.itemLength)
+}
+
+func (e *InvalidNumberOfNewMediaItemsError) Is(target error) bool {
+	return target == ErrInvalidNumberOfNewMediaItems
+}
+
+func (e *InvalidNumberOfNewMediaItemsError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type MediaItemNotFoundError struct{}
+
+func (e *MediaItemNotFoundError) Error() string {
+	return ErrMediaItemNotFound.Error()
+}
+
+func (e *MediaItemNotFoundError) Is(target error) bool {
+	return target == ErrMediaItemNotFound
+}
+
+func (e *MediaItemNotFoundError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusNotFound,
 		Message:        pointer.New(e.Error()),
 	}
 }

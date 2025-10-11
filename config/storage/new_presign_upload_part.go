@@ -2,8 +2,8 @@ package storage
 
 import (
 	"context"
-	"log"
 
+	"github.com/Adgytec/adgytec-flow/utils/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
@@ -22,7 +22,13 @@ func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID strin
 		},
 	)
 	if presignErr != nil {
-		log.Printf("error generating presign upload part url for '%s', part-number: %d, cause: %v", key, partNumber, presignErr)
+		logger.GetLoggerFromContext(ctx).Error().
+			Err(presignErr).
+			Int32("part-number", partNumber).
+			Str("key", key).
+			Str("action", "multipart upload part presign put generation").
+			Send()
+
 		return "", presignErr
 	}
 

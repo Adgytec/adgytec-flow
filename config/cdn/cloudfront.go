@@ -1,11 +1,11 @@
 package cdn
 
 import (
-	"log"
 	"os"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/feature/cloudfront/sign"
+	"github.com/rs/zerolog/log"
 )
 
 type cdnCloudfront struct {
@@ -18,8 +18,7 @@ func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
 }
 
 func NewCloudfrontCDNSigner() (CDN, error) {
-	log.Println("creating cloudfront url signer")
-
+	log.Info().Msg("new cloudfront cdn signer")
 	keyPairID := os.Getenv("CLOUDFRONT_KEY_PAIR_ID")
 	key := os.Getenv("CLOUDFRONT_PRIVATE_KEY")
 	cdnUrl := os.Getenv("CDN_URL")

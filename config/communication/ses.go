@@ -1,10 +1,9 @@
 package communication
 
 import (
-	"log"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/ses"
+	"github.com/rs/zerolog/log"
 )
 
 type communicationEmailSES struct {
@@ -16,7 +15,7 @@ func (c *communicationEmailSES) SendMail(to []string, from string) error {
 }
 
 func newSesClient(awsConfig aws.Config) communicationEmail {
-	log.Println("creating ses client")
+	log.Info().Msg("new ses client")
 	return &communicationEmailSES{
 		client: ses.NewFromConfig(awsConfig),
 	}

@@ -29,7 +29,7 @@ type appInternalServices interface {
 	IAMService() iam.IAMServicePC
 	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC
-	MediaWithTransaction() media.MediaServicePCWithTransaction
+	MediaWithTransaction() media.MediaServicePC
 }
 
 type App interface {

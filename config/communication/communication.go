@@ -1,9 +1,8 @@
 package communication
 
 import (
-	"log"
-
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/rs/zerolog/log"
 )
 
 type Communication interface {
@@ -23,7 +22,7 @@ func (c *communicationImpl) SendMail(to []string, from string) error {
 }
 
 func NewAWSCommunicationClient(awsConfig aws.Config) Communication {
-	log.Println("creating aws communication client")
+	log.Info().Msg("new aws communication client")
 	return &communicationImpl{
 		email: newSesClient(awsConfig),
 	}

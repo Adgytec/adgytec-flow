@@ -12,7 +12,7 @@ type internalServices struct {
 	iamService   iam.IAMServicePC
 	userService  user.UserServicePC
 	middleware   core.MiddlewarePC
-	mediaService media.MediaServicePCWithTransaction
+	mediaService media.MediaServicePC
 }
 
 func (s *internalServices) IAMService() iam.IAMServicePC {
@@ -27,11 +27,11 @@ func (s *internalServices) Middleware() core.MiddlewarePC {
 	return s.middleware
 }
 
-func (s *internalServices) MediaWithTransaction() media.MediaServicePCWithTransaction {
+func (s *internalServices) MediaWithTransaction() media.MediaServicePC {
 	return s.mediaService
 }
 
-func newInternalService(externalService appExternalServices) appInternalServices {
+func newInternalService(externalService appExternalServices) (appInternalServices, error) {
 	internalService := internalServices{}
 	appInstance := &app{
 		appExternalServices: externalService,
@@ -40,10 +40,10 @@ func newInternalService(externalService appExternalServices) appInternalServices
 
 	// Initialize internal services. The order of initialization is important.
 	internalService.iamService = iam.NewIAMServicePC(externalService)
-	internalService.mediaService = media.NewMediaServicePC(externalService)
+	internalService.mediaService = media.NewMediaServicePC(appInstance)
 
 	internalService.userService = user.NewUserServicePC(appInstance)
 	internalService.middleware = appmiddleware.NewAppMiddlewarePC(appInstance)
 
-	return &internalService
+	return &internalService, nil
 }

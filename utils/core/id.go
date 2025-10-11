@@ -1,12 +1,12 @@
 package core
 
 import (
-	"log"
 	"os"
 	"sync"
 
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -19,13 +19,18 @@ func getIDNamespace() uuid.UUID {
 	idOnce.Do(func() {
 		err := godotenv.Load()
 		if err != nil {
-			log.Println("error loading .env file")
+			log.Warn().
+				Err(err).
+				Msg("failed to load .env")
 		}
 
 		namespaceString := os.Getenv("ID_NAMESPACE")
 		namespaceVal, namespaceErr := uuid.Parse(namespaceString)
 		if namespaceErr != nil {
-			log.Fatalf("invalid id namespace value found: %s\n%v", namespaceString, namespaceErr)
+			log.Fatal().
+				Err(namespaceErr).
+				Str("action", "get id namespace").
+				Send()
 		}
 		idNamespace = namespaceVal
 	})
