@@ -2,9 +2,9 @@ package media
 
 import (
 	"context"
-	"log"
 
 	"github.com/Adgytec/adgytec-flow/config/database"
+	"github.com/rs/zerolog/log"
 )
 
 type MediaServiceActions interface {
@@ -31,7 +31,9 @@ func (pc *mediaServicePC) WithTransaction(tx database.Database) MediaServiceActi
 }
 
 func NewMediaServicePC(params mediaServiceParams) MediaServicePC {
-	log.Printf("creating %s-service PC", serviceName)
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service pc")
 	return &mediaServicePC{
 		params: params,
 	}

@@ -2,10 +2,10 @@ package user
 
 import (
 	"context"
-	"log"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 type UserServicePC interface {
@@ -18,7 +18,9 @@ type userServicePC struct {
 }
 
 func NewUserServicePC(params userServiceParams) UserServicePC {
-	log.Printf("creating %s-service PC", serviceName)
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service pc")
 	return &userServicePC{
 		service: newUserService(params),
 	}

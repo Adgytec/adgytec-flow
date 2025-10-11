@@ -2,12 +2,12 @@ package storage
 
 import (
 	"context"
-	"log"
 	"sort"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID string, partsInfo []MultipartPartInfo) error {
@@ -43,7 +43,11 @@ func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID st
 		},
 	)
 	if completeUploadErr != nil {
-		log.Printf("error completing multipart upload for '%s': %v", key, completeUploadErr)
+		log.Error().
+			Err(completeUploadErr).
+			Str("key", key).
+			Str("action", "complete multipart upload").
+			Send()
 		return completeUploadErr
 	}
 

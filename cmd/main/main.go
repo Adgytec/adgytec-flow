@@ -50,7 +50,8 @@ func main() {
 	if serverErr != nil {
 		log.Fatal().
 			Err(serverErr).
-			Msg("error creating new http server")
+			Str("action", "new http server").
+			Send()
 	}
 
 	go func() {
@@ -69,7 +70,8 @@ func main() {
 	if err := httpServer.Shutdown(); err != nil {
 		log.Error().
 			Err(err).
-			Msg("graceful shutdown failed")
+			Str("action", "http server shutdown").
+			Send()
 	} else {
 		log.Info().
 			Msg("server shutdown gracefully")

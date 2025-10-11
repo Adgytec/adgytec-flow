@@ -2,11 +2,11 @@ package storage
 
 import (
 	"context"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *s3Client) NewPresignPut(ctx context.Context, key string, id uuid.UUID) (string, error) {
@@ -22,7 +22,11 @@ func (s *s3Client) NewPresignPut(ctx context.Context, key string, id uuid.UUID) 
 		},
 	)
 	if presignErr != nil {
-		log.Printf("error creating new presign put url for '%s': %v", key, presignErr)
+		log.Error().
+			Err(presignErr).
+			Str("key", key).
+			Str("action", "new presign put").
+			Send()
 		return "", presignErr
 	}
 

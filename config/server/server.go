@@ -2,13 +2,13 @@ package server
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/config/appinit"
 	"github.com/Adgytec/adgytec-flow/config/router"
+	"github.com/rs/zerolog/log"
 )
 
 type Server interface {
@@ -22,12 +22,12 @@ type httpServer struct {
 }
 
 func (s *httpServer) ListenAndServe() error {
-	log.Println("Server now listening")
+	log.Info().Msg("server started listening")
 	return s.server.ListenAndServe()
 }
 
 func (s *httpServer) Shutdown() error {
-	log.Println("shutting down server")
+	log.Info().Msg("server shutting down")
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 

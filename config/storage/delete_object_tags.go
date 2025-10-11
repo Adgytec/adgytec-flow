@@ -2,10 +2,10 @@ package storage
 
 import (
 	"context"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *s3Client) DeleteObjectTags(ctx context.Context, key string) error {
@@ -17,7 +17,11 @@ func (s *s3Client) DeleteObjectTags(ctx context.Context, key string) error {
 		},
 	)
 	if deleteTagErr != nil {
-		log.Printf("error deleting s3 object tags for '%s': %v", key, deleteTagErr)
+		log.Error().
+			Err(deleteTagErr).
+			Str("key", key).
+			Str("action", "delete s3 object tags").
+			Send()
 		return deleteTagErr
 	}
 	return nil

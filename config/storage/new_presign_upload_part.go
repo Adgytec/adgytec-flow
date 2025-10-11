@@ -2,10 +2,10 @@ package storage
 
 import (
 	"context"
-	"log"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID string, partNumber int32) (string, error) {
@@ -22,7 +22,13 @@ func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID strin
 		},
 	)
 	if presignErr != nil {
-		log.Printf("error generating presign upload part url for '%s', part-number: %d, cause: %v", key, partNumber, presignErr)
+		log.Error().
+			Err(presignErr).
+			Int32("part-number", partNumber).
+			Str("key", key).
+			Str("action", "multipart upload part presign put generation").
+			Send()
+
 		return "", presignErr
 	}
 
