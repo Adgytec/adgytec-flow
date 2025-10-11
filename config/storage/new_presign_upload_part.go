@@ -3,9 +3,9 @@ package storage
 import (
 	"context"
 
+	"github.com/Adgytec/adgytec-flow/utils/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/rs/zerolog/log"
 )
 
 func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID string, partNumber int32) (string, error) {
@@ -22,7 +22,7 @@ func (s *s3Client) NewPresignUploadPart(ctx context.Context, key, uploadID strin
 		},
 	)
 	if presignErr != nil {
-		log.Error().
+		logger.GetLoggerFromContext(ctx).Error().
 			Err(presignErr).
 			Int32("part-number", partNumber).
 			Str("key", key).

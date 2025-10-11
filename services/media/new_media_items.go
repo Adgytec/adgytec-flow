@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
-	"github.com/rs/zerolog/log"
+	"github.com/Adgytec/adgytec-flow/utils/logger"
 )
 
 func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error) {
@@ -39,7 +39,7 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 	// add details to db
 	_, dbErr := s.database.Queries().AddMediaItems(ctx, mediaItemsParams)
 	if dbErr != nil {
-		log.Error().
+		logger.GetLoggerFromContext(ctx).Error().
 			Err(dbErr).
 			Str("action", "adding new media items to db").
 			Send()
