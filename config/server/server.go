@@ -22,7 +22,6 @@ type httpServer struct {
 }
 
 func (s *httpServer) ListenAndServe() error {
-	log.Info().Msg("server started listening")
 	return s.server.ListenAndServe()
 }
 
