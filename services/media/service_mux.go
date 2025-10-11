@@ -2,12 +2,12 @@ package media
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/rs/zerolog/log"
 )
 
 func getCompleteMultipartPath(mediaID uuid.UUID) string {
@@ -44,7 +44,9 @@ func (m *mediaServiceMux) Router() *chi.Mux {
 }
 
 func NewMediaServiceMux(params mediaServiceMuxParams) services.Mux {
-	log.Printf("adding %s-service mux", serviceName)
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service mux")
 	return &mediaServiceMux{
 		service:    newMediaService(params),
 		middleware: params.Middleware(),

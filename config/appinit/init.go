@@ -2,13 +2,13 @@ package appinit
 
 import (
 	"context"
-	"log"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/rs/zerolog/log"
 )
 
 type permissionType string
@@ -26,7 +26,7 @@ var appServices = []serviceFactory{
 }
 
 func EnsureServicesInitialization(appConfig app.App) error {
-	log.Println("Ensuring application initialization.")
+	log.Info().Msg("Ensuring all application services are initialized")
 	for _, factory := range appServices {
 		details, managementPermissions, applicationPermissions := factory()
 

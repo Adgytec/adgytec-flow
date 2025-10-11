@@ -2,9 +2,9 @@ package storage
 
 import (
 	"context"
-	"log"
 	"sort"
 
+	"github.com/Adgytec/adgytec-flow/utils/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
@@ -43,7 +43,11 @@ func (s *s3Client) CompleteMultipartUpload(ctx context.Context, key, uploadID st
 		},
 	)
 	if completeUploadErr != nil {
-		log.Printf("error completing multipart upload for '%s': %v", key, completeUploadErr)
+		logger.GetLoggerFromContext(ctx).Error().
+			Err(completeUploadErr).
+			Str("key", key).
+			Str("action", "complete multipart upload").
+			Send()
 		return completeUploadErr
 	}
 

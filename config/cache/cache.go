@@ -2,9 +2,9 @@ package cache
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/Adgytec/adgytec-flow/config/serializer"
+	"github.com/rs/zerolog/log"
 	"golang.org/x/sync/singleflight"
 )
 
@@ -45,7 +45,12 @@ func (c *implCache[T]) Get(
 			return serializedData, nil
 		}
 
-		log.Printf("cache data serialization failed for key: %s, error: %v", c.key(id), serializeErr)
+		log.Error().
+			Err(serializeErr).
+			Str("key", c.key(id)).
+			Str("action", "cache get data serialization").
+			Send()
+
 		c.Delete(id)
 	}
 
@@ -69,7 +74,12 @@ func (c *implCache[T]) Get(
 func (c *implCache[T]) Set(id string, data T) {
 	byteData, err := c.serializer.Encode(data)
 	if err != nil {
-		log.Printf("error serializing cache data for key %s failed: %v", c.key(id), err)
+		log.Error().
+			Err(err).
+			Str("key", c.key(id)).
+			Str("action", "cache set data serialization").
+			Send()
+
 		return
 	}
 

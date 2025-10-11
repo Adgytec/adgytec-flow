@@ -30,4 +30,10 @@ type MiddlewarePC interface {
 	// signed url check
 	ValidateSignedURL(http.Handler) http.Handler
 	ValidateSignedURLWithActor(http.Handler) http.Handler
+
+	// request logging middleware
+	Logger(http.Handler) http.Handler
+
+	// recoverer
+	Recoverer(http.Handler) http.Handler
 }

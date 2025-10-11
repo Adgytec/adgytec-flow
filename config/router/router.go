@@ -1,7 +1,6 @@
 package router
 
 import (
-	"log"
 	"net/http"
 	"os"
 
@@ -16,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
+	"github.com/rs/zerolog/log"
 )
 
 type serviceFactory func(params app.App) services.Mux
@@ -51,15 +51,16 @@ func handle400(mux *chi.Mux) {
 }
 
 func NewApplicationRouter(appConfig app.App) *chi.Mux {
-	log.Println("adding application mux")
+	log.Info().Msg("adding application mux")
 	mux := chi.NewMux()
 
-	mux.Use(middleware.Heartbeat("/health"))
-	mux.Use(middleware.Logger)
-	mux.Use(middleware.Recoverer)
+	mux.Use(middleware.RealIP)
+	mux.Use(appConfig.Middleware().Logger)
+	mux.Use(appConfig.Middleware().Recoverer)
 	mux.Use(middleware.StripSlashes)
 	mux.Use(middleware.AllowContentType("application/json"))
 	mux.Use(middleware.Compress(5, "application/json"))
+	mux.Use(middleware.Heartbeat("/health"))
 
 	allowedOrigins := []string{
 		"https://*",

@@ -1,11 +1,10 @@
 package iam
 
 import (
-	"log"
-
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog/log"
 )
 
 type iamServiceMux struct {
@@ -27,7 +26,9 @@ func (m *iamServiceMux) Router() *chi.Mux {
 }
 
 func NewIAMMux(params iamServiceMuxParams) services.Mux {
-	log.Printf("adding %s-service mux", serviceName)
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service mux")
 	return &iamServiceMux{
 		service:    newIAMService(params),
 		middleware: params.Middleware(),

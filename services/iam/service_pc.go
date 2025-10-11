@@ -2,7 +2,8 @@ package iam
 
 import (
 	"context"
-	"log"
+
+	"github.com/rs/zerolog/log"
 )
 
 type IAMServicePC interface {
@@ -18,7 +19,9 @@ type iamServicePC struct {
 }
 
 func NewIAMServicePC(params iamServiceParams) IAMServicePC {
-	log.Printf("creating %s-service PC", serviceName)
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service pc")
 	return &iamServicePC{
 		service: newIAMService(params),
 	}

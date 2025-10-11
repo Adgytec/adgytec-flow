@@ -2,9 +2,9 @@ package media
 
 import (
 	"context"
-	"log"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/utils/logger"
 )
 
 func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemInfoWithStorageDetails) ([]MediaUploadDetails, error) {
@@ -39,7 +39,11 @@ func (s *mediaService) newMediaItems(ctx context.Context, input []NewMediaItemIn
 	// add details to db
 	_, dbErr := s.database.Queries().AddMediaItems(ctx, mediaItemsParams)
 	if dbErr != nil {
-		log.Printf("error added new media items details to db: %v", dbErr)
+		logger.GetLoggerFromContext(ctx).Error().
+			Err(dbErr).
+			Str("action", "adding new media items to db").
+			Send()
+
 		return nil, dbErr
 	}
 

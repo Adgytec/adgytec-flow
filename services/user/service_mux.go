@@ -1,11 +1,10 @@
 package user
 
 import (
-	"log"
-
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/services"
 	"github.com/go-chi/chi/v5"
+	"github.com/rs/zerolog/log"
 )
 
 type userServiceMux struct {
@@ -47,7 +46,9 @@ func (m *userServiceMux) Router() *chi.Mux {
 }
 
 func NewUserServiceMux(params userServiceMuxParams) services.Mux {
-	log.Printf("adding %s-service mux", serviceName)
+	log.Info().
+		Str("service", serviceName).
+		Msg("new service mux")
 	return &userServiceMux{
 		service:    newUserService(params),
 		middleware: params.Middleware(),

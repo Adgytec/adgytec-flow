@@ -1,11 +1,11 @@
 package storage
 
 import (
-	"log"
 	"os"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/rs/zerolog/log"
 )
 
 type s3Client struct {
@@ -15,8 +15,7 @@ type s3Client struct {
 }
 
 func NewS3Client(awsConfig aws.Config) (Storage, error) {
-	log.Println("creating s3 client")
-
+	log.Info().Msg("new s3 client")
 	bucket := os.Getenv("AWS_S3_STUDIO_BUCKET")
 
 	if bucket == "" {

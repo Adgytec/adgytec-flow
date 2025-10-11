@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 	"strings"
+
+	"github.com/rs/zerolog/log"
 )
 
 type RequestBody interface {
@@ -73,7 +74,10 @@ func decodeRequestBody[T any](w http.ResponseWriter, r *http.Request) (T, error)
 			}
 
 		default:
-			log.Printf("Error decoding request body: %v\n", err)
+			log.Error().
+				Err(err).
+				Str("action", "decode request body").
+				Send()
 			return zero, err
 		}
 	}

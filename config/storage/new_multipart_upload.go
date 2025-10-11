@@ -2,8 +2,8 @@ package storage
 
 import (
 	"context"
-	"log"
 
+	"github.com/Adgytec/adgytec-flow/utils/logger"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
@@ -19,7 +19,11 @@ func (s *s3Client) NewMultipartUpload(ctx context.Context, key string, id uuid.U
 		},
 	)
 	if newMultipartUploadErr != nil {
-		log.Printf("error creating multipart upload for '%s': %v", key, newMultipartUploadErr)
+		logger.GetLoggerFromContext(ctx).Error().
+			Err(newMultipartUploadErr).
+			Str("key", key).
+			Str("action", "new multipart upload").
+			Send()
 		return "", newMultipartUploadErr
 	}
 
