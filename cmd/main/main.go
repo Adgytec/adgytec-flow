@@ -44,8 +44,6 @@ func main() {
 				zerolog.TimestampFieldName,
 				"remote_ip",
 				"user_agent",
-				"git_revision",
-				"go_version",
 			},
 		}
 	}
