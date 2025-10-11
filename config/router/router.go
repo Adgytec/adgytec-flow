@@ -56,11 +56,11 @@ func NewApplicationRouter(appConfig app.App) *chi.Mux {
 
 	mux.Use(middleware.RealIP)
 	mux.Use(appConfig.Middleware().Logger)
-	mux.Use(middleware.Heartbeat("/health"))
-	mux.Use(middleware.Recoverer)
+	mux.Use(appConfig.Middleware().Recoverer)
 	mux.Use(middleware.StripSlashes)
 	mux.Use(middleware.AllowContentType("application/json"))
 	mux.Use(middleware.Compress(5, "application/json"))
+	mux.Use(middleware.Heartbeat("/health"))
 
 	allowedOrigins := []string{
 		"https://*",

@@ -33,4 +33,7 @@ type MiddlewarePC interface {
 
 	// request logging middleware
 	Logger(http.Handler) http.Handler
+
+	// recoverer
+	Recoverer(http.Handler) http.Handler
 }
