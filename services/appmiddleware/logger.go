@@ -39,7 +39,7 @@ func (pc *appMiddlewarePC) Logger(next http.Handler) http.Handler {
 				Str("user_agent", r.UserAgent()).
 				Str("remote_ip", r.RemoteAddr).
 				Dur("elapsed_ms", time.Since(start)).
-				Msg("incoming request")
+				Msg("request completed")
 		}()
 
 		next.ServeHTTP(rw, r)
