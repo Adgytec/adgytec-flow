@@ -22,7 +22,7 @@ type newUserSocialLinkData struct {
 	ProfileLink  string `json:"profileLink"`
 }
 
-func (socialLink *newUserSocialLinkData) Validate() error {
+func (socialLink newUserSocialLinkData) Validate() error {
 	validationErr := validation.ValidateStruct(
 		&socialLink,
 		validation.Field(&socialLink.PlatformName, validation.Required),
@@ -92,13 +92,13 @@ func (m *userServiceMux) newUserSelfSocialLink(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	newSocialLinkDetails, payloadErr := payload.DecodeRequestBodyAndValidate[*newUserSocialLinkData](w, r)
+	newSocialLinkDetails, payloadErr := payload.DecodeRequestBodyAndValidate[newUserSocialLinkData](w, r)
 	if payloadErr != nil {
 		payload.EncodeError(w, payloadErr)
 		return
 	}
 
-	newSocialLink, socialLinkErr := m.service.newUserSocialLink(reqCtx, userID, *newSocialLinkDetails)
+	newSocialLink, socialLinkErr := m.service.newUserSocialLink(reqCtx, userID, newSocialLinkDetails)
 	if socialLinkErr != nil {
 		payload.EncodeError(w, socialLinkErr)
 		return
