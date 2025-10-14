@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS global.user_social_links (
 	id UUID PRIMARY KEY DEFAULT uuidv7 (),
 	platform_name TEXT NOT NULL,
 	profile_link TEXT NOT NULL,
-	user_id UUID NOT NULL REFERENCES global.users (id),
+	user_id UUID NOT NULL REFERENCES global.users (id) ON DELETE CASCADE,
 	created_at TIMESTAMPTZ NOT NULL,
 	updated_at TIMESTAMPTZ,
 	UNIQUE (
