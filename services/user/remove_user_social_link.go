@@ -71,6 +71,8 @@ func (m *userServiceMux) removeUserSocialLinkUtil(w http.ResponseWriter, r *http
 		payload.EncodeError(w, removeSocialLinkErr)
 		return
 	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
 
 func (m *userServiceMux) removeUserSelfSocialLink(w http.ResponseWriter, r *http.Request) {
