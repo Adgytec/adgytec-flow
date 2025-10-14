@@ -7,9 +7,16 @@ WHERE
 	id = sqlc.arg (user_id)::UUID;
 
 -- name: GetUserSocialLinks :many
-select id, platform_name, profile_link, created_at, updated_at 
-    from global.user_social_links
-where user_id = sqlc.arg(user_id)::UUID;
+SELECT
+	id,
+	platform_name,
+	profile_link,
+	created_at,
+	updated_at
+FROM
+	global.user_social_links
+WHERE
+	user_id = sqlc.arg (user_id)::UUID;
 
 -- name: GetGlobalUsersLatestFirst :many
 SELECT
@@ -130,3 +137,31 @@ FROM
 	global.user_details d
 WHERE
 	d.id = $5;
+
+-- name: NewUserSocialLink :one
+INSERT INTO
+	global.user_social_links (
+		platform_name,
+		profile_link,
+		user_id
+	)
+VALUES
+	($1, $2, $3)
+RETURNING
+	*;
+
+-- name: RemoveUserSocialLink :exec
+DELETE FROM global.user_social_links
+WHERE
+	id = $1
+	AND user_id = $2;
+
+-- name: UpdateUserSocialLink :one
+UPDATE global.user_social_links
+SET
+	profile_link = $1
+WHERE
+	id = $2
+	AND user_id = $3
+RETURNING
+	*;
