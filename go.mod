@@ -1,6 +1,6 @@
 module github.com/Adgytec/adgytec-flow
 
-go 1.24.0
+go 1.25.3
 
 require (
 	github.com/MicahParks/keyfunc/v3 v3.6.2
