@@ -10,11 +10,12 @@ import (
 )
 
 var (
-	ErrInvalidUserId      = errors.New("invalid user id")
-	ErrUserNotFound       = errors.New("user not found")
-	ErrNameLength         = errors.New("User name must be between 3 and 100 characters long.")
-	ErrAboutLength        = errors.New("User about must be between 8 and 1024 characters long.")
-	ErrInvalidDateOfBirth = errors.New("Invalid date of birth")
+	ErrInvalidUserId                          = errors.New("invalid user id")
+	ErrUserNotFound                           = errors.New("user not found")
+	ErrNameLength                             = errors.New("User name must be between 3 and 100 characters long.")
+	ErrAboutLength                            = errors.New("User about must be between 8 and 1024 characters long.")
+	ErrInvalidDateOfBirth                     = errors.New("Invalid date of birth")
+	ErrUserSocialPlatformDetailsAlreadyExists = errors.New("user social platform details already exists")
 )
 
 type InvalidUserIDError struct {
@@ -49,6 +50,25 @@ func (e *UserNotFoundError) Is(target error) bool {
 func (e *UserNotFoundError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusNotFound,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type UserSocialPlatformDetailsAlreadyExistsError struct {
+	PlatformName string
+}
+
+func (e *UserSocialPlatformDetailsAlreadyExistsError) Error() string {
+	return fmt.Sprintf("'%s' details already exists", e.PlatformName)
+}
+
+func (e *UserSocialPlatformDetailsAlreadyExistsError) Is(target error) bool {
+	return target == ErrUserSocialPlatformDetailsAlreadyExists
+}
+
+func (e *UserSocialPlatformDetailsAlreadyExistsError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusConflict,
 		Message:        pointer.New(e.Error()),
 	}
 }
