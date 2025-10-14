@@ -626,26 +626,6 @@ type GlobalUserDetails struct {
 	ExtraLarge                 *string               `json:"extraLarge"`
 }
 
-type GlobalUserDetailsWithSocialLinks struct {
-	ID                         uuid.UUID             `json:"id"`
-	Email                      string                `json:"email"`
-	Name                       *string               `json:"name"`
-	About                      *string               `json:"about"`
-	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
-	CreatedAt                  time.Time             `json:"createdAt"`
-	ProfilePictureID           *uuid.UUID            `json:"profilePictureId"`
-	Status                     GlobalUserStatus      `json:"status"`
-	UncompressedProfilePicture *string               `json:"uncompressedProfilePicture"`
-	ProfilePictureSize         *int64                `json:"profilePictureSize"`
-	ProfilePictureStatus       NullGlobalMediaStatus `json:"profilePictureStatus"`
-	Thumbnail                  *string               `json:"thumbnail"`
-	Small                      *string               `json:"small"`
-	Medium                     *string               `json:"medium"`
-	Large                      *string               `json:"large"`
-	ExtraLarge                 *string               `json:"extraLarge"`
-	SocialLinks                interface{}           `json:"socialLinks"`
-}
-
 type GlobalUserSocialLinks struct {
 	ID           uuid.UUID  `json:"id"`
 	PlatformName string     `json:"platformName"`
