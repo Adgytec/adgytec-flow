@@ -80,6 +80,8 @@ func (s *userService) newUserSocialLink(ctx context.Context, userID uuid.UUID, s
 		return nil, commitErr
 	}
 
+	// cache invalidate
+	s.getUserCache.Delete(userID.String())
 	return &newSocialLink, nil
 }
 

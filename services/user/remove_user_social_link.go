@@ -49,7 +49,14 @@ func (s *userService) removeUserSocialLink(ctx context.Context, userID, resource
 		return &SocialLinkNotFoundError{}
 	}
 
-	return tx.Commit(ctx)
+	commitErr := tx.Commit(ctx)
+	if commitErr != nil {
+		return commitErr
+	}
+
+	// cache invalidate
+	s.getUserCache.Delete(userID.String())
+	return nil
 }
 
 func (m *userServiceMux) removeUserSocialLinkUtil(w http.ResponseWriter, r *http.Request, userID uuid.UUID) {

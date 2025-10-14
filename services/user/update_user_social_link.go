@@ -62,6 +62,9 @@ func (s *userService) updateUserSocialLink(ctx context.Context, userID, resource
 	if commitErr != nil {
 		return nil, commitErr
 	}
+
+	// cache invalidate
+	s.getUserCache.Delete(userID.String())
 	return &updatedSocialLink, nil
 }
 
