@@ -410,6 +410,79 @@ func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context,
 	return items, nil
 }
 
+const getUserById = `-- name: GetUserById :one
+SELECT
+	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+FROM
+	global.user_details
+WHERE
+	id = $1::UUID
+`
+
+func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetails, error) {
+	row := q.db.QueryRow(ctx, getUserById, userID)
+	var i GlobalUserDetails
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.Name,
+		&i.About,
+		&i.DateOfBirth,
+		&i.CreatedAt,
+		&i.ProfilePictureID,
+		&i.Status,
+		&i.UncompressedProfilePicture,
+		&i.ProfilePictureSize,
+		&i.ProfilePictureStatus,
+		&i.Thumbnail,
+		&i.Small,
+		&i.Medium,
+		&i.Large,
+		&i.ExtraLarge,
+	)
+	return i, err
+}
+
+const getUserSocialLinks = `-- name: GetUserSocialLinks :many
+select id, platform_name, profile_link, created_at, updated_at 
+    from global.user_social_links
+where user_id = $1::UUID
+`
+
+type GetUserSocialLinksRow struct {
+	ID           uuid.UUID  `json:"id"`
+	PlatformName string     `json:"platformName"`
+	ProfileLink  string     `json:"profileLink"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    *time.Time `json:"updatedAt"`
+}
+
+func (q *Queries) GetUserSocialLinks(ctx context.Context, userID uuid.UUID) ([]GetUserSocialLinksRow, error) {
+	rows, err := q.db.Query(ctx, getUserSocialLinks, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserSocialLinksRow
+	for rows.Next() {
+		var i GetUserSocialLinksRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.PlatformName,
+			&i.ProfileLink,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateGlobalUserProfile = `-- name: UpdateGlobalUserProfile :one
 WITH
 	updated AS (

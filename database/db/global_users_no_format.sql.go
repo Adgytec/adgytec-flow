@@ -14,23 +14,16 @@ import (
 const getUserById = `-- name: GetUserById :one
 SELECT
 	users.id, users.email, users.name, users.about, users.date_of_birth, users.created_at, users.profile_picture_id, users.status, users.uncompressed_profile_picture, users.profile_picture_size, users.profile_picture_status, users.thumbnail, users.small, users.medium, users.large, users.extra_large,
-	jsonb_agg_strict (
-		jsonb_build_object(
-			'id',
-			links.id,
-			'platformName',
-			links.platform_name,
-			'profileLink',
-			links.profile_link,
-			'createdAt',
-			links.created_at,
-			'updatedAt',
-			links.updated_at
-		)
+	ARRAY(
+		SELECT
+			id, platform_name, profile_link, user_id, created_at, updated_at
+		FROM
+			global.user_social_links
+		WHERE
+			user_id = users.id
 	) AS social_links
 FROM
 	global.user_details AS users
-	LEFT JOIN global.user_social_links AS links ON users.id = links.user_id
 WHERE
 	users.id = $1::UUID
 GROUP BY

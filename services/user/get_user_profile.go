@@ -39,6 +39,8 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 
 	userModel, userError := s.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
 		var zero models.GlobalUser
+
+		// get user profile
 		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 		if dbErr != nil {
 			if errors.Is(dbErr, pgx.ErrNoRows) {
@@ -48,8 +50,14 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			return zero, dbErr
 		}
 
-		userModel := s.getUserResponseModel(userProfile.GlobalUserDetails)
-		userModel.SocialLinks = userProfile.SocialLinks
+		// get user profile social links
+		userSocialLinks, dbErr := s.db.Queries().GetUserSocialLinks(ctx, userID)
+		if dbErr != nil {
+			return zero, dbErr
+		}
+
+		userModel := s.getUserResponseModel(userProfile)
+		userModel.SocialLinks = userSocialLinks
 
 		return userModel, nil
 	})
