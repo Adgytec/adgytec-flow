@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
@@ -12,6 +13,7 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 )
 
 type updateUserSocialLinkData struct {
@@ -55,6 +57,9 @@ func (s *userService) updateUserSocialLink(ctx context.Context, userID, resource
 		ProfileLink: profileLink.ProfileLink,
 	})
 	if dbErr != nil {
+		if errors.Is(dbErr, pgx.ErrNoRows) {
+			return nil, &SocialLinkNotFoundError{}
+		}
 		return nil, dbErr
 	}
 
