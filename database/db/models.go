@@ -544,7 +544,7 @@ type ApplicationPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
-	UpdatedAt         time.Time                 `json:"updatedAt"`
+	UpdatedAt         *time.Time                `json:"updatedAt"`
 }
 
 type ArchiveDeletedRecords struct {
@@ -626,6 +626,15 @@ type GlobalUserDetails struct {
 	ExtraLarge                 *string               `json:"extraLarge"`
 }
 
+type GlobalUserSocialLinks struct {
+	ID           uuid.UUID  `json:"id"`
+	PlatformName string     `json:"platformName"`
+	ProfileLink  string     `json:"profileLink"`
+	UserID       uuid.UUID  `json:"userId"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    *time.Time `json:"updatedAt"`
+}
+
 type GlobalUsers struct {
 	ID               uuid.UUID        `json:"id"`
 	Email            string           `json:"email"`
@@ -648,5 +657,5 @@ type ManagementPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
-	UpdatedAt         time.Time                 `json:"updatedAt"`
+	UpdatedAt         *time.Time                `json:"updatedAt"`
 }
