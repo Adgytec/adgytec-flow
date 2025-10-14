@@ -10,12 +10,14 @@ import (
 )
 
 var (
-	ErrInvalidUserId                          = errors.New("invalid user id")
+	ErrInvalidUserID                          = errors.New("invalid user id")
 	ErrUserNotFound                           = errors.New("user not found")
 	ErrNameLength                             = errors.New("User name must be between 3 and 100 characters long.")
 	ErrAboutLength                            = errors.New("User about must be between 8 and 1024 characters long.")
 	ErrInvalidDateOfBirth                     = errors.New("Invalid date of birth")
 	ErrUserSocialPlatformDetailsAlreadyExists = errors.New("user social platform details already exists")
+	ErrSocialLinkNotFound                     = errors.New("social link not found")
+	ErrInvalidSocialLinkID                    = errors.New("invalid social link id")
 )
 
 type InvalidUserIDError struct {
@@ -27,7 +29,7 @@ func (e *InvalidUserIDError) Error() string {
 }
 
 func (e *InvalidUserIDError) Is(target error) bool {
-	return target == ErrInvalidUserId
+	return target == ErrInvalidUserID
 }
 
 func (e *InvalidUserIDError) HTTPResponse() apires.ErrorDetails {
@@ -69,6 +71,42 @@ func (e *UserSocialPlatformDetailsAlreadyExistsError) Is(target error) bool {
 func (e *UserSocialPlatformDetailsAlreadyExistsError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusConflict,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type SocialLinkNotFoundError struct{}
+
+func (e *SocialLinkNotFoundError) Error() string {
+	return "Social link not found."
+}
+
+func (e *SocialLinkNotFoundError) Is(target error) bool {
+	return target == ErrSocialLinkNotFound
+}
+
+func (e *SocialLinkNotFoundError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusNotFound,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidSocialLinkIDError struct {
+	InvalidSocialLinkID string
+}
+
+func (e *InvalidSocialLinkIDError) Error() string {
+	return fmt.Sprintf("ID: '%s', is not a valid social link id.", e.InvalidSocialLinkID)
+}
+
+func (e *InvalidSocialLinkIDError) Is(target error) bool {
+	return target == ErrInvalidSocialLinkID
+}
+
+func (e *InvalidSocialLinkIDError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
 }
