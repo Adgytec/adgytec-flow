@@ -28,6 +28,8 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Get("/profile", m.getUserSelfProfileHandler)
 
 		router.Patch("/profile/update", m.updateSelfProfile)
+
+		router.Post("/profile/add-social-link", m.newUserSelfSocialLink)
 	})
 
 	mux.Group(func(router chi.Router) {
