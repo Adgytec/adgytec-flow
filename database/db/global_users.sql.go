@@ -523,7 +523,7 @@ func (q *Queries) NewUserSocialLink(ctx context.Context, arg NewUserSocialLinkPa
 	return i, err
 }
 
-const removeUserSocialLink = `-- name: RemoveUserSocialLink :exec
+const removeUserSocialLink = `-- name: RemoveUserSocialLink :execrows
 DELETE FROM global.user_social_links
 WHERE
 	id = $1
@@ -535,9 +535,12 @@ type RemoveUserSocialLinkParams struct {
 	UserID uuid.UUID `json:"userId"`
 }
 
-func (q *Queries) RemoveUserSocialLink(ctx context.Context, arg RemoveUserSocialLinkParams) error {
-	_, err := q.db.Exec(ctx, removeUserSocialLink, arg.ID, arg.UserID)
-	return err
+func (q *Queries) RemoveUserSocialLink(ctx context.Context, arg RemoveUserSocialLinkParams) (int64, error) {
+	result, err := q.db.Exec(ctx, removeUserSocialLink, arg.ID, arg.UserID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
 }
 
 const updateGlobalUserProfile = `-- name: UpdateGlobalUserProfile :one

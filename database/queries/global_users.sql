@@ -150,7 +150,7 @@ VALUES
 RETURNING
 	*;
 
--- name: RemoveUserSocialLink :exec
+-- name: RemoveUserSocialLink :execrows
 DELETE FROM global.user_social_links
 WHERE
 	id = $1
