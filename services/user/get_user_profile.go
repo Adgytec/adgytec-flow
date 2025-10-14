@@ -48,7 +48,10 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			return zero, dbErr
 		}
 
-		return s.getUserResponseModel(userProfile), nil
+		userModel := s.getUserResponseModel(userProfile.GlobalUserDetails)
+		userModel.SocialLinks = userProfile.SocialLinks
+
+		return userModel, nil
 	})
 	if userError != nil {
 		return nil, userError
