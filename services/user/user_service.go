@@ -86,7 +86,9 @@ func (s *userService) getUserResponseModels(users []db.GlobalUserDetails) []mode
 	return userModels
 }
 
-func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
+func (s *userService) getUserIDFromRequest(r *http.Request) (uuid.UUID, error) {
+	userID := chi.URLParam(r, "userID")
+
 	userUUID, userIDErr := uuid.Parse(userID)
 	if userIDErr != nil {
 		return uuid.Nil, &InvalidUserIDError{
@@ -107,7 +109,6 @@ func (s *userService) getSocialLinkIDFromRequest(r *http.Request) (uuid.UUID, er
 	}
 
 	return socialLinkUUID, nil
-
 }
 
 func newUserService(params userServiceParams) *userService {

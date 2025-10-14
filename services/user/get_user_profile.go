@@ -10,7 +10,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -92,13 +91,12 @@ func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *htt
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userID := chi.URLParam(r, "userID")
 
-	userUUID, userIDErr := m.service.getUserUUIDFromString(userID)
+	userID, userIDErr := m.service.getUserIDFromRequest(r)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return
 	}
 
-	m.getUserProfileUtil(reqCtx, w, userUUID)
+	m.getUserProfileUtil(reqCtx, w, userID)
 }

@@ -9,7 +9,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -80,13 +79,11 @@ func (m *userServiceMux) removeUserSelfSocialLink(w http.ResponseWriter, r *http
 }
 
 func (m *userServiceMux) removeUserSocialLink(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "userID")
-
-	userUUID, userIDErr := m.service.getUserUUIDFromString(userID)
+	userID, userIDErr := m.service.getUserIDFromRequest(r)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return
 	}
 
-	m.removeUserSocialLinkUtil(w, r, userUUID)
+	m.removeUserSocialLinkUtil(w, r, userID)
 }
