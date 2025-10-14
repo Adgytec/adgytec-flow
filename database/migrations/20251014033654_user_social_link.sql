@@ -6,7 +6,11 @@ CREATE TABLE IF NOT EXISTS global.user_social_links (
 	profile_link TEXT NOT NULL,
 	user_id UUID NOT NULL REFERENCES global.users (id),
 	created_at TIMESTAMPTZ NOT NULL,
-	updated_at TIMESTAMPTZ
+	updated_at TIMESTAMPTZ,
+	UNIQUE (
+		user_id,
+		platform_name
+	)
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON global.user_social_links FOR each ROW
