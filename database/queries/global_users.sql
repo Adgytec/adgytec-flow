@@ -2,7 +2,7 @@
 SELECT
 	*
 FROM
-	global.user_details
+	global.user_details_with_social_links
 WHERE
 	id = sqlc.arg (user_id)::UUID;
 

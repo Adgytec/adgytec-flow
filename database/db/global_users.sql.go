@@ -412,16 +412,16 @@ func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context,
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large, social_links
 FROM
-	global.user_details
+	global.user_details_with_social_links
 WHERE
 	id = $1::UUID
 `
 
-func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetails, error) {
+func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUserDetailsWithSocialLinks, error) {
 	row := q.db.QueryRow(ctx, getUserById, userID)
-	var i GlobalUserDetails
+	var i GlobalUserDetailsWithSocialLinks
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
@@ -439,6 +439,7 @@ func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUser
 		&i.Medium,
 		&i.Large,
 		&i.ExtraLarge,
+		&i.SocialLinks,
 	)
 	return i, err
 }
