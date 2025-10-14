@@ -32,6 +32,8 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Post("/profile/add-social-link", m.newUserSelfSocialLink)
 
 		router.Delete("/profile/social-link/{socialLinkID}", m.removeUserSelfSocialLink)
+
+		router.Patch("/profile/social-link/{socialLinkID}", m.updateUserSelfSocialLink)
 	})
 
 	mux.Group(func(router chi.Router) {
