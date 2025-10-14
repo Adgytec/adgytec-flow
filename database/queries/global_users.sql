@@ -1,11 +1,3 @@
--- name: GetUserById :one
-SELECT
-	*
-FROM
-	global.user_details_with_social_links
-WHERE
-	id = sqlc.arg (user_id)::UUID;
-
 -- name: GetGlobalUsersLatestFirst :many
 SELECT
 	*

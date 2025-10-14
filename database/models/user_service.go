@@ -17,6 +17,7 @@ type GlobalUser struct {
 	CreatedAt      time.Time           `json:"createdAt"`
 	ProfilePicture *ImageDetails       `json:"profilePicture"`
 	Status         db.GlobalUserStatus `json:"status"`
+	SocialLinks    interface{}         `json:"socialLinks,omitempty"`
 }
 
 func (u GlobalUser) GetCreatedAt() time.Time {
