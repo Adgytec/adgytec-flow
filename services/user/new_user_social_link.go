@@ -10,6 +10,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
@@ -41,7 +42,7 @@ func (s *userService) newUserSocialLink(ctx context.Context, userID uuid.UUID, s
 	permissionErr := s.iam.CheckPermission(ctx, iam.NewPermissionRequiredFromSelfPermission(
 		updateSelfProfilePermission,
 		iam.PermissionRequiredResources{
-			UserID: &userID,
+			UserID: pointer.New(userID),
 		},
 	))
 	if permissionErr != nil {
