@@ -35,6 +35,7 @@ func (socialLink updateUserSocialLinkData) Validate() error {
 	return nil
 }
 
+// admin shouldn't be able to update user social link
 func (s *userService) updateUserSocialLink(ctx context.Context, userID, resourceID uuid.UUID, profileLink updateUserSocialLinkData) (*db.GlobalUserSocialLinks, error) {
 	permissionErr := s.iam.CheckPermission(ctx, iam.NewPermissionRequiredFromSelfPermission(
 		updateSelfProfilePermission,

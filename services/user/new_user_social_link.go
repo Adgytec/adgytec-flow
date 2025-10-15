@@ -38,6 +38,7 @@ func (socialLink newUserSocialLinkData) Validate() error {
 	return nil
 }
 
+// admin shouldn't be able to add social link to user
 func (s *userService) newUserSocialLink(ctx context.Context, userID uuid.UUID, socialLinkDetails newUserSocialLinkData) (*db.GlobalUserSocialLinks, error) {
 	permissionErr := s.iam.CheckPermission(ctx, iam.NewPermissionRequiredFromSelfPermission(
 		updateSelfProfilePermission,
