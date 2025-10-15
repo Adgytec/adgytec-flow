@@ -15,14 +15,11 @@ CREATE TABLE IF NOT EXISTS application.permissions (
 	name TEXT NOT NULL,
 	description TEXT,
 	created_at TIMESTAMPTZ NOT NULL,
-	updated_at TIMESTAMPTZ NOT NULL
+	updated_at TIMESTAMPTZ
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON application.permissions FOR each ROW
 EXECUTE function global.set_created_at ();
-
-CREATE OR REPLACE TRIGGER on_insert_set_updated_at before insert ON application.permissions FOR each ROW
-EXECUTE function global.set_updated_at ();
 
 CREATE OR REPLACE TRIGGER on_update_set_updated_at before
 UPDATE ON application.permissions FOR each ROW
@@ -44,9 +41,7 @@ DROP TRIGGER if EXISTS permission_archive ON application.permissions;
 
 DROP TRIGGER if EXISTS on_update_set_updated_at ON application.permissions;
 
-DROP TRIGGER if EXISTS on_insert_set_updated_at ON application.permissons;
-
-DROP TRIGGER if EXISTS on_insert_set_created_at ON application.permissons;
+DROP TRIGGER if EXISTS on_insert_set_created_at ON application.permissions;
 
 DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON application.permissions;
 

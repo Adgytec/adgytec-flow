@@ -1,6 +1,8 @@
 package user
 
 import (
+	"net/http"
+
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/config/cache"
 	"github.com/Adgytec/adgytec-flow/config/cdn"
@@ -13,6 +15,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/pagination"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
@@ -83,15 +86,29 @@ func (s *userService) getUserResponseModels(users []db.GlobalUserDetails) []mode
 	return userModels
 }
 
-func (s *userService) getUserUUIDFromString(userID string) (uuid.UUID, error) {
-	userUUID, userIdErr := uuid.Parse(userID)
-	if userIdErr != nil {
+func (s *userService) getUserIDFromRequest(r *http.Request) (uuid.UUID, error) {
+	userID := chi.URLParam(r, "userID")
+
+	userUUID, userIDErr := uuid.Parse(userID)
+	if userIDErr != nil {
 		return uuid.Nil, &InvalidUserIDError{
 			InvalidUserID: userID,
 		}
 	}
 
 	return userUUID, nil
+}
+
+func (s *userService) getSocialLinkIDFromRequest(r *http.Request) (uuid.UUID, error) {
+	socialLinkID := chi.URLParam(r, "socialLinkID")
+	socialLinkUUID, socialLinkIDErr := uuid.Parse(socialLinkID)
+	if socialLinkIDErr != nil {
+		return uuid.Nil, &InvalidSocialLinkIDError{
+			InvalidSocialLinkID: socialLinkID,
+		}
+	}
+
+	return socialLinkUUID, nil
 }
 
 func newUserService(params userServiceParams) *userService {

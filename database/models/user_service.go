@@ -9,14 +9,15 @@ import (
 )
 
 type GlobalUser struct {
-	ID             uuid.UUID           `json:"id"`
-	Email          string              `json:"email"`
-	Name           *string             `json:"name"`
-	About          *string             `json:"about"`
-	DateOfBirth    pgtype.Date         `json:"dateOfBirth"`
-	CreatedAt      time.Time           `json:"createdAt"`
-	ProfilePicture *ImageDetails       `json:"profilePicture"`
-	Status         db.GlobalUserStatus `json:"status"`
+	ID             uuid.UUID                  `json:"id"`
+	Email          string                     `json:"email"`
+	Name           *string                    `json:"name"`
+	About          *string                    `json:"about"`
+	DateOfBirth    pgtype.Date                `json:"dateOfBirth"`
+	CreatedAt      time.Time                  `json:"createdAt"`
+	ProfilePicture *ImageDetails              `json:"profilePicture"`
+	Status         db.GlobalUserStatus        `json:"status"`
+	SocialLinks    []db.GetUserSocialLinksRow `json:"socialLinks,omitempty"`
 }
 
 func (u GlobalUser) GetCreatedAt() time.Time {
