@@ -16,7 +16,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	"github.com/Adgytec/adgytec-flow/utils/types"
-	"github.com/go-chi/chi/v5"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
@@ -271,13 +270,11 @@ func (m *userServiceMux) updateSelfProfile(w http.ResponseWriter, r *http.Reques
 }
 
 func (m *userServiceMux) updateUserProfile(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "userID")
-
-	userUUID, userIDErr := m.service.getUserUUIDFromString(userID)
+	userID, userIDErr := m.service.getUserIDFromRequest(r)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return
 	}
 
-	m.updateUserProfileUtil(w, r, userUUID)
+	m.updateUserProfileUtil(w, r, userID)
 }

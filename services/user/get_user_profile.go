@@ -10,7 +10,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -39,6 +38,8 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 
 	userModel, userError := s.getUserCache.Get(userID.String(), func() (models.GlobalUser, error) {
 		var zero models.GlobalUser
+
+		// get user profile
 		userProfile, dbErr := s.db.Queries().GetUserById(ctx, userID)
 		if dbErr != nil {
 			if errors.Is(dbErr, pgx.ErrNoRows) {
@@ -48,7 +49,16 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			return zero, dbErr
 		}
 
-		return s.getUserResponseModel(userProfile), nil
+		// get user profile social links
+		userSocialLinks, dbErr := s.db.Queries().GetUserSocialLinks(ctx, userID)
+		if dbErr != nil {
+			return zero, dbErr
+		}
+
+		userModel := s.getUserResponseModel(userProfile)
+		userModel.SocialLinks = userSocialLinks
+
+		return userModel, nil
 	})
 	if userError != nil {
 		return nil, userError
@@ -81,13 +91,12 @@ func (m *userServiceMux) getUserSelfProfileHandler(w http.ResponseWriter, r *htt
 
 func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
-	userID := chi.URLParam(r, "userID")
 
-	userUUID, userIDErr := m.service.getUserUUIDFromString(userID)
+	userID, userIDErr := m.service.getUserIDFromRequest(r)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return
 	}
 
-	m.getUserProfileUtil(reqCtx, w, userUUID)
+	m.getUserProfileUtil(reqCtx, w, userID)
 }

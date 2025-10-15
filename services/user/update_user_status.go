@@ -9,7 +9,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
-	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -62,15 +61,14 @@ func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Req
 	}
 
 	reqCtx := r.Context()
-	userID := chi.URLParam(r, "userID")
 
-	userUUID, userIdErr := m.service.getUserUUIDFromString(userID)
+	userID, userIdErr := m.service.getUserIDFromRequest(r)
 	if userIdErr != nil {
 		payload.EncodeError(w, userIdErr)
 		return
 	}
 
-	statusErr := m.service.updateUserStatus(reqCtx, userUUID, status)
+	statusErr := m.service.updateUserStatus(reqCtx, userID, status)
 	if statusErr != nil {
 		payload.EncodeError(w, statusErr)
 		return

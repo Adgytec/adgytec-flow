@@ -443,6 +443,106 @@ func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUser
 	return i, err
 }
 
+const getUserSocialLinks = `-- name: GetUserSocialLinks :many
+SELECT
+	id,
+	platform_name,
+	profile_link,
+	created_at,
+	updated_at
+FROM
+	global.user_social_links
+WHERE
+	user_id = $1::UUID
+`
+
+type GetUserSocialLinksRow struct {
+	ID           uuid.UUID  `json:"id"`
+	PlatformName string     `json:"platformName"`
+	ProfileLink  string     `json:"profileLink"`
+	CreatedAt    time.Time  `json:"createdAt"`
+	UpdatedAt    *time.Time `json:"updatedAt"`
+}
+
+func (q *Queries) GetUserSocialLinks(ctx context.Context, userID uuid.UUID) ([]GetUserSocialLinksRow, error) {
+	rows, err := q.db.Query(ctx, getUserSocialLinks, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserSocialLinksRow
+	for rows.Next() {
+		var i GetUserSocialLinksRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.PlatformName,
+			&i.ProfileLink,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const newUserSocialLink = `-- name: NewUserSocialLink :one
+INSERT INTO
+	global.user_social_links (
+		platform_name,
+		profile_link,
+		user_id
+	)
+VALUES
+	($1, $2, $3)
+RETURNING
+	id, platform_name, profile_link, user_id, created_at, updated_at
+`
+
+type NewUserSocialLinkParams struct {
+	PlatformName string    `json:"platformName"`
+	ProfileLink  string    `json:"profileLink"`
+	UserID       uuid.UUID `json:"userId"`
+}
+
+func (q *Queries) NewUserSocialLink(ctx context.Context, arg NewUserSocialLinkParams) (GlobalUserSocialLinks, error) {
+	row := q.db.QueryRow(ctx, newUserSocialLink, arg.PlatformName, arg.ProfileLink, arg.UserID)
+	var i GlobalUserSocialLinks
+	err := row.Scan(
+		&i.ID,
+		&i.PlatformName,
+		&i.ProfileLink,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const removeUserSocialLink = `-- name: RemoveUserSocialLink :execrows
+DELETE FROM global.user_social_links
+WHERE
+	id = $1
+	AND user_id = $2
+`
+
+type RemoveUserSocialLinkParams struct {
+	ID     uuid.UUID `json:"id"`
+	UserID uuid.UUID `json:"userId"`
+}
+
+func (q *Queries) RemoveUserSocialLink(ctx context.Context, arg RemoveUserSocialLinkParams) (int64, error) {
+	result, err := q.db.Exec(ctx, removeUserSocialLink, arg.ID, arg.UserID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected(), nil
+}
+
 const updateGlobalUserProfile = `-- name: UpdateGlobalUserProfile :one
 WITH
 	updated AS (
@@ -519,4 +619,35 @@ type UpdateGlobalUserStatusParams struct {
 func (q *Queries) UpdateGlobalUserStatus(ctx context.Context, arg UpdateGlobalUserStatusParams) error {
 	_, err := q.db.Exec(ctx, updateGlobalUserStatus, arg.Status, arg.ID)
 	return err
+}
+
+const updateUserSocialLink = `-- name: UpdateUserSocialLink :one
+UPDATE global.user_social_links
+SET
+	profile_link = $1
+WHERE
+	id = $2
+	AND user_id = $3
+RETURNING
+	id, platform_name, profile_link, user_id, created_at, updated_at
+`
+
+type UpdateUserSocialLinkParams struct {
+	ProfileLink string    `json:"profileLink"`
+	ID          uuid.UUID `json:"id"`
+	UserID      uuid.UUID `json:"userId"`
+}
+
+func (q *Queries) UpdateUserSocialLink(ctx context.Context, arg UpdateUserSocialLinkParams) (GlobalUserSocialLinks, error) {
+	row := q.db.QueryRow(ctx, updateUserSocialLink, arg.ProfileLink, arg.ID, arg.UserID)
+	var i GlobalUserSocialLinks
+	err := row.Scan(
+		&i.ID,
+		&i.PlatformName,
+		&i.ProfileLink,
+		&i.UserID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }

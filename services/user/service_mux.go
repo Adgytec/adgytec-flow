@@ -28,6 +28,12 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Get("/profile", m.getUserSelfProfileHandler)
 
 		router.Patch("/profile/update", m.updateSelfProfile)
+
+		router.Post("/profile/add-social-link", m.newUserSelfSocialLink)
+
+		router.Delete("/profile/social-link/{socialLinkID}", m.removeUserSelfSocialLink)
+
+		router.Patch("/profile/social-link/{socialLinkID}", m.updateUserSelfSocialLink)
 	})
 
 	mux.Group(func(router chi.Router) {
@@ -40,6 +46,8 @@ func (m *userServiceMux) Router() *chi.Mux {
 		router.Patch("/{userID}/disable", m.disableGlobalUser)
 
 		router.Patch("/{userID}/update", m.updateUserProfile)
+
+		router.Delete("/{userID}/social-link/{socialLinkID}", m.removeUserSocialLink)
 	})
 
 	return mux
