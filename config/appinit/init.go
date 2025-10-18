@@ -115,9 +115,8 @@ func EnsureServicesInitialization(appConfig app.App) error {
 		},
 		func(ctx context.Context, q *db.Queries) error { return q.UpsertServiceRestrictionsFromStaging(ctx) },
 	); err != nil {
-		return &AddingPermissionError{
-			permissionType: permissionTypeApplication,
-			cause:          err,
+		return &AddServiceRestrictionsError{
+			cause: err,
 		}
 	}
 
