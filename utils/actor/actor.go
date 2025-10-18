@@ -11,29 +11,19 @@ func GetActorDetailsFromContext(ctx context.Context) (ActorDetails, error) {
 	var zero ActorDetails
 
 	// empty actor id and actor type are also considered errors
-	actorID, actorIDOk := ctx.Value(ActorKeyID).(string)
+	actorID, actorIDOk := ctx.Value(ActorKeyID).(uuid.UUID)
 	if !actorIDOk {
 		return zero, ErrInvalidActorID
 	}
 
-	actorType, actorTypeOk := ctx.Value(ActorKeyType).(string)
-	if !actorTypeOk {
-		return zero, ErrInvalidActorType
-	}
-
-	actorUUID, actorUUIDErr := uuid.Parse(actorID)
-	if actorUUIDErr != nil {
-		return zero, ErrInvalidActorID
-	}
-
-	actorTypeValue := db.GlobalActorType(actorType)
-	if !actorTypeValue.Valid() {
+	actorType, actorTypeOk := ctx.Value(ActorKeyType).(db.GlobalActorType)
+	if !actorTypeOk || !actorType.Valid() {
 		return zero, ErrInvalidActorType
 	}
 
 	return ActorDetails{
-		ID:   actorUUID,
-		Type: actorTypeValue,
+		ID:   actorID,
+		Type: actorType,
 	}, nil
 }
 
@@ -47,4 +37,12 @@ func GetActorIdFromContext(ctx context.Context) (uuid.UUID, error) {
 func GetActorTypeFromContext(ctx context.Context) (db.GlobalActorType, error) {
 	actorDetails, actorDetailsErr := GetActorDetailsFromContext(ctx)
 	return actorDetails.Type, actorDetailsErr
+}
+
+// NewSystemActorContext returns a context with a "system" actor.
+// This is useful during startup, migrations, or any operation
+// that requires a transaction but has no real actor.
+func NewSystemActorContext(ctx context.Context) context.Context {
+	actorIDCtx := context.WithValue(ctx, ActorKeyID, uuid.Nil)
+	return context.WithValue(actorIDCtx, ActorKeyType, db.GlobalActorTypeSystem)
 }
