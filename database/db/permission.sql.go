@@ -69,15 +69,13 @@ INSERT INTO
 		assignable_actor
 	)
 SELECT
-	(
-		id,
-		service_id,
-		key,
-		name,
-		description,
-		required_resources,
-		assignable_actor
-	)
+	id,
+	service_id,
+	key,
+	name,
+	description,
+	required_resources,
+	assignable_actor
 FROM
 	application_permission_staging
 ON CONFLICT (id) DO UPDATE
@@ -104,15 +102,13 @@ INSERT INTO
 		assignable_actor
 	)
 SELECT
-	(
-		id,
-		service_id,
-		key,
-		name,
-		description,
-		required_resources,
-		assignable_actor
-	)
+	id,
+	service_id,
+	key,
+	name,
+	description,
+	required_resources,
+	assignable_actor
 FROM
 	management_permission_staging
 ON CONFLICT (id) DO UPDATE
