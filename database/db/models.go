@@ -491,16 +491,19 @@ type GlobalMediaVideo struct {
 }
 
 type GlobalServices struct {
-	ID        uuid.UUID   `json:"id"`
-	Name      string      `json:"name"`
-	Type      interface{} `json:"type"`
-	CreatedAt time.Time   `json:"createdAt"`
+	ID          uuid.UUID         `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Type        GlobalServiceType `json:"type"`
+	CreatedAt   time.Time         `json:"createdAt"`
 }
 
 type GlobalUserDetails struct {
 	ID                         uuid.UUID             `json:"id"`
 	Email                      string                `json:"email"`
+	NormalizedEmail            string                `json:"normalizedEmail"`
 	Name                       *string               `json:"name"`
+	NormalizedName             *string               `json:"normalizedName"`
 	About                      *string               `json:"about"`
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`

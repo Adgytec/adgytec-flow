@@ -7,27 +7,17 @@ package db
 
 import (
 	"context"
-
-	"github.com/google/uuid"
 )
 
-const addServiceDetails = `-- name: AddServiceDetails :exec
-INSERT INTO
-	global.services (id, name, type)
-VALUES
-	($1, $2, $3)
-ON CONFLICT (id) DO UPDATE
-SET
-	type = excluded.type
+const newServiceStagingTable = `-- name: NewServiceStagingTable :exec
+CREATE TEMPORARY TABLE services_staging (
+	LIKE global.services including ALL
+) ON
+COMMIT
+DROP
 `
 
-type AddServiceDetailsParams struct {
-	ID   uuid.UUID   `json:"id"`
-	Name string      `json:"name"`
-	Type interface{} `json:"type"`
-}
-
-func (q *Queries) AddServiceDetails(ctx context.Context, arg AddServiceDetailsParams) error {
-	_, err := q.db.Exec(ctx, addServiceDetails, arg.ID, arg.Name, arg.Type)
+func (q *Queries) NewServiceStagingTable(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, newServiceStagingTable)
 	return err
 }
