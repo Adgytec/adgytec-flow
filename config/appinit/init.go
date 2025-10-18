@@ -45,20 +45,54 @@ func EnsureServicesInitialization(appConfig app.App) error {
 		allApplicationPermissions = append(allApplicationPermissions, applicationPermissions...)
 	}
 
-	if err := addServiceDetails(systemCtx, appConfig.Database(), allServicesDetails); err != nil {
+	if err := genericAdd(
+		systemCtx,
+		appConfig.Database(),
+		allServicesDetails,
+		nil, // no ID modification needed for services
+		func(ctx context.Context, q *db.Queries) error { return q.NewServiceStagingTable(ctx) },
+		func(ctx context.Context, q *db.Queries, items []db.AddServicesIntoStagingParams) (int64, error) {
+			return q.AddServicesIntoStaging(ctx, items)
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.UpsertServicesFromStaging(ctx) },
+	); err != nil {
 		return &AddingServiceDetailsError{
 			cause: err,
 		}
 	}
 
-	if err := addManagementPermissions(systemCtx, appConfig.Database(), allManagementPermissions); err != nil {
+	if err := genericAdd(
+		systemCtx,
+		appConfig.Database(),
+		allManagementPermissions,
+		func(p *db.AddManagementPermissionsIntoStagingParams) {
+			p.ID = core.GetIDFromPayload([]byte(p.Key))
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.NewManagementPermissionStagingTable(ctx) },
+		func(ctx context.Context, q *db.Queries, items []db.AddManagementPermissionsIntoStagingParams) (int64, error) {
+			return q.AddManagementPermissionsIntoStaging(ctx, items)
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.UpsertManagementPermissionsFromStaging(ctx) },
+	); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeManagement,
 			cause:          err,
 		}
 	}
 
-	if err := addApplicationPermissions(systemCtx, appConfig.Database(), allApplicationPermissions); err != nil {
+	if err := genericAdd(
+		systemCtx,
+		appConfig.Database(),
+		allApplicationPermissions,
+		func(p *db.AddApplicationPermissionsIntoStagingParams) {
+			p.ID = core.GetIDFromPayload([]byte(p.Key))
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.NewApplicationPermissionStagingTable(ctx) },
+		func(ctx context.Context, q *db.Queries, items []db.AddApplicationPermissionsIntoStagingParams) (int64, error) {
+			return q.AddApplicationPermissionsIntoStaging(ctx, items)
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.UpsertApplicationPermissionsFromStaging(ctx) },
+	); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeApplication,
 			cause:          err,
@@ -68,37 +102,22 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	return nil
 }
 
-func addServiceDetails(ctx context.Context, dbConn database.Database, serviceDetails []db.AddServicesIntoStagingParams) error {
-	qtx, tx, txErr := dbConn.WithTransaction(ctx)
-	if txErr != nil {
-		return txErr
-	}
-	defer tx.Rollback(ctx)
+// genericAdd handles services or permissions in staging tables
+func genericAdd[T any](
+	ctx context.Context,
+	dbConn database.Database,
+	items []T,
+	idFunc func(*T), // optional, can be nil
+	createStaging func(ctx context.Context, q *db.Queries) error,
+	copyIntoStaging func(ctx context.Context, q *db.Queries, items []T) (int64, error),
+	upsert func(ctx context.Context, q *db.Queries) error,
+) error {
 
-	// create temp table
-	stagingErr := qtx.Queries().NewServiceStagingTable(ctx)
-	if stagingErr != nil {
-		return stagingErr
-	}
-
-	// add service details to staging
-	_, serviceErr := qtx.Queries().AddServicesIntoStaging(ctx, serviceDetails)
-	if serviceErr != nil {
-		return serviceErr
-	}
-
-	// add to main services
-	upsertErr := qtx.Queries().UpsertServicesFromStaging(ctx)
-	if upsertErr != nil {
-		return upsertErr
-	}
-
-	return tx.Commit(ctx)
-}
-
-func addManagementPermissions(ctx context.Context, dbConn database.Database, permissions []db.AddManagementPermissionsIntoStagingParams) error {
-	for i := range permissions {
-		permissions[i].ID = core.GetIDFromPayload([]byte(permissions[i].Key))
+	// optionally set IDs
+	if idFunc != nil {
+		for i := range items {
+			idFunc(&items[i])
+		}
 	}
 
 	qtx, tx, txErr := dbConn.WithTransaction(ctx)
@@ -108,53 +127,18 @@ func addManagementPermissions(ctx context.Context, dbConn database.Database, per
 	defer tx.Rollback(ctx)
 
 	// create temp table
-	stagingErr := qtx.Queries().NewManagementPermissionStagingTable(ctx)
-	if stagingErr != nil {
-		return stagingErr
+	if err := createStaging(ctx, qtx.Queries()); err != nil {
+		return err
 	}
 
-	// add service details to staging
-	_, permissionErr := qtx.Queries().AddManagementPermissionsIntoStaging(ctx, permissions)
-	if permissionErr != nil {
-		return permissionErr
+	// copy into staging
+	if _, err := copyIntoStaging(ctx, qtx.Queries(), items); err != nil {
+		return err
 	}
 
-	// add to main services
-	upsertErr := qtx.Queries().UpsertManagementPermissionsFromStaging(ctx)
-	if upsertErr != nil {
-		return upsertErr
-	}
-
-	return tx.Commit(ctx)
-}
-
-func addApplicationPermissions(ctx context.Context, dbConn database.Database, permissions []db.AddApplicationPermissionsIntoStagingParams) error {
-	for i := range permissions {
-		permissions[i].ID = core.GetIDFromPayload([]byte(permissions[i].Key))
-	}
-
-	qtx, tx, txErr := dbConn.WithTransaction(ctx)
-	if txErr != nil {
-		return txErr
-	}
-	defer tx.Rollback(ctx)
-
-	// create temp table
-	stagingErr := qtx.Queries().NewApplicationPermissionStagingTable(ctx)
-	if stagingErr != nil {
-		return stagingErr
-	}
-
-	// add service details to staging
-	_, permissionErr := qtx.Queries().AddApplicationPermissionsIntoStaging(ctx, permissions)
-	if permissionErr != nil {
-		return permissionErr
-	}
-
-	// add to main services
-	upsertErr := qtx.Queries().UpsertApplicationPermissionsFromStaging(ctx)
-	if upsertErr != nil {
-		return upsertErr
+	// upsert into main table
+	if err := upsert(ctx, qtx.Queries()); err != nil {
+		return err
 	}
 
 	return tx.Commit(ctx)
