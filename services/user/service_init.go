@@ -4,6 +4,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 )
 
-func InitUserService() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams) {
-	return userServiceDetails, managementPermissions, nil
+func InitUserService() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams) {
+	return userServiceDetails, managementPermissions, nil, nil
 }
