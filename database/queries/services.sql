@@ -1,30 +1,40 @@
--- name: AddServiceDetails :exec
+-- name: NewServiceStagingTable :exec
+CREATE TEMPORARY TABLE services_staging (
+	LIKE global.services including ALL
+) ON
+COMMIT
+DROP;
+
+-- name: AddServicesIntoStaging :copyfrom
 INSERT INTO
-	global.services (
+	services_staging (
 		id,
 		name,
-		assignable,
-		logical_partition
+		description,
+		type
 	)
 VALUES
-	($1, $2, $3, $4)
+	($1, $2, $3, $4);
+
+-- name: UpsertServicesFromStaging :exec
+INSERT INTO
+	global.services AS s (
+		id,
+		name,
+		description,
+		type
+	)
+SELECT
+	id,
+	name,
+	description,
+	type
+FROM
+	services_staging
 ON CONFLICT (id) DO UPDATE
 SET
-	assignable = excluded.assignable,
-	logical_partition = excluded.logical_partition;
-
--- name: AddServiceHierarchyDetails :exec
-INSERT INTO
-	global.service_hierarchy_details (
-		service_id,
-		hierarchy_name,
-		hierarchy_type,
-		hierarchy_result
-	)
-VALUES
-	($1, $2, $3, $4)
-ON CONFLICT (service_id) DO UPDATE
-SET
-	hierarchy_name = excluded.hierarchy_name,
-	hierarchy_type = excluded.hierarchy_type,
-	hierarchy_result = excluded.hierarchy_result;
+	description = excluded.description,
+	type = excluded.type
+WHERE
+	s.description IS DISTINCT FROM excluded.description
+	OR s.type IS DISTINCT FROM excluded.type;

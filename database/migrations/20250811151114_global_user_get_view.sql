@@ -4,7 +4,9 @@ CREATE OR REPLACE VIEW global.user_details AS
 SELECT
 	users.id,
 	users.email,
+	users.normalized_email,
 	users.name,
+	users.normalized_name,
 	users.about,
 	users.date_of_birth,
 	users.created_at,

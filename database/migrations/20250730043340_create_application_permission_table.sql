@@ -14,16 +14,11 @@ CREATE TABLE IF NOT EXISTS application.permissions (
 	required_resources application.permission_resource_type[] NOT NULL,
 	name TEXT NOT NULL,
 	description TEXT,
-	created_at TIMESTAMPTZ NOT NULL,
-	updated_at TIMESTAMPTZ
+	created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON application.permissions FOR each ROW
 EXECUTE function global.set_created_at ();
-
-CREATE OR REPLACE TRIGGER on_update_set_updated_at before
-UPDATE ON application.permissions FOR each ROW
-EXECUTE function global.set_updated_at ();
 
 CREATE OR REPLACE TRIGGER on_update_prevent_created_at_update before
 UPDATE ON application.permissions FOR each ROW WHEN (

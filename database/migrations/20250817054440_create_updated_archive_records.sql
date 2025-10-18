@@ -3,7 +3,8 @@
 CREATE TYPE global.actor_type AS ENUM(
 	'api-key',
 	'user',
-	'signed'
+	'signed',
+	'system'
 );
 
 CREATE TABLE IF NOT EXISTS archive.updated_records (
