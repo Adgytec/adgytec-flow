@@ -1,14 +1,8 @@
 -- name: AddServiceDetails :exec
 INSERT INTO
-	global.services (
-		id,
-		name,
-		assignable,
-		logical_partition
-	)
+	global.services (id, name, type)
 VALUES
-	($1, $2, $3, $4)
+	($1, $2, $3)
 ON CONFLICT (id) DO UPDATE
 SET
-	assignable = excluded.assignable,
-	logical_partition = excluded.logical_partition;
+	type = excluded.type;

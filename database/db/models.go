@@ -282,52 +282,52 @@ func (e GlobalMediaUploadType) Valid() bool {
 	return false
 }
 
-type GlobalServiceLogicalPartitionType string
+type GlobalServiceType string
 
 const (
-	GlobalServiceLogicalPartitionTypeHierarchy GlobalServiceLogicalPartitionType = "hierarchy"
-	GlobalServiceLogicalPartitionTypeNone      GlobalServiceLogicalPartitionType = "none"
+	GlobalServiceTypeCore     GlobalServiceType = "core"
+	GlobalServiceTypeOptional GlobalServiceType = "optional"
 )
 
-func (e *GlobalServiceLogicalPartitionType) Scan(src interface{}) error {
+func (e *GlobalServiceType) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = GlobalServiceLogicalPartitionType(s)
+		*e = GlobalServiceType(s)
 	case string:
-		*e = GlobalServiceLogicalPartitionType(s)
+		*e = GlobalServiceType(s)
 	default:
-		return fmt.Errorf("unsupported scan type for GlobalServiceLogicalPartitionType: %T", src)
+		return fmt.Errorf("unsupported scan type for GlobalServiceType: %T", src)
 	}
 	return nil
 }
 
-type NullGlobalServiceLogicalPartitionType struct {
-	GlobalServiceLogicalPartitionType GlobalServiceLogicalPartitionType `json:"globalServiceLogicalPartitionType"`
-	Valid                             bool                              `json:"valid"` // Valid is true if GlobalServiceLogicalPartitionType is not NULL
+type NullGlobalServiceType struct {
+	GlobalServiceType GlobalServiceType `json:"globalServiceType"`
+	Valid             bool              `json:"valid"` // Valid is true if GlobalServiceType is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullGlobalServiceLogicalPartitionType) Scan(value interface{}) error {
+func (ns *NullGlobalServiceType) Scan(value interface{}) error {
 	if value == nil {
-		ns.GlobalServiceLogicalPartitionType, ns.Valid = "", false
+		ns.GlobalServiceType, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.GlobalServiceLogicalPartitionType.Scan(value)
+	return ns.GlobalServiceType.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
+func (ns NullGlobalServiceType) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.GlobalServiceLogicalPartitionType), nil
+	return string(ns.GlobalServiceType), nil
 }
 
-func (e GlobalServiceLogicalPartitionType) Valid() bool {
+func (e GlobalServiceType) Valid() bool {
 	switch e {
-	case GlobalServiceLogicalPartitionTypeHierarchy,
-		GlobalServiceLogicalPartitionTypeNone:
+	case GlobalServiceTypeCore,
+		GlobalServiceTypeOptional:
 		return true
 	}
 	return false
@@ -491,11 +491,10 @@ type GlobalMediaVideo struct {
 }
 
 type GlobalServices struct {
-	ID               uuid.UUID                         `json:"id"`
-	Name             string                            `json:"name"`
-	Assignable       bool                              `json:"assignable"`
-	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
-	CreatedAt        time.Time                         `json:"createdAt"`
+	ID        uuid.UUID   `json:"id"`
+	Name      string      `json:"name"`
+	Type      interface{} `json:"type"`
+	CreatedAt time.Time   `json:"createdAt"`
 }
 
 type GlobalUserDetails struct {
