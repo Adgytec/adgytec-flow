@@ -43,37 +43,3 @@ func (q *Queries) AddServiceDetails(ctx context.Context, arg AddServiceDetailsPa
 	)
 	return err
 }
-
-const addServiceHierarchyDetails = `-- name: AddServiceHierarchyDetails :exec
-INSERT INTO
-	global.service_hierarchy_details (
-		service_id,
-		hierarchy_name,
-		hierarchy_type,
-		hierarchy_result
-	)
-VALUES
-	($1, $2, $3, $4)
-ON CONFLICT (service_id) DO UPDATE
-SET
-	hierarchy_name = excluded.hierarchy_name,
-	hierarchy_type = excluded.hierarchy_type,
-	hierarchy_result = excluded.hierarchy_result
-`
-
-type AddServiceHierarchyDetailsParams struct {
-	ServiceID       uuid.UUID                    `json:"serviceId"`
-	HierarchyName   string                       `json:"hierarchyName"`
-	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
-	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
-}
-
-func (q *Queries) AddServiceHierarchyDetails(ctx context.Context, arg AddServiceHierarchyDetailsParams) error {
-	_, err := q.db.Exec(ctx, addServiceHierarchyDetails,
-		arg.ServiceID,
-		arg.HierarchyName,
-		arg.HierarchyType,
-		arg.HierarchyResult,
-	)
-	return err
-}

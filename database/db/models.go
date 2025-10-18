@@ -282,108 +282,6 @@ func (e GlobalMediaUploadType) Valid() bool {
 	return false
 }
 
-type GlobalServiceHierarchyResult string
-
-const (
-	GlobalServiceHierarchyResultHierarchy GlobalServiceHierarchyResult = "hierarchy"
-	GlobalServiceHierarchyResultItem      GlobalServiceHierarchyResult = "item"
-)
-
-func (e *GlobalServiceHierarchyResult) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = GlobalServiceHierarchyResult(s)
-	case string:
-		*e = GlobalServiceHierarchyResult(s)
-	default:
-		return fmt.Errorf("unsupported scan type for GlobalServiceHierarchyResult: %T", src)
-	}
-	return nil
-}
-
-type NullGlobalServiceHierarchyResult struct {
-	GlobalServiceHierarchyResult GlobalServiceHierarchyResult `json:"globalServiceHierarchyResult"`
-	Valid                        bool                         `json:"valid"` // Valid is true if GlobalServiceHierarchyResult is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullGlobalServiceHierarchyResult) Scan(value interface{}) error {
-	if value == nil {
-		ns.GlobalServiceHierarchyResult, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.GlobalServiceHierarchyResult.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullGlobalServiceHierarchyResult) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.GlobalServiceHierarchyResult), nil
-}
-
-func (e GlobalServiceHierarchyResult) Valid() bool {
-	switch e {
-	case GlobalServiceHierarchyResultHierarchy,
-		GlobalServiceHierarchyResultItem:
-		return true
-	}
-	return false
-}
-
-type GlobalServiceHierarchyType string
-
-const (
-	GlobalServiceHierarchyTypeLevel GlobalServiceHierarchyType = "level"
-	GlobalServiceHierarchyTypeTree  GlobalServiceHierarchyType = "tree"
-)
-
-func (e *GlobalServiceHierarchyType) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = GlobalServiceHierarchyType(s)
-	case string:
-		*e = GlobalServiceHierarchyType(s)
-	default:
-		return fmt.Errorf("unsupported scan type for GlobalServiceHierarchyType: %T", src)
-	}
-	return nil
-}
-
-type NullGlobalServiceHierarchyType struct {
-	GlobalServiceHierarchyType GlobalServiceHierarchyType `json:"globalServiceHierarchyType"`
-	Valid                      bool                       `json:"valid"` // Valid is true if GlobalServiceHierarchyType is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullGlobalServiceHierarchyType) Scan(value interface{}) error {
-	if value == nil {
-		ns.GlobalServiceHierarchyType, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.GlobalServiceHierarchyType.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullGlobalServiceHierarchyType) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.GlobalServiceHierarchyType), nil
-}
-
-func (e GlobalServiceHierarchyType) Valid() bool {
-	switch e {
-	case GlobalServiceHierarchyTypeLevel,
-		GlobalServiceHierarchyTypeTree:
-		return true
-	}
-	return false
-}
-
 type GlobalServiceLogicalPartitionType string
 
 const (
@@ -590,13 +488,6 @@ type GlobalMediaVideo struct {
 	Thumbnail        *string   `json:"thumbnail"`
 	AdaptiveManifest *string   `json:"adaptiveManifest"`
 	Preview          *string   `json:"preview"`
-}
-
-type GlobalServiceHierarchyDetails struct {
-	ServiceID       uuid.UUID                    `json:"serviceId"`
-	HierarchyName   string                       `json:"hierarchyName"`
-	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
-	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
 }
 
 type GlobalServices struct {
