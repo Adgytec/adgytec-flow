@@ -9,6 +9,44 @@ import (
 	"context"
 )
 
+// iteratorForAddManagementPermissionsIntoStaging implements pgx.CopyFromSource.
+type iteratorForAddManagementPermissionsIntoStaging struct {
+	rows                 []AddManagementPermissionsIntoStagingParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForAddManagementPermissionsIntoStaging) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForAddManagementPermissionsIntoStaging) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].ServiceID,
+		r.rows[0].Key,
+		r.rows[0].Name,
+		r.rows[0].Description,
+		r.rows[0].RequiredResources,
+		r.rows[0].AssignableActor,
+	}, nil
+}
+
+func (r iteratorForAddManagementPermissionsIntoStaging) Err() error {
+	return nil
+}
+
+func (q *Queries) AddManagementPermissionsIntoStaging(ctx context.Context, arg []AddManagementPermissionsIntoStagingParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"management_permission_staging"}, []string{"id", "service_id", "key", "name", "description", "required_resources", "assignable_actor"}, &iteratorForAddManagementPermissionsIntoStaging{rows: arg})
+}
+
 // iteratorForAddMediaItems implements pgx.CopyFromSource.
 type iteratorForAddMediaItems struct {
 	rows                 []AddMediaItemsParams

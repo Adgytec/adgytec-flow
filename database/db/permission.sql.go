@@ -62,7 +62,30 @@ func (q *Queries) AddApplicationPermission(ctx context.Context, arg AddApplicati
 	return err
 }
 
-const addManagementPermission = `-- name: AddManagementPermission :exec
+type AddManagementPermissionsIntoStagingParams struct {
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	RequiredResources []string                  `json:"requiredResources"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+}
+
+const newManagementPermissionStagingTable = `-- name: NewManagementPermissionStagingTable :exec
+CREATE TEMPORARY TABLE management_permission_staging (
+	LIKE application.permissions including ALL
+) ON
+COMMIT
+DROP
+`
+
+func (q *Queries) NewManagementPermissionStagingTable(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, newManagementPermissionStagingTable)
+	return err
+}
+
+const upsertManagementPermissionsFromStaging = `-- name: UpsertManagementPermissionsFromStaging :exec
 INSERT INTO
 	management.permissions (
 		id,
@@ -73,42 +96,26 @@ INSERT INTO
 		required_resources,
 		assignable_actor
 	)
-VALUES
+SELECT
 	(
-		$1,
-		$2,
-		$3,
-		$4,
-		$5,
-		$6,
-		$7
+		id,
+		service_id,
+		key,
+		name,
+		description,
+		required_resources,
+		assignable_actor
 	)
-ON CONFLICT (key) DO UPDATE
+FROM
+	management_permission_staging
+ON CONFLICT (id) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
 	assignable_actor = excluded.assignable_actor
 `
 
-type AddManagementPermissionParams struct {
-	ID                uuid.UUID                 `json:"id"`
-	ServiceID         uuid.UUID                 `json:"serviceId"`
-	Key               string                    `json:"key"`
-	Name              string                    `json:"name"`
-	Description       *string                   `json:"description"`
-	RequiredResources []string                  `json:"requiredResources"`
-	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
-}
-
-func (q *Queries) AddManagementPermission(ctx context.Context, arg AddManagementPermissionParams) error {
-	_, err := q.db.Exec(ctx, addManagementPermission,
-		arg.ID,
-		arg.ServiceID,
-		arg.Key,
-		arg.Name,
-		arg.Description,
-		arg.RequiredResources,
-		arg.AssignableActor,
-	)
+func (q *Queries) UpsertManagementPermissionsFromStaging(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, upsertManagementPermissionsFromStaging)
 	return err
 }

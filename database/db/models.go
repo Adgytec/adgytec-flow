@@ -433,6 +433,17 @@ func (e ManagementPermissionResourceType) Valid() bool {
 	return false
 }
 
+type ApplicationPermissionStaging struct {
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+	RequiredResources []string                  `json:"requiredResources"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	CreatedAt         time.Time                 `json:"createdAt"`
+}
+
 type ApplicationPermissions struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
@@ -442,7 +453,6 @@ type ApplicationPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
-	UpdatedAt         *time.Time                `json:"updatedAt"`
 }
 
 type ArchiveDeletedRecords struct {
@@ -541,6 +551,17 @@ type GlobalUsers struct {
 	CreatedAt        time.Time        `json:"createdAt"`
 }
 
+type ManagementPermissionStaging struct {
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+	RequiredResources []string                  `json:"requiredResources"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	CreatedAt         time.Time                 `json:"createdAt"`
+}
+
 type ManagementPermissions struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
@@ -550,7 +571,6 @@ type ManagementPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
-	UpdatedAt         *time.Time                `json:"updatedAt"`
 }
 
 type ServicesStaging struct {

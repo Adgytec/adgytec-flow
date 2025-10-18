@@ -1,6 +1,13 @@
--- name: AddManagementPermission :exec
+-- name: NewManagementPermissionStagingTable :exec
+CREATE TEMPORARY TABLE management_permission_staging (
+	LIKE application.permissions including ALL
+) ON
+COMMIT
+DROP;
+
+-- name: AddManagementPermissionsIntoStaging :copyfrom
 INSERT INTO
-	management.permissions (
+	management_permission_staging (
 		id,
 		service_id,
 		key,
@@ -18,8 +25,32 @@ VALUES
 		$5,
 		$6,
 		$7
+	);
+
+-- name: UpsertManagementPermissionsFromStaging :exec
+INSERT INTO
+	management.permissions (
+		id,
+		service_id,
+		key,
+		name,
+		description,
+		required_resources,
+		assignable_actor
 	)
-ON CONFLICT (key) DO UPDATE
+SELECT
+	(
+		id,
+		service_id,
+		key,
+		name,
+		description,
+		required_resources,
+		assignable_actor
+	)
+FROM
+	management_permission_staging
+ON CONFLICT (id) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
