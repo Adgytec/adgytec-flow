@@ -8,6 +8,8 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
+	"github.com/Adgytec/adgytec-flow/utils/actor"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/rs/zerolog/log"
 )
 
@@ -28,6 +30,9 @@ var appServices = []serviceFactory{
 func EnsureServicesInitialization(appConfig app.App) error {
 	log.Info().Msg("Ensuring all application services are initialized")
 
+	// system context
+	systemCtx := actor.NewSystemActorContext(context.Background())
+
 	var allServicesDetails []db.AddServicesIntoStagingParams
 	var allManagementPermissions []db.AddManagementPermissionsIntoStagingParams
 	var allApplicaitonPermissions []db.AddApplicationPermissionsIntoStagingParams
@@ -40,20 +45,20 @@ func EnsureServicesInitialization(appConfig app.App) error {
 		allApplicaitonPermissions = append(allApplicaitonPermissions, applicationPermissions...)
 	}
 
-	if err := addServiceDetails(context.Background(), appConfig.Database(), allServicesDetails); err != nil {
+	if err := addServiceDetails(systemCtx, appConfig.Database(), allServicesDetails); err != nil {
 		return &AddingServiceDetailsError{
 			cause: err,
 		}
 	}
 
-	if err := addManagemntPermissions(context.Background(), appConfig.Database(), allManagementPermissions); err != nil {
+	if err := addManagemntPermissions(systemCtx, appConfig.Database(), allManagementPermissions); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeManagement,
 			cause:          err,
 		}
 	}
 
-	if err := addApplicationPermissions(context.Background(), appConfig.Database(), allApplicaitonPermissions); err != nil {
+	if err := addApplicationPermissions(systemCtx, appConfig.Database(), allApplicaitonPermissions); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeApplication,
 			cause:          err,
@@ -92,6 +97,10 @@ func addServiceDetails(ctx context.Context, dbConn database.Database, serviceDet
 }
 
 func addManagemntPermissions(ctx context.Context, dbConn database.Database, permissions []db.AddManagementPermissionsIntoStagingParams) error {
+	for i := range permissions {
+		permissions[i].ID = core.GetIDFromPayload([]byte(permissions[i].Key))
+	}
+
 	qtx, tx, txErr := dbConn.WithTransaction(ctx)
 	if txErr != nil {
 		return txErr
@@ -120,6 +129,10 @@ func addManagemntPermissions(ctx context.Context, dbConn database.Database, perm
 }
 
 func addApplicationPermissions(ctx context.Context, dbConn database.Database, permissions []db.AddApplicationPermissionsIntoStagingParams) error {
+	for i := range permissions {
+		permissions[i].ID = core.GetIDFromPayload([]byte(permissions[i].Key))
+	}
+
 	qtx, tx, txErr := dbConn.WithTransaction(ctx)
 	if txErr != nil {
 		return txErr
