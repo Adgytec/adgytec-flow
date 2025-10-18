@@ -20,7 +20,7 @@ const (
 	permissionTypeApplication permissionType = "application"
 )
 
-type serviceFactory func() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams)
+type serviceFactory func() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams)
 
 var appServices = []serviceFactory{
 	iam.InitIAMService,
@@ -36,13 +36,15 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	var allServicesDetails []db.AddServicesIntoStagingParams
 	var allManagementPermissions []db.AddManagementPermissionsIntoStagingParams
 	var allApplicationPermissions []db.AddApplicationPermissionsIntoStagingParams
+	var allServicesRestrictions []db.AddServiceRestrictionIntoStagingParams
 
 	for _, factory := range appServices {
-		details, managementPermissions, applicationPermissions := factory()
+		details, managementPermissions, applicationPermissions, restrictions := factory()
 
 		allServicesDetails = append(allServicesDetails, details)
 		allManagementPermissions = append(allManagementPermissions, managementPermissions...)
 		allApplicationPermissions = append(allApplicationPermissions, applicationPermissions...)
+		allServicesRestrictions = append(allServicesRestrictions, restrictions...)
 	}
 
 	if err := genericAdd(
@@ -92,6 +94,26 @@ func EnsureServicesInitialization(appConfig app.App) error {
 			return q.AddApplicationPermissionsIntoStaging(ctx, items)
 		},
 		func(ctx context.Context, q *db.Queries) error { return q.UpsertApplicationPermissionsFromStaging(ctx) },
+	); err != nil {
+		return &AddingPermissionError{
+			permissionType: permissionTypeApplication,
+			cause:          err,
+		}
+	}
+
+	if err := genericAdd(
+		systemCtx,
+		appConfig.Database(),
+		allServicesRestrictions,
+		func(p *db.AddServiceRestrictionIntoStagingParams) {
+			payload := append(p.ServiceID[:], []byte(p.Name)...)
+			p.ID = core.GetIDFromPayload(payload)
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.NewServiceRestrictionsStagingTable(ctx) },
+		func(ctx context.Context, q *db.Queries, items []db.AddServiceRestrictionIntoStagingParams) (int64, error) {
+			return q.AddServiceRestrictionIntoStaging(ctx, items)
+		},
+		func(ctx context.Context, q *db.Queries) error { return q.UpsertServiceRestrictionsFromStaging(ctx) },
 	); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeApplication,
