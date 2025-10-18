@@ -6,8 +6,9 @@ import (
 )
 
 var (
-	ErrAddingServiceDetails = errors.New("error adding service detail")
-	ErrAddingPermission     = errors.New("error adding permission")
+	ErrAddingServiceDetails      = errors.New("error adding service detail")
+	ErrAddingPermission          = errors.New("error adding permission")
+	ErrAddingServiceRestrictions = errors.New("error adding service restrictions")
 )
 
 type AddingServiceDetailsError struct {
@@ -33,4 +34,16 @@ func (e *AddingPermissionError) Error() string {
 
 func (e *AddingPermissionError) Is(target error) bool {
 	return target == ErrAddingPermission
+}
+
+type AddServiceRestrictionsError struct {
+	cause error
+}
+
+func (e *AddServiceRestrictionsError) Error() string {
+	return fmt.Sprintf("failed to add service restrictions: %v", e.cause)
+}
+
+func (e *AddServiceRestrictionsError) Is(target error) bool {
+	return target == ErrAddingServiceRestrictions
 }
