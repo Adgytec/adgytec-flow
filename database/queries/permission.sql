@@ -1,6 +1,6 @@
 -- name: NewManagementPermissionStagingTable :exec
 CREATE TEMPORARY TABLE management_permission_staging (
-	LIKE application.permissions including ALL
+	LIKE management.permissions including ALL
 ) ON
 COMMIT
 DROP;
@@ -56,9 +56,16 @@ SET
 	description = excluded.description,
 	assignable_actor = excluded.assignable_actor;
 
--- name: AddApplicationPermission :exec
+-- name: NewApplicationPermissionStagingTable :exec
+CREATE TEMPORARY TABLE application_permission_staging (
+	LIKE application.permissions including ALL
+) ON
+COMMIT
+DROP;
+
+-- name: AddApplicationPermissionsIntoStaging :copyfrom
 INSERT INTO
-	application.permissions (
+	application_permission_staging (
 		id,
 		service_id,
 		key,
@@ -76,8 +83,32 @@ VALUES
 		$5,
 		$6,
 		$7
+	);
+
+-- name: UpsertApplicationPermissionsFromStaging :exec
+INSERT INTO
+	application.permissions (
+		id,
+		service_id,
+		key,
+		name,
+		description,
+		required_resources,
+		assignable_actor
 	)
-ON CONFLICT (key) DO UPDATE
+SELECT
+	(
+		id,
+		service_id,
+		key,
+		name,
+		description,
+		required_resources,
+		assignable_actor
+	)
+FROM
+	application_permission_staging
+ON CONFLICT (id) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,

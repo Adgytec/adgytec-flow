@@ -9,6 +9,44 @@ import (
 	"context"
 )
 
+// iteratorForAddApplicationPermissionsIntoStaging implements pgx.CopyFromSource.
+type iteratorForAddApplicationPermissionsIntoStaging struct {
+	rows                 []AddApplicationPermissionsIntoStagingParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForAddApplicationPermissionsIntoStaging) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForAddApplicationPermissionsIntoStaging) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].ID,
+		r.rows[0].ServiceID,
+		r.rows[0].Key,
+		r.rows[0].Name,
+		r.rows[0].Description,
+		r.rows[0].RequiredResources,
+		r.rows[0].AssignableActor,
+	}, nil
+}
+
+func (r iteratorForAddApplicationPermissionsIntoStaging) Err() error {
+	return nil
+}
+
+func (q *Queries) AddApplicationPermissionsIntoStaging(ctx context.Context, arg []AddApplicationPermissionsIntoStagingParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"application_permission_staging"}, []string{"id", "service_id", "key", "name", "description", "required_resources", "assignable_actor"}, &iteratorForAddApplicationPermissionsIntoStaging{rows: arg})
+}
+
 // iteratorForAddManagementPermissionsIntoStaging implements pgx.CopyFromSource.
 type iteratorForAddManagementPermissionsIntoStaging struct {
 	rows                 []AddManagementPermissionsIntoStagingParams
