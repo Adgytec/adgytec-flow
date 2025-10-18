@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS application.permissions (
 	required_resources application.permission_resource_type[] NOT NULL,
 	name TEXT NOT NULL,
 	description TEXT,
-	created_at TIMESTAMPTZ NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL default clock_timestamp(),
 	updated_at TIMESTAMPTZ
 );
 
