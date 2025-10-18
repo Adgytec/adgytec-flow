@@ -7,7 +7,6 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
-	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/rs/zerolog/log"
 )
 
@@ -27,38 +26,42 @@ var appServices = []serviceFactory{
 
 func EnsureServicesInitialization(appConfig app.App) error {
 	log.Info().Msg("Ensuring all application services are initialized")
+
+	var allServicesDetails []db.AddServicesIntoStagingParams
+	var allManagementPermissions []db.AddManagementPermissionsIntoStagingParams
+	var allApplicaitonPermissions []db.AddApplicationPermissionsIntoStagingParams
+
 	for _, factory := range appServices {
 		details, managementPermissions, applicationPermissions := factory()
 
-		if err := appConfig.Database().Queries().AddServiceDetails(context.Background(), details); err != nil {
-			return &AddingServiceDetailsError{
-				serviceName: details.Name,
-				cause:       err,
-			}
-		}
+		allServicesDetails = append(allServicesDetails, details)
+		allManagementPermissions = append(allManagementPermissions, managementPermissions...)
+		allApplicaitonPermissions = append(allApplicaitonPermissions, applicationPermissions...)
+	}
 
-		for _, perm := range managementPermissions {
-			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
-			if err := appConfig.Database().Queries().AddManagementPermission(context.Background(), perm); err != nil {
-				return &AddingPermissionError{
-					serviceName:    details.Name,
-					cause:          err,
-					permissionKey:  perm.Key,
-					permissionType: permissionTypeManagement,
-				}
-			}
+	// add service details
+	_, serviceErr := appConfig.Database().Queries().AddServicesIntoStaging(context.Background(), allServicesDetails)
+	if serviceErr != nil {
+		return &AddingServiceDetailsError{
+			cause: serviceErr,
 		}
+	}
 
-		for _, perm := range applicationPermissions {
-			perm.ID = core.GetIDFromPayload([]byte(perm.Key))
-			if err := appConfig.Database().Queries().AddApplicationPermission(context.Background(), perm); err != nil {
-				return &AddingPermissionError{
-					serviceName:    details.Name,
-					cause:          err,
-					permissionKey:  perm.Key,
-					permissionType: permissionTypeApplication,
-				}
-			}
+	// add management permissions
+	_, managementErr := appConfig.Database().Queries().AddManagementPermissionsIntoStaging(context.Background(), allManagementPermissions)
+	if managementErr != nil {
+		return &AddingPermissionError{
+			permissionType: permissionTypeManagement,
+			cause:          managementErr,
+		}
+	}
+
+	// add application permissions
+	_, applicationErr := appConfig.Database().Queries().AddApplicationPermissionsIntoStaging(context.Background(), allApplicaitonPermissions)
+	if applicationErr != nil {
+		return &AddingPermissionError{
+			permissionType: permissionTypeApplication,
+			cause:          applicationErr,
 		}
 	}
 

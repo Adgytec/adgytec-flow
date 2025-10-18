@@ -11,12 +11,11 @@ var (
 )
 
 type AddingServiceDetailsError struct {
-	serviceName string
-	cause       error
+	cause error
 }
 
 func (e *AddingServiceDetailsError) Error() string {
-	return fmt.Sprintf("failed to add service details for service %s: %v", e.serviceName, e.cause)
+	return fmt.Sprintf("failed to add service details: %v", e.cause)
 }
 
 func (e *AddingServiceDetailsError) Is(target error) bool {
@@ -24,14 +23,12 @@ func (e *AddingServiceDetailsError) Is(target error) bool {
 }
 
 type AddingPermissionError struct {
-	serviceName     string
-	permissionKey   string
-	permissionType  permissionType
-	cause           error
+	permissionType permissionType
+	cause          error
 }
 
 func (e *AddingPermissionError) Error() string {
-	return fmt.Sprintf("failed to add %s permission '%s' for service %s: %v", e.permissionType, e.permissionKey, e.serviceName, e.cause)
+	return fmt.Sprintf("failed to add %s permissions: %v", e.permissionType, e.cause)
 }
 
 func (e *AddingPermissionError) Is(target error) bool {
