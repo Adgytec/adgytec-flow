@@ -36,7 +36,7 @@ func (q *Queries) CreateGlobalUser(ctx context.Context, arg CreateGlobalUserPara
 
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -69,7 +69,9 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -96,7 +98,7 @@ func (q *Queries) GetGlobalUsersByQuery(ctx context.Context, arg GetGlobalUsersB
 
 const getGlobalUsersLatestFirst = `-- name: GetGlobalUsersLatestFirst :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 ORDER BY
@@ -117,7 +119,9 @@ func (q *Queries) GetGlobalUsersLatestFirst(ctx context.Context, limit int32) ([
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -144,7 +148,7 @@ func (q *Queries) GetGlobalUsersLatestFirst(ctx context.Context, limit int32) ([
 
 const getGlobalUsersLatestFirstGreaterThanCursor = `-- name: GetGlobalUsersLatestFirstGreaterThanCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -172,7 +176,9 @@ func (q *Queries) GetGlobalUsersLatestFirstGreaterThanCursor(ctx context.Context
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -199,7 +205,7 @@ func (q *Queries) GetGlobalUsersLatestFirstGreaterThanCursor(ctx context.Context
 
 const getGlobalUsersLatestFirstLesserThanCursor = `-- name: GetGlobalUsersLatestFirstLesserThanCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -227,7 +233,9 @@ func (q *Queries) GetGlobalUsersLatestFirstLesserThanCursor(ctx context.Context,
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -254,7 +262,7 @@ func (q *Queries) GetGlobalUsersLatestFirstLesserThanCursor(ctx context.Context,
 
 const getGlobalUsersOldestFirst = `-- name: GetGlobalUsersOldestFirst :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 ORDER BY
@@ -275,7 +283,9 @@ func (q *Queries) GetGlobalUsersOldestFirst(ctx context.Context, limit int32) ([
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -302,7 +312,7 @@ func (q *Queries) GetGlobalUsersOldestFirst(ctx context.Context, limit int32) ([
 
 const getGlobalUsersOldestFirstGreaterThanCursor = `-- name: GetGlobalUsersOldestFirstGreaterThanCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -330,7 +340,9 @@ func (q *Queries) GetGlobalUsersOldestFirstGreaterThanCursor(ctx context.Context
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -357,7 +369,7 @@ func (q *Queries) GetGlobalUsersOldestFirstGreaterThanCursor(ctx context.Context
 
 const getGlobalUsersOldestFirstLesserThanCursor = `-- name: GetGlobalUsersOldestFirstLesserThanCursor :many
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -385,7 +397,9 @@ func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context,
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
+			&i.NormalizedEmail,
 			&i.Name,
+			&i.NormalizedName,
 			&i.About,
 			&i.DateOfBirth,
 			&i.CreatedAt,
@@ -412,7 +426,7 @@ func (q *Queries) GetGlobalUsersOldestFirstLesserThanCursor(ctx context.Context,
 
 const getUserById = `-- name: GetUserById :one
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details
 WHERE
@@ -425,7 +439,9 @@ func (q *Queries) GetUserById(ctx context.Context, userID uuid.UUID) (GlobalUser
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.NormalizedEmail,
 		&i.Name,
+		&i.NormalizedName,
 		&i.About,
 		&i.DateOfBirth,
 		&i.CreatedAt,
@@ -558,7 +574,7 @@ WITH
 			u.id
 	)
 SELECT
-	id, email, name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
 	global.user_details d
 WHERE
@@ -585,7 +601,9 @@ func (q *Queries) UpdateGlobalUserProfile(ctx context.Context, arg UpdateGlobalU
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
+		&i.NormalizedEmail,
 		&i.Name,
+		&i.NormalizedName,
 		&i.About,
 		&i.DateOfBirth,
 		&i.CreatedAt,

@@ -11,69 +11,49 @@ import (
 	"github.com/google/uuid"
 )
 
-const addServiceDetails = `-- name: AddServiceDetails :exec
-INSERT INTO
-	global.services (
-		id,
-		name,
-		assignable,
-		logical_partition
-	)
-VALUES
-	($1, $2, $3, $4)
-ON CONFLICT (id) DO UPDATE
-SET
-	assignable = excluded.assignable,
-	logical_partition = excluded.logical_partition
-`
-
-type AddServiceDetailsParams struct {
-	ID               uuid.UUID                         `json:"id"`
-	Name             string                            `json:"name"`
-	Assignable       bool                              `json:"assignable"`
-	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
+type AddServicesIntoStagingParams struct {
+	ID          uuid.UUID         `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Type        GlobalServiceType `json:"type"`
 }
 
-func (q *Queries) AddServiceDetails(ctx context.Context, arg AddServiceDetailsParams) error {
-	_, err := q.db.Exec(ctx, addServiceDetails,
-		arg.ID,
-		arg.Name,
-		arg.Assignable,
-		arg.LogicalPartition,
-	)
+const newServiceStagingTable = `-- name: NewServiceStagingTable :exec
+CREATE TEMPORARY TABLE services_staging (
+	LIKE global.services including ALL
+) ON
+COMMIT
+DROP
+`
+
+func (q *Queries) NewServiceStagingTable(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, newServiceStagingTable)
 	return err
 }
 
-const addServiceHierarchyDetails = `-- name: AddServiceHierarchyDetails :exec
+const upsertServicesFromStaging = `-- name: UpsertServicesFromStaging :exec
 INSERT INTO
-	global.service_hierarchy_details (
-		service_id,
-		hierarchy_name,
-		hierarchy_type,
-		hierarchy_result
+	global.services AS s (
+		id,
+		name,
+		description,
+		type
 	)
-VALUES
-	($1, $2, $3, $4)
-ON CONFLICT (service_id) DO UPDATE
+SELECT
+	id,
+	name,
+	description,
+	type
+FROM
+	services_staging
+ON CONFLICT (id) DO UPDATE
 SET
-	hierarchy_name = excluded.hierarchy_name,
-	hierarchy_type = excluded.hierarchy_type,
-	hierarchy_result = excluded.hierarchy_result
+	type = excluded.type
+WHERE
+	s.type IS DISTINCT FROM excluded.type
 `
 
-type AddServiceHierarchyDetailsParams struct {
-	ServiceID       uuid.UUID                    `json:"serviceId"`
-	HierarchyName   string                       `json:"hierarchyName"`
-	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
-	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
-}
-
-func (q *Queries) AddServiceHierarchyDetails(ctx context.Context, arg AddServiceHierarchyDetailsParams) error {
-	_, err := q.db.Exec(ctx, addServiceHierarchyDetails,
-		arg.ServiceID,
-		arg.HierarchyName,
-		arg.HierarchyType,
-		arg.HierarchyResult,
-	)
+func (q *Queries) UpsertServicesFromStaging(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, upsertServicesFromStaging)
 	return err
 }

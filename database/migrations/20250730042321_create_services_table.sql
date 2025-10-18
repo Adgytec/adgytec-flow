@@ -1,17 +1,13 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE global.service_logical_partition_type AS ENUM('hierarchy', 'none');
+CREATE TYPE global.service_type AS ENUM('core', 'optional');
 
-/*
-assignble tells if this permission can be assignable to organization
-if the value is false it means it is normal service which can be part of organization or not 
-*/
 CREATE TABLE IF NOT EXISTS global.services (
 	id UUID PRIMARY KEY,
 	name TEXT NOT NULL UNIQUE,
-	assignable BOOL NOT NULL DEFAULT FALSE,
-	logical_partition global.service_logical_partition_type NOT NULL DEFAULT 'none',
-	created_at TIMESTAMPTZ NOT NULL
+	description TEXT,
+	type global.service_type NOT NULL,
+	created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON global.services FOR each ROW
@@ -37,6 +33,6 @@ DROP TRIGGER if EXISTS on_insert_set_created_at ON global.services;
 
 DROP TABLE global.services;
 
-DROP TYPE if EXISTS global.service_logical_partition_type;
+DROP TYPE if EXISTS global.service_type;
 
 -- +goose StatementEnd

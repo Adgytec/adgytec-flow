@@ -72,6 +72,7 @@ const (
 	GlobalActorTypeApiKey GlobalActorType = "api-key"
 	GlobalActorTypeUser   GlobalActorType = "user"
 	GlobalActorTypeSigned GlobalActorType = "signed"
+	GlobalActorTypeSystem GlobalActorType = "system"
 )
 
 func (e *GlobalActorType) Scan(src interface{}) error {
@@ -113,7 +114,8 @@ func (e GlobalActorType) Valid() bool {
 	switch e {
 	case GlobalActorTypeApiKey,
 		GlobalActorTypeUser,
-		GlobalActorTypeSigned:
+		GlobalActorTypeSigned,
+		GlobalActorTypeSystem:
 		return true
 	}
 	return false
@@ -282,154 +284,52 @@ func (e GlobalMediaUploadType) Valid() bool {
 	return false
 }
 
-type GlobalServiceHierarchyResult string
+type GlobalServiceType string
 
 const (
-	GlobalServiceHierarchyResultHierarchy GlobalServiceHierarchyResult = "hierarchy"
-	GlobalServiceHierarchyResultItem      GlobalServiceHierarchyResult = "item"
+	GlobalServiceTypeCore     GlobalServiceType = "core"
+	GlobalServiceTypeOptional GlobalServiceType = "optional"
 )
 
-func (e *GlobalServiceHierarchyResult) Scan(src interface{}) error {
+func (e *GlobalServiceType) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = GlobalServiceHierarchyResult(s)
+		*e = GlobalServiceType(s)
 	case string:
-		*e = GlobalServiceHierarchyResult(s)
+		*e = GlobalServiceType(s)
 	default:
-		return fmt.Errorf("unsupported scan type for GlobalServiceHierarchyResult: %T", src)
+		return fmt.Errorf("unsupported scan type for GlobalServiceType: %T", src)
 	}
 	return nil
 }
 
-type NullGlobalServiceHierarchyResult struct {
-	GlobalServiceHierarchyResult GlobalServiceHierarchyResult `json:"globalServiceHierarchyResult"`
-	Valid                        bool                         `json:"valid"` // Valid is true if GlobalServiceHierarchyResult is not NULL
+type NullGlobalServiceType struct {
+	GlobalServiceType GlobalServiceType `json:"globalServiceType"`
+	Valid             bool              `json:"valid"` // Valid is true if GlobalServiceType is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullGlobalServiceHierarchyResult) Scan(value interface{}) error {
+func (ns *NullGlobalServiceType) Scan(value interface{}) error {
 	if value == nil {
-		ns.GlobalServiceHierarchyResult, ns.Valid = "", false
+		ns.GlobalServiceType, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.GlobalServiceHierarchyResult.Scan(value)
+	return ns.GlobalServiceType.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullGlobalServiceHierarchyResult) Value() (driver.Value, error) {
+func (ns NullGlobalServiceType) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.GlobalServiceHierarchyResult), nil
+	return string(ns.GlobalServiceType), nil
 }
 
-func (e GlobalServiceHierarchyResult) Valid() bool {
+func (e GlobalServiceType) Valid() bool {
 	switch e {
-	case GlobalServiceHierarchyResultHierarchy,
-		GlobalServiceHierarchyResultItem:
-		return true
-	}
-	return false
-}
-
-type GlobalServiceHierarchyType string
-
-const (
-	GlobalServiceHierarchyTypeLevel GlobalServiceHierarchyType = "level"
-	GlobalServiceHierarchyTypeTree  GlobalServiceHierarchyType = "tree"
-)
-
-func (e *GlobalServiceHierarchyType) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = GlobalServiceHierarchyType(s)
-	case string:
-		*e = GlobalServiceHierarchyType(s)
-	default:
-		return fmt.Errorf("unsupported scan type for GlobalServiceHierarchyType: %T", src)
-	}
-	return nil
-}
-
-type NullGlobalServiceHierarchyType struct {
-	GlobalServiceHierarchyType GlobalServiceHierarchyType `json:"globalServiceHierarchyType"`
-	Valid                      bool                       `json:"valid"` // Valid is true if GlobalServiceHierarchyType is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullGlobalServiceHierarchyType) Scan(value interface{}) error {
-	if value == nil {
-		ns.GlobalServiceHierarchyType, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.GlobalServiceHierarchyType.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullGlobalServiceHierarchyType) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.GlobalServiceHierarchyType), nil
-}
-
-func (e GlobalServiceHierarchyType) Valid() bool {
-	switch e {
-	case GlobalServiceHierarchyTypeLevel,
-		GlobalServiceHierarchyTypeTree:
-		return true
-	}
-	return false
-}
-
-type GlobalServiceLogicalPartitionType string
-
-const (
-	GlobalServiceLogicalPartitionTypeHierarchy GlobalServiceLogicalPartitionType = "hierarchy"
-	GlobalServiceLogicalPartitionTypeNone      GlobalServiceLogicalPartitionType = "none"
-)
-
-func (e *GlobalServiceLogicalPartitionType) Scan(src interface{}) error {
-	switch s := src.(type) {
-	case []byte:
-		*e = GlobalServiceLogicalPartitionType(s)
-	case string:
-		*e = GlobalServiceLogicalPartitionType(s)
-	default:
-		return fmt.Errorf("unsupported scan type for GlobalServiceLogicalPartitionType: %T", src)
-	}
-	return nil
-}
-
-type NullGlobalServiceLogicalPartitionType struct {
-	GlobalServiceLogicalPartitionType GlobalServiceLogicalPartitionType `json:"globalServiceLogicalPartitionType"`
-	Valid                             bool                              `json:"valid"` // Valid is true if GlobalServiceLogicalPartitionType is not NULL
-}
-
-// Scan implements the Scanner interface.
-func (ns *NullGlobalServiceLogicalPartitionType) Scan(value interface{}) error {
-	if value == nil {
-		ns.GlobalServiceLogicalPartitionType, ns.Valid = "", false
-		return nil
-	}
-	ns.Valid = true
-	return ns.GlobalServiceLogicalPartitionType.Scan(value)
-}
-
-// Value implements the driver Valuer interface.
-func (ns NullGlobalServiceLogicalPartitionType) Value() (driver.Value, error) {
-	if !ns.Valid {
-		return nil, nil
-	}
-	return string(ns.GlobalServiceLogicalPartitionType), nil
-}
-
-func (e GlobalServiceLogicalPartitionType) Valid() bool {
-	switch e {
-	case GlobalServiceLogicalPartitionTypeHierarchy,
-		GlobalServiceLogicalPartitionTypeNone:
+	case GlobalServiceTypeCore,
+		GlobalServiceTypeOptional:
 		return true
 	}
 	return false
@@ -535,6 +435,17 @@ func (e ManagementPermissionResourceType) Valid() bool {
 	return false
 }
 
+type ApplicationPermissionStaging struct {
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+	RequiredResources []string                  `json:"requiredResources"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	CreatedAt         time.Time                 `json:"createdAt"`
+}
+
 type ApplicationPermissions struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
@@ -544,7 +455,6 @@ type ApplicationPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
-	UpdatedAt         *time.Time                `json:"updatedAt"`
 }
 
 type ArchiveDeletedRecords struct {
@@ -592,25 +502,20 @@ type GlobalMediaVideo struct {
 	Preview          *string   `json:"preview"`
 }
 
-type GlobalServiceHierarchyDetails struct {
-	ServiceID       uuid.UUID                    `json:"serviceId"`
-	HierarchyName   string                       `json:"hierarchyName"`
-	HierarchyType   GlobalServiceHierarchyType   `json:"hierarchyType"`
-	HierarchyResult GlobalServiceHierarchyResult `json:"hierarchyResult"`
-}
-
 type GlobalServices struct {
-	ID               uuid.UUID                         `json:"id"`
-	Name             string                            `json:"name"`
-	Assignable       bool                              `json:"assignable"`
-	LogicalPartition GlobalServiceLogicalPartitionType `json:"logicalPartition"`
-	CreatedAt        time.Time                         `json:"createdAt"`
+	ID          uuid.UUID         `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Type        GlobalServiceType `json:"type"`
+	CreatedAt   time.Time         `json:"createdAt"`
 }
 
 type GlobalUserDetails struct {
 	ID                         uuid.UUID             `json:"id"`
 	Email                      string                `json:"email"`
+	NormalizedEmail            string                `json:"normalizedEmail"`
 	Name                       *string               `json:"name"`
+	NormalizedName             *string               `json:"normalizedName"`
 	About                      *string               `json:"about"`
 	DateOfBirth                pgtype.Date           `json:"dateOfBirth"`
 	CreatedAt                  time.Time             `json:"createdAt"`
@@ -648,6 +553,17 @@ type GlobalUsers struct {
 	CreatedAt        time.Time        `json:"createdAt"`
 }
 
+type ManagementPermissionStaging struct {
+	ID                uuid.UUID                 `json:"id"`
+	ServiceID         uuid.UUID                 `json:"serviceId"`
+	Key               string                    `json:"key"`
+	AssignableActor   GlobalAssignableActorType `json:"assignableActor"`
+	RequiredResources []string                  `json:"requiredResources"`
+	Name              string                    `json:"name"`
+	Description       *string                   `json:"description"`
+	CreatedAt         time.Time                 `json:"createdAt"`
+}
+
 type ManagementPermissions struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
@@ -657,5 +573,12 @@ type ManagementPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
-	UpdatedAt         *time.Time                `json:"updatedAt"`
+}
+
+type ServicesStaging struct {
+	ID          uuid.UUID         `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Type        GlobalServiceType `json:"type"`
+	CreatedAt   time.Time         `json:"createdAt"`
 }

@@ -54,7 +54,7 @@ func (p permissionRequired) GetPermissionRequiredResources() PermissionRequiredR
 // helper methods to create PermissionProvider for permission resolution
 
 func NewPermissionRequiredFromManagementPermission(
-	permission db.AddManagementPermissionParams,
+	permission db.AddManagementPermissionsIntoStagingParams,
 	requiredPermissionResources PermissionRequiredResources,
 ) PermissionProvider {
 	return permissionRequired{
@@ -66,7 +66,7 @@ func NewPermissionRequiredFromManagementPermission(
 }
 
 func NewPermissionRequiredFromApplicationPermission(
-	permission db.AddApplicationPermissionParams,
+	permission db.AddApplicationPermissionsIntoStagingParams,
 	requiredPermissionResources PermissionRequiredResources,
 ) PermissionProvider {
 	return permissionRequired{
