@@ -31,6 +31,7 @@ SELECT
 	type
 FROM
 	services_staging
+ON CONFLICT (id) DO UPDATE
 SET
 	description = excluded.description,
 	type = excluded.type
