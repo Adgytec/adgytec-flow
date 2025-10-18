@@ -59,7 +59,7 @@ func (q *Queries) NewManagementPermissionStagingTable(ctx context.Context) error
 
 const upsertApplicationPermissionsFromStaging = `-- name: UpsertApplicationPermissionsFromStaging :exec
 INSERT INTO
-	application.permissions (
+	application.permissions AS p (
 		id,
 		service_id,
 		key,
@@ -82,7 +82,13 @@ ON CONFLICT (id) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
-	assignable_actor = excluded.assignable_actor
+	assignable_actor = excluded.assignable_actor,
+	required_resources = excluded.required_resources
+WHERE
+	p.name IS DISTINCT FROM excluded.name
+	OR p.description IS DISTINCT FROM excluded.description
+	OR p.assignable_actor IS DISTINCT FROM excluded.assignable_actor
+	OR p.required_resources IS DISTINCT FROM excluded.required_resources
 `
 
 func (q *Queries) UpsertApplicationPermissionsFromStaging(ctx context.Context) error {
@@ -92,7 +98,7 @@ func (q *Queries) UpsertApplicationPermissionsFromStaging(ctx context.Context) e
 
 const upsertManagementPermissionsFromStaging = `-- name: UpsertManagementPermissionsFromStaging :exec
 INSERT INTO
-	management.permissions (
+	management.permissions AS p (
 		id,
 		service_id,
 		key,
@@ -115,7 +121,13 @@ ON CONFLICT (id) DO UPDATE
 SET
 	name = excluded.name,
 	description = excluded.description,
-	assignable_actor = excluded.assignable_actor
+	assignable_actor = excluded.assignable_actor,
+	required_resources = excluded.required_resources
+WHERE
+	p.name IS DISTINCT FROM excluded.name
+	OR p.description IS DISTINCT FROM excluded.description
+	OR p.assignable_actor IS DISTINCT FROM excluded.assignable_actor
+	OR p.required_resources IS DISTINCT FROM excluded.required_resources
 `
 
 func (q *Queries) UpsertManagementPermissionsFromStaging(ctx context.Context) error {
