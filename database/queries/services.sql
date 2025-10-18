@@ -31,8 +31,9 @@ SELECT
 	type
 FROM
 	services_staging
-ON CONFLICT (id) DO UPDATE
 SET
+	description = excluded.description,
 	type = excluded.type
 WHERE
-	s.type IS DISTINCT FROM excluded.type;
+	s.description IS DISTINCT FROM excluded.description
+	OR s.type IS DISTINCT FROM excluded.type;
