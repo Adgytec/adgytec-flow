@@ -6,33 +6,33 @@ COMMIT
 DROP;
 
 -- name: AddServicesIntoStaging :copyfrom
--- INSERT INTO
--- 	services_staging (
--- 		id,
--- 		name,
--- 		description,
--- 		type
--- 	)
--- VALUES
--- 	($1, $2, $3, $4);
---
+INSERT INTO
+	services_staging (
+		id,
+		name,
+		description,
+		type
+	)
+VALUES
+	($1, $2, $3, $4);
+
 -- name: UpsertServicesFromStaging :exec
--- INSERT INTO
--- 	global.services AS s (
--- 		id,
--- 		name,
--- 		description,
--- 		type
--- 	)
--- SELECT
--- 	id,
--- 	name,
--- 	description,
--- 	type
--- FROM
--- 	services_staging
--- ON CONFLICT (id) DO UPDATE
--- SET
--- 	type = excluded.type
--- WHERE
--- 	s.type IS DISTINCT FROM excluded.type;
+INSERT INTO
+	global.services AS s (
+		id,
+		name,
+		description,
+		type
+	)
+SELECT
+	id,
+	name,
+	description,
+	type
+FROM
+	services_staging
+ON CONFLICT (id) DO UPDATE
+SET
+	type = excluded.type
+WHERE
+	s.type IS DISTINCT FROM excluded.type;

@@ -552,3 +552,11 @@ type ManagementPermissions struct {
 	CreatedAt         time.Time                 `json:"createdAt"`
 	UpdatedAt         *time.Time                `json:"updatedAt"`
 }
+
+type ServicesStaging struct {
+	ID          uuid.UUID         `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Type        GlobalServiceType `json:"type"`
+	CreatedAt   time.Time         `json:"createdAt"`
+}

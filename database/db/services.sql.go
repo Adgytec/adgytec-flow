@@ -7,7 +7,16 @@ package db
 
 import (
 	"context"
+
+	"github.com/google/uuid"
 )
+
+type AddServicesIntoStagingParams struct {
+	ID          uuid.UUID         `json:"id"`
+	Name        string            `json:"name"`
+	Description *string           `json:"description"`
+	Type        GlobalServiceType `json:"type"`
+}
 
 const newServiceStagingTable = `-- name: NewServiceStagingTable :exec
 CREATE TEMPORARY TABLE services_staging (
@@ -19,5 +28,32 @@ DROP
 
 func (q *Queries) NewServiceStagingTable(ctx context.Context) error {
 	_, err := q.db.Exec(ctx, newServiceStagingTable)
+	return err
+}
+
+const upsertServicesFromStaging = `-- name: UpsertServicesFromStaging :exec
+INSERT INTO
+	global.services AS s (
+		id,
+		name,
+		description,
+		type
+	)
+SELECT
+	id,
+	name,
+	description,
+	type
+FROM
+	services_staging
+ON CONFLICT (id) DO UPDATE
+SET
+	type = excluded.type
+WHERE
+	s.type IS DISTINCT FROM excluded.type
+`
+
+func (q *Queries) UpsertServicesFromStaging(ctx context.Context) error {
+	_, err := q.db.Exec(ctx, upsertServicesFromStaging)
 	return err
 }

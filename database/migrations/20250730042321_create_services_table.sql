@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS global.services (
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
 	type global.service_type NOT NULL,
-	created_at TIMESTAMPTZ NOT NULL
+	created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()
 );
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON global.services FOR each ROW
