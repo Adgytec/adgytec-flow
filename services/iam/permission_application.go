@@ -7,13 +7,13 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
-var applicationPermissions = []db.AddApplicationPermissionParams{
+var applicationPermissions = []db.AddApplicationPermissionsIntoStagingParams{
 	assignApplicationPermission,
 	removeApplicationPermission,
 	listApplicationPermission,
 }
 
-var assignApplicationPermission = db.AddApplicationPermissionParams{
+var assignApplicationPermission = db.AddApplicationPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:assign:permission", iamServiceDetails.Name),
 	ServiceID: iamServiceDetails.ID,
 	Name:      "Assign Permission",
@@ -25,7 +25,7 @@ Grants the ability to assign permissions to any user or group.`),
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var removeApplicationPermission = db.AddApplicationPermissionParams{
+var removeApplicationPermission = db.AddApplicationPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:remove:permission", iamServiceDetails.Name),
 	ServiceID: iamServiceDetails.ID,
 	Name:      "Remove Permission",
@@ -37,7 +37,7 @@ Grants the ability to remove permissions from any user or group.`),
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var listApplicationPermission = db.AddApplicationPermissionParams{
+var listApplicationPermission = db.AddApplicationPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:list:permission", iamServiceDetails.Name),
 	ServiceID: iamServiceDetails.ID,
 	Name:      "List Permission",

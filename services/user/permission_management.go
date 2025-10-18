@@ -7,7 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 )
 
-var managementPermissions = []db.AddManagementPermissionParams{
+var managementPermissions = []db.AddManagementPermissionsIntoStagingParams{
 	listAllUsersPermission,
 	disableUserPermission,
 	enableUserPermission,
@@ -15,7 +15,7 @@ var managementPermissions = []db.AddManagementPermissionParams{
 	updateUserProfilePermission,
 }
 
-var listAllUsersPermission = db.AddManagementPermissionParams{
+var listAllUsersPermission = db.AddManagementPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:list:users", userServiceDetails.Name),
 	ServiceID: userServiceDetails.ID,
 	Name:      "List All Users",
@@ -28,7 +28,7 @@ Grants the ability to list all the users that are part of Adgytec studio.
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var disableUserPermission = db.AddManagementPermissionParams{
+var disableUserPermission = db.AddManagementPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:disable:users", userServiceDetails.Name),
 	ServiceID: userServiceDetails.ID,
 	Name:      "Disable Users",
@@ -41,7 +41,7 @@ Grants the ability to disable users access to Adgytec Studio.
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var enableUserPermission = db.AddManagementPermissionParams{
+var enableUserPermission = db.AddManagementPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:enable:users", userServiceDetails.Name),
 	ServiceID: userServiceDetails.ID,
 	Name:      "Enable Users",
@@ -53,7 +53,7 @@ Grants the ability to enable users access to Adgytec Studio.`),
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var getUserProfilePermission = db.AddManagementPermissionParams{
+var getUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:get:user-profile", userServiceDetails.Name),
 	ServiceID: userServiceDetails.ID,
 	Name:      "Get User Profile",
@@ -65,7 +65,7 @@ Grants the ability to get individual user profile details.`),
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
-var updateUserProfilePermission = db.AddManagementPermissionParams{
+var updateUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:update:user-profile", userServiceDetails.Name),
 	ServiceID: userServiceDetails.ID,
 	Name:      "Update User Profile",

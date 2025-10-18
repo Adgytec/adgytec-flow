@@ -18,7 +18,7 @@ const (
 	permissionTypeApplication permissionType = "application"
 )
 
-type serviceFactory func() (db.AddServiceDetailsParams, []db.AddManagementPermissionParams, []db.AddApplicationPermissionParams)
+type serviceFactory func() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams)
 
 var appServices = []serviceFactory{
 	iam.InitIAMService,

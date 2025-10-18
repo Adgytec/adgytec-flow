@@ -7,9 +7,8 @@ import (
 
 var serviceName = "user"
 
-var userServiceDetails = db.AddServiceDetailsParams{
-	ID:               core.GetIDFromPayload([]byte(serviceName)),
-	Name:             serviceName,
-	Assignable:       false,
-	LogicalPartition: db.GlobalServiceLogicalPartitionTypeNone,
+var userServiceDetails = db.AddServicesIntoStagingParams{
+	ID:   core.GetIDFromPayload([]byte(serviceName)),
+	Name: serviceName,
+	Type: db.GlobalServiceTypeCore,
 }
