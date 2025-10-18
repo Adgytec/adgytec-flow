@@ -35,14 +35,14 @@ func EnsureServicesInitialization(appConfig app.App) error {
 
 	var allServicesDetails []db.AddServicesIntoStagingParams
 	var allManagementPermissions []db.AddManagementPermissionsIntoStagingParams
-	var allApplicaitonPermissions []db.AddApplicationPermissionsIntoStagingParams
+	var allApplicationPermissions []db.AddApplicationPermissionsIntoStagingParams
 
 	for _, factory := range appServices {
 		details, managementPermissions, applicationPermissions := factory()
 
 		allServicesDetails = append(allServicesDetails, details)
 		allManagementPermissions = append(allManagementPermissions, managementPermissions...)
-		allApplicaitonPermissions = append(allApplicaitonPermissions, applicationPermissions...)
+		allApplicationPermissions = append(allApplicationPermissions, applicationPermissions...)
 	}
 
 	if err := addServiceDetails(systemCtx, appConfig.Database(), allServicesDetails); err != nil {
@@ -51,14 +51,14 @@ func EnsureServicesInitialization(appConfig app.App) error {
 		}
 	}
 
-	if err := addManagemntPermissions(systemCtx, appConfig.Database(), allManagementPermissions); err != nil {
+	if err := addManagementPermissions(systemCtx, appConfig.Database(), allManagementPermissions); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeManagement,
 			cause:          err,
 		}
 	}
 
-	if err := addApplicationPermissions(systemCtx, appConfig.Database(), allApplicaitonPermissions); err != nil {
+	if err := addApplicationPermissions(systemCtx, appConfig.Database(), allApplicationPermissions); err != nil {
 		return &AddingPermissionError{
 			permissionType: permissionTypeApplication,
 			cause:          err,
@@ -96,7 +96,7 @@ func addServiceDetails(ctx context.Context, dbConn database.Database, serviceDet
 	return tx.Commit(ctx)
 }
 
-func addManagemntPermissions(ctx context.Context, dbConn database.Database, permissions []db.AddManagementPermissionsIntoStagingParams) error {
+func addManagementPermissions(ctx context.Context, dbConn database.Database, permissions []db.AddManagementPermissionsIntoStagingParams) error {
 	for i := range permissions {
 		permissions[i].ID = core.GetIDFromPayload([]byte(permissions[i].Key))
 	}
