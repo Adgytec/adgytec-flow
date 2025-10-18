@@ -6,20 +6,22 @@ COMMIT delete rows;
 
 -- name: AddServicesIntoStaging :copyfrom
 INSERT INTO
-	services_staging (id, name, type)
+	services_staging (id, name, description, type)
 VALUES
-	($1, $2, $3);
+	($1, $2, $3, $4);
 
 -- name: UpsertServicesFromStaging :exec
 INSERT INTO
-	global.services AS t (id, name, type)
+	global.services AS s (id, name, description, type)
 SELECT
 	id,
 	name,
+        description,
 	type
 FROM
 	services_staging
 ON CONFLICT (id) DO UPDATE
 SET
 	type = excluded.type
-    where t.type is distinct from excluded.type;
+WHERE
+	s.type IS DISTINCT FROM excluded.type;

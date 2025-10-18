@@ -5,6 +5,7 @@ CREATE TYPE global.service_type AS ENUM('core', 'optional');
 CREATE TABLE IF NOT EXISTS global.services (
 	id UUID PRIMARY KEY,
 	name TEXT NOT NULL UNIQUE,
+	description TEXT,
 	type service_type NOT NULL,
 	created_at TIMESTAMPTZ NOT NULL
 );
