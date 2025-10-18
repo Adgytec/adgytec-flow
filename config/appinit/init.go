@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/config/app"
+	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/user"
@@ -39,11 +40,9 @@ func EnsureServicesInitialization(appConfig app.App) error {
 		allApplicaitonPermissions = append(allApplicaitonPermissions, applicationPermissions...)
 	}
 
-	// add service details
-	_, serviceErr := appConfig.Database().Queries().AddServicesIntoStaging(context.Background(), allServicesDetails)
-	if serviceErr != nil {
+	if err := addServiceDetails(context.Background(), appConfig.Database(), allServicesDetails); err != nil {
 		return &AddingServiceDetailsError{
-			cause: serviceErr,
+			cause: err,
 		}
 	}
 
@@ -66,4 +65,32 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	}
 
 	return nil
+}
+
+func addServiceDetails(ctx context.Context, dbConn database.Database, serviceDetails []db.AddServicesIntoStagingParams) error {
+	qtx, tx, txErr := dbConn.WithTransaction(ctx)
+	if txErr != nil {
+		return txErr
+	}
+	defer tx.Rollback(ctx)
+
+	// create temp table
+	stagingErr := qtx.Queries().NewServiceStagingTable(ctx)
+	if stagingErr != nil {
+		return stagingErr
+	}
+
+	// add service details to staging
+	_, serviceErr := qtx.Queries().AddServicesIntoStaging(ctx, serviceDetails)
+	if serviceErr != nil {
+		return serviceErr
+	}
+
+	// add to main services
+	upsertErr := qtx.Queries().UpsertServicesFromStaging(ctx)
+	if upsertErr != nil {
+		return upsertErr
+	}
+
+	return tx.Commit(ctx)
 }
