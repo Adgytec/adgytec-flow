@@ -583,6 +583,14 @@ type ManagementPermissions struct {
 	CreatedAt         time.Time                 `json:"createdAt"`
 }
 
+type ServiceRestrictionsStaging struct {
+	ID          uuid.UUID `json:"id"`
+	ServiceID   uuid.UUID `json:"serviceId"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	ValueType   string    `json:"valueType"`
+}
+
 type ServicesStaging struct {
 	ID          uuid.UUID         `json:"id"`
 	Name        string            `json:"name"`
