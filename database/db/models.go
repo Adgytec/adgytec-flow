@@ -287,8 +287,9 @@ func (e GlobalMediaUploadType) Valid() bool {
 type GlobalServiceType string
 
 const (
-	GlobalServiceTypeCore     GlobalServiceType = "core"
-	GlobalServiceTypeOptional GlobalServiceType = "optional"
+	GlobalServiceTypeCore         GlobalServiceType = "core"
+	GlobalServiceTypeOptional     GlobalServiceType = "optional"
+	GlobalServiceTypeOrganization GlobalServiceType = "organization"
 )
 
 func (e *GlobalServiceType) Scan(src interface{}) error {
@@ -329,7 +330,8 @@ func (ns NullGlobalServiceType) Value() (driver.Value, error) {
 func (e GlobalServiceType) Valid() bool {
 	switch e {
 	case GlobalServiceTypeCore,
-		GlobalServiceTypeOptional:
+		GlobalServiceTypeOptional,
+		GlobalServiceTypeOrganization:
 		return true
 	}
 	return false
