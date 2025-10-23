@@ -7,6 +7,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
+	org "github.com/Adgytec/adgytec-flow/services/organization"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -25,6 +26,7 @@ type serviceFactory func() (db.AddServicesIntoStagingParams, []db.AddManagementP
 var appServices = []serviceFactory{
 	iam.InitIAMService,
 	user.InitUserService,
+	org.InitOrgService,
 }
 
 func EnsureServicesInitialization(appConfig app.App) error {
