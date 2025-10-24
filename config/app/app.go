@@ -11,6 +11,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/storage"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
+	org "github.com/Adgytec/adgytec-flow/services/organization"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
@@ -30,6 +31,7 @@ type appInternalServices interface {
 	UserService() user.UserServicePC
 	Middleware() core.MiddlewarePC
 	MediaWithTransaction() media.MediaServicePC
+	Organization() org.OrgServicePC
 }
 
 type App interface {
