@@ -3,6 +3,7 @@ package org
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/core"
@@ -71,3 +72,5 @@ func (orgDetails newOrganizationData) Validate() error {
 func (s *orgService) newOrganization(ctx context.Context) error {
 	return nil
 }
+
+func (s *orgServiceMux) newOrganization(w http.ResponseWriter, r *http.Request) {}

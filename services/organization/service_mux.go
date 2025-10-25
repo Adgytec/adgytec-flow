@@ -22,6 +22,12 @@ func (m *orgServiceMux) Router() *chi.Mux {
 	mux.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
 	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
 
+	mux.Group(func(router chi.Router) {
+		router.Use(m.middleware.ActorManagementAccessCheck)
+
+		router.Post("/create", m.newOrganization)
+	})
+
 	return mux
 }
 
