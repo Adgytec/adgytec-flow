@@ -8,6 +8,7 @@ import (
 )
 
 type orgServiceMux struct {
+	service    *orgService
 	middleware core.MiddlewarePC
 }
 
@@ -24,10 +25,13 @@ func (m *orgServiceMux) Router() *chi.Mux {
 	return mux
 }
 
-func NewOrgMux(params any) services.Mux {
+func NewOrgMux(params orgServiceMuxParams) services.Mux {
 	log.Info().
 		Str("service", serviceName).
 		Msg("new service mux")
 
-	return &orgServiceMux{}
+	return &orgServiceMux{
+		service:    newOrgService(params),
+		middleware: params.Middleware(),
+	}
 }
