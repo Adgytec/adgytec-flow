@@ -49,3 +49,21 @@ func (s *services) GetCoreServiceRestrictions() []db.AddServiceRestrictionIntoSt
 	s.coreServiceRestrictions = coreRestrictions
 	return s.coreServiceRestrictions
 }
+
+func NewServices(details []Details) Services {
+	svcList := make([]db.AddServicesIntoStagingParams, 0, len(details))
+	restrictionList := make([]db.AddServiceRestrictionIntoStagingParams, 0)
+
+	for _, d := range details {
+		svcList = append(svcList, d.Service)
+		if len(d.ServiceRestrictions) > 0 {
+			restrictionList = append(restrictionList, d.ServiceRestrictions...)
+		}
+	}
+
+	return &services{
+		services:            svcList,
+		serviceRestrictions: restrictionList,
+		// coreServiceRestrictions left nil for lazy caching
+	}
+}
