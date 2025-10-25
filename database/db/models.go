@@ -573,6 +573,12 @@ type GlobalUsers struct {
 	CreatedAt        time.Time        `json:"createdAt"`
 }
 
+type ManagementOrganizationCoreServiceRestrictions struct {
+	OrgID         uuid.UUID `json:"orgId"`
+	RestrictionID uuid.UUID `json:"restrictionId"`
+	Value         int16     `json:"value"`
+}
+
 type ManagementPermissionStaging struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
