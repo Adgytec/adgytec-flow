@@ -8,7 +8,8 @@ service availability for any org is checked during resource creation, updation a
 CREATE TABLE IF NOT EXISTS management.organization_service_restrictions (
 	org_id UUID NOT NULL REFERENCES global.organizations (id),
 	restriction_id UUID NOT NULL REFERENCES global.service_restrictions (id),
-	value SMALLINT NOT NULL,
+	value INTEGER NOT NULL,
+	info TEXT,
 	PRIMARY KEY (
 		org_id,
 		restriction_id
