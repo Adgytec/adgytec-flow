@@ -10,6 +10,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -239,4 +240,18 @@ func (s *orgService) newOrganization(ctx context.Context, orgDetails newOrganiza
 	return &newOrgRes, nil
 }
 
-func (s *orgServiceMux) newOrganization(w http.ResponseWriter, r *http.Request) {}
+func (s *orgServiceMux) newOrganization(w http.ResponseWriter, r *http.Request) {
+	newOrgDetails, payloadErr := payload.DecodeRequestBodyAndValidate[newOrganizationData](w, r)
+	if payloadErr != nil {
+		payload.EncodeError(w, payloadErr)
+		return
+	}
+
+	newOrgRes, newOrgErr := s.service.newOrganization(r.Context(), newOrgDetails)
+	if newOrgErr != nil {
+		payload.EncodeError(w, newOrgErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusCreated, newOrgRes)
+}
