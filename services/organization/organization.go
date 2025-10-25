@@ -11,7 +11,7 @@ import (
 
 type orgServiceParams interface {
 	Database() database.Database
-	User() user.UserServicePC
+	UserService() user.UserServicePC
 	CacheClient() cache.CacheClient
 }
 
@@ -29,7 +29,7 @@ type orgService struct {
 func newOrgService(params orgServiceParams) *orgService {
 	return &orgService{
 		db:          params.Database(),
-		userService: params.User(),
+		userService: params.UserService(),
 		coreServiceRestrictionsCache: cache.NewCache(
 			params.CacheClient(),
 			serializer.NewGobSerializer[[]db.GetCoreServiceRestrictionsRow](),
