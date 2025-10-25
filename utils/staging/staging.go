@@ -39,7 +39,7 @@ func (s *services) GetCoreServiceRestrictions() []db.AddServiceRestrictionIntoSt
 		}
 	}
 
-	var coreRestrictions []db.AddServiceRestrictionIntoStagingParams
+	coreRestrictions := make([]db.AddServiceRestrictionIntoStagingParams, 0)
 	for _, r := range s.serviceRestrictions {
 		if _, ok := coreServiceIDs[r.ServiceID]; ok {
 			coreRestrictions = append(coreRestrictions, r)
