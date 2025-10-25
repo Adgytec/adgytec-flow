@@ -36,6 +36,8 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	// system context
 	systemCtx := actor.NewSystemActorContext(context.Background())
 
+	var serviceDetails []staging.Details
+
 	var allServicesDetails []db.AddServicesIntoStagingParams
 	var allManagementPermissions []db.AddManagementPermissionsIntoStagingParams
 	var allApplicationPermissions []db.AddApplicationPermissionsIntoStagingParams
@@ -44,11 +46,16 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	for _, factory := range appServices {
 		details := factory()
 
+		serviceDetails = append(serviceDetails, details)
+
 		allServicesDetails = append(allServicesDetails, details.Service)
 		allManagementPermissions = append(allManagementPermissions, details.ManagementPermissions...)
 		allApplicationPermissions = append(allApplicationPermissions, details.ApplicationPermissions...)
 		allServicesRestrictions = append(allServicesRestrictions, details.ServiceRestrictions...)
 	}
+
+	// add to app
+	appConfig.AddServices(serviceDetails)
 
 	if err := genericAdd(
 		systemCtx,
