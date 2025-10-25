@@ -1,12 +1,12 @@
-package iam
+package org
 
 import "github.com/Adgytec/adgytec-flow/utils/staging"
 
-func InitIAMService() staging.Details {
+func InitOrgService() staging.Details {
 	return staging.Details{
-		Service:                iamServiceDetails,
+		Service:                orgServiceDetails,
 		ManagementPermissions:  managementPermissions,
-		ApplicationPermissions: applicationPermissions,
+		ApplicationPermissions: nil,
 		ServiceRestrictions:    nil,
 	}
 }

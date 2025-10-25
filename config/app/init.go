@@ -1,6 +1,8 @@
 package app
 
-import "github.com/rs/zerolog/log"
+import (
+	"github.com/rs/zerolog/log"
+)
 
 func NewApp() (App, error) {
 	log.Info().Msg("Initializing application external services")
@@ -16,7 +18,8 @@ func NewApp() (App, error) {
 	}
 
 	return &app{
-		externalServices,
-		internalServices,
+		appExternalServices: externalServices,
+		appInternalServices: internalServices,
+		services:            nil,
 	}, nil
 }

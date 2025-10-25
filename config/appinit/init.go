@@ -7,9 +7,11 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
+	org "github.com/Adgytec/adgytec-flow/services/organization"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/staging"
 	"github.com/rs/zerolog/log"
 )
 
@@ -20,11 +22,12 @@ const (
 	permissionTypeApplication permissionType = "application"
 )
 
-type serviceFactory func() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams)
+type serviceFactory func() staging.Details
 
 var appServices = []serviceFactory{
 	iam.InitIAMService,
 	user.InitUserService,
+	org.InitOrgService,
 }
 
 func EnsureServicesInitialization(appConfig app.App) error {
@@ -33,19 +36,26 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	// system context
 	systemCtx := actor.NewSystemActorContext(context.Background())
 
+	var serviceDetails []staging.Details
+
 	var allServicesDetails []db.AddServicesIntoStagingParams
 	var allManagementPermissions []db.AddManagementPermissionsIntoStagingParams
 	var allApplicationPermissions []db.AddApplicationPermissionsIntoStagingParams
 	var allServicesRestrictions []db.AddServiceRestrictionIntoStagingParams
 
 	for _, factory := range appServices {
-		details, managementPermissions, applicationPermissions, restrictions := factory()
+		details := factory()
 
-		allServicesDetails = append(allServicesDetails, details)
-		allManagementPermissions = append(allManagementPermissions, managementPermissions...)
-		allApplicationPermissions = append(allApplicationPermissions, applicationPermissions...)
-		allServicesRestrictions = append(allServicesRestrictions, restrictions...)
+		serviceDetails = append(serviceDetails, details)
+
+		allServicesDetails = append(allServicesDetails, details.Service)
+		allManagementPermissions = append(allManagementPermissions, details.ManagementPermissions...)
+		allApplicationPermissions = append(allApplicationPermissions, details.ApplicationPermissions...)
+		allServicesRestrictions = append(allServicesRestrictions, details.ServiceRestrictions...)
 	}
+
+	// add to app
+	appConfig.AddServices(serviceDetails)
 
 	if err := genericAdd(
 		systemCtx,

@@ -4,6 +4,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/appmiddleware"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
+	org "github.com/Adgytec/adgytec-flow/services/organization"
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
@@ -13,6 +14,7 @@ type internalServices struct {
 	userService  user.UserServicePC
 	middleware   core.MiddlewarePC
 	mediaService media.MediaServicePC
+	orgService   org.OrgServicePC
 }
 
 func (s *internalServices) IAMService() iam.IAMServicePC {
@@ -31,6 +33,10 @@ func (s *internalServices) MediaWithTransaction() media.MediaServicePC {
 	return s.mediaService
 }
 
+func (s *internalServices) Organization() org.OrgServicePC {
+	return s.orgService
+}
+
 func newInternalService(externalService appExternalServices) (appInternalServices, error) {
 	internalService := internalServices{}
 	appInstance := &app{
@@ -43,6 +49,8 @@ func newInternalService(externalService appExternalServices) (appInternalService
 	internalService.mediaService = media.NewMediaServicePC(appInstance)
 
 	internalService.userService = user.NewUserServicePC(appInstance)
+	internalService.orgService = org.NewOrgServicePC(appInstance)
+
 	internalService.middleware = appmiddleware.NewAppMiddlewarePC(appInstance)
 
 	return &internalService, nil
