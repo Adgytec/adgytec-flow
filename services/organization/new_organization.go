@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"github.com/Adgytec/adgytec-flow/services/media"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
+	"github.com/go-ozzo/ozzo-validation/v4/is"
 	"github.com/google/uuid"
 )
 
@@ -46,6 +48,24 @@ type newOrganizationData struct {
 	Logo            *media.NewMediaItemInfo          `json:"logo"`
 	CoverPhoto      *media.NewMediaItemInfo          `json:"coverPhoto"`
 	RestrictionInfo []newOrganizationRestrictionItem `json:"restrictionInfo"`
+}
+
+func (orgDetails newOrganizationData) Validate() error {
+	validationErr := validation.ValidateStruct(&orgDetails,
+		validation.Field(&orgDetails.Name, validation.Required),
+		validation.Field(&orgDetails.RootUser, is.Email),
+		validation.Field(orgDetails.Logo),
+		validation.Field(orgDetails.CoverPhoto),
+		validation.Field(orgDetails.RestrictionInfo),
+	)
+
+	if validationErr != nil {
+		return &core.FieldValidationError{
+			ValidationErrors: validationErr,
+		}
+	}
+
+	return nil
 }
 
 func (s *orgService) newOrganization(ctx context.Context) error {
