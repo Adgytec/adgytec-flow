@@ -49,7 +49,7 @@ func newInternalService(externalService appExternalServices) (appInternalService
 	internalService.mediaService = media.NewMediaServicePC(appInstance)
 
 	internalService.userService = user.NewUserServicePC(appInstance)
-	internalService.orgService = org.NewOrgMux(appInstance)
+	internalService.orgService = org.NewOrgServicePC(appInstance)
 
 	internalService.middleware = appmiddleware.NewAppMiddlewarePC(appInstance)
 
