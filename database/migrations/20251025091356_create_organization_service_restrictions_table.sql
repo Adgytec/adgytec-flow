@@ -2,6 +2,8 @@
 -- +goose StatementBegin
 /*
 value -1 defines no restriction limit
+don't require seperate table for optional services 
+service availability for any org is checked during resource creation, updation and retrival
 */
 CREATE TABLE IF NOT EXISTS management.organization_service_restrictions (
 	org_id UUID NOT NULL REFERENCES global.organizations (id),
