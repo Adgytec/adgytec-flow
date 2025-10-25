@@ -36,3 +36,14 @@ SET
 	description = excluded.description
 WHERE
 	s.description IS DISTINCT FROM excluded.description;
+
+-- name: GetCoreServiceRestrictions :many
+SELECT
+	r.id,
+	r.name,
+	s.name AS service_name
+FROM
+	global.service_restrictions r
+	JOIN global.services s ON r.service_id = s.id
+WHERE
+	s.type = 'core';

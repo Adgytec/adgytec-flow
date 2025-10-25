@@ -18,6 +18,44 @@ type AddServiceRestrictionIntoStagingParams struct {
 	Description *string   `json:"description"`
 }
 
+const getCoreServiceRestrictions = `-- name: GetCoreServiceRestrictions :many
+SELECT
+	r.id,
+	r.name,
+	s.name AS service_name
+FROM
+	global.service_restrictions r
+	JOIN global.services s ON r.service_id = s.id
+WHERE
+	s.type = 'core'
+`
+
+type GetCoreServiceRestrictionsRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	ServiceName string    `json:"serviceName"`
+}
+
+func (q *Queries) GetCoreServiceRestrictions(ctx context.Context) ([]GetCoreServiceRestrictionsRow, error) {
+	rows, err := q.db.Query(ctx, getCoreServiceRestrictions)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCoreServiceRestrictionsRow
+	for rows.Next() {
+		var i GetCoreServiceRestrictionsRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.ServiceName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const newServiceRestrictionsStagingTable = `-- name: NewServiceRestrictionsStagingTable :exec
 CREATE TEMPORARY TABLE service_restrictions_staging (
 	LIKE global.service_restrictions including ALL
