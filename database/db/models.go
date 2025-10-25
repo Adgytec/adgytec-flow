@@ -504,6 +504,16 @@ type GlobalMediaVideo struct {
 	Preview          *string   `json:"preview"`
 }
 
+type GlobalOrganizations struct {
+	ID          uuid.UUID  `json:"id"`
+	RootUser    uuid.UUID  `json:"rootUser"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
+	Logo        *uuid.UUID `json:"logo"`
+	CoverImage  *uuid.UUID `json:"coverImage"`
+	CreatedAt   time.Time  `json:"createdAt"`
+}
+
 type GlobalServiceRestrictions struct {
 	ID          uuid.UUID `json:"id"`
 	ServiceID   uuid.UUID `json:"serviceId"`
