@@ -575,7 +575,8 @@ type GlobalUsers struct {
 type ManagementOrganizationServiceRestrictions struct {
 	OrgID         uuid.UUID `json:"orgId"`
 	RestrictionID uuid.UUID `json:"restrictionId"`
-	Value         int16     `json:"value"`
+	Value         int32     `json:"value"`
+	Info          *string   `json:"info"`
 }
 
 type ManagementPermissionStaging struct {

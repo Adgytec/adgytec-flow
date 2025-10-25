@@ -121,6 +121,41 @@ func (q *Queries) AddMediaItems(ctx context.Context, arg []AddMediaItemsParams) 
 	return q.db.CopyFrom(ctx, []string{"global", "media"}, []string{"id", "bucket_path", "required_mime_type", "upload_type", "upload_id"}, &iteratorForAddMediaItems{rows: arg})
 }
 
+// iteratorForAddOrganizationRestriction implements pgx.CopyFromSource.
+type iteratorForAddOrganizationRestriction struct {
+	rows                 []AddOrganizationRestrictionParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForAddOrganizationRestriction) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForAddOrganizationRestriction) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].OrgID,
+		r.rows[0].RestrictionID,
+		r.rows[0].Value,
+		r.rows[0].Info,
+	}, nil
+}
+
+func (r iteratorForAddOrganizationRestriction) Err() error {
+	return nil
+}
+
+func (q *Queries) AddOrganizationRestriction(ctx context.Context, arg []AddOrganizationRestrictionParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"management", "organization_service_restrictions"}, []string{"org_id", "restriction_id", "value", "info"}, &iteratorForAddOrganizationRestriction{rows: arg})
+}
+
 // iteratorForAddServiceRestrictionIntoStaging implements pgx.CopyFromSource.
 type iteratorForAddServiceRestrictionIntoStaging struct {
 	rows                 []AddServiceRestrictionIntoStagingParams
