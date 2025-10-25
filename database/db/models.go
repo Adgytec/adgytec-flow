@@ -510,7 +510,7 @@ type GlobalOrganizations struct {
 	Name        string     `json:"name"`
 	Description *string    `json:"description"`
 	Logo        *uuid.UUID `json:"logo"`
-	CoverImage  *uuid.UUID `json:"coverImage"`
+	CoverMedia  *uuid.UUID `json:"coverMedia"`
 	CreatedAt   time.Time  `json:"createdAt"`
 }
 

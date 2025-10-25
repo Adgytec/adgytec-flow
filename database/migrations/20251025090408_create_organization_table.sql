@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS global.organizations (
 	name TEXT NOT NULL,
 	description TEXT,
 	logo UUID REFERENCES global.media (id),
-	cover_image UUID REFERENCES global.media (id),
+	cover_media UUID REFERENCES global.media (id),
 	created_at TIMESTAMPTZ NOT NULL
 );
 

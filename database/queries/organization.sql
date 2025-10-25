@@ -5,7 +5,7 @@ INSERT INTO
 		name,
 		description,
 		logo,
-		cover_image
+		cover_media
 	)
 VALUES
 	($1, $2, $3, $4, $5)

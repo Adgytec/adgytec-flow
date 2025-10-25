@@ -25,7 +25,7 @@ INSERT INTO
 		name,
 		description,
 		logo,
-		cover_image
+		cover_media
 	)
 VALUES
 	($1, $2, $3, $4, $5)
@@ -38,7 +38,7 @@ type NewOrganizationParams struct {
 	Name        string     `json:"name"`
 	Description *string    `json:"description"`
 	Logo        *uuid.UUID `json:"logo"`
-	CoverImage  *uuid.UUID `json:"coverImage"`
+	CoverMedia  *uuid.UUID `json:"coverMedia"`
 }
 
 func (q *Queries) NewOrganization(ctx context.Context, arg NewOrganizationParams) (uuid.UUID, error) {
@@ -47,7 +47,7 @@ func (q *Queries) NewOrganization(ctx context.Context, arg NewOrganizationParams
 		arg.Name,
 		arg.Description,
 		arg.Logo,
-		arg.CoverImage,
+		arg.CoverMedia,
 	)
 	var id uuid.UUID
 	err := row.Scan(&id)
