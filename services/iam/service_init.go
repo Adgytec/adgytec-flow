@@ -1,9 +1,12 @@
 package iam
 
-import (
-	"github.com/Adgytec/adgytec-flow/database/db"
-)
+import "github.com/Adgytec/adgytec-flow/utils/staging"
 
-func InitIAMService() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams) {
-	return iamServiceDetails, managementPermissions, applicationPermissions, nil
+func InitIAMService() staging.Details {
+	return staging.Details{
+		Service:                iamServiceDetails,
+		ManagementPermissions:  managementPermissions,
+		ApplicationPermissions: applicationPermissions,
+		ServiceRestrictions:    nil,
+	}
 }

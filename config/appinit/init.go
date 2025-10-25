@@ -11,6 +11,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/user"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/staging"
 	"github.com/rs/zerolog/log"
 )
 
@@ -21,7 +22,7 @@ const (
 	permissionTypeApplication permissionType = "application"
 )
 
-type serviceFactory func() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams)
+type serviceFactory func() staging.Details
 
 var appServices = []serviceFactory{
 	iam.InitIAMService,
@@ -41,12 +42,12 @@ func EnsureServicesInitialization(appConfig app.App) error {
 	var allServicesRestrictions []db.AddServiceRestrictionIntoStagingParams
 
 	for _, factory := range appServices {
-		details, managementPermissions, applicationPermissions, restrictions := factory()
+		details := factory()
 
-		allServicesDetails = append(allServicesDetails, details)
-		allManagementPermissions = append(allManagementPermissions, managementPermissions...)
-		allApplicationPermissions = append(allApplicationPermissions, applicationPermissions...)
-		allServicesRestrictions = append(allServicesRestrictions, restrictions...)
+		allServicesDetails = append(allServicesDetails, details.Service)
+		allManagementPermissions = append(allManagementPermissions, details.ManagementPermissions...)
+		allApplicationPermissions = append(allApplicationPermissions, details.ApplicationPermissions...)
+		allServicesRestrictions = append(allServicesRestrictions, details.ServiceRestrictions...)
 	}
 
 	if err := genericAdd(

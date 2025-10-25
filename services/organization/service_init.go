@@ -1,7 +1,12 @@
 package org
 
-import "github.com/Adgytec/adgytec-flow/database/db"
+import "github.com/Adgytec/adgytec-flow/utils/staging"
 
-func InitOrgService() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams) {
-	return orgServiceDetails, nil, nil, nil
+func InitOrgService() staging.Details {
+	return staging.Details{
+		Service:                orgServiceDetails,
+		ManagementPermissions:  nil,
+		ApplicationPermissions: nil,
+		ServiceRestrictions:    nil,
+	}
 }

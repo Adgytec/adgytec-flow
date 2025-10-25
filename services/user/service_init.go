@@ -1,9 +1,12 @@
 package user
 
-import (
-	"github.com/Adgytec/adgytec-flow/database/db"
-)
+import "github.com/Adgytec/adgytec-flow/utils/staging"
 
-func InitUserService() (db.AddServicesIntoStagingParams, []db.AddManagementPermissionsIntoStagingParams, []db.AddApplicationPermissionsIntoStagingParams, []db.AddServiceRestrictionIntoStagingParams) {
-	return userServiceDetails, managementPermissions, nil, nil
+func InitUserService() staging.Details {
+	return staging.Details{
+		Service:                userServiceDetails,
+		ManagementPermissions:  managementPermissions,
+		ApplicationPermissions: nil,
+		ServiceRestrictions:    nil,
+	}
 }
