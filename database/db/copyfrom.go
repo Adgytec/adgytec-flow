@@ -145,7 +145,6 @@ func (r iteratorForAddServiceRestrictionIntoStaging) Values() ([]interface{}, er
 		r.rows[0].ServiceID,
 		r.rows[0].Name,
 		r.rows[0].Description,
-		r.rows[0].ValueType,
 	}, nil
 }
 
@@ -154,7 +153,7 @@ func (r iteratorForAddServiceRestrictionIntoStaging) Err() error {
 }
 
 func (q *Queries) AddServiceRestrictionIntoStaging(ctx context.Context, arg []AddServiceRestrictionIntoStagingParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"service_restrictions_staging"}, []string{"id", "service_id", "name", "description", "value_type"}, &iteratorForAddServiceRestrictionIntoStaging{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"service_restrictions_staging"}, []string{"id", "service_id", "name", "description"}, &iteratorForAddServiceRestrictionIntoStaging{rows: arg})
 }
 
 // iteratorForAddServicesIntoStaging implements pgx.CopyFromSource.

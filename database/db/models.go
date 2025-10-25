@@ -519,7 +519,6 @@ type GlobalServiceRestrictions struct {
 	ServiceID   uuid.UUID `json:"serviceId"`
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
-	ValueType   string    `json:"valueType"`
 }
 
 type GlobalServices struct {
@@ -606,7 +605,6 @@ type ServiceRestrictionsStaging struct {
 	ServiceID   uuid.UUID `json:"serviceId"`
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
-	ValueType   string    `json:"valueType"`
 }
 
 type ServicesStaging struct {

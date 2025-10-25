@@ -16,7 +16,6 @@ type AddServiceRestrictionIntoStagingParams struct {
 	ServiceID   uuid.UUID `json:"serviceId"`
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
-	ValueType   string    `json:"valueType"`
 }
 
 const newServiceRestrictionsStagingTable = `-- name: NewServiceRestrictionsStagingTable :exec
@@ -38,24 +37,20 @@ INSERT INTO
 		id,
 		service_id,
 		name,
-		description,
-		value_type
+		description
 	)
 SELECT
 	id,
 	service_id,
 	name,
-	description,
-	value_type
+	description
 FROM
 	service_restrictions_staging
 ON CONFLICT (id) DO UPDATE
 SET
-	description = excluded.description,
-	value_type = excluded.value_type
+	description = excluded.description
 WHERE
 	s.description IS DISTINCT FROM excluded.description
-	OR s.value_type IS DISTINCT FROM excluded.value_type
 `
 
 func (q *Queries) UpsertServiceRestrictionsFromStaging(ctx context.Context) error {
