@@ -12,7 +12,7 @@ VALUES
 RETURNING
 	id;
 
--- name: AddOrganizationRestriction :copyfrom
+-- name: AddOrganizationRestrictions :copyfrom
 INSERT INTO
 	management.organization_service_restrictions (
 		org_id,

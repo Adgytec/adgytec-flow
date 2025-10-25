@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type AddOrganizationRestrictionParams struct {
+type AddOrganizationRestrictionsParams struct {
 	OrgID         uuid.UUID `json:"orgId"`
 	RestrictionID uuid.UUID `json:"restrictionId"`
 	Value         int32     `json:"value"`

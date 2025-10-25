@@ -121,13 +121,13 @@ func (q *Queries) AddMediaItems(ctx context.Context, arg []AddMediaItemsParams) 
 	return q.db.CopyFrom(ctx, []string{"global", "media"}, []string{"id", "bucket_path", "required_mime_type", "upload_type", "upload_id"}, &iteratorForAddMediaItems{rows: arg})
 }
 
-// iteratorForAddOrganizationRestriction implements pgx.CopyFromSource.
-type iteratorForAddOrganizationRestriction struct {
-	rows                 []AddOrganizationRestrictionParams
+// iteratorForAddOrganizationRestrictions implements pgx.CopyFromSource.
+type iteratorForAddOrganizationRestrictions struct {
+	rows                 []AddOrganizationRestrictionsParams
 	skippedFirstNextCall bool
 }
 
-func (r *iteratorForAddOrganizationRestriction) Next() bool {
+func (r *iteratorForAddOrganizationRestrictions) Next() bool {
 	if len(r.rows) == 0 {
 		return false
 	}
@@ -139,7 +139,7 @@ func (r *iteratorForAddOrganizationRestriction) Next() bool {
 	return len(r.rows) > 0
 }
 
-func (r iteratorForAddOrganizationRestriction) Values() ([]interface{}, error) {
+func (r iteratorForAddOrganizationRestrictions) Values() ([]interface{}, error) {
 	return []interface{}{
 		r.rows[0].OrgID,
 		r.rows[0].RestrictionID,
@@ -148,12 +148,12 @@ func (r iteratorForAddOrganizationRestriction) Values() ([]interface{}, error) {
 	}, nil
 }
 
-func (r iteratorForAddOrganizationRestriction) Err() error {
+func (r iteratorForAddOrganizationRestrictions) Err() error {
 	return nil
 }
 
-func (q *Queries) AddOrganizationRestriction(ctx context.Context, arg []AddOrganizationRestrictionParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"management", "organization_service_restrictions"}, []string{"org_id", "restriction_id", "value", "info"}, &iteratorForAddOrganizationRestriction{rows: arg})
+func (q *Queries) AddOrganizationRestrictions(ctx context.Context, arg []AddOrganizationRestrictionsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"management", "organization_service_restrictions"}, []string{"org_id", "restriction_id", "value", "info"}, &iteratorForAddOrganizationRestrictions{rows: arg})
 }
 
 // iteratorForAddServiceRestrictionIntoStaging implements pgx.CopyFromSource.
