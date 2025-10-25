@@ -4,11 +4,15 @@ import "github.com/rs/zerolog/log"
 
 type OrgServicePC interface{}
 
-type orgServicePC struct{}
+type orgServicePC struct {
+	service *orgService
+}
 
-func NewOrgServicePC(params any) OrgServicePC {
+func NewOrgServicePC(params orgServiceParams) OrgServicePC {
 	log.Info().
 		Str("service", serviceName).
 		Msg("new service pc")
-	return &orgServicePC{}
+	return &orgServicePC{
+		service: newOrgService(params),
+	}
 }
