@@ -17,6 +17,12 @@ import (
 	"github.com/google/uuid"
 )
 
+const (
+	newOrgBucketPrefix = "new-organization"
+	logoPrefix         = "logo"
+	coverMediaPrefix   = "cover-media"
+)
+
 type newOrganizationResponse struct {
 	NextStep           string                     `json:"nextStep"`
 	MediaUploadDetails []media.MediaUploadDetails `json:"mediaUploadDetails,omitempty"`
@@ -173,7 +179,7 @@ func (s *orgService) newOrganization(ctx context.Context, orgDetails newOrganiza
 			media.NewMediaItemInfoWithStorageDetails{
 				NewMediaItemInfo: *orgDetails.Logo,
 				RequiredMime:     media.ImageMime,
-				BucketPrefix:     path.Join("new-organization", "logo"), // for new organizations only
+				BucketPrefix:     path.Join(newOrgBucketPrefix, logoPrefix), // for new organizations only
 			},
 		)
 	}
@@ -184,7 +190,7 @@ func (s *orgService) newOrganization(ctx context.Context, orgDetails newOrganiza
 			media.NewMediaItemInfoWithStorageDetails{
 				NewMediaItemInfo: *orgDetails.CoverMedia,
 				RequiredMime:     media.VisualMime,
-				BucketPrefix:     path.Join("new-organization", "cover-media"), // for new organizations only
+				BucketPrefix:     path.Join(newOrgBucketPrefix, coverMediaPrefix), // for new organizations only
 			},
 		)
 	}
