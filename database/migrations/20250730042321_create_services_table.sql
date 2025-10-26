@@ -1,6 +1,10 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TYPE global.service_type AS ENUM('core', 'optional');
+CREATE TYPE global.service_type AS ENUM(
+	'core',
+	'optional',
+	'organization'
+);
 
 CREATE TABLE IF NOT EXISTS global.services (
 	id UUID PRIMARY KEY,

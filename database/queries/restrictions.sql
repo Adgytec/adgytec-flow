@@ -11,11 +11,10 @@ INSERT INTO
 		id,
 		service_id,
 		name,
-		description,
-		value_type
+		description
 	)
 VALUES
-	($1, $2, $3, $4, $5);
+	($1, $2, $3, $4);
 
 -- name: UpsertServiceRestrictionsFromStaging :exec
 INSERT INTO
@@ -23,21 +22,17 @@ INSERT INTO
 		id,
 		service_id,
 		name,
-		description,
-		value_type
+		description
 	)
 SELECT
 	id,
 	service_id,
 	name,
-	description,
-	value_type
+	description
 FROM
 	service_restrictions_staging
 ON CONFLICT (id) DO UPDATE
 SET
-	description = excluded.description,
-	value_type = excluded.value_type
+	description = excluded.description
 WHERE
-	s.description IS DISTINCT FROM excluded.description
-	OR s.value_type IS DISTINCT FROM excluded.value_type;
+	s.description IS DISTINCT FROM excluded.description;

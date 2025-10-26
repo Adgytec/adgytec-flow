@@ -25,6 +25,6 @@ type iamService struct {
 func newIAMService(params iamServiceParams) *iamService {
 	return &iamService{
 		db:              params.Database(),
-		permissionCache: cache.NewCache[bool](params.CacheClient(), serializer.NewJSONSerializer[bool](), "iam"),
+		permissionCache: cache.NewCache(params.CacheClient(), serializer.NewJSONSerializer[bool](), "iam"),
 	}
 }
