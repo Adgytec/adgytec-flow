@@ -25,7 +25,7 @@ var listAllUsersPermission = db.AddManagementPermissionsIntoStagingParams{
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("List All Users").
 			PlainText("Grants the ability to list all the users that are part of Adgytec Studio.").
-			PlainTextf("%s", md.Italic("Note: This allows viewing all users regardless of whether they are part of any organization or management."))
+			PlainText(md.Italic("Note: This allows viewing all users regardless of whether they are part of any organization or management."))
 	}),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
@@ -38,7 +38,7 @@ var disableUserPermission = db.AddManagementPermissionsIntoStagingParams{
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("Disable Users").
 			PlainText("Grants the ability to disable users' access to Adgytec Studio.").
-			PlainTextf("%s", md.Italic("Note: This disables users globally regardless of the organization they belong to."))
+			PlainText(md.Italic("Note: This disables users globally regardless of the organization they belong to."))
 	}),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
@@ -75,7 +75,7 @@ var updateUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("Update User Profile").
 			PlainText("Grants the ability to update individual user profile.").
-			PlainTextf("%s", md.Italic("Note: This also requires 'Get User Profile' permission."))
+			PlainText(md.Italic("Note: This also requires 'Get User Profile' permission."))
 	}),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
