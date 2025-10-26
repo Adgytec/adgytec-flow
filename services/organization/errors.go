@@ -20,17 +20,12 @@ type MissingRequiredCoreServicesRestrictionsError struct {
 }
 
 func (e *MissingRequiredCoreServicesRestrictionsError) Error() string {
-	var sb strings.Builder
-	sb.WriteString("missing required core service restrictions: ")
-
+	missing := make([]string, len(e.missingServicesRestrictions))
 	for i, r := range e.missingServicesRestrictions {
-		if i > 0 {
-			sb.WriteString(", ")
-		}
-		sb.WriteString(fmt.Sprintf("%s (service: %s)", r.Name, r.ServiceID.String()))
+		missing[i] = fmt.Sprintf("%s (service: %s)", r.Name, r.ServiceID.String())
 	}
 
-	return sb.String()
+	return "missing required core service restrictions: " + strings.Join(missing, ", ")
 }
 
 func (e *MissingRequiredCoreServicesRestrictionsError) Is(target error) bool {
