@@ -224,7 +224,7 @@ func (s *orgService) newOrganization(ctx context.Context, orgDetails newOrganiza
 	// add new org restrictions
 	orgRestrictionsParams := orgDetails.getOrgRestrictions(orgID)
 	if len(orgRestrictionsParams) > 0 {
-		_, dbErr := qtx.Queries().AddOrganizationRestrictions(ctx, orgDetails.getOrgRestrictions(orgID))
+		_, dbErr := qtx.Queries().AddOrganizationRestrictions(ctx, orgRestrictionsParams)
 		if dbErr != nil {
 			return nil, dbErr
 		}
