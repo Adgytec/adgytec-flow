@@ -140,6 +140,37 @@ func (orgDetails newOrganizationData) getOrgRestrictions(orgID uuid.UUID) []db.A
 	return restrictions
 }
 
+func (s *orgService) newOrgMediaDetails(orgDetails *newOrganizationData) (*uuid.UUID, *uuid.UUID, []media.NewMediaItemInfoWithStorageDetails) {
+	var mediaItemDetails []media.NewMediaItemInfoWithStorageDetails
+
+	var logo *uuid.UUID
+	var coverMedia *uuid.UUID
+
+	if orgDetails.Logo != nil {
+		logo = pointer.New(orgDetails.Logo.ID)
+		mediaItemDetails = append(mediaItemDetails,
+			media.NewMediaItemInfoWithStorageDetails{
+				NewMediaItemInfo: *orgDetails.Logo,
+				RequiredMime:     media.ImageMime,
+				BucketPrefix:     path.Join(newOrgBucketPrefix, logoPrefix), // for new organizations only
+			},
+		)
+	}
+
+	if orgDetails.CoverMedia != nil {
+		coverMedia = pointer.New(orgDetails.CoverMedia.ID)
+		mediaItemDetails = append(mediaItemDetails,
+			media.NewMediaItemInfoWithStorageDetails{
+				NewMediaItemInfo: *orgDetails.CoverMedia,
+				RequiredMime:     media.VisualMime,
+				BucketPrefix:     path.Join(newOrgBucketPrefix, coverMediaPrefix), // for new organizations only
+			},
+		)
+	}
+
+	return logo, coverMedia, mediaItemDetails
+}
+
 func (s *orgService) newOrganization(ctx context.Context, orgDetails newOrganizationData) (*newOrganizationResponse, error) {
 	permissionErr := s.iam.CheckPermission(ctx,
 		iam.NewPermissionRequiredFromManagementPermission(
@@ -168,33 +199,7 @@ func (s *orgService) newOrganization(ctx context.Context, orgDetails newOrganiza
 	newOrgRes := newOrganizationResponse{}
 
 	// handle provided media info
-	var mediaItemDetails []media.NewMediaItemInfoWithStorageDetails
-
-	var logo *uuid.UUID
-	var coverMedia *uuid.UUID
-
-	if orgDetails.Logo != nil {
-		logo = pointer.New(orgDetails.Logo.ID)
-		mediaItemDetails = append(mediaItemDetails,
-			media.NewMediaItemInfoWithStorageDetails{
-				NewMediaItemInfo: *orgDetails.Logo,
-				RequiredMime:     media.ImageMime,
-				BucketPrefix:     path.Join(newOrgBucketPrefix, logoPrefix), // for new organizations only
-			},
-		)
-	}
-
-	if orgDetails.CoverMedia != nil {
-		coverMedia = pointer.New(orgDetails.CoverMedia.ID)
-		mediaItemDetails = append(mediaItemDetails,
-			media.NewMediaItemInfoWithStorageDetails{
-				NewMediaItemInfo: *orgDetails.CoverMedia,
-				RequiredMime:     media.VisualMime,
-				BucketPrefix:     path.Join(newOrgBucketPrefix, coverMediaPrefix), // for new organizations only
-			},
-		)
-	}
-
+	logo, coverMedia, mediaItemDetails := s.newOrgMediaDetails(&orgDetails)
 	if len(mediaItemDetails) > 0 {
 		mediaService := s.media.WithTransaction(qtx)
 		uploadDetails, mediaUploadErr := mediaService.NewMediaItems(ctx, mediaItemDetails)
