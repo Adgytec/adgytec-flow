@@ -512,6 +512,7 @@ type GlobalOrganizations struct {
 	Logo        *uuid.UUID `json:"logo"`
 	CoverMedia  *uuid.UUID `json:"coverMedia"`
 	CreatedAt   time.Time  `json:"createdAt"`
+	CreatedBy   uuid.UUID  `json:"createdBy"`
 }
 
 type GlobalServiceRestrictions struct {
