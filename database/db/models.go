@@ -287,8 +287,9 @@ func (e GlobalMediaUploadType) Valid() bool {
 type GlobalServiceType string
 
 const (
-	GlobalServiceTypeCore     GlobalServiceType = "core"
-	GlobalServiceTypeOptional GlobalServiceType = "optional"
+	GlobalServiceTypeCore         GlobalServiceType = "core"
+	GlobalServiceTypeOptional     GlobalServiceType = "optional"
+	GlobalServiceTypeOrganization GlobalServiceType = "organization"
 )
 
 func (e *GlobalServiceType) Scan(src interface{}) error {
@@ -329,7 +330,8 @@ func (ns NullGlobalServiceType) Value() (driver.Value, error) {
 func (e GlobalServiceType) Valid() bool {
 	switch e {
 	case GlobalServiceTypeCore,
-		GlobalServiceTypeOptional:
+		GlobalServiceTypeOptional,
+		GlobalServiceTypeOrganization:
 		return true
 	}
 	return false
@@ -502,12 +504,22 @@ type GlobalMediaVideo struct {
 	Preview          *string   `json:"preview"`
 }
 
+type GlobalOrganizations struct {
+	ID          uuid.UUID  `json:"id"`
+	RootUser    uuid.UUID  `json:"rootUser"`
+	Name        string     `json:"name"`
+	Description *string    `json:"description"`
+	Logo        *uuid.UUID `json:"logo"`
+	CoverMedia  *uuid.UUID `json:"coverMedia"`
+	CreatedAt   time.Time  `json:"createdAt"`
+	CreatedBy   uuid.UUID  `json:"createdBy"`
+}
+
 type GlobalServiceRestrictions struct {
 	ID          uuid.UUID `json:"id"`
 	ServiceID   uuid.UUID `json:"serviceId"`
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
-	ValueType   string    `json:"valueType"`
 }
 
 type GlobalServices struct {
@@ -561,6 +573,13 @@ type GlobalUsers struct {
 	CreatedAt        time.Time        `json:"createdAt"`
 }
 
+type ManagementOrganizationServiceRestrictions struct {
+	OrgID         uuid.UUID `json:"orgId"`
+	RestrictionID uuid.UUID `json:"restrictionId"`
+	Value         int32     `json:"value"`
+	Info          *string   `json:"info"`
+}
+
 type ManagementPermissionStaging struct {
 	ID                uuid.UUID                 `json:"id"`
 	ServiceID         uuid.UUID                 `json:"serviceId"`
@@ -588,7 +607,6 @@ type ServiceRestrictionsStaging struct {
 	ServiceID   uuid.UUID `json:"serviceId"`
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
-	ValueType   string    `json:"valueType"`
 }
 
 type ServicesStaging struct {

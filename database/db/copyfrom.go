@@ -121,6 +121,41 @@ func (q *Queries) AddMediaItems(ctx context.Context, arg []AddMediaItemsParams) 
 	return q.db.CopyFrom(ctx, []string{"global", "media"}, []string{"id", "bucket_path", "required_mime_type", "upload_type", "upload_id"}, &iteratorForAddMediaItems{rows: arg})
 }
 
+// iteratorForAddOrganizationRestrictions implements pgx.CopyFromSource.
+type iteratorForAddOrganizationRestrictions struct {
+	rows                 []AddOrganizationRestrictionsParams
+	skippedFirstNextCall bool
+}
+
+func (r *iteratorForAddOrganizationRestrictions) Next() bool {
+	if len(r.rows) == 0 {
+		return false
+	}
+	if !r.skippedFirstNextCall {
+		r.skippedFirstNextCall = true
+		return true
+	}
+	r.rows = r.rows[1:]
+	return len(r.rows) > 0
+}
+
+func (r iteratorForAddOrganizationRestrictions) Values() ([]interface{}, error) {
+	return []interface{}{
+		r.rows[0].OrgID,
+		r.rows[0].RestrictionID,
+		r.rows[0].Value,
+		r.rows[0].Info,
+	}, nil
+}
+
+func (r iteratorForAddOrganizationRestrictions) Err() error {
+	return nil
+}
+
+func (q *Queries) AddOrganizationRestrictions(ctx context.Context, arg []AddOrganizationRestrictionsParams) (int64, error) {
+	return q.db.CopyFrom(ctx, []string{"management", "organization_service_restrictions"}, []string{"org_id", "restriction_id", "value", "info"}, &iteratorForAddOrganizationRestrictions{rows: arg})
+}
+
 // iteratorForAddServiceRestrictionIntoStaging implements pgx.CopyFromSource.
 type iteratorForAddServiceRestrictionIntoStaging struct {
 	rows                 []AddServiceRestrictionIntoStagingParams
@@ -145,7 +180,6 @@ func (r iteratorForAddServiceRestrictionIntoStaging) Values() ([]interface{}, er
 		r.rows[0].ServiceID,
 		r.rows[0].Name,
 		r.rows[0].Description,
-		r.rows[0].ValueType,
 	}, nil
 }
 
@@ -154,7 +188,7 @@ func (r iteratorForAddServiceRestrictionIntoStaging) Err() error {
 }
 
 func (q *Queries) AddServiceRestrictionIntoStaging(ctx context.Context, arg []AddServiceRestrictionIntoStagingParams) (int64, error) {
-	return q.db.CopyFrom(ctx, []string{"service_restrictions_staging"}, []string{"id", "service_id", "name", "description", "value_type"}, &iteratorForAddServiceRestrictionIntoStaging{rows: arg})
+	return q.db.CopyFrom(ctx, []string{"service_restrictions_staging"}, []string{"id", "service_id", "name", "description"}, &iteratorForAddServiceRestrictionIntoStaging{rows: arg})
 }
 
 // iteratorForAddServicesIntoStaging implements pgx.CopyFromSource.

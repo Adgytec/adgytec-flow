@@ -118,7 +118,7 @@ func newUserService(params userServiceParams) *userService {
 		iam:              params.IAMService(),
 		cdn:              params.CDN(),
 		media:            params.MediaWithTransaction(),
-		getUserCache:     cache.NewCache[models.GlobalUser](params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
-		getUserListCache: cache.NewCache[pagination.ResponsePagination[models.GlobalUser]](params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
+		getUserCache:     cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
+		getUserListCache: cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}
 }
