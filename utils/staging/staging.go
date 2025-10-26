@@ -1,6 +1,8 @@
 package staging
 
 import (
+	"sync"
+
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/google/uuid"
 )
@@ -25,28 +27,28 @@ type services struct {
 	services                []db.AddServicesIntoStagingParams
 	serviceRestrictions     []db.AddServiceRestrictionIntoStagingParams
 	coreServiceRestrictions []db.AddServiceRestrictionIntoStagingParams // cached slice
+	initOnce                sync.Once
 }
 
 func (s *services) GetCoreServiceRestrictions() []db.AddServiceRestrictionIntoStagingParams {
-	if s.coreServiceRestrictions != nil {
-		return s.coreServiceRestrictions
-	}
-
-	coreServiceIDs := make(map[uuid.UUID]struct{})
-	for _, svc := range s.services {
-		if svc.Type == db.GlobalServiceTypeCore {
-			coreServiceIDs[svc.ID] = struct{}{}
+	s.initOnce.Do(func() {
+		coreServiceIDs := make(map[uuid.UUID]struct{})
+		for _, svc := range s.services {
+			if svc.Type == db.GlobalServiceTypeCore {
+				coreServiceIDs[svc.ID] = struct{}{}
+			}
 		}
-	}
 
-	coreRestrictions := make([]db.AddServiceRestrictionIntoStagingParams, 0)
-	for _, r := range s.serviceRestrictions {
-		if _, ok := coreServiceIDs[r.ServiceID]; ok {
-			coreRestrictions = append(coreRestrictions, r)
+		coreRestrictions := make([]db.AddServiceRestrictionIntoStagingParams, 0)
+		for _, r := range s.serviceRestrictions {
+			if _, ok := coreServiceIDs[r.ServiceID]; ok {
+				coreRestrictions = append(coreRestrictions, r)
+			}
 		}
-	}
 
-	s.coreServiceRestrictions = coreRestrictions
+		s.coreServiceRestrictions = coreRestrictions
+	})
+
 	return s.coreServiceRestrictions
 }
 
