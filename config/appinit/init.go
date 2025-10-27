@@ -9,6 +9,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	org "github.com/Adgytec/adgytec-flow/services/organization"
 	"github.com/Adgytec/adgytec-flow/services/user"
+	usermanagement "github.com/Adgytec/adgytec-flow/services/user_management"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/staging"
@@ -28,6 +29,7 @@ var appServices = []serviceFactory{
 	iam.InitIAMService,
 	user.InitUserService,
 	org.InitOrgService,
+	usermanagement.InitService,
 }
 
 func EnsureServicesInitialization(appConfig app.App) error {
