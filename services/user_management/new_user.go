@@ -6,6 +6,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
 )
@@ -59,4 +60,18 @@ func (s *userManagementService) newUser(ctx context.Context, userData newUserDat
 	return nil
 }
 
-func (m *serviceMux) newUser(w http.ResponseWriter, r *http.Request) {}
+func (m *serviceMux) newUser(w http.ResponseWriter, r *http.Request) {
+	newUserDetails, payloadErr := payload.DecodeRequestBodyAndValidate[newUserData](w, r)
+	if payloadErr != nil {
+		payload.EncodeError(w, payloadErr)
+		return
+	}
+
+	newUserErr := m.service.newUser(r.Context(), newUserDetails)
+	if newUserErr != nil {
+		payload.EncodeError(w, newUserErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusCreated, "user added successfully")
+}
