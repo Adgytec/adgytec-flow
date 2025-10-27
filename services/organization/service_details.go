@@ -10,5 +10,5 @@ var serviceName = "organization"
 var orgServiceDetails = db.AddServicesIntoStagingParams{
 	ID:   core.GetIDFromPayload([]byte(serviceName)),
 	Name: serviceName,
-	Type: db.GlobalServiceTypeOrganization,
+	Type: db.GlobalServiceTypePlatform,
 }

@@ -1,9 +1,14 @@
 -- +goose Up
 -- +goose StatementBegin
+/*
+core: services that are part of all organizations and global managmenet scope
+optional: org scoped services that can be added to any organization
+platform: global scope services that are not org scoped and used for global management
+*/
 CREATE TYPE global.service_type AS ENUM(
 	'core',
 	'optional',
-	'organization'
+	'platform'
 );
 
 CREATE TABLE IF NOT EXISTS global.services (
