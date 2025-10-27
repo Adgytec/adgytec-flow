@@ -602,6 +602,12 @@ type ManagementPermissions struct {
 	CreatedAt         time.Time                 `json:"createdAt"`
 }
 
+type ManagementUsers struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	CreatedAt time.Time `json:"createdAt"`
+}
+
 type ServiceRestrictionsStaging struct {
 	ID          uuid.UUID `json:"id"`
 	ServiceID   uuid.UUID `json:"serviceId"`
