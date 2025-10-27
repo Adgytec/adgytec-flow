@@ -1,13 +1,13 @@
-package org
+package usermanagement
 
 import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
-var serviceName = "organization"
+var serviceName = "user-management"
 
-var orgServiceDetails = db.AddServicesIntoStagingParams{
+var serviceDetails = db.AddServicesIntoStagingParams{
 	ID:   core.GetIDFromPayload([]byte(serviceName)),
 	Name: serviceName,
 	Type: db.GlobalServiceTypePlatform,

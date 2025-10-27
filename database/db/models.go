@@ -287,9 +287,9 @@ func (e GlobalMediaUploadType) Valid() bool {
 type GlobalServiceType string
 
 const (
-	GlobalServiceTypeCore         GlobalServiceType = "core"
-	GlobalServiceTypeOptional     GlobalServiceType = "optional"
-	GlobalServiceTypeOrganization GlobalServiceType = "organization"
+	GlobalServiceTypeCore     GlobalServiceType = "core"
+	GlobalServiceTypeOptional GlobalServiceType = "optional"
+	GlobalServiceTypePlatform GlobalServiceType = "platform"
 )
 
 func (e *GlobalServiceType) Scan(src interface{}) error {
@@ -331,7 +331,7 @@ func (e GlobalServiceType) Valid() bool {
 	switch e {
 	case GlobalServiceTypeCore,
 		GlobalServiceTypeOptional,
-		GlobalServiceTypeOrganization:
+		GlobalServiceTypePlatform:
 		return true
 	}
 	return false
@@ -600,6 +600,27 @@ type ManagementPermissions struct {
 	Name              string                    `json:"name"`
 	Description       *string                   `json:"description"`
 	CreatedAt         time.Time                 `json:"createdAt"`
+}
+
+type ManagementUserGroupUsers struct {
+	UserGroupID uuid.UUID `json:"userGroupId"`
+	UserID      uuid.UUID `json:"userId"`
+	CreatedBy   uuid.UUID `json:"createdBy"`
+	CreatedAt   time.Time `json:"createdAt"`
+}
+
+type ManagementUserGroups struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedBy   uuid.UUID `json:"createdBy"`
+	CreatedAt   time.Time `json:"createdAt"`
+}
+
+type ManagementUsers struct {
+	ID        uuid.UUID `json:"id"`
+	CreatedBy uuid.UUID `json:"createdBy"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 type ServiceRestrictionsStaging struct {
