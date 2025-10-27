@@ -2,7 +2,7 @@
 -- +goose StatementBegin
 CREATE OR REPLACE TRIGGER archive_user_record before
 UPDATE ON global.users FOR each ROW
-EXECUTE function archive.archive_after_update ();
+EXECUTE function archive.archive_before_update ();
 
 -- +goose StatementEnd
 -- +goose Down

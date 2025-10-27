@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS archive.updated_records (
 	updated_by UUID NOT NULL
 );
 
-CREATE OR REPLACE FUNCTION archive.archive_after_update () returns trigger AS $$
+CREATE OR REPLACE FUNCTION archive.archive_before_update () returns trigger AS $$
 declare
     actor text;
     actor_type text;
@@ -47,7 +47,7 @@ $$ language plpgsql;
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-DROP FUNCTION if EXISTS archive.archive_after_update;
+DROP FUNCTION if EXISTS archive.archive_before_update;
 
 DROP TABLE archive.updated_records;
 

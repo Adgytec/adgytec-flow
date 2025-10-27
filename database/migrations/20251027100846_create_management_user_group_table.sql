@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS management.user_groups (
 	id UUID PRIMARY KEY DEFAULT uuidv7 (),
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
-	created_by UUID NOT NULL REFERENCES management.users (id),
+	created_by UUID NOT NULL REFERENCES management.users (id) ON DELETE RESTRICT,
 	created_at TIMESTAMPTZ NOT NULL
 );
 
@@ -30,8 +30,10 @@ CREATE OR REPLACE TRIGGER user_group_delete_archive before delete ON management.
 EXECUTE function archive.archive_before_delete ();
 
 CREATE OR REPLACE TRIGGER user_group_update_archive before
-UPDATE ON management.user_groups FOR each ROW
-EXECUTE function archive.archive_after_update ();
+UPDATE ON management.user_groups FOR each ROW WHEN (
+	old.* IS DISTINCT FROM new.*
+)
+EXECUTE function archive.archive_before_update ();
 
 -- +goose StatementEnd
 -- +goose Down
