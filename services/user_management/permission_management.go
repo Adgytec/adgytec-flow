@@ -30,7 +30,7 @@ var newManagementUserPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Add User").
 			PlainText("Grants the ability to add user for management purposes.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -42,7 +42,7 @@ var removeManagementUserPermission = db.AddManagementPermissionsIntoStagingParam
 		m.H3("Remove User").
 			PlainText("Grants the ability to remove user from management.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -54,7 +54,7 @@ var listManagementUsersPermission = db.AddManagementPermissionsIntoStagingParams
 		m.H3("List Users").
 			PlainText("Grants the ability to list all management users.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -66,7 +66,7 @@ var newUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Create User Group").
 			PlainText("Grants the ability to create user groups.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -78,7 +78,7 @@ var listUserGroupsPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("List User Groups").
 			PlainText("Grants the ability to list all user groups.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -90,7 +90,7 @@ var updateUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Update User Group").
 			PlainText("Grants the ability to update user group details.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -102,7 +102,7 @@ var deleteUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Delete User Group").
 			PlainText("Grants the ability to delete user group.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -114,7 +114,7 @@ var addUserInUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Add User To User Group").
 			PlainText("Grants the ability to add user to a user group.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -126,7 +126,7 @@ var listUserGroupUsersPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("List User Group Users").
 			PlainText("Grants the ability to list user group users.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -138,6 +138,6 @@ var removeUserFromUserGroupPermission = db.AddManagementPermissionsIntoStagingPa
 		m.H3("Remove User From User Group").
 			PlainText("Grants the ability to remove user from a user group.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }

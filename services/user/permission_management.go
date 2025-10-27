@@ -27,7 +27,7 @@ var listAllUsersPermission = db.AddManagementPermissionsIntoStagingParams{
 			PlainText("Grants the ability to list all the users that are part of Adgytec Studio.").
 			PlainText(md.Italic("Note: This allows viewing all users regardless of whether they are part of any organization or management."))
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -40,7 +40,7 @@ var disableUserPermission = db.AddManagementPermissionsIntoStagingParams{
 			PlainText("Grants the ability to disable users' access to Adgytec Studio.").
 			PlainText(md.Italic("Note: This disables users globally regardless of the organization they belong to."))
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -52,7 +52,7 @@ var enableUserPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Enable Users").
 			PlainText("Grants the ability to enable users' access to Adgytec Studio.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -64,7 +64,7 @@ var getUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Get User Profile").
 			PlainText("Grants the ability to get individual user profile details.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -77,6 +77,6 @@ var updateUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
 			PlainText("Grants the ability to update individual user profile.").
 			PlainText(md.Italic("Note: This also requires 'Get User Profile' permission."))
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
