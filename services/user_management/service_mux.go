@@ -22,7 +22,7 @@ func (m *serviceMux) Router() *chi.Mux {
 	mux.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
 	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
 
-	mux.Post("/user/new", m.newUser)
+	mux.Post("/user", m.newUser)
 
 	return mux
 }
