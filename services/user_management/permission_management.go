@@ -11,6 +11,7 @@ import (
 
 var managementPermissions = []db.AddManagementPermissionsIntoStagingParams{
 	newManagementUserPermission,
+	removeManagementUserPermission,
 	newUserGroupPermission,
 	updateUserGroupPermission,
 	deleteUserGroupPermission,
@@ -25,6 +26,18 @@ var newManagementUserPermission = db.AddManagementPermissionsIntoStagingParams{
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("Add User").
 			PlainText("Grants the ability to add user for management purposes.")
+	}),
+	RequiredResources: []string{},
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
+}
+
+var removeManagementUserPermission = db.AddManagementPermissionsIntoStagingParams{
+	Key:       fmt.Sprintf("%s:remove:user", serviceDetails.Name),
+	ServiceID: serviceDetails.ID,
+	Name:      "Remove User",
+	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
+		m.H3("Remove User").
+			PlainText("Grants the ability to remove user from management.")
 	}),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
