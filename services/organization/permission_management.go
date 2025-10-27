@@ -22,6 +22,6 @@ var createOrganizationPermission = db.AddManagementPermissionsIntoStagingParams{
 		m.H3("Create Organization").
 			PlainText("Grants the ability to create new organization.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }

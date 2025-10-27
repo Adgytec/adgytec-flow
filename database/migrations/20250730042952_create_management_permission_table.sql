@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS management.permissions (
 	service_id UUID NOT NULL REFERENCES global.services (id) ON DELETE CASCADE,
 	key TEXT UNIQUE NOT NULL,
 	assignable_actor global.assignable_actor_type NOT NULL,
-	required_resources management.permission_resource_type[] NOT NULL,
+	required_resources management.permission_resource_type[],
 	name TEXT NOT NULL,
 	description TEXT,
 	created_at TIMESTAMPTZ NOT NULL DEFAULT clock_timestamp()

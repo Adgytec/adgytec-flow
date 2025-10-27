@@ -22,7 +22,7 @@ var assignApplicationPermission = db.AddApplicationPermissionsIntoStagingParams{
 		m.H3("Assign Permission").
 			PlainText("Grants the ability to assign permissions to any user or group.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -34,7 +34,7 @@ var removeApplicationPermission = db.AddApplicationPermissionsIntoStagingParams{
 		m.H3("Remove Permission").
 			PlainText("Grants the ability to remove permissions from any user or group.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
@@ -46,6 +46,6 @@ var listApplicationPermission = db.AddApplicationPermissionsIntoStagingParams{
 		m.H3("List Permission").
 			PlainText("Grants the ability to list permissions to any user or group.")
 	}),
-	RequiredResources: []string{},
+	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
