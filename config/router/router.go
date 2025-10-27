@@ -9,6 +9,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/services/media"
 	org "github.com/Adgytec/adgytec-flow/services/organization"
 	"github.com/Adgytec/adgytec-flow/services/user"
+	usermanagement "github.com/Adgytec/adgytec-flow/services/user_management"
 	"github.com/Adgytec/adgytec-flow/utils/apires"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
@@ -33,6 +34,9 @@ var appServices = []serviceFactory{
 	},
 	func(appConfig app.App) services.Mux {
 		return org.NewOrgMux(appConfig)
+	},
+	func(appConfig app.App) services.Mux {
+		return usermanagement.NewMux(appConfig)
 	},
 }
 
