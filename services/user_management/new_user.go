@@ -9,6 +9,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
+	"github.com/google/uuid"
 )
 
 type newUserData struct {
@@ -29,7 +30,7 @@ func (userData newUserData) Validate() error {
 	return nil
 }
 
-func (s *userManagementService) newUser(ctx context.Context, userData newUserData) error {
+func (s *userManagementService) newUser(ctx context.Context, userData newUserData) (*uuid.UUID, error) {
 	permissionErr := s.iam.CheckPermission(ctx,
 		iam.NewPermissionRequiredFromManagementPermission(
 			newManagementUserPermission,
@@ -37,27 +38,28 @@ func (s *userManagementService) newUser(ctx context.Context, userData newUserDat
 		),
 	)
 	if permissionErr != nil {
-		return permissionErr
+		return nil, permissionErr
 	}
 
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
-		return txErr
+		return nil, txErr
 	}
 	defer tx.Rollback(context.Background())
 
 	newUserID, userCreateErr := s.userService.NewUser(ctx, userData.Email)
 	if userCreateErr != nil {
-		return userCreateErr
+		return nil, userCreateErr
 	}
 
 	// add user to management
 	dbErr := qtx.Queries().NewManagementUser(ctx, newUserID)
 	if dbErr != nil {
-		return dbErr
+		return nil, dbErr
 	}
 
-	return tx.Commit(ctx)
+	commitErr := tx.Commit(ctx)
+	return &newUserID, commitErr
 }
 
 func (m *serviceMux) newUser(w http.ResponseWriter, r *http.Request) {
@@ -67,11 +69,14 @@ func (m *serviceMux) newUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newUserErr := m.service.newUser(r.Context(), newUserDetails)
+	userID, newUserErr := m.service.newUser(r.Context(), newUserDetails)
 	if newUserErr != nil {
 		payload.EncodeError(w, newUserErr)
 		return
 	}
 
-	payload.EncodeJSON(w, http.StatusCreated, "user added successfully")
+	payload.EncodeJSON(w, http.StatusCreated, map[string]any{
+		"id":      userID.String(),
+		"message": "user added successfully",
+	})
 }
