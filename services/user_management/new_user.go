@@ -46,13 +46,13 @@ func (s *userManagementService) newUser(ctx context.Context, userData newUserDat
 	}
 	defer tx.Rollback(context.Background())
 
-	rootUserID, rootUserCreateErr := s.userService.NewUser(ctx, userData.Email)
-	if rootUserCreateErr != nil {
-		return rootUserCreateErr
+	newUserID, userCreateErr := s.userService.NewUser(ctx, userData.Email)
+	if userCreateErr != nil {
+		return userCreateErr
 	}
 
 	// add user to management
-	dbErr := qtx.Queries().NewManagementUser(ctx, rootUserID)
+	dbErr := qtx.Queries().NewManagementUser(ctx, newUserID)
 	if dbErr != nil {
 		return dbErr
 	}
