@@ -1,8 +1,8 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS management.users (
-	id UUID PRIMARY KEY REFERENCES global.users (id),
-	created_by UUID NOT NULL REFERENCES global.users (id),
+	id UUID PRIMARY KEY REFERENCES global.users (id) ON DELETE CASCADE,
+	created_by UUID NOT NULL REFERENCES global.users (id) ON DELETE RESTRICT,
 	created_at TIMESTAMPTZ NOT NULL
 );
 
