@@ -29,9 +29,14 @@ UPDATE ON management.user_group_users FOR each ROW WHEN (
 )
 EXECUTE function global.created_by_update ();
 
+CREATE OR REPLACE TRIGGER user_group_users_delete_archive before delete ON management.user_group_users FOR each ROW
+EXECUTE function archive.archive_before_delete ();
+
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
+DROP TRIGGER if EXISTS user_group_users_delete_archive ON management.user_group_users;
+
 DROP TRIGGER if EXISTS on_update_prevent_created_by_update ON management.user_group_users;
 
 DROP TRIGGER if EXISTS on_insert_set_created_by ON management.user_group_users;
