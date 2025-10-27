@@ -11,11 +11,14 @@ import (
 
 var managementPermissions = []db.AddManagementPermissionsIntoStagingParams{
 	newManagementUserPermission,
+	listManagementUsersPermission,
 	removeManagementUserPermission,
 	newUserGroupPermission,
+	listUserGroupsPermission,
 	updateUserGroupPermission,
 	deleteUserGroupPermission,
 	addUserInUserGroupPermission,
+	listUserGroupUsersPermission,
 	removeUserFromUserGroupPermission,
 }
 
@@ -43,6 +46,18 @@ var removeManagementUserPermission = db.AddManagementPermissionsIntoStagingParam
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
+var listManagementUsersPermission = db.AddManagementPermissionsIntoStagingParams{
+	Key:       fmt.Sprintf("%s:list:users", serviceDetails.Name),
+	ServiceID: serviceDetails.ID,
+	Name:      "List Users",
+	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
+		m.H3("List Users").
+			PlainText("Grants the ability to list all management users.")
+	}),
+	RequiredResources: []string{},
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
+}
+
 var newUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 	Key:       fmt.Sprintf("%s:create:user-group", serviceDetails.Name),
 	ServiceID: serviceDetails.ID,
@@ -50,6 +65,18 @@ var newUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("Create User Group").
 			PlainText("Grants the ability to create user groups.")
+	}),
+	RequiredResources: []string{},
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
+}
+
+var listUserGroupsPermission = db.AddManagementPermissionsIntoStagingParams{
+	Key:       fmt.Sprintf("%s:list:user-groups", serviceDetails.Name),
+	ServiceID: serviceDetails.ID,
+	Name:      "List User Groups",
+	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
+		m.H3("List User Groups").
+			PlainText("Grants the ability to list all user groups.")
 	}),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
@@ -86,6 +113,18 @@ var addUserInUserGroupPermission = db.AddManagementPermissionsIntoStagingParams{
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("Add User To User Group").
 			PlainText("Grants the ability to add user to a user group.")
+	}),
+	RequiredResources: []string{},
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
+}
+
+var listUserGroupUsersPermission = db.AddManagementPermissionsIntoStagingParams{
+	Key:       fmt.Sprintf("%s:list:user-group-users", serviceDetails.Name),
+	ServiceID: serviceDetails.ID,
+	Name:      "List User Group Users",
+	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
+		m.H3("List User Group Users").
+			PlainText("Grants the ability to list user group users.")
 	}),
 	RequiredResources: []string{},
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
