@@ -57,7 +57,7 @@ func (s *userManagementService) newUser(ctx context.Context, userData newUserDat
 		return dbErr
 	}
 
-	return nil
+	return tx.Commit(ctx)
 }
 
 func (m *serviceMux) newUser(w http.ResponseWriter, r *http.Request) {
