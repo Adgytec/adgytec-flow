@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/go-ozzo/ozzo-validation/v4/is"
@@ -27,7 +28,34 @@ func (userData newUserData) Validate() error {
 	return nil
 }
 
-func (s *userManagementService) newUser(ctx context.Context) error {
+func (s *userManagementService) newUser(ctx context.Context, userData newUserData) error {
+	permissionErr := s.iam.CheckPermission(ctx,
+		iam.NewPermissionRequiredFromManagementPermission(
+			newManagementUserPermission,
+			iam.PermissionRequiredResources{},
+		),
+	)
+	if permissionErr != nil {
+		return permissionErr
+	}
+
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
+	if txErr != nil {
+		return txErr
+	}
+	defer tx.Rollback(context.Background())
+
+	rootUserID, rootUserCreateErr := s.userService.NewUser(ctx, userData.Email)
+	if rootUserCreateErr != nil {
+		return rootUserCreateErr
+	}
+
+	// add user to management
+	dbErr := qtx.Queries().NewManagementUser(ctx, rootUserID)
+	if dbErr != nil {
+		return dbErr
+	}
+
 	return nil
 }
 
