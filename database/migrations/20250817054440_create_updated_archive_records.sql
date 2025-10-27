@@ -40,7 +40,7 @@ begin
         actor_type::global.actor_type,
         actor::uuid
     );
-    return null;
+    return new;
 end;
 $$ language plpgsql;
 
