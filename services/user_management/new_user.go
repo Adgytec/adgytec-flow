@@ -15,7 +15,7 @@ type newUserData struct {
 
 func (userData newUserData) Validate() error {
 	validationErr := validation.ValidateStruct(&userData,
-		validation.Field(&userData.Email, is.Email),
+		validation.Field(&userData.Email, validation.Required, is.Email),
 	)
 
 	if validationErr != nil {

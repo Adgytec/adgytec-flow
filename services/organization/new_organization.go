@@ -85,7 +85,7 @@ type newOrganizationData struct {
 func (orgDetails newOrganizationData) Validate() error {
 	validationErr := validation.ValidateStruct(&orgDetails,
 		validation.Field(&orgDetails.Name, validation.Required),
-		validation.Field(&orgDetails.RootUser, is.Email),
+		validation.Field(&orgDetails.RootUser, validation.Required, is.Email),
 		validation.Field(orgDetails.Logo),
 		validation.Field(orgDetails.CoverMedia),
 		validation.Field(orgDetails.RestrictionInfo),
