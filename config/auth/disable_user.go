@@ -28,7 +28,7 @@ func (a *authCognito) DisableUser(ctx context.Context, username string) error {
 		return &AuthActionFailedError{
 			username:   username,
 			cause:      disableUserErr,
-			actionType: authActionDisableUser,
+			actionType: authActionTypeDisableUser,
 		}
 	}
 

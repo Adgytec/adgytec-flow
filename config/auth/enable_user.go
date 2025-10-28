@@ -28,7 +28,7 @@ func (a *authCognito) EnableUser(ctx context.Context, username string) error {
 		return &AuthActionFailedError{
 			username:   username,
 			cause:      enableUserErr,
-			actionType: authActionEnableUser,
+			actionType: authActionTypeEnableUser,
 		}
 	}
 
