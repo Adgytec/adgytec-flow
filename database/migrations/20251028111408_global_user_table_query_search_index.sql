@@ -7,8 +7,8 @@ CREATE INDEX if NOT EXISTS idx_users_normalized_email ON global.users (normalize
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-DROP INDEX if EXISTS idx_users_normalized_email ON global.users;
+DROP INDEX if EXISTS idx_users_normalized_email;
 
-DROP INDEX if EXISTS idx_users_normalized_name ON global.users;
+DROP INDEX if EXISTS idx_users_normalized_name;
 
 -- +goose StatementEnd
