@@ -65,14 +65,14 @@ UPDATE ON global.media FOR each ROW WHEN (
 EXECUTE function global.created_at_update ();
 
 CREATE TABLE IF NOT EXISTS global.media_video (
-	media_id UUID NOT NULL REFERENCES global.media (id) ON DELETE CASCADE,
+	media_id UUID PRIMARY KEY REFERENCES global.media (id) ON DELETE CASCADE,
 	thumbnail TEXT,
 	adaptive_manifest TEXT,
 	preview TEXT
 );
 
 CREATE TABLE IF NOT EXISTS global.media_image (
-	media_id UUID NOT NULL REFERENCES global.media (id) ON DELETE CASCADE,
+	media_id UUID PRIMARY KEY REFERENCES global.media (id) ON DELETE CASCADE,
 	thumbnail TEXT,
 	small TEXT,
 	medium TEXT,
