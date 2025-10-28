@@ -3,6 +3,7 @@ package pagination
 import (
 	"context"
 	"slices"
+	"strings"
 	"time"
 )
 
@@ -28,7 +29,7 @@ func GetPaginatedData[T any, M PaginationItem](
 				}
 			}
 
-			return getPageByQuery(ctx, reqParams.SearchQuery, reqParams.Sorting, actions)
+			return getPageByQuery(ctx, strings.ToLower(reqParams.SearchQuery), reqParams.Sorting, actions)
 		case reqParams.NextCursor != "":
 			if actions.LesserThanCursorLatestFirst == nil || actions.GreaterThanCursorOldestFirst == nil {
 				return zero, &PaginationActionNotImplementedError{
