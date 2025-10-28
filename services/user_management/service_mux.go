@@ -23,6 +23,7 @@ func (m *serviceMux) Router() *chi.Mux {
 	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
 
 	mux.Post("/user", m.newUser)
+	mux.Delete("/user/{userID}", m.removeUser)
 
 	return mux
 }
