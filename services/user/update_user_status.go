@@ -52,7 +52,20 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		return dbErr
 	}
 
-	return tx.Commit(ctx)
+	// handle enable from auth provider here
+	// db act as source of truth
+	// it should be run in transaction as enable is required for user login in client application
+
+	commitErr := tx.Commit(ctx)
+	if commitErr != nil {
+		return commitErr
+	}
+
+	// handle disable from auth provider here
+	// db act as source of truth
+	// disabling user from auth provider act as welcome addition to also prevent user login in client application
+
+	return nil
 }
 
 func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db.GlobalUserStatus) {
