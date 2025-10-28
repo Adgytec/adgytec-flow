@@ -9,6 +9,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -62,7 +63,7 @@ func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Req
 
 	reqCtx := r.Context()
 
-	userID, userIdErr := m.service.getUserIDFromRequest(r)
+	userID, userIdErr := reqparams.GetUserIDFromRequest(r)
 	if userIdErr != nil {
 		payload.EncodeError(w, userIdErr)
 		return

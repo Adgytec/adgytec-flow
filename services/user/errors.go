@@ -10,7 +10,6 @@ import (
 )
 
 var (
-	ErrInvalidUserID                          = errors.New("invalid user id")
 	ErrUserNotFound                           = errors.New("user not found")
 	ErrNameLength                             = errors.New("User name must be between 3 and 100 characters long.")
 	ErrAboutLength                            = errors.New("User about must be between 8 and 1024 characters long.")
@@ -19,25 +18,6 @@ var (
 	ErrSocialLinkNotFound                     = errors.New("social link not found")
 	ErrInvalidSocialLinkID                    = errors.New("invalid social link id")
 )
-
-type InvalidUserIDError struct {
-	InvalidUserID string
-}
-
-func (e *InvalidUserIDError) Error() string {
-	return fmt.Sprintf("User ID: '%s', is not a valid user id.", e.InvalidUserID)
-}
-
-func (e *InvalidUserIDError) Is(target error) bool {
-	return target == ErrInvalidUserID
-}
-
-func (e *InvalidUserIDError) HTTPResponse() apires.ErrorDetails {
-	return apires.ErrorDetails{
-		HTTPStatusCode: http.StatusBadRequest,
-		Message:        pointer.New(e.Error()),
-	}
-}
 
 type UserNotFoundError struct{}
 
