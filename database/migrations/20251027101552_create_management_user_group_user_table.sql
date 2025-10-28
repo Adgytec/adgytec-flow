@@ -3,7 +3,7 @@
 CREATE TABLE IF NOT EXISTS management.user_group_users (
 	user_group_id UUID NOT NULL REFERENCES management.user_groups (id) ON DELETE CASCADE,
 	user_id UUID NOT NULL REFERENCES management.users (id) ON DELETE CASCADE,
-	created_by UUID NOT NULL REFERENCES management.users (id) ON DELETE RESTRICT,
+	created_by UUID NOT NULL REFERENCES global.users (id) ON DELETE RESTRICT,
 	created_at TIMESTAMPTZ NOT NULL,
 	PRIMARY KEY (
 		user_group_id,

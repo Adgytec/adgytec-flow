@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS management.user_groups (
 	id UUID PRIMARY KEY DEFAULT uuidv7 (),
 	name TEXT NOT NULL UNIQUE,
 	description TEXT,
-	created_by UUID NOT NULL REFERENCES management.users (id) ON DELETE RESTRICT,
+	created_by UUID NOT NULL REFERENCES global.users (id) ON DELETE RESTRICT,
 	created_at TIMESTAMPTZ NOT NULL
 );
 
