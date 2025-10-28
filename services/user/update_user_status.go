@@ -12,6 +12,7 @@ import (
 	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/rs/zerolog/log"
 )
 
 func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, status db.GlobalUserStatus) error {
@@ -38,7 +39,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	}
 	defer tx.Rollback(context.Background())
 
-	dbErr := qtx.Queries().UpdateGlobalUserStatus(
+	username, dbErr := qtx.Queries().UpdateGlobalUserStatus(
 		ctx,
 		db.UpdateGlobalUserStatusParams{
 			ID:     userID,
@@ -55,6 +56,12 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	// handle enable from auth provider here
 	// db act as source of truth
 	// it should be run in transaction as enable is required for user login in client application
+	if status == db.GlobalUserStatusEnabled {
+		authErr := s.auth.EnableUser(ctx, username)
+		if authErr != nil {
+			return authErr
+		}
+	}
 
 	commitErr := tx.Commit(ctx)
 	if commitErr != nil {
@@ -64,8 +71,12 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	// handle disable from auth provider here
 	// db act as source of truth
 	// disabling user from auth provider act as welcome addition to also prevent user login in client application
-
-	// auth provider interaction will be added in next pr
+	if status == db.GlobalUserStatusDisabled {
+		authErr := s.auth.DisableUser(ctx, username)
+		if authErr != nil {
+			log.Error().Err(authErr).Str("action", "auth provider disable user").Send()
+		}
+	}
 
 	return nil
 }

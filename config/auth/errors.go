@@ -11,6 +11,7 @@ import (
 
 var (
 	ErrUserExists         = errors.New("user exists")
+	ErrUserNotFound       = errors.New("user not found")
 	ErrAuthActionFailed   = errors.New("auth action failed")
 	ErrInvalidAccessToken = errors.New("invalid access token")
 	ErrInvalidAPIKey      = errors.New("invalid api key")
@@ -37,6 +38,25 @@ func (e *UserExistsError) Is(target error) bool {
 func (e *UserExistsError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusConflict,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type UserNotFoundError struct {
+	username string
+}
+
+func (e *UserNotFoundError) Error() string {
+	return fmt.Sprintf("User with username %s not found.", e.username)
+}
+
+func (e *UserNotFoundError) Is(target error) bool {
+	return target == ErrUserNotFound
+}
+
+func (e *UserNotFoundError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusNotFound,
 		Message:        pointer.New(e.Error()),
 	}
 }

@@ -11,6 +11,8 @@ import (
 
 type Auth interface {
 	NewUser(ctx context.Context, username string) error
+	DisableUser(ctx context.Context, username string) error
+	EnableUser(ctx context.Context, username string) error
 	ValidateUserAccessToken(accessToken string) (uuid.UUID, error)
 
 	// this only checks if the API key is in required format as described in the application doc
@@ -46,4 +48,6 @@ type authActionType string
 const (
 	authActionTypeCreate              authActionType = "auth-user-create"
 	authActionTypeValidateAccessToken authActionType = "auth-validate-user-access-token"
+	authActionTypeDisableUser         authActionType = "auth-disable-user"
+	authActionTypeEnableUser          authActionType = "auth-enable-user"
 )
