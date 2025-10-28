@@ -7,9 +7,407 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
+
+const getManagementUsersByQuery = `-- name: GetManagementUsersByQuery :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+WHERE
+	ud.normalized_name ILIKE '%' || unaccent (
+		$2::TEXT
+	) || '%'
+	OR ud.normalized_email ILIKE '%' || unaccent (
+		$2::TEXT
+	) || '%'
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$1
+`
+
+type GetManagementUsersByQueryParams struct {
+	Limit int32  `json:"limit"`
+	Query string `json:"query"`
+}
+
+func (q *Queries) GetManagementUsersByQuery(ctx context.Context, arg GetManagementUsersByQueryParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersByQuery, arg.Limit, arg.Query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManagementUsersLatestFirst = `-- name: GetManagementUsersLatestFirst :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$1
+`
+
+func (q *Queries) GetManagementUsersLatestFirst(ctx context.Context, limit int32) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersLatestFirst, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManagementUsersLatestFirstGreaterThanCursor = `-- name: GetManagementUsersLatestFirstGreaterThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+WHERE
+	ud.created_at > $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$1
+`
+
+type GetManagementUsersLatestFirstGreaterThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+func (q *Queries) GetManagementUsersLatestFirstGreaterThanCursor(ctx context.Context, arg GetManagementUsersLatestFirstGreaterThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersLatestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManagementUsersLatestFirstLesserThanCursor = `-- name: GetManagementUsersLatestFirstLesserThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+WHERE
+	ud.created_at < $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$1
+`
+
+type GetManagementUsersLatestFirstLesserThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+func (q *Queries) GetManagementUsersLatestFirstLesserThanCursor(ctx context.Context, arg GetManagementUsersLatestFirstLesserThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersLatestFirstLesserThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManagementUsersOldestFirst = `-- name: GetManagementUsersOldestFirst :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+ORDER BY
+	ud.created_at ASC
+LIMIT
+	$1
+`
+
+func (q *Queries) GetManagementUsersOldestFirst(ctx context.Context, limit int32) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersOldestFirst, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManagementUsersOldestFirstGreaterThanCursor = `-- name: GetManagementUsersOldestFirstGreaterThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+WHERE
+	ud.created_at > $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at ASC
+LIMIT
+	$1
+`
+
+type GetManagementUsersOldestFirstGreaterThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+func (q *Queries) GetManagementUsersOldestFirstGreaterThanCursor(ctx context.Context, arg GetManagementUsersOldestFirstGreaterThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersOldestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getManagementUsersOldestFirstLesserThanCursor = `-- name: GetManagementUsersOldestFirstLesserThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+WHERE
+	ud.created_at < $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at ASC
+LIMIT
+	$1
+`
+
+type GetManagementUsersOldestFirstLesserThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+func (q *Queries) GetManagementUsersOldestFirstLesserThanCursor(ctx context.Context, arg GetManagementUsersOldestFirstLesserThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getManagementUsersOldestFirstLesserThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
 
 const newManagementUser = `-- name: NewManagementUser :exec
 INSERT INTO
