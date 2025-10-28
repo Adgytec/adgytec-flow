@@ -11,6 +11,8 @@ import (
 
 type Auth interface {
 	NewUser(ctx context.Context, username string) error
+	DisableUser(ctx context.Context, username string) error
+	EnableUser(ctx context.Context, username string) error
 	ValidateUserAccessToken(accessToken string) (uuid.UUID, error)
 
 	// this only checks if the API key is in required format as described in the application doc
