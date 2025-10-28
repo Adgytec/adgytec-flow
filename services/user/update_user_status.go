@@ -39,7 +39,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	}
 	defer tx.Rollback(context.Background())
 
-	dbErr := qtx.Queries().UpdateGlobalUserStatus(
+	username, dbErr := qtx.Queries().UpdateGlobalUserStatus(
 		ctx,
 		db.UpdateGlobalUserStatusParams{
 			ID:     userID,
@@ -57,7 +57,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	// db act as source of truth
 	// it should be run in transaction as enable is required for user login in client application
 	if status == db.GlobalUserStatusEnabled {
-		authErr := s.auth.EnableUser(ctx, "")
+		authErr := s.auth.EnableUser(ctx, username)
 		if authErr != nil {
 			return authErr
 		}
@@ -72,7 +72,7 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	// db act as source of truth
 	// disabling user from auth provider act as welcome addition to also prevent user login in client application
 	if status == db.GlobalUserStatusDisabled {
-		authErr := s.auth.DisableUser(ctx, "")
+		authErr := s.auth.DisableUser(ctx, username)
 		if authErr != nil {
 			log.Error().Err(authErr).Str("action", "auth provider disable user").Send()
 		}

@@ -103,12 +103,14 @@ ORDER BY
 LIMIT
 	$1;
 
--- name: UpdateGlobalUserStatus :exec
+-- name: UpdateGlobalUserStatus :one
 UPDATE global.users
 SET
 	status = $1
 WHERE
-	id = $2;
+	id = $2
+RETURNING
+	email;
 
 -- name: CreateGlobalUser :exec
 INSERT INTO
