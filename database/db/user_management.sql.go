@@ -23,3 +23,14 @@ func (q *Queries) NewManagementUser(ctx context.Context, id uuid.UUID) error {
 	_, err := q.db.Exec(ctx, newManagementUser, id)
 	return err
 }
+
+const removeManagementUser = `-- name: RemoveManagementUser :exec
+DELETE FROM management.users
+WHERE
+	id = $1
+`
+
+func (q *Queries) RemoveManagementUser(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, removeManagementUser, id)
+	return err
+}

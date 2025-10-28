@@ -13,7 +13,7 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const createGlobalUser = `-- name: CreateGlobalUser :execrows
+const createGlobalUser = `-- name: CreateGlobalUser :exec
 INSERT INTO
 	global.users (id, email)
 VALUES
@@ -26,12 +26,9 @@ type CreateGlobalUserParams struct {
 	Email string    `json:"email"`
 }
 
-func (q *Queries) CreateGlobalUser(ctx context.Context, arg CreateGlobalUserParams) (int64, error) {
-	result, err := q.db.Exec(ctx, createGlobalUser, arg.ID, arg.Email)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected(), nil
+func (q *Queries) CreateGlobalUser(ctx context.Context, arg CreateGlobalUserParams) error {
+	_, err := q.db.Exec(ctx, createGlobalUser, arg.ID, arg.Email)
+	return err
 }
 
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many

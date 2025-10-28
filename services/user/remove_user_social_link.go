@@ -9,6 +9,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	"github.com/Adgytec/adgytec-flow/utils/pointer"
+	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
 )
 
@@ -88,7 +89,7 @@ func (m *userServiceMux) removeUserSelfSocialLink(w http.ResponseWriter, r *http
 }
 
 func (m *userServiceMux) removeUserSocialLink(w http.ResponseWriter, r *http.Request) {
-	userID, userIDErr := m.service.getUserIDFromRequest(r)
+	userID, userIDErr := reqparams.GetUserIDFromRequest(r)
 	if userIDErr != nil {
 		payload.EncodeError(w, userIDErr)
 		return

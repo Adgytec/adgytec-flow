@@ -9,6 +9,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
+	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 )
@@ -51,7 +52,22 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		return dbErr
 	}
 
-	return tx.Commit(ctx)
+	// handle enable from auth provider here
+	// db act as source of truth
+	// it should be run in transaction as enable is required for user login in client application
+
+	commitErr := tx.Commit(ctx)
+	if commitErr != nil {
+		return commitErr
+	}
+
+	// handle disable from auth provider here
+	// db act as source of truth
+	// disabling user from auth provider act as welcome addition to also prevent user login in client application
+
+	// auth provider interaction will be added in next pr
+
+	return nil
 }
 
 func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Request, status db.GlobalUserStatus) {
@@ -62,7 +78,7 @@ func (m *userServiceMux) updateUserStatusUtil(w http.ResponseWriter, r *http.Req
 
 	reqCtx := r.Context()
 
-	userID, userIdErr := m.service.getUserIDFromRequest(r)
+	userID, userIdErr := reqparams.GetUserIDFromRequest(r)
 	if userIdErr != nil {
 		payload.EncodeError(w, userIdErr)
 		return
