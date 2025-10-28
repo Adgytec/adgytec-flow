@@ -49,7 +49,7 @@ func (s *userService) getUserResponseModels(users []db.GlobalUserDetails) []mode
 	return userModels
 }
 
-func (pc *userServicePC) GetUserReponseModel(user db.GlobalUserDetails) models.GlobalUser {
+func (pc *userServicePC) GetUserResponseModel(user db.GlobalUserDetails) models.GlobalUser {
 	return pc.service.getUserResponseModel(user)
 }
 
