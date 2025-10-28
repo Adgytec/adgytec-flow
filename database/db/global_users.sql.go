@@ -35,16 +35,27 @@ const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
 	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
 FROM
-	global.user_details
-WHERE
-	normalized_name LIKE unaccent (
-		$2::TEXT
-	) || '%'
-	OR normalized_email LIKE unaccent (
-		$2::TEXT
-	) || '%'
+	(
+		SELECT
+			id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+		FROM
+			global.user_details
+		WHERE
+			normalized_name LIKE unaccent (
+				$2::TEXT
+			) || '%'
+		UNION
+		SELECT
+			id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
+		FROM
+			global.user_details
+		WHERE
+			normalized_email LIKE unaccent (
+				$2::TEXT
+			) || '%'
+	) AS users
 ORDER BY
-	created_at DESC
+	users.created_at DESC
 LIMIT
 	$1
 `
