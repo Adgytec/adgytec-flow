@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/google/uuid"
 	"github.com/rs/zerolog/log"
 )
@@ -11,6 +12,8 @@ import (
 type UserServicePC interface {
 	NewUser(ctx context.Context, email string) (uuid.UUID, error)
 	GetUserStatus(ctx context.Context, userID uuid.UUID) (db.GlobalUserStatus, error)
+	GetUserResponseModels(users []db.GlobalUserDetails) []models.GlobalUser
+	GetUserResponseModel(user db.GlobalUserDetails) models.GlobalUser
 }
 
 type userServicePC struct {
