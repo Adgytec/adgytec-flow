@@ -19,10 +19,10 @@ FROM
 	global.user_details ud
 	JOIN management.users mu ON ud.id = mu.id
 WHERE
-	ud.normalized_name ILIKE '%' || unaccent (
+	ud.normalized_name LIKE unaccent (
 		$2::TEXT
 	) || '%'
-	OR ud.normalized_email ILIKE '%' || unaccent (
+	OR ud.normalized_email LIKE unaccent (
 		$2::TEXT
 	) || '%'
 ORDER BY
