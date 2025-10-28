@@ -18,9 +18,9 @@ func (a *authCognito) EnableUser(ctx context.Context, username string) error {
 	)
 
 	if enableUserErr != nil {
-		var userExistsError *types.UsernameExistsException
-		if errors.As(enableUserErr, &userExistsError) {
-			return &UserExistsError{
+		var userNotFoundError *types.UserNotFoundException
+		if errors.As(enableUserErr, &userNotFoundError) {
+			return &UserNotFoundError{
 				username: username,
 			}
 		}
