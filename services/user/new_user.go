@@ -20,7 +20,8 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 	}
 	defer tx.Rollback(context.Background())
 
-	inserted, dbErr := qtx.Queries().CreateGlobalUser(
+	// user is never delete from global users only their authentication detials from auth provider is removed
+	dbErr := qtx.Queries().CreateGlobalUser(
 		ctx,
 		db.CreateGlobalUserParams{
 			ID:    userID,
@@ -31,13 +32,12 @@ func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, err
 		return zero, dbErr
 	}
 
-	// for newly inserted users also create the useraccount in auth service
-	if inserted == 1 {
-		authErr := s.auth.NewUser(ctx, email)
-		if authErr != nil {
-			if !errors.Is(authErr, auth.ErrUserExists) {
-				return zero, authErr
-			}
+	// always call auth provider method for new user
+	// this ensures that previously removed user from auth provider is created again
+	authErr := s.auth.NewUser(ctx, email)
+	if authErr != nil {
+		if !errors.Is(authErr, auth.ErrUserExists) {
+			return zero, authErr
 		}
 	}
 

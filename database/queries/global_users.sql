@@ -110,7 +110,7 @@ SET
 WHERE
 	id = $2;
 
--- name: CreateGlobalUser :execrows
+-- name: CreateGlobalUser :exec
 INSERT INTO
 	global.users (id, email)
 VALUES
