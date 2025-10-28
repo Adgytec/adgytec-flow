@@ -48,4 +48,6 @@ type authActionType string
 const (
 	authActionTypeCreate              authActionType = "auth-user-create"
 	authActionTypeValidateAccessToken authActionType = "auth-validate-user-access-token"
+	authActionDisableUser             authActionType = "auth-disable-user"
+	authActionEnableUser              authActionType = "auth-enable-user"
 )
