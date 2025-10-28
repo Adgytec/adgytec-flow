@@ -115,4 +115,6 @@ func (s *mediaServiceMux) completeMultipartUpload(w http.ResponseWriter, r *http
 		payload.EncodeError(w, completeMultipartErr)
 		return
 	}
+
+	w.WriteHeader(http.StatusCreated)
 }
