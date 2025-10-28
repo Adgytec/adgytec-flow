@@ -37,12 +37,7 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetails) models.Glo
 }
 
 func (s *userService) getUserResponseModels(users []db.GlobalUserDetails) []models.GlobalUser {
-	usersLen := len(users)
-	if usersLen == 0 {
-		return nil
-	}
-
-	userModels := make([]models.GlobalUser, 0, usersLen)
+	userModels := make([]models.GlobalUser, 0, len(users))
 	for _, user := range users {
 		userModels = append(userModels, s.getUserResponseModel(user))
 	}
