@@ -30,7 +30,7 @@ EXECUTE function archive.archive_before_delete ();
 -- +goose StatementEnd
 -- +goose Down
 -- +goose StatementBegin
-DROP TRIGGER if EXISTS users ON management.users;
+DROP TRIGGER if EXISTS user_delete_archive ON management.users;
 
 DROP TRIGGER if EXISTS on_update_prevent_created_by_update ON management.users;
 

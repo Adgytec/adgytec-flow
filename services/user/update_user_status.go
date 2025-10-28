@@ -65,6 +65,8 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 	// db act as source of truth
 	// disabling user from auth provider act as welcome addition to also prevent user login in client application
 
+	// auth provider interaction will be added in next pr
+
 	return nil
 }
 
