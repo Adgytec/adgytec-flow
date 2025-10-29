@@ -16,27 +16,15 @@ const getManagementUsersByQuery = `-- name: GetManagementUsersByQuery :many
 SELECT
 	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
 FROM
-	(
-		SELECT
-			ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
-		FROM
-			global.user_details ud
-			JOIN management.users mu ON ud.id = mu.id
-		WHERE
-			ud.normalized_name LIKE unaccent (
-				$2::TEXT
-			) || '%'
-		UNION
-		SELECT
-			ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
-		FROM
-			global.user_details ud
-			JOIN management.users mu ON ud.id = mu.id
-		WHERE
-			ud.normalized_email LIKE unaccent (
-				$2::TEXT
-			) || '%'
-	) AS ud
+	global.user_details ud
+	JOIN management.users mu ON ud.id = mu.id
+WHERE
+	ud.normalized_name LIKE unaccent (
+		$2::TEXT
+	) || '%'
+	OR ud.normalized_email LIKE unaccent (
+		$2::TEXT
+	) || '%'
 ORDER BY
 	ud.created_at DESC
 LIMIT

@@ -90,27 +90,16 @@ LIMIT
 SELECT
 	*
 FROM
-	(
-		SELECT
-			*
-		FROM
-			global.user_details
-		WHERE
-			normalized_name LIKE unaccent (
-				sqlc.arg ('query')::TEXT
-			) || '%'
-		UNION
-		SELECT
-			*
-		FROM
-			global.user_details
-		WHERE
-			normalized_email LIKE unaccent (
-				sqlc.arg ('query')::TEXT
-			) || '%'
-	) AS users
+	global.user_details
+WHERE
+	normalized_name LIKE unaccent (
+		sqlc.arg ('query')::TEXT
+	) || '%'
+	OR normalized_email LIKE unaccent (
+		sqlc.arg ('query')::TEXT
+	) || '%'
 ORDER BY
-	users.created_at DESC
+	created_at DESC
 LIMIT
 	$1;
 
