@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/database/db"
@@ -12,7 +13,7 @@ import (
 
 func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, error) {
 	var zero uuid.UUID
-	userID := core.GetIDFromPayload([]byte(email))
+	userID := core.GetIDFromPayload([]byte(strings.ToLower(email)))
 
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
