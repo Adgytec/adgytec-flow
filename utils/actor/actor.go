@@ -43,6 +43,6 @@ func GetActorTypeFromContext(ctx context.Context) (db.GlobalActorType, error) {
 // This is useful during startup, migrations, or any operation
 // that requires a transaction but has no real actor.
 func NewSystemActorContext(ctx context.Context) context.Context {
-	actorIDCtx := context.WithValue(ctx, ActorKeyID, uuid.Nil)
+	actorIDCtx := context.WithValue(ctx, ActorKeyID, systemActorID)
 	return context.WithValue(actorIDCtx, ActorKeyType, db.GlobalActorTypeSystem)
 }
