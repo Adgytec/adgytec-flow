@@ -11,6 +11,8 @@ type PermissionProvider interface {
 	GetPermissionType() PermissionType
 	GetPermissionActorType() db.GlobalAssignableActorType
 	GetPermissionRequiredResources() PermissionRequiredResources
+	SystemAllowed() bool
+	AllowSystem() PermissionProvider
 }
 
 // PermissionRequiredResources defines the required resources for PermissionEntity for successfull resolution
@@ -33,6 +35,7 @@ type permissionRequired struct {
 	permissionType      PermissionType
 	permissionActorType db.GlobalAssignableActorType
 	requiredResources   PermissionRequiredResources
+	systemAllowed       bool
 }
 
 func (p permissionRequired) GetPermissionKey() string {
@@ -49,6 +52,15 @@ func (p permissionRequired) GetPermissionActorType() db.GlobalAssignableActorTyp
 
 func (p permissionRequired) GetPermissionRequiredResources() PermissionRequiredResources {
 	return p.requiredResources
+}
+
+func (p permissionRequired) SystemAllowed() bool {
+	return p.systemAllowed
+}
+
+func (p permissionRequired) AllowSystem() PermissionProvider {
+	p.systemAllowed = true
+	return p
 }
 
 // helper methods to create PermissionProvider for permission resolution
