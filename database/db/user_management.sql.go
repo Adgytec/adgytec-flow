@@ -405,6 +405,25 @@ func (q *Queries) GetManagementUsersOldestFirstLesserThanCursor(ctx context.Cont
 	return items, nil
 }
 
+const managementUserExists = `-- name: ManagementUserExists :one
+SELECT
+	EXISTS (
+		SELECT
+			1
+		FROM
+			management.users
+		WHERE
+			id = $1
+	)
+`
+
+func (q *Queries) ManagementUserExists(ctx context.Context, id uuid.UUID) (bool, error) {
+	row := q.db.QueryRow(ctx, managementUserExists, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const newManagementUser = `-- name: NewManagementUser :exec
 INSERT INTO
 	management.users (id)

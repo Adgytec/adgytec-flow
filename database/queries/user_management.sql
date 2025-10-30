@@ -97,3 +97,14 @@ ORDER BY
 	ud.created_at DESC
 LIMIT
 	$1;
+
+-- name: ManagementUserExists :one
+SELECT
+	EXISTS (
+		SELECT
+			1
+		FROM
+			management.users
+		WHERE
+			id = $1
+	);
