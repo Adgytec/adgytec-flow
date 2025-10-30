@@ -28,9 +28,9 @@ func GetPaginationParamsFromRequest(r *http.Request) PaginationRequestParams {
 	}
 }
 
-func GetPaginationParamsFromRequestNormalizeQuery(r *http.Request) PaginationRequestParams {
+func GetPaginationParamsFromRequestNormalizeQuery(r *http.Request) (PaginationRequestParams, error) {
 	params := GetPaginationParamsFromRequest(r)
-	params.normalizeQuery()
+	err := params.normalizeQuery()
 
-	return params
+	return params, err
 }

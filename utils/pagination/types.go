@@ -73,14 +73,17 @@ func (p PaginationRequestParams) cacheID() string {
 	return fmt.Sprintf("%s:%s", id, p.Sorting)
 }
 
-func (p *PaginationRequestParams) normalizeQuery() {
+func (p *PaginationRequestParams) normalizeQuery() error {
 	query, unaccentErr := normalize.Unaccent(p.SearchQuery)
 	if unaccentErr != nil {
-		// proceed without normalizing
-		return
+		return &InvalidQueryStringError{
+			query: p.SearchQuery,
+			cause: unaccentErr,
+		}
 	}
 
 	p.SearchQuery = strings.ToLower(query)
+	return nil
 }
 
 // PaginationFuncQuery defines a func required for getting paginated data with search query
