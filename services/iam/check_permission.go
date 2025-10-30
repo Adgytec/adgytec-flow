@@ -4,9 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
-	"github.com/google/uuid"
 )
 
 func (pc *iamServicePC) CheckPermission(ctx context.Context, permissionRequired PermissionProvider) error {
@@ -27,20 +25,9 @@ func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequire
 		return actorDetailsErr
 	}
 
-	// system actor has all the permissions
-	if actorDetails.Type == db.GlobalActorTypeSystem && actorDetails.ID == uuid.Nil {
-		// permission granted
-		return nil
-	}
-
-	permissionEntity := permissionEntity{
-		id:         actorDetails.ID,
-		entityType: actorDetails.Type,
-	}
-
 	var lastPermissionErr error
 	for _, permission := range permissionsRequired {
-		lastPermissionErr = pc.service.checkPermission(ctx, permissionEntity, permission)
+		lastPermissionErr = pc.service.checkPermission(ctx, actorDetails, permission)
 		if lastPermissionErr == nil {
 			// permission granted
 			return nil
@@ -55,9 +42,9 @@ func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequire
 	return lastPermissionErr
 }
 
-func (s *iamService) checkPermission(ctx context.Context, permissionEntity permissionEntity, permissionRequired PermissionProvider) error {
+func (s *iamService) checkPermission(ctx context.Context, permissionEntity actor.ActorDetails, permissionRequired PermissionProvider) error {
 	actorTypeError := s.validateActorType(
-		permissionEntity.entityType,
+		permissionEntity.Type,
 		permissionRequired.GetPermissionActorType(),
 	)
 	if actorTypeError != nil {

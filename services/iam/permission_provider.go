@@ -24,12 +24,6 @@ type PermissionRequiredResources struct {
 	ServiceResourceItemID *uuid.UUID
 }
 
-// permissionEntity defines the current actor details for permission resolution
-type permissionEntity struct {
-	id         uuid.UUID
-	entityType db.GlobalActorType
-}
-
 type permissionRequired struct {
 	key                 string
 	permissionType      PermissionType
