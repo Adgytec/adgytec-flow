@@ -10,6 +10,7 @@ import (
 )
 
 var managementPermissions = []db.AddManagementPermissionsIntoStagingParams{
+	getManagementUserProfilePermission,
 	newManagementUserPermission,
 	listManagementUsersPermission,
 	removeManagementUserPermission,
@@ -20,6 +21,18 @@ var managementPermissions = []db.AddManagementPermissionsIntoStagingParams{
 	addUserInUserGroupPermission,
 	listUserGroupUsersPermission,
 	removeUserFromUserGroupPermission,
+}
+
+var getManagementUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
+	Key:       fmt.Sprintf("%s:get:user-profile", serviceDetails.Name),
+	ServiceID: serviceDetails.ID,
+	Name:      "Get Management User Profile",
+	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
+		m.H3("Get Management User Profile").
+			PlainText("Grants the ability to get individual management user profile details.")
+	}),
+	RequiredResources: nil,
+	AssignableActor:   db.GlobalAssignableActorTypeUser,
 }
 
 var newManagementUserPermission = db.AddManagementPermissionsIntoStagingParams{
