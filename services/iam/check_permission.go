@@ -4,7 +4,9 @@ import (
 	"context"
 	"errors"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/actor"
+	"github.com/google/uuid"
 )
 
 func (pc *iamServicePC) CheckPermission(ctx context.Context, permissionRequired PermissionProvider) error {
@@ -23,6 +25,12 @@ func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequire
 	actorDetails, actorDetailsErr := actor.GetActorDetailsFromContext(ctx)
 	if actorDetailsErr != nil {
 		return actorDetailsErr
+	}
+
+	// system actor has all the permissions
+	if actorDetails.Type == db.GlobalActorTypeSystem && actorDetails.ID == uuid.Nil {
+		// permission granted
+		return nil
 	}
 
 	permissionEntity := permissionEntity{
