@@ -12,6 +12,7 @@ import (
 var (
 	ErrInvalidCursorValue             = errors.New("invalid cursor value")
 	ErrPaginationActionNotImplemented = errors.New("action not implemented")
+	ErrInvalidQueryString             = errors.New("invalid query string")
 )
 
 type InvalidCursorValueError struct {
@@ -52,6 +53,30 @@ func (e *PaginationActionNotImplementedError) Is(target error) bool {
 func (e *PaginationActionNotImplementedError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusNotImplemented,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidQueryStringError struct {
+	query string
+	cause error
+}
+
+func (e *InvalidQueryStringError) Error() string {
+	return fmt.Sprintf("%s is invalid utf-8 encoded string", e.query)
+}
+
+func (e *InvalidQueryStringError) Is(target error) bool {
+	return target == ErrInvalidQueryString
+}
+
+func (e *InvalidQueryStringError) Unwrap() error {
+	return e.cause
+}
+
+func (e *InvalidQueryStringError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
 	}
 }

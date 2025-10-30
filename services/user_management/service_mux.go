@@ -24,6 +24,7 @@ func (m *serviceMux) Router() *chi.Mux {
 
 	mux.Post("/user", m.newUser)
 	mux.Delete("/user/{userID}", m.removeUser)
+	mux.Get("/users", m.getManagementUsers)
 
 	return mux
 }

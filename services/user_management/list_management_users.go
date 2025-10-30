@@ -1,4 +1,4 @@
-package user
+package usermanagement
 
 import (
 	"context"
@@ -11,14 +11,14 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 )
 
-func (s *userService) getGlobalUsers(
+func (s *userManagementService) getManagementUsers(
 	ctx context.Context,
 	params pagination.PaginationRequestParams,
 ) (*pagination.ResponsePagination[models.GlobalUser], error) {
 	permissionErr := s.iam.CheckPermission(
 		ctx,
 		iam.NewPermissionRequiredFromManagementPermission(
-			listAllUsersPermission,
+			listManagementUsersPermission,
 			iam.PermissionRequiredResources{},
 		),
 	)
@@ -34,19 +34,19 @@ func (s *userService) getGlobalUsers(
 			models.GlobalUser,
 		]{
 			Cache:                        s.getUserListCache,
-			ToModel:                      s.getUserResponseModels,
-			Query:                        s.getGlobalUsersQuery,
-			InitialLatestFirst:           s.getGlobalUsersInitialLatestFirst,
-			InitialOldestFirst:           s.getGlobalUsersInitialOldestFirst,
-			GreaterThanCursorLatestFirst: s.getGlobalUsersGreaterThanCursorLatestFirst,
-			GreaterThanCursorOldestFirst: s.getGlobalUsersGreaterThanCursorOldestFirst,
-			LesserThanCursorLatestFirst:  s.getGlobalUsersLesserThanCursorLatestFirst,
-			LesserThanCursorOldestFirst:  s.getGlobalUsersLesserThanCursorOldestFirst,
+			ToModel:                      s.userService.GetUserResponseModels,
+			Query:                        s.getManagementUsersQuery,
+			InitialLatestFirst:           s.getManagementUsersInitialLatestFirst,
+			InitialOldestFirst:           s.getManagementUsersInitialOldestFirst,
+			GreaterThanCursorLatestFirst: s.getManagementUsersGreaterThanCursorLatestFirst,
+			GreaterThanCursorOldestFirst: s.getManagementUsersGreaterThanCursorOldestFirst,
+			LesserThanCursorLatestFirst:  s.getManagementUsersLesserThanCursorLatestFirst,
+			LesserThanCursorOldestFirst:  s.getManagementUsersLesserThanCursorOldestFirst,
 		},
 	)
 }
 
-func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
+func (m *serviceMux) getManagementUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
 	paginationParams, paramsErr := pagination.GetPaginationParamsFromRequestNormalizeQuery(r)
@@ -55,7 +55,7 @@ func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	userList, userErr := m.service.getGlobalUsers(reqCtx, paginationParams)
+	userList, userErr := m.service.getManagementUsers(reqCtx, paginationParams)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return

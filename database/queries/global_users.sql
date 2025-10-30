@@ -92,12 +92,8 @@ SELECT
 FROM
 	global.user_details
 WHERE
-	normalized_name ILIKE '%' || unaccent (
-		sqlc.arg ('query')::TEXT
-	) || '%'
-	OR normalized_email ILIKE '%' || unaccent (
-		sqlc.arg ('query')::TEXT
-	) || '%'
+	normalized_name LIKE sqlc.arg ('query')::TEXT || '%'
+	OR normalized_email LIKE sqlc.arg ('query')::TEXT || '%'
 ORDER BY
 	created_at DESC
 LIMIT

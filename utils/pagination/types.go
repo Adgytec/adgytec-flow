@@ -4,9 +4,11 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/Adgytec/adgytec-flow/config/cache"
+	"github.com/Adgytec/adgytec-flow/utils/normalize"
 )
 
 type PaginationItem interface {
@@ -69,6 +71,19 @@ func (p PaginationRequestParams) cacheID() string {
 	}
 
 	return fmt.Sprintf("%s:%s", id, p.Sorting)
+}
+
+func (p *PaginationRequestParams) normalizeQuery() error {
+	query, unaccentErr := normalize.Unaccent(p.SearchQuery)
+	if unaccentErr != nil {
+		return &InvalidQueryStringError{
+			query: p.SearchQuery,
+			cause: unaccentErr,
+		}
+	}
+
+	p.SearchQuery = strings.ToLower(query)
+	return nil
 }
 
 // PaginationFuncQuery defines a func required for getting paginated data with search query

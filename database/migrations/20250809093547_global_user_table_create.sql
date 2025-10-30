@@ -66,7 +66,7 @@ DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON global.users;
 
 DROP TRIGGER if EXISTS on_insert_set_created_at ON global.users;
 
-DROP INDEX if EXISTS global_users_email_unique_idx;
+DROP INDEX if EXISTS global.global_users_email_unique_idx;
 
 DROP TABLE IF EXISTS global.users;
 
