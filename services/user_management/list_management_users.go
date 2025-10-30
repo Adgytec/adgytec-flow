@@ -49,7 +49,7 @@ func (s *userManagementService) getManagementUsers(
 func (m *serviceMux) getManagementUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
-	paginationParams := pagination.GetPaginationParamsFromRequest(r)
+	paginationParams := pagination.GetPaginationParamsFromRequestNormalizeQuery(r)
 	userList, userErr := m.service.getManagementUsers(reqCtx, paginationParams)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
