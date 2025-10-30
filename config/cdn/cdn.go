@@ -6,5 +6,6 @@ const defaultSignedURLExpiration = time.Hour
 const cdnExpiryKey = "CDN_EXPIRY"
 
 type CDN interface {
-	GetSignedURL(*string) *string
+	GetSignedURL(bucketPath *string) *string
+	GetSignedURLWithDuration(bucketPath *string, expiryIn time.Duration) *string
 }
