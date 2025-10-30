@@ -101,3 +101,7 @@ func (m *userServiceMux) getUserProfileHandler(w http.ResponseWriter, r *http.Re
 
 	m.getUserProfileUtil(reqCtx, w, userID)
 }
+
+func (pc *userServicePC) GetUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error) {
+	return pc.service.getUserProfile(ctx, userID)
+}

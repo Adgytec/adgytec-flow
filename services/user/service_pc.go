@@ -12,6 +12,7 @@ import (
 type UserServicePC interface {
 	NewUser(ctx context.Context, email string) (uuid.UUID, error)
 	GetUserStatus(ctx context.Context, userID uuid.UUID) (db.GlobalUserStatus, error)
+	GetUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error)
 	GetUserResponseModels(users []db.GlobalUserDetails) []models.GlobalUser
 	GetUserResponseModel(user db.GlobalUserDetails) models.GlobalUser
 }
