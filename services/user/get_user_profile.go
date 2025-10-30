@@ -22,7 +22,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 			iam.PermissionRequiredResources{
 				UserID: pointer.New(userID),
 			},
-		).AllowSystem(),
+		),
 		iam.NewPermissionRequiredFromManagementPermission(
 			getUserProfilePermission,
 			iam.PermissionRequiredResources{},
