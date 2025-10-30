@@ -17,7 +17,7 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetails) models.Glo
 		Status:      user.Status,
 	}
 
-	if user.ProfilePictureID != nil {
+	if user.ProfilePictureID != nil && user.ProfilePictureStatus.Valid {
 		// if profile picture is not nil
 		// than original image will always be there
 		// for rest of the fields cdn will handle it as its also taking pointer
