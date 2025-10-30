@@ -2,6 +2,7 @@ package cdn
 
 import (
 	"os"
+	"path"
 	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/feature/cloudfront/sign"
@@ -13,7 +14,15 @@ type cdnCloudfront struct {
 	cdnUrl    string
 }
 
+func (c *cdnCloudfront) generateURL(bucketPath string) string {
+	return path.Join(c.cdnUrl, bucketPath)
+}
+
 func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
+	if bucketPath == nil {
+		return nil
+	}
+
 	return nil
 }
 
