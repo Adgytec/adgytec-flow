@@ -13,3 +13,8 @@ var updateSelfProfilePermission = iam.SelfPermissions{
 	Key:  "self:update:user-profile",
 	Name: "Update self profile",
 }
+
+var getSelfProfileStatusPermission = iam.SelfPermissions{
+	Key:  "self:get:profile-status",
+	Name: "Get self profile status",
+}

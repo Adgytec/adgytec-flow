@@ -499,6 +499,22 @@ func (q *Queries) GetUserSocialLinks(ctx context.Context, userID uuid.UUID) ([]G
 	return items, nil
 }
 
+const getUserStatus = `-- name: GetUserStatus :one
+SELECT
+	status
+FROM
+	global.users
+WHERE
+	id = $1
+`
+
+func (q *Queries) GetUserStatus(ctx context.Context, id uuid.UUID) (GlobalUserStatus, error) {
+	row := q.db.QueryRow(ctx, getUserStatus, id)
+	var status GlobalUserStatus
+	err := row.Scan(&status)
+	return status, err
+}
+
 const newUserSocialLink = `-- name: NewUserSocialLink :one
 INSERT INTO
 	global.user_social_links (

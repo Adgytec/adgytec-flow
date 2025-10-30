@@ -8,6 +8,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/config/cdn"
 	"github.com/Adgytec/adgytec-flow/config/database"
 	"github.com/Adgytec/adgytec-flow/config/serializer"
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/services/media"
@@ -38,6 +39,7 @@ type userService struct {
 	cdn              cdn.CDN
 	media            media.MediaServicePC
 	getUserCache     cache.Cache[models.GlobalUser]
+	userStatusCache  cache.Cache[db.GlobalUserStatus]
 	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 }
 
@@ -61,6 +63,7 @@ func newUserService(params userServiceParams) *userService {
 		cdn:              params.CDN(),
 		media:            params.MediaWithTransaction(),
 		getUserCache:     cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[models.GlobalUser](), "user"),
+		userStatusCache:  cache.NewCache(params.CacheClient(), serializer.NewJSONSerializer[db.GlobalUserStatus](), "user-status"),
 		getUserListCache: cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "user-list"),
 	}
 }
