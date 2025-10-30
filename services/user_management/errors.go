@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	ErrUserNotExistsInManagement = errors.New("user not exists in management")
+	ErrUserNotExistsInManagement = errors.New("user does not exist in management")
 )
 
 type UserNotExistsInManagementError struct{}

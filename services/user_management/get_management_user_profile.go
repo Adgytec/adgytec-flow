@@ -22,7 +22,7 @@ func (s *userManagementService) getUserProfile(ctx context.Context, userID uuid.
 		return nil, permissionErr
 	}
 
-	// check mangement user existence
+	// check management user existence
 	exists, dbErr := s.db.Queries().ManagementUserExists(ctx, userID)
 	if dbErr != nil {
 		return nil, dbErr
@@ -32,7 +32,7 @@ func (s *userManagementService) getUserProfile(ctx context.Context, userID uuid.
 		return nil, &UserNotExistsInManagementError{}
 	}
 
-	// escale user privilage to system to get user profile from user service
+	// escalate user privilege to system to get user profile from user service
 	userDetails, userErr := s.userService.GetUserProfile(actor.NewSystemActorContext(ctx), userID)
 	return userDetails, userErr
 }
