@@ -4,6 +4,7 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/feature/cloudfront/sign"
 	"github.com/rs/zerolog/log"
@@ -23,7 +24,13 @@ func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
 		return nil
 	}
 
-	return nil
+	signedURL, signErr := c.urlSigner.Sign(c.generateURL(*bucketPath), time.Now().Add(time.Hour*1))
+	if signErr != nil {
+		log.Error().Err(signErr).Str("action", "get-signed-url").Str("bucket-path", *bucketPath).Send()
+		return nil
+	}
+
+	return &signedURL
 }
 
 func NewCloudfrontCDNSigner() (CDN, error) {
