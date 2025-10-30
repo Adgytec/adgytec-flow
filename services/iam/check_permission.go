@@ -42,9 +42,21 @@ func (pc *iamServicePC) CheckPermissions(ctx context.Context, permissionsRequire
 	return lastPermissionErr
 }
 
-func (s *iamService) checkPermission(ctx context.Context, permissionEntity actor.ActorDetails, permissionRequired PermissionProvider) error {
+func (s *iamService) checkPermission(ctx context.Context, actorDetails actor.ActorDetails, permissionRequired PermissionProvider) error {
+	// check if current actor is system and permission can be resolved by system actor
+	if actorDetails.IsSystem() {
+		if permissionRequired.SystemAllowed() {
+			// permission granted
+			return nil
+		}
+
+		return &PermissionDeniedError{
+			Reason: "system actor is not permitted to perform this action",
+		}
+	}
+
 	actorTypeError := s.validateActorType(
-		permissionEntity.Type,
+		actorDetails.Type,
 		permissionRequired.GetPermissionActorType(),
 	)
 	if actorTypeError != nil {
@@ -53,11 +65,11 @@ func (s *iamService) checkPermission(ctx context.Context, permissionEntity actor
 
 	switch permissionRequired.GetPermissionType() {
 	case PermissionTypeSelf:
-		return s.resolveSelfPermission(permissionEntity, permissionRequired)
+		return s.resolveSelfPermission(actorDetails, permissionRequired)
 	case PermissionTypeApplication:
-		return s.resolveApplicationPermission(ctx, permissionEntity, permissionRequired)
+		return s.resolveApplicationPermission(ctx, actorDetails, permissionRequired)
 	case PermissionTypeManagement:
-		return s.resolveManagementPermission(ctx, permissionEntity, permissionRequired)
+		return s.resolveManagementPermission(ctx, actorDetails, permissionRequired)
 	default:
 		return &PermissionResolutionFailedError{
 			Cause: ErrUnknownPermissionType,
