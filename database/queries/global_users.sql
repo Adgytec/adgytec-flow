@@ -163,3 +163,11 @@ WHERE
 	AND user_id = $3
 RETURNING
 	*;
+
+-- name: GetUserStatus :one
+SELECT
+	status
+FROM
+	global.users
+WHERE
+	id = $1;
