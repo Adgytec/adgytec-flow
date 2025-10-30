@@ -1,11 +1,11 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE INDEX if NOT EXISTS idx_users_normalized_name ON global.users (
-	normalized_name text_pattern_ops
+	normalized_name COLLATE "C"
 );
 
 CREATE INDEX if NOT EXISTS idx_users_normalized_email ON global.users (
-	normalized_email text_pattern_ops
+	normalized_email COLLATE "C"
 );
 
 -- +goose StatementEnd
