@@ -26,7 +26,7 @@ func (s *userService) getUserProfile(ctx context.Context, userID uuid.UUID) (*mo
 		iam.NewPermissionRequiredFromManagementPermission(
 			getUserProfilePermission,
 			iam.PermissionRequiredResources{},
-		),
+		).AllowSystem(),
 	}
 
 	permissionErr := s.iam.CheckPermissions(

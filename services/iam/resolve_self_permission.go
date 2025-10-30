@@ -1,7 +1,9 @@
 package iam
 
+import "github.com/Adgytec/adgytec-flow/utils/actor"
+
 func (s *iamService) resolveSelfPermission(
-	permissionEntity permissionEntity,
+	permissionEntity actor.ActorDetails,
 	permissionRequired PermissionProvider,
 ) error {
 	// invalid case
@@ -11,7 +13,7 @@ func (s *iamService) resolveSelfPermission(
 		}
 	}
 
-	if permissionEntity.id != *permissionRequired.GetPermissionRequiredResources().UserID {
+	if permissionEntity.ID != *permissionRequired.GetPermissionRequiredResources().UserID {
 
 		return &PermissionDeniedError{
 			Reason: "The resource is owned by a different user account than the one currently authenticated.",

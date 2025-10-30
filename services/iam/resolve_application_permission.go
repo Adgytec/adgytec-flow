@@ -3,12 +3,13 @@ package iam
 import (
 	"context"
 
+	"github.com/Adgytec/adgytec-flow/utils/actor"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 )
 
 func (s *iamService) resolveApplicationPermission(
 	ctx context.Context,
-	permissionEntity permissionEntity,
+	permissionEntity actor.ActorDetails,
 	permissionRequired PermissionProvider,
 ) error {
 	return core.ErrNotImplemented
