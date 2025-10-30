@@ -2,7 +2,7 @@ package cdn
 
 import "time"
 
-const validDuration = time.Hour
+const signedURLExpiration = time.Hour
 
 type CDN interface {
 	GetSignedUrl(*string) *string

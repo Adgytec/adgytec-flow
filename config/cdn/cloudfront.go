@@ -25,7 +25,7 @@ func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
 	}
 
 	signedURL, signErr := c.urlSigner.Sign(c.generateURL(*bucketPath),
-		time.Now().Add(validDuration),
+		time.Now().Add(signedURLExpiration),
 	)
 	if signErr != nil {
 		log.Error().Err(signErr).Str("action", "get-signed-url").Str("bucket-path", *bucketPath).Send()
