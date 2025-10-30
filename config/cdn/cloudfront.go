@@ -21,13 +21,13 @@ func (c *cdnCloudfront) generateURL(bucketPath string) string {
 	return path.Join(c.cdnUrl, bucketPath)
 }
 
-func (c *cdnCloudfront) GetSignedURL(bucketPath *string) *string {
+func (c *cdnCloudfront) getSignedURL(bucketPath *string, expireIn time.Duration) *string {
 	if bucketPath == nil {
 		return nil
 	}
 
 	signedURL, signErr := c.urlSigner.Sign(c.generateURL(*bucketPath),
-		time.Now().Add(c.defaultDuration),
+		time.Now().Add(expireIn),
 	)
 	if signErr != nil {
 		log.Error().Err(signErr).Str("action", "get-signed-url").Str("bucket-path", *bucketPath).Send()
@@ -35,6 +35,14 @@ func (c *cdnCloudfront) GetSignedURL(bucketPath *string) *string {
 	}
 
 	return &signedURL
+}
+
+func (c *cdnCloudfront) GetSignedURL(bucketPath *string) *string {
+	return c.getSignedURL(bucketPath, c.defaultDuration)
+}
+
+func (c *cdnCloudfront) GetSignedURLWithDuration(bucketPath *string, expireIn time.Duration) *string {
+	return c.getSignedURL(bucketPath, expireIn)
 }
 
 func NewCloudfrontCDNSigner() (CDN, error) {
