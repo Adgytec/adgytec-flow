@@ -91,12 +91,8 @@ FROM
 	global.user_details ud
 	JOIN management.users mu ON ud.id = mu.id
 WHERE
-	ud.normalized_name LIKE unaccent (
-		sqlc.arg ('query')::TEXT
-	) || '%'
-	OR ud.normalized_email LIKE unaccent (
-		sqlc.arg ('query')::TEXT
-	) || '%'
+	ud.normalized_name LIKE sqlc.arg ('query')::TEXT || '%'
+	OR ud.normalized_email LIKE sqlc.arg ('query')::TEXT || '%'
 ORDER BY
 	ud.created_at DESC
 LIMIT

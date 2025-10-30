@@ -37,12 +37,8 @@ SELECT
 FROM
 	global.user_details
 WHERE
-	normalized_name LIKE unaccent (
-		$2::TEXT
-	) || '%'
-	OR normalized_email LIKE unaccent (
-		$2::TEXT
-	) || '%'
+	normalized_name LIKE $2::TEXT || '%'
+	OR normalized_email LIKE $2::TEXT || '%'
 ORDER BY
 	created_at DESC
 LIMIT

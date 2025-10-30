@@ -19,12 +19,8 @@ FROM
 	global.user_details ud
 	JOIN management.users mu ON ud.id = mu.id
 WHERE
-	ud.normalized_name LIKE unaccent (
-		$2::TEXT
-	) || '%'
-	OR ud.normalized_email LIKE unaccent (
-		$2::TEXT
-	) || '%'
+	ud.normalized_name LIKE $2::TEXT || '%'
+	OR ud.normalized_email LIKE $2::TEXT || '%'
 ORDER BY
 	ud.created_at DESC
 LIMIT
