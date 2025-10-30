@@ -78,6 +78,8 @@ func (s *userService) updateUserStatus(ctx context.Context, userID uuid.UUID, st
 		}
 	}
 
+	// update cache
+	s.userStatusCache.Set(userID.String(), status)
 	return nil
 }
 
