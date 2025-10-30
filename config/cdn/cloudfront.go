@@ -21,7 +21,7 @@ func (c *cdnCloudfront) generateURL(bucketPath string) string {
 	return path.Join(c.cdnUrl, bucketPath)
 }
 
-func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
+func (c *cdnCloudfront) GetSignedURL(bucketPath *string) *string {
 	if bucketPath == nil {
 		return nil
 	}
