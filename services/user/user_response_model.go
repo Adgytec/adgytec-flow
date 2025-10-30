@@ -18,7 +18,9 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetails) models.Glo
 	}
 
 	if user.ProfilePictureID != nil {
-		// all the media fields will always be present
+		// if profile picture is not nil
+		// than original image will always be there
+		// for rest of the fields cdn will handle it as its also taking pointer
 		profilePictureModel := &models.ImageDetails{
 			MediaID:       *user.ProfilePictureID,
 			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
