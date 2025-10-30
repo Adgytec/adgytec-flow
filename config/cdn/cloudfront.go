@@ -2,19 +2,47 @@ package cdn
 
 import (
 	"os"
+	"path"
 	"strings"
+	"time"
 
+	"github.com/Adgytec/adgytec-flow/utils/duration"
 	"github.com/aws/aws-sdk-go-v2/feature/cloudfront/sign"
 	"github.com/rs/zerolog/log"
 )
 
 type cdnCloudfront struct {
-	urlSigner *sign.URLSigner
-	cdnUrl    string
+	urlSigner       *sign.URLSigner
+	cdnUrl          string
+	defaultDuration time.Duration
 }
 
-func (c *cdnCloudfront) GetSignedUrl(bucketPath *string) *string {
-	return nil
+func (c *cdnCloudfront) generateURL(bucketPath string) string {
+	return path.Join(c.cdnUrl, bucketPath)
+}
+
+func (c *cdnCloudfront) getSignedURL(bucketPath *string, expireIn time.Duration) *string {
+	if bucketPath == nil {
+		return nil
+	}
+
+	signedURL, signErr := c.urlSigner.Sign(c.generateURL(*bucketPath),
+		time.Now().Add(expireIn),
+	)
+	if signErr != nil {
+		log.Error().Err(signErr).Str("action", "get-signed-url").Str("bucket-path", *bucketPath).Send()
+		return nil
+	}
+
+	return &signedURL
+}
+
+func (c *cdnCloudfront) GetSignedURL(bucketPath *string) *string {
+	return c.getSignedURL(bucketPath, c.defaultDuration)
+}
+
+func (c *cdnCloudfront) GetSignedURLWithDuration(bucketPath *string, expireIn time.Duration) *string {
+	return c.getSignedURL(bucketPath, expireIn)
 }
 
 func NewCloudfrontCDNSigner() (CDN, error) {
@@ -34,7 +62,8 @@ func NewCloudfrontCDNSigner() (CDN, error) {
 	}
 
 	return &cdnCloudfront{
-		urlSigner: sign.NewURLSigner(keyPairID, privKey),
-		cdnUrl:    cdnUrl,
+		urlSigner:       sign.NewURLSigner(keyPairID, privKey),
+		cdnUrl:          cdnUrl,
+		defaultDuration: duration.GetFromEnv(cdnExpiryKey, defaultSignedURLExpiration),
 	}, nil
 }

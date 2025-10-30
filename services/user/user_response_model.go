@@ -17,20 +17,20 @@ func (s *userService) getUserResponseModel(user db.GlobalUserDetails) models.Glo
 		Status:      user.Status,
 	}
 
-	if user.ProfilePictureID != nil {
+	if user.ProfilePictureID != nil && user.ProfilePictureStatus.Valid {
 		// if profile picture is not nil
 		// than original image will always be there
 		// for rest of the fields cdn will handle it as its also taking pointer
 		profilePictureModel := &models.ImageDetails{
 			MediaID:       *user.ProfilePictureID,
-			OriginalImage: s.cdn.GetSignedUrl(user.UncompressedProfilePicture),
+			OriginalImage: s.cdn.GetSignedURL(user.UncompressedProfilePicture),
 			Size:          user.ProfilePictureSize,
 			Status:        pointer.New(string(user.ProfilePictureStatus.GlobalMediaStatus)),
-			Thumbnail:     s.cdn.GetSignedUrl(user.Thumbnail),
-			Small:         s.cdn.GetSignedUrl(user.Small),
-			Medium:        s.cdn.GetSignedUrl(user.Medium),
-			Large:         s.cdn.GetSignedUrl(user.Large),
-			ExtraLarge:    s.cdn.GetSignedUrl(user.ExtraLarge),
+			Thumbnail:     s.cdn.GetSignedURL(user.Thumbnail),
+			Small:         s.cdn.GetSignedURL(user.Small),
+			Medium:        s.cdn.GetSignedURL(user.Medium),
+			Large:         s.cdn.GetSignedURL(user.Large),
+			ExtraLarge:    s.cdn.GetSignedURL(user.ExtraLarge),
 		}
 		userModel.ProfilePicture = profilePictureModel
 	}
