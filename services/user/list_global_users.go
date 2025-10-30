@@ -49,7 +49,12 @@ func (s *userService) getGlobalUsers(
 func (m *userServiceMux) getGlobalUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
-	paginationParams := pagination.GetPaginationParamsFromRequestNormalizeQuery(r)
+	paginationParams, paramsErr := pagination.GetPaginationParamsFromRequestNormalizeQuery(r)
+	if paramsErr != nil {
+		payload.EncodeError(w, paramsErr)
+		return
+	}
+
 	userList, userErr := m.service.getGlobalUsers(reqCtx, paginationParams)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
