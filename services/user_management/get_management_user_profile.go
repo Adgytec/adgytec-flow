@@ -33,7 +33,7 @@ func (s *userManagementService) getUserProfile(ctx context.Context, userID uuid.
 	}
 
 	// escale user privilage to system to get user profile from user service
-	userDetails, userErr := s.getUserProfile(actor.NewSystemActorContext(ctx), userID)
+	userDetails, userErr := s.userService.GetUserProfile(actor.NewSystemActorContext(ctx), userID)
 	return userDetails, userErr
 }
 
