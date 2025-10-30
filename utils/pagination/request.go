@@ -27,3 +27,10 @@ func GetPaginationParamsFromRequest(r *http.Request) PaginationRequestParams {
 		SearchQuery: getRequestQueryValue(r, SearchQuery),
 	}
 }
+
+func GetPaginationParamsFromRequestNormalizeQuery(r *http.Request) PaginationRequestParams {
+	params := GetPaginationParamsFromRequest(r)
+	params.normalizeQuery()
+
+	return params
+}
