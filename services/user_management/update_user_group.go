@@ -15,9 +15,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/types"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
-	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type updateUserGroupData struct {
@@ -114,10 +112,6 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 			return nil, &UserGroupNotFoundError{}
 		}
 
-		var pgErr *pgconn.PgError
-		if errors.As(dbErr, &pgErr) && pgErr.Code == pgerrcode.UniqueViolation {
-			return nil, &UserGroupWithSameNameExistsError{}
-		}
 		return nil, dbErr
 	}
 
