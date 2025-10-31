@@ -43,6 +43,7 @@ func (s *userManagementService) newUserGroupUser(ctx context.Context, groupID uu
 	if dbErr != nil {
 		var pgErr *pgconn.PgError
 		if errors.As(dbErr, &pgErr) {
+			// TODO: handle this in better way later
 			if pgErr.Code == pgerrcode.ForeignKeyViolation {
 				switch pgErr.ColumnName {
 				case "user_group_id":
