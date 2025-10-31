@@ -33,3 +33,85 @@ FROM
 WHERE
 	id = $1
 FOR UPDATE;
+
+-- name: GetUserGroupsLatestFirst :many
+SELECT
+	*
+FROM
+	management.user_group_details
+ORDER BY
+	created_at DESC
+LIMIT
+	$1;
+
+-- name: GetUserGroupsOldestFirst :many
+SELECT
+	*
+FROM
+	management.user_group_details
+ORDER BY
+	created_at ASC
+LIMIT
+	$1;
+
+-- name: GetUserGroupsLatestFirstGreaterThanCursor :many
+SELECT
+	*
+FROM
+	management.user_group_details
+WHERE
+	created_at > sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at DESC
+LIMIT
+	$1;
+
+-- name: GetUserGroupsOldestFirstGreaterThanCursor :many
+SELECT
+	*
+FROM
+	management.user_group_details
+WHERE
+	created_at > sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at ASC
+LIMIT
+	$1;
+
+-- name: GetUserGroupsLatestFirstLesserThanCursor :many
+SELECT
+	*
+FROM
+	management.user_group_details
+WHERE
+	created_at < sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at DESC
+LIMIT
+	$1;
+
+-- name: GetUserGroupsOldestFirstLesserThanCursor :many
+SELECT
+	*
+FROM
+	management.user_group_details
+WHERE
+	created_at < sqlc.arg (cursor)::TIMESTAMPTZ
+ORDER BY
+	created_at ASC
+LIMIT
+	$1;
+
+-- name: GetUserGroupsByQuery :many
+SELECT
+	*
+FROM
+	management.user_group_details
+WHERE
+	lower(name) LIKE lower(
+		sqlc.arg ('query')::TEXT
+	) || '%'
+ORDER BY
+	created_at DESC
+LIMIT
+	$1;

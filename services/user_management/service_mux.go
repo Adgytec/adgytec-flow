@@ -25,12 +25,13 @@ func (m *serviceMux) Router() *chi.Mux {
 	// users
 	mux.Post("/user", m.newUser)
 	mux.Delete("/user/{userID}", m.removeUser)
-	mux.Get("/users", m.getManagementUsers)
+	mux.Get("/users", m.listManagementUsers)
 	mux.Get("/user/{userID}", m.getUserProfile)
 
 	// user-group
 	mux.Post("/user-group", m.newUserGroup)
 	mux.Patch("/user-group/{groupID}", m.updateUserGroup)
+	mux.Get("/user-groups", m.listUserGroups)
 
 	return mux
 }
