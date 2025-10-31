@@ -89,18 +89,20 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 	}
 
 	// name check
-	if groupDetails.Name.Missing() {
-		updatedGroupParams.Name = existingGroup.Name
-	} else {
-		// validation ensures that if name is provided, it is not null or blank
+	updatedGroupParams.Name = existingGroup.Name
+	if !groupDetails.Name.Missing() {
+		// name is non nullable
 		updatedGroupParams.Name = groupDetails.Name.Value
 	}
 
 	// description check
-	if groupDetails.Description.Missing() {
-		updatedGroupParams.Description = existingGroup.Description
-	} else if !groupDetails.Description.Null() {
-		updatedGroupParams.Description = &groupDetails.Description.Value
+	updatedGroupParams.Description = existingGroup.Description
+	if !groupDetails.Description.Missing() {
+		if groupDetails.Description.Null() {
+			updatedGroupParams.Description = nil
+		} else {
+			updatedGroupParams.Description = &groupDetails.Description.Value
+		}
 	}
 
 	// update group
