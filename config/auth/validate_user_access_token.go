@@ -46,6 +46,6 @@ func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, er
 		return uuid.Nil, invalidTokenErr
 	}
 
-	userID := core.GetIDFromPayload([]byte(username))
+	userID := core.GetUserIDFromUsername(username)
 	return userID, nil
 }
