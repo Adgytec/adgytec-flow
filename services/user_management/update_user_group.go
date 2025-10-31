@@ -92,14 +92,13 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 
 	// name check
 	updatedGroupParams.Name = existingGroup.Name
-	if !groupDetails.Name.Missing() {
-		// name is non nullable
+	if groupDetails.Name.Present() {
 		updatedGroupParams.Name = groupDetails.Name.Value
 	}
 
 	// description check
 	updatedGroupParams.Description = existingGroup.Description
-	if !groupDetails.Description.Missing() {
+	if groupDetails.Description.Present() {
 		if groupDetails.Description.Null() {
 			updatedGroupParams.Description = nil
 		} else {
