@@ -22,10 +22,14 @@ func (m *serviceMux) Router() *chi.Mux {
 	mux.Use(m.middleware.ValidateAndGetActorDetailsFromHttpRequest)
 	mux.Use(m.middleware.ValidateActorTypeUserGlobalStatus)
 
+	// users
 	mux.Post("/user", m.newUser)
 	mux.Delete("/user/{userID}", m.removeUser)
 	mux.Get("/users", m.getManagementUsers)
 	mux.Get("/user/{userID}", m.getUserProfile)
+
+	// user-group
+	mux.Post("/user-group", m.newUserGroup)
 
 	return mux
 }

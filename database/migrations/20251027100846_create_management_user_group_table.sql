@@ -2,11 +2,13 @@
 -- +goose StatementBegin
 CREATE TABLE IF NOT EXISTS management.user_groups (
 	id UUID PRIMARY KEY DEFAULT uuidv7 (),
-	name TEXT NOT NULL UNIQUE,
+	name TEXT NOT NULL,
 	description TEXT,
 	created_by UUID NOT NULL REFERENCES global.users (id) ON DELETE RESTRICT,
 	created_at TIMESTAMPTZ NOT NULL
 );
+
+CREATE UNIQUE INDEX user_group_name_unique_idx ON management.user_groups (lower(name));
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON management.user_groups FOR each ROW
 EXECUTE function global.set_created_at ();
@@ -49,6 +51,8 @@ DROP TRIGGER if EXISTS on_insert_set_created_by ON management.user_groups;
 DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON management.user_groups;
 
 DROP TRIGGER if EXISTS on_insert_set_created_at ON management.user_groups;
+
+DROP INDEX if EXISTS management.user_group_name_unique_idx;
 
 DROP TABLE management.user_groups;
 
