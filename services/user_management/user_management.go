@@ -24,17 +24,19 @@ type serviceMuxParams interface {
 }
 
 type userManagementService struct {
-	db               database.Database
-	userService      user.UserServicePC
-	iam              iam.IAMServicePC
-	getUserListCache cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
+	db                 database.Database
+	userService        user.UserServicePC
+	iam                iam.IAMServicePC
+	getUserListCache   cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
+	userGroupListCache cache.Cache[pagination.ResponsePagination[models.UserGroup]]
 }
 
 func newService(params serviceParams) *userManagementService {
 	return &userManagementService{
-		db:               params.Database(),
-		userService:      params.UserService(),
-		iam:              params.IAMService(),
-		getUserListCache: cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "management-user-list"),
+		db:                 params.Database(),
+		userService:        params.UserService(),
+		iam:                params.IAMService(),
+		getUserListCache:   cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "management-user-list"),
+		userGroupListCache: cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.UserGroup]](), "user-group-list"),
 	}
 }
