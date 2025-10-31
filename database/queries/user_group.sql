@@ -21,3 +21,14 @@ RETURNING
 	name,
 	description,
 	created_at;
+
+-- name: GetUserGroupByID :one
+SELECT
+	id,
+	name,
+	description,
+	created_at
+FROM
+	management.user_groups
+WHERE
+	id = $1;

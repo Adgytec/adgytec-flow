@@ -12,6 +12,37 @@ import (
 	"github.com/google/uuid"
 )
 
+const getUserGroupByID = `-- name: GetUserGroupByID :one
+SELECT
+	id,
+	name,
+	description,
+	created_at
+FROM
+	management.user_groups
+WHERE
+	id = $1
+`
+
+type GetUserGroupByIDRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+}
+
+func (q *Queries) GetUserGroupByID(ctx context.Context, id uuid.UUID) (GetUserGroupByIDRow, error) {
+	row := q.db.QueryRow(ctx, getUserGroupByID, id)
+	var i GetUserGroupByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const newUserGroup = `-- name: NewUserGroup :one
 INSERT INTO
 	management.user_groups (name, description)
