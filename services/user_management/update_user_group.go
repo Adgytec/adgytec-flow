@@ -77,7 +77,7 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 	defer tx.Rollback(context.Background())
 
 	// get existing group details
-	existingGroup, existingErr := qtx.Queries().GetUserGroupByID(ctx, groupID)
+	existingGroup, existingErr := qtx.Queries().GetUserGroupByIDForUpdate(ctx, groupID)
 	if existingErr != nil {
 		if errors.Is(existingErr, pgx.ErrNoRows) {
 			return nil, &UserGroupNotFoundError{}

@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-const getUserGroupByID = `-- name: GetUserGroupByID :one
+const getUserGroupByIDForUpdate = `-- name: GetUserGroupByIDForUpdate :one
 SELECT
 	id,
 	name,
@@ -22,18 +22,19 @@ FROM
 	management.user_groups
 WHERE
 	id = $1
+FOR UPDATE
 `
 
-type GetUserGroupByIDRow struct {
+type GetUserGroupByIDForUpdateRow struct {
 	ID          uuid.UUID `json:"id"`
 	Name        string    `json:"name"`
 	Description *string   `json:"description"`
 	CreatedAt   time.Time `json:"createdAt"`
 }
 
-func (q *Queries) GetUserGroupByID(ctx context.Context, id uuid.UUID) (GetUserGroupByIDRow, error) {
-	row := q.db.QueryRow(ctx, getUserGroupByID, id)
-	var i GetUserGroupByIDRow
+func (q *Queries) GetUserGroupByIDForUpdate(ctx context.Context, id uuid.UUID) (GetUserGroupByIDForUpdateRow, error) {
+	row := q.db.QueryRow(ctx, getUserGroupByIDForUpdate, id)
+	var i GetUserGroupByIDForUpdateRow
 	err := row.Scan(
 		&i.ID,
 		&i.Name,

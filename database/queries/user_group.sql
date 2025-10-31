@@ -22,7 +22,7 @@ RETURNING
 	description,
 	created_at;
 
--- name: GetUserGroupByID :one
+-- name: GetUserGroupByIDForUpdate :one
 SELECT
 	id,
 	name,
@@ -31,4 +31,5 @@ SELECT
 FROM
 	management.user_groups
 WHERE
-	id = $1;
+	id = $1
+FOR UPDATE;
