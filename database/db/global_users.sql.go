@@ -611,8 +611,6 @@ WITH
 			date_of_birth = $4
 		WHERE
 			u.id = $5
-		RETURNING
-			u.id
 	)
 SELECT
 	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large

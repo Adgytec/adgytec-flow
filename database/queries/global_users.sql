@@ -126,8 +126,6 @@ WITH
 			date_of_birth = $4
 		WHERE
 			u.id = $5
-		RETURNING
-			u.id
 	)
 SELECT
 	*

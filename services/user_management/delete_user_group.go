@@ -32,7 +32,14 @@ func (s *userManagementService) deleteUserGroup(ctx context.Context, groupID uui
 		return dbErr
 	}
 
-	return tx.Commit(ctx)
+	commitErr := tx.Commit(ctx)
+	if commitErr != nil {
+		return commitErr
+	}
+
+	// invalidate cache
+	s.userGroupCache.Delete(groupID.String())
+	return nil
 }
 
 func (m *serviceMux) deleteUserGroup(w http.ResponseWriter, r *http.Request) {

@@ -10,17 +10,21 @@ RETURNING
 	created_at;
 
 -- name: UpdateUserGroup :one
-UPDATE management.user_groups
-SET
-	name = $1,
-	description = $2
+WITH
+	updated AS (
+		UPDATE management.user_groups
+		SET
+			name = $1,
+			description = $2
+		WHERE
+			id = $3
+	)
+SELECT
+	ugd.*
+FROM
+	management.user_group_details ugd
 WHERE
-	id = $3
-RETURNING
-	id,
-	name,
-	description,
-	created_at;
+	ugd.id = $3;
 
 -- name: GetUserGroupByIDForUpdate :one
 SELECT
@@ -118,5 +122,13 @@ LIMIT
 
 -- name: DeleteUserGroup :exec
 DELETE FROM management.user_groups
+WHERE
+	id = $1;
+
+-- name: GetUserGroupByID :one
+SELECT
+	*
+FROM
+	management.user_group_details
 WHERE
 	id = $1;

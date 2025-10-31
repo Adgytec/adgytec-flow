@@ -23,6 +23,28 @@ func (q *Queries) DeleteUserGroup(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getUserGroupByID = `-- name: GetUserGroupByID :one
+SELECT
+	id, name, description, created_at, user_count
+FROM
+	management.user_group_details
+WHERE
+	id = $1
+`
+
+func (q *Queries) GetUserGroupByID(ctx context.Context, id uuid.UUID) (ManagementUserGroupDetails, error) {
+	row := q.db.QueryRow(ctx, getUserGroupByID, id)
+	var i ManagementUserGroupDetails
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UserCount,
+	)
+	return i, err
+}
+
 const getUserGroupByIDForUpdate = `-- name: GetUserGroupByIDForUpdate :one
 SELECT
 	id,
@@ -388,17 +410,21 @@ func (q *Queries) NewUserGroup(ctx context.Context, arg NewUserGroupParams) (New
 }
 
 const updateUserGroup = `-- name: UpdateUserGroup :one
-UPDATE management.user_groups
-SET
-	name = $1,
-	description = $2
+WITH
+	updated AS (
+		UPDATE management.user_groups
+		SET
+			name = $1,
+			description = $2
+		WHERE
+			id = $3
+	)
+SELECT
+	ugd.id, ugd.name, ugd.description, ugd.created_at, ugd.user_count
+FROM
+	management.user_group_details ugd
 WHERE
-	id = $3
-RETURNING
-	id,
-	name,
-	description,
-	created_at
+	ugd.id = $3
 `
 
 type UpdateUserGroupParams struct {
@@ -407,21 +433,15 @@ type UpdateUserGroupParams struct {
 	ID          uuid.UUID `json:"id"`
 }
 
-type UpdateUserGroupRow struct {
-	ID          uuid.UUID `json:"id"`
-	Name        string    `json:"name"`
-	Description *string   `json:"description"`
-	CreatedAt   time.Time `json:"createdAt"`
-}
-
-func (q *Queries) UpdateUserGroup(ctx context.Context, arg UpdateUserGroupParams) (UpdateUserGroupRow, error) {
+func (q *Queries) UpdateUserGroup(ctx context.Context, arg UpdateUserGroupParams) (ManagementUserGroupDetails, error) {
 	row := q.db.QueryRow(ctx, updateUserGroup, arg.Name, arg.Description, arg.ID)
-	var i UpdateUserGroupRow
+	var i ManagementUserGroupDetails
 	err := row.Scan(
 		&i.ID,
 		&i.Name,
 		&i.Description,
 		&i.CreatedAt,
+		&i.UserCount,
 	)
 	return i, err
 }

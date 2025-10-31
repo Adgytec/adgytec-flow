@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/database/models"
 	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
@@ -59,7 +60,7 @@ func (groupDetails updateUserGroupData) Validate() error {
 	return nil
 }
 
-func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uuid.UUID, groupDetails updateUserGroupData) (*db.UpdateUserGroupRow, error) {
+func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uuid.UUID, groupDetails updateUserGroupData) (*models.UserGroup, error) {
 	permissionErr := s.iam.CheckPermission(ctx,
 		iam.NewPermissionRequiredFromManagementPermission(updateUserGroupPermission,
 			iam.PermissionRequiredResources{},
@@ -121,7 +122,11 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 		return nil, commitErr
 	}
 
-	return &updatedGroup, nil
+	groupModel := getUserGroupResponseModel(updatedGroup)
+
+	// cache update
+	s.userGroupCache.Set(groupID.String(), groupModel)
+	return &groupModel, nil
 }
 
 func (m *serviceMux) updateUserGroup(w http.ResponseWriter, r *http.Request) {
