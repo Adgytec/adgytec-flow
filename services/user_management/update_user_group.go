@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"unicode/utf8"
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
@@ -36,12 +35,11 @@ func (groupDetails updateUserGroupData) Validate() error {
 					}
 
 					if name.Null() {
-						return fmt.Errorf("Name can't be null")
+						return fmt.Errorf("cannot be null")
 					}
 
-					nameLen := utf8.RuneCountInString(strings.TrimSpace(name.Value))
-					if nameLen < 1 {
-						return fmt.Errorf("Missing required name value")
+					if strings.TrimSpace(name.Value) == "" {
+						return fmt.Errorf("cannot be blank")
 					}
 
 					return nil
@@ -94,7 +92,7 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 	if groupDetails.Name.Missing() {
 		updatedGroupParams.Name = existingGroup.Name
 	} else {
-		// name will always be null its validated before when request body decoding
+		// validation ensures that if name is provided, it is not null or blank
 		updatedGroupParams.Name = groupDetails.Name.Value
 	}
 
