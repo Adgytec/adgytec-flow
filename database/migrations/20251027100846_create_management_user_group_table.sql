@@ -52,7 +52,7 @@ DROP TRIGGER if EXISTS on_update_prevent_created_at_update ON management.user_gr
 
 DROP TRIGGER if EXISTS on_insert_set_created_at ON management.user_groups;
 
-DROP INDEX if EXISTS management.user_group_name_unqiue_idx;
+DROP INDEX if EXISTS management.user_group_name_unique_idx;
 
 DROP TABLE management.user_groups;
 

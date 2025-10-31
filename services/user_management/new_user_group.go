@@ -66,7 +66,11 @@ func (s *userManagementService) newUserGroup(ctx context.Context, groupDetails n
 	}
 
 	commitErr := tx.Commit(ctx)
-	return &newGroup, commitErr
+	if commitErr != nil {
+		return nil, commitErr
+	}
+
+	return &newGroup, nil
 }
 
 func (m *serviceMux) newUserGroup(w http.ResponseWriter, r *http.Request) {
