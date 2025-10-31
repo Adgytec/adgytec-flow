@@ -8,7 +8,9 @@ CREATE TABLE IF NOT EXISTS management.user_groups (
 	created_at TIMESTAMPTZ NOT NULL
 );
 
-CREATE UNIQUE INDEX user_group_name_unique_idx ON management.user_groups (lower(name));
+CREATE UNIQUE INDEX user_group_name_unique_idx ON management.user_groups (
+	lower(name) COLLATE "C"
+);
 
 CREATE OR REPLACE TRIGGER on_insert_set_created_at before insert ON management.user_groups FOR each ROW
 EXECUTE function global.set_created_at ();
