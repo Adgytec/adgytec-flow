@@ -4,13 +4,42 @@ import (
 	"context"
 	"net/http"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
 )
 
 func (s *userManagementService) removeUserGroupUser(ctx context.Context, groupID, userID uuid.UUID) error {
-	return nil
+	permissionErr := s.iam.CheckPermission(ctx,
+		iam.NewPermissionRequiredFromManagementPermission(
+			removeUserFromUserGroupPermission,
+			iam.PermissionRequiredResources{},
+		),
+	)
+	if permissionErr != nil {
+		return permissionErr
+	}
+
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
+	if txErr != nil {
+		return txErr
+	}
+	defer tx.Rollback(context.Background())
+
+	dbErr := qtx.Queries().RemoveUserGroupUser(ctx,
+		db.RemoveUserGroupUserParams{
+			UserGroupID: groupID,
+			UserID:      userID,
+		},
+	)
+	if dbErr != nil {
+		return dbErr
+	}
+
+	return tx.Commit(ctx)
+
 }
 
 func (m *serviceMux) removeUserGroupUser(w http.ResponseWriter, r *http.Request) {
