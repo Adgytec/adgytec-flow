@@ -10,7 +10,8 @@ import (
 )
 
 var (
-	ErrInvalidUserID = errors.New("invalid user id")
+	ErrInvalidUserID      = errors.New("invalid user id")
+	ErrInvalidUserGroupID = errors.New("invalid user group id")
 )
 
 type InvalidUserIDError struct {
@@ -26,6 +27,25 @@ func (e *InvalidUserIDError) Is(target error) bool {
 }
 
 func (e *InvalidUserIDError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusBadRequest,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type InvalidUserGroupIDError struct {
+	InvalidUserGroupID string
+}
+
+func (e *InvalidUserGroupIDError) Error() string {
+	return fmt.Sprintf("User Group ID: '%s', is not a valid group id.", e.InvalidUserGroupID)
+}
+
+func (e *InvalidUserGroupIDError) Is(target error) bool {
+	return target == ErrInvalidUserGroupID
+}
+
+func (e *InvalidUserGroupIDError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),

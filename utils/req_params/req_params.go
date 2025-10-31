@@ -19,3 +19,16 @@ func GetUserIDFromRequest(r *http.Request) (uuid.UUID, error) {
 
 	return userUUID, nil
 }
+
+func GetUserGroupIDFromRequest(r *http.Request) (uuid.UUID, error) {
+	groupID := chi.URLParam(r, "groupID")
+
+	groupUUID, groupIDErr := uuid.Parse(groupID)
+	if groupIDErr != nil {
+		return uuid.Nil, &InvalidUserGroupIDError{
+			InvalidUserGroupID: groupID,
+		}
+	}
+
+	return groupUUID, nil
+}
