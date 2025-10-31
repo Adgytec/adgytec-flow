@@ -31,6 +31,7 @@ func (m *serviceMux) Router() *chi.Mux {
 	// user-group
 	mux.Post("/user-group", m.newUserGroup)
 	mux.Patch("/user-group/{groupID}", m.updateUserGroup)
+	mux.Get("/user-groups", m.listUserGroups)
 
 	return mux
 }
