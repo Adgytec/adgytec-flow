@@ -147,12 +147,6 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		return nil, nil, permissionErr
 	}
 
-	// get existing user detail
-	existingUser, existingUserErr := s.getUserProfile(ctx, userID)
-	if existingUserErr != nil {
-		return nil, nil, existingUserErr
-	}
-
 	// start transaction
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
@@ -160,54 +154,78 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	}
 	defer tx.Rollback(context.Background())
 
+	// get existing user detail
+	existingUser, existingUserErr := qtx.Queries().GetGlobalUserByIDForUpdate(ctx, userID)
+	if existingUserErr != nil {
+		if errors.Is(existingUserErr, pgx.ErrNoRows) {
+			return nil, nil, &UserNotFoundError{}
+		}
+
+		return nil, nil, existingUserErr
+	}
+
 	// update user obj
 	updatedUser := db.UpdateGlobalUserProfileParams{
 		ID: userID,
 	}
 
 	// name check
-	if userProfile.Name.Missing() {
-		updatedUser.Name = existingUser.Name
-	} else if !userProfile.Name.Null() {
-		updatedUser.Name = &userProfile.Name.Value
+	updatedUser.Name = existingUser.Name
+	if userProfile.Name.Present() {
+		if userProfile.Name.Null() {
+			updatedUser.Name = nil
+		} else {
+			updatedUser.Name = &userProfile.Name.Value
+		}
 	}
 
 	// about check
-	if userProfile.About.Missing() {
-		updatedUser.About = existingUser.About
-	} else if !userProfile.About.Null() {
-		updatedUser.About = &userProfile.About.Value
+	updatedUser.About = existingUser.About
+	if userProfile.About.Present() {
+		if userProfile.About.Null() {
+			updatedUser.About = nil
+		} else {
+			updatedUser.About = &userProfile.About.Value
+		}
 	}
 
 	// dob check
-	if userProfile.DateOfBirth.Missing() {
-		updatedUser.DateOfBirth = existingUser.DateOfBirth
-	} else if !userProfile.DateOfBirth.Null() {
-		updatedUser.DateOfBirth = userProfile.DateOfBirth.Value
+	updatedUser.DateOfBirth = existingUser.DateOfBirth
+	if userProfile.DateOfBirth.Present() {
+		if userProfile.DateOfBirth.Null() {
+			updatedUser.DateOfBirth = pgtype.Date{
+				Valid: false,
+			}
+		} else {
+			updatedUser.DateOfBirth = userProfile.DateOfBirth.Value
+		}
 	}
 
 	// profile picture check
 	var profilePictureUploadDetails *media.MediaUploadDetails
-	if userProfile.ProfilePicture.Missing() && existingUser.ProfilePicture != nil {
-		updatedUser.ProfilePictureID = &existingUser.ProfilePicture.MediaID
-	} else if !userProfile.ProfilePicture.Null() {
-		// new profile picture
-		updatedUser.ProfilePictureID = &userProfile.ProfilePicture.Value.ID
+	updatedUser.ProfilePictureID = existingUser.ProfilePictureID
+	if userProfile.ProfilePicture.Present() {
+		if userProfile.ProfilePicture.Null() {
+			updatedUser.ProfilePictureID = nil
+		} else {
+			// new profile picture
+			updatedUser.ProfilePictureID = &userProfile.ProfilePicture.Value.ID
 
-		// create new profile picture upload details
-		mediaService := s.media.WithTransaction(qtx)
-		uploadDetails, profilePictureUploadErr := mediaService.NewMediaItem(
-			ctx,
-			media.NewMediaItemInfoWithStorageDetails{
-				NewMediaItemInfo: userProfile.ProfilePicture.Value,
-				RequiredMime:     media.ImageMime,
-				BucketPrefix:     path.Join(userID.String(), "profile"),
-			},
-		)
-		if profilePictureUploadErr != nil {
-			return nil, nil, profilePictureUploadErr
+			// create new profile picture upload details
+			mediaService := s.media.WithTransaction(qtx)
+			uploadDetails, profilePictureUploadErr := mediaService.NewMediaItem(
+				ctx,
+				media.NewMediaItemInfoWithStorageDetails{
+					NewMediaItemInfo: userProfile.ProfilePicture.Value,
+					RequiredMime:     media.ImageMime,
+					BucketPrefix:     path.Join(userID.String(), "profile"),
+				},
+			)
+			if profilePictureUploadErr != nil {
+				return nil, nil, profilePictureUploadErr
+			}
+			profilePictureUploadDetails = uploadDetails
 		}
-		profilePictureUploadDetails = uploadDetails
 	}
 
 	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(
@@ -215,9 +233,7 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		updatedUser,
 	)
 	if dbErr != nil {
-		if errors.Is(dbErr, pgx.ErrNoRows) {
-			return nil, nil, &UserNotFoundError{}
-		}
+
 		return nil, nil, dbErr
 	}
 	txCommitErr := tx.Commit(ctx)
