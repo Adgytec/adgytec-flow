@@ -59,7 +59,11 @@ func (s *userManagementService) newUser(ctx context.Context, userData newUserDat
 	}
 
 	commitErr := tx.Commit(ctx)
-	return &newUserID, commitErr
+	if commitErr != nil {
+		return nil, commitErr
+	}
+
+	return &newUserID, nil
 }
 
 func (m *serviceMux) newUser(w http.ResponseWriter, r *http.Request) {
