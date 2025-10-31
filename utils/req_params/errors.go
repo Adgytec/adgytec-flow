@@ -10,9 +10,7 @@ import (
 )
 
 var (
-	ErrInvalidID          = errors.New("invalid id")
-	ErrInvalidUserID      = errors.New("invalid user id")
-	ErrInvalidUserGroupID = errors.New("invalid user group id")
+	ErrInvalidID = errors.New("invalid id")
 )
 
 type InvalidIDError struct {
