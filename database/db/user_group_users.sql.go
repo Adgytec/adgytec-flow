@@ -34,3 +34,20 @@ func (q *Queries) NewUserGroupUser(ctx context.Context, arg NewUserGroupUserPara
 	_, err := q.db.Exec(ctx, newUserGroupUser, arg.UserGroupID, arg.UserID)
 	return err
 }
+
+const removeUserGroupUser = `-- name: RemoveUserGroupUser :exec
+DELETE FROM management.user_group_users
+WHERE
+	user_group_id = $1
+	AND user_id = $2
+`
+
+type RemoveUserGroupUserParams struct {
+	UserGroupID uuid.UUID `json:"userGroupId"`
+	UserID      uuid.UUID `json:"userId"`
+}
+
+func (q *Queries) RemoveUserGroupUser(ctx context.Context, arg RemoveUserGroupUserParams) error {
+	_, err := q.db.Exec(ctx, removeUserGroupUser, arg.UserGroupID, arg.UserID)
+	return err
+}
