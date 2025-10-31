@@ -7,9 +7,429 @@ package db
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 )
+
+const getUserGroupUsersByQuery = `-- name: GetUserGroupUsersByQuery :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+	AND (
+		ud.normalized_name LIKE $2::TEXT || '%'
+		OR ud.normalized_email LIKE $2::TEXT || '%'
+	)
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$3
+`
+
+type GetUserGroupUsersByQueryParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Query       string    `json:"query"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersByQuery(ctx context.Context, arg GetUserGroupUsersByQueryParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersByQuery, arg.UserGroupID, arg.Query, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupUsersLatestFirst = `-- name: GetUserGroupUsersLatestFirst :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$2
+`
+
+type GetUserGroupUsersLatestFirstParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersLatestFirst(ctx context.Context, arg GetUserGroupUsersLatestFirstParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersLatestFirst, arg.UserGroupID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupUsersLatestFirstGreaterThanCursor = `-- name: GetUserGroupUsersLatestFirstGreaterThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+	AND ud.created_at > $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$3
+`
+
+type GetUserGroupUsersLatestFirstGreaterThanCursorParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Cursor      time.Time `json:"cursor"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersLatestFirstGreaterThanCursor(ctx context.Context, arg GetUserGroupUsersLatestFirstGreaterThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersLatestFirstGreaterThanCursor, arg.UserGroupID, arg.Cursor, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupUsersLatestFirstLesserThanCursor = `-- name: GetUserGroupUsersLatestFirstLesserThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+	AND ud.created_at < $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at DESC
+LIMIT
+	$3
+`
+
+type GetUserGroupUsersLatestFirstLesserThanCursorParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Cursor      time.Time `json:"cursor"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersLatestFirstLesserThanCursor(ctx context.Context, arg GetUserGroupUsersLatestFirstLesserThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersLatestFirstLesserThanCursor, arg.UserGroupID, arg.Cursor, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupUsersOldestFirst = `-- name: GetUserGroupUsersOldestFirst :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+ORDER BY
+	ud.created_at ASC
+LIMIT
+	$2
+`
+
+type GetUserGroupUsersOldestFirstParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersOldestFirst(ctx context.Context, arg GetUserGroupUsersOldestFirstParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersOldestFirst, arg.UserGroupID, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupUsersOldestFirstGreaterThanCursor = `-- name: GetUserGroupUsersOldestFirstGreaterThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+	AND ud.created_at > $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at ASC
+LIMIT
+	$3
+`
+
+type GetUserGroupUsersOldestFirstGreaterThanCursorParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Cursor      time.Time `json:"cursor"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersOldestFirstGreaterThanCursor(ctx context.Context, arg GetUserGroupUsersOldestFirstGreaterThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersOldestFirstGreaterThanCursor, arg.UserGroupID, arg.Cursor, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupUsersOldestFirstLesserThanCursor = `-- name: GetUserGroupUsersOldestFirstLesserThanCursor :many
+SELECT
+	ud.id, ud.email, ud.normalized_email, ud.name, ud.normalized_name, ud.about, ud.date_of_birth, ud.created_at, ud.profile_picture_id, ud.status, ud.uncompressed_profile_picture, ud.profile_picture_size, ud.profile_picture_status, ud.thumbnail, ud.small, ud.medium, ud.large, ud.extra_large
+FROM
+	global.user_details ud
+	JOIN management.user_group_users ugu ON ud.id = ugu.user_id
+WHERE
+	ugu.user_group_id = $1::UUID
+	AND ud.created_at < $2::TIMESTAMPTZ
+ORDER BY
+	ud.created_at ASC
+LIMIT
+	$3
+`
+
+type GetUserGroupUsersOldestFirstLesserThanCursorParams struct {
+	UserGroupID uuid.UUID `json:"userGroupID"`
+	Cursor      time.Time `json:"cursor"`
+	Limit       int32     `json:"limit"`
+}
+
+func (q *Queries) GetUserGroupUsersOldestFirstLesserThanCursor(ctx context.Context, arg GetUserGroupUsersOldestFirstLesserThanCursorParams) ([]GlobalUserDetails, error) {
+	rows, err := q.db.Query(ctx, getUserGroupUsersOldestFirstLesserThanCursor, arg.UserGroupID, arg.Cursor, arg.Limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GlobalUserDetails
+	for rows.Next() {
+		var i GlobalUserDetails
+		if err := rows.Scan(
+			&i.ID,
+			&i.Email,
+			&i.NormalizedEmail,
+			&i.Name,
+			&i.NormalizedName,
+			&i.About,
+			&i.DateOfBirth,
+			&i.CreatedAt,
+			&i.ProfilePictureID,
+			&i.Status,
+			&i.UncompressedProfilePicture,
+			&i.ProfilePictureSize,
+			&i.ProfilePictureStatus,
+			&i.Thumbnail,
+			&i.Small,
+			&i.Medium,
+			&i.Large,
+			&i.ExtraLarge,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
 
 const newUserGroupUser = `-- name: NewUserGroupUser :exec
 INSERT INTO
