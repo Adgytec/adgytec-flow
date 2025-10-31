@@ -25,7 +25,7 @@ func (m *serviceMux) Router() *chi.Mux {
 	// users
 	mux.Post("/user", m.newUser)
 	mux.Delete("/user/{userID}", m.removeUser)
-	mux.Get("/users", m.getManagementUsers)
+	mux.Get("/users", m.listManagementUsers)
 	mux.Get("/user/{userID}", m.getUserProfile)
 
 	// user-group

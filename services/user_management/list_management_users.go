@@ -11,7 +11,7 @@ import (
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 )
 
-func (s *userManagementService) getManagementUsers(
+func (s *userManagementService) listManagementUsers(
 	ctx context.Context,
 	params pagination.PaginationRequestParams,
 ) (*pagination.ResponsePagination[models.GlobalUser], error) {
@@ -46,7 +46,7 @@ func (s *userManagementService) getManagementUsers(
 	)
 }
 
-func (m *serviceMux) getManagementUsers(w http.ResponseWriter, r *http.Request) {
+func (m *serviceMux) listManagementUsers(w http.ResponseWriter, r *http.Request) {
 	reqCtx := r.Context()
 
 	paginationParams, paramsErr := pagination.GetPaginationParamsFromRequestNormalizeQuery(r)
@@ -55,7 +55,7 @@ func (m *serviceMux) getManagementUsers(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	userList, userErr := m.service.getManagementUsers(reqCtx, paginationParams)
+	userList, userErr := m.service.listManagementUsers(reqCtx, paginationParams)
 	if userErr != nil {
 		payload.EncodeError(w, userErr)
 		return
