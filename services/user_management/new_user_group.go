@@ -1,8 +1,10 @@
 package usermanagement
 
 import (
+	"context"
 	"net/http"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
@@ -24,6 +26,10 @@ func (groupDetails newUserGroupData) Validate() error {
 	}
 
 	return nil
+}
+
+func (s *userManagementService) newUserGroup(ctx context.Context, groupDetails newUserGroupData) (*db.NewUserGroupRow, error) {
+	return nil, nil
 }
 
 func (m *serviceMux) newUserGroup(w http.ResponseWriter, r *http.Request) {}
