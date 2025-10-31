@@ -6,6 +6,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 )
 
@@ -32,4 +33,18 @@ func (s *userManagementService) newUserGroup(ctx context.Context, groupDetails n
 	return nil, nil
 }
 
-func (m *serviceMux) newUserGroup(w http.ResponseWriter, r *http.Request) {}
+func (m *serviceMux) newUserGroup(w http.ResponseWriter, r *http.Request) {
+	newGroupDetails, payloadErr := payload.DecodeRequestBodyAndValidate[newUserGroupData](w, r)
+	if payloadErr != nil {
+		payload.EncodeError(w, payloadErr)
+		return
+	}
+
+	newGroup, newGroupErr := m.service.newUserGroup(r.Context(), newGroupDetails)
+	if newGroupErr != nil {
+		payload.EncodeError(w, newGroupErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusCreated, newGroup)
+}
