@@ -33,6 +33,7 @@ func (m *serviceMux) Router() *chi.Mux {
 	mux.Patch("/user-group/{groupID}", m.updateUserGroup)
 	mux.Get("/user-groups", m.listUserGroups)
 	mux.Delete("/user-group/{groupID}", m.deleteUserGroup)
+	mux.Get("/user-group/{groupID}", m.getUserGroupByID)
 
 	return mux
 }
