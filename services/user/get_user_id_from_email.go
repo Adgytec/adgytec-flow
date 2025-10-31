@@ -8,7 +8,7 @@ import (
 )
 
 func (s *userService) getUserIDFromEmail(email string) uuid.UUID {
-	return core.GetIDFromPayload([]byte(strings.TrimSpace(email)))
+	return core.GetIDFromPayload([]byte(strings.ToLower(strings.TrimSpace(email))))
 }
 
 func (pc *userServicePC) GetUserIDFromEmail(email string) uuid.UUID {
