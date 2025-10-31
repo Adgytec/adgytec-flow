@@ -171,3 +171,15 @@ FROM
 	global.users
 WHERE
 	id = $1;
+
+-- name: GetGlobalUserByIDForUpdate :one
+SELECT
+	name,
+	about,
+	date_of_birth,
+	profile_picture_id
+FROM
+	global.users
+WHERE
+	id = $1
+FOR UPDATE;

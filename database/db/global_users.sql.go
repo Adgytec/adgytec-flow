@@ -31,6 +31,38 @@ func (q *Queries) CreateGlobalUser(ctx context.Context, arg CreateGlobalUserPara
 	return err
 }
 
+const getGlobalUserByIDForUpdate = `-- name: GetGlobalUserByIDForUpdate :one
+SELECT
+	name,
+	about,
+	date_of_birth,
+	profile_picture_id
+FROM
+	global.users
+WHERE
+	id = $1
+FOR UPDATE
+`
+
+type GetGlobalUserByIDForUpdateRow struct {
+	Name             *string     `json:"name"`
+	About            *string     `json:"about"`
+	DateOfBirth      pgtype.Date `json:"dateOfBirth"`
+	ProfilePictureID *uuid.UUID  `json:"profilePictureId"`
+}
+
+func (q *Queries) GetGlobalUserByIDForUpdate(ctx context.Context, id uuid.UUID) (GetGlobalUserByIDForUpdateRow, error) {
+	row := q.db.QueryRow(ctx, getGlobalUserByIDForUpdate, id)
+	var i GetGlobalUserByIDForUpdateRow
+	err := row.Scan(
+		&i.Name,
+		&i.About,
+		&i.DateOfBirth,
+		&i.ProfilePictureID,
+	)
+	return i, err
+}
+
 const getGlobalUsersByQuery = `-- name: GetGlobalUsersByQuery :many
 SELECT
 	id, email, normalized_email, name, normalized_name, about, date_of_birth, created_at, profile_picture_id, status, uncompressed_profile_picture, profile_picture_size, profile_picture_status, thumbnail, small, medium, large, extra_large
