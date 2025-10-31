@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"path"
 	"unicode/utf8"
@@ -52,8 +53,12 @@ func (userProfile updateUserProfileData) Validate() error {
 			validation.By(
 				func(val any) error {
 					name := val.(types.NullableString)
-					if name.Null() {
+					if name.Missing() {
 						return nil
+					}
+
+					if name.Null() {
+						return fmt.Errorf("cannot be null")
 					}
 
 					nameLen := utf8.RuneCountInString(name.Value)
@@ -88,8 +93,12 @@ func (userProfile updateUserProfileData) Validate() error {
 			validation.By(
 				func(val any) error {
 					dob := val.(types.Nullable[pgtype.Date])
-					if dob.Null() {
+					if dob.Missing() {
 						return nil
+					}
+
+					if dob.Null() {
+						return fmt.Errorf("cannot be null")
 					}
 
 					if !dob.Value.Valid {
@@ -147,12 +156,6 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		return nil, nil, permissionErr
 	}
 
-	// get existing user detail
-	existingUser, existingUserErr := s.getUserProfile(ctx, userID)
-	if existingUserErr != nil {
-		return nil, nil, existingUserErr
-	}
-
 	// start transaction
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {
@@ -160,54 +163,69 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	}
 	defer tx.Rollback(context.Background())
 
+	// get existing user detail
+	existingUser, existingUserErr := qtx.Queries().GetGlobalUserByIDForUpdate(ctx, userID)
+	if existingUserErr != nil {
+		if errors.Is(existingUserErr, pgx.ErrNoRows) {
+			return nil, nil, &UserNotFoundError{}
+		}
+
+		return nil, nil, existingUserErr
+	}
+
 	// update user obj
 	updatedUser := db.UpdateGlobalUserProfileParams{
 		ID: userID,
 	}
 
 	// name check
-	if userProfile.Name.Missing() {
-		updatedUser.Name = existingUser.Name
-	} else if !userProfile.Name.Null() {
+	updatedUser.Name = existingUser.Name
+	if userProfile.Name.Present() {
 		updatedUser.Name = &userProfile.Name.Value
 	}
 
 	// about check
-	if userProfile.About.Missing() {
-		updatedUser.About = existingUser.About
-	} else if !userProfile.About.Null() {
-		updatedUser.About = &userProfile.About.Value
+	updatedUser.About = existingUser.About
+	if userProfile.About.Present() {
+		if userProfile.About.Null() {
+			updatedUser.About = nil
+		} else {
+			updatedUser.About = &userProfile.About.Value
+		}
 	}
 
 	// dob check
-	if userProfile.DateOfBirth.Missing() {
-		updatedUser.DateOfBirth = existingUser.DateOfBirth
-	} else if !userProfile.DateOfBirth.Null() {
+	updatedUser.DateOfBirth = existingUser.DateOfBirth
+	if userProfile.DateOfBirth.Present() {
 		updatedUser.DateOfBirth = userProfile.DateOfBirth.Value
+
 	}
 
 	// profile picture check
 	var profilePictureUploadDetails *media.MediaUploadDetails
-	if userProfile.ProfilePicture.Missing() && existingUser.ProfilePicture != nil {
-		updatedUser.ProfilePictureID = &existingUser.ProfilePicture.MediaID
-	} else if !userProfile.ProfilePicture.Null() {
-		// new profile picture
-		updatedUser.ProfilePictureID = &userProfile.ProfilePicture.Value.ID
+	updatedUser.ProfilePictureID = existingUser.ProfilePictureID
+	if userProfile.ProfilePicture.Present() {
+		if userProfile.ProfilePicture.Null() {
+			updatedUser.ProfilePictureID = nil
+		} else {
+			// new profile picture
+			updatedUser.ProfilePictureID = &userProfile.ProfilePicture.Value.ID
 
-		// create new profile picture upload details
-		mediaService := s.media.WithTransaction(qtx)
-		uploadDetails, profilePictureUploadErr := mediaService.NewMediaItem(
-			ctx,
-			media.NewMediaItemInfoWithStorageDetails{
-				NewMediaItemInfo: userProfile.ProfilePicture.Value,
-				RequiredMime:     media.ImageMime,
-				BucketPrefix:     path.Join(userID.String(), "profile"),
-			},
-		)
-		if profilePictureUploadErr != nil {
-			return nil, nil, profilePictureUploadErr
+			// create new profile picture upload details
+			mediaService := s.media.WithTransaction(qtx)
+			uploadDetails, profilePictureUploadErr := mediaService.NewMediaItem(
+				ctx,
+				media.NewMediaItemInfoWithStorageDetails{
+					NewMediaItemInfo: userProfile.ProfilePicture.Value,
+					RequiredMime:     media.ImageMime,
+					BucketPrefix:     path.Join(userID.String(), "profile"),
+				},
+			)
+			if profilePictureUploadErr != nil {
+				return nil, nil, profilePictureUploadErr
+			}
+			profilePictureUploadDetails = uploadDetails
 		}
-		profilePictureUploadDetails = uploadDetails
 	}
 
 	updatedUserProfileView, dbErr := qtx.Queries().UpdateGlobalUserProfile(
@@ -215,9 +233,7 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 		updatedUser,
 	)
 	if dbErr != nil {
-		if errors.Is(dbErr, pgx.ErrNoRows) {
-			return nil, nil, &UserNotFoundError{}
-		}
+
 		return nil, nil, dbErr
 	}
 	txCommitErr := tx.Commit(ctx)

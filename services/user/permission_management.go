@@ -74,8 +74,7 @@ var updateUserProfilePermission = db.AddManagementPermissionsIntoStagingParams{
 	Name:      "Update User Profile",
 	Description: markdown.BuildMarkdown(func(m *md.Markdown) {
 		m.H3("Update User Profile").
-			PlainText("Grants the ability to update individual user profile.").
-			PlainText(md.Italic("Note: This also requires 'Get User Profile' permission."))
+			PlainText("Grants the ability to update individual user profile.")
 	}),
 	RequiredResources: nil,
 	AssignableActor:   db.GlobalAssignableActorTypeUser,
