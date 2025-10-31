@@ -29,6 +29,7 @@ type userManagementService struct {
 	iam                iam.IAMServicePC
 	getUserListCache   cache.Cache[pagination.ResponsePagination[models.GlobalUser]]
 	userGroupListCache cache.Cache[pagination.ResponsePagination[models.UserGroup]]
+	userGroupCache     cache.Cache[models.UserGroup]
 }
 
 func newService(params serviceParams) *userManagementService {
@@ -38,5 +39,6 @@ func newService(params serviceParams) *userManagementService {
 		iam:                params.IAMService(),
 		getUserListCache:   cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.GlobalUser]](), "management-user-list"),
 		userGroupListCache: cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[pagination.ResponsePagination[models.UserGroup]](), "user-group-list"),
+		userGroupCache:     cache.NewCache(params.CacheClient(), serializer.NewGobSerializer[models.UserGroup](), "user-group"),
 	}
 }
