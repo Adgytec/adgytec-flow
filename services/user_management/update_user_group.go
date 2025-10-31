@@ -9,6 +9,8 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/utils/core"
+	"github.com/Adgytec/adgytec-flow/utils/payload"
+	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/Adgytec/adgytec-flow/utils/types"
 	validation "github.com/go-ozzo/ozzo-validation/v4"
 	"github.com/google/uuid"
@@ -54,4 +56,24 @@ func (s *userManagementService) updateUserGroup(ctx context.Context, groupID uui
 	return nil, nil
 }
 
-func (m *serviceMux) updateUserGroup(w http.ResponseWriter, r *http.Request) {}
+func (m *serviceMux) updateUserGroup(w http.ResponseWriter, r *http.Request) {
+	groupID, groupIDErr := reqparams.GetUserGroupIDFromRequest(r)
+	if groupIDErr != nil {
+		payload.EncodeError(w, groupIDErr)
+		return
+	}
+
+	groupDetails, payloadErr := payload.DecodeRequestBodyAndValidate[updateUserGroupData](w, r)
+	if payloadErr != nil {
+		payload.EncodeError(w, payloadErr)
+		return
+	}
+
+	updatedGroup, updateErr := m.service.updateUserGroup(r.Context(), groupID, groupDetails)
+	if updateErr != nil {
+		payload.EncodeError(w, updateErr)
+		return
+	}
+
+	payload.EncodeJSON(w, http.StatusOK, updatedGroup)
+}
