@@ -116,7 +116,7 @@ ORDER BY
 LIMIT
 	$1;
 
--- name: RemoveUserGroup :exec
+-- name: DeleteUserGroup :exec
 DELETE FROM management.user_groups
 WHERE
 	id = $1;

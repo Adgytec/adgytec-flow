@@ -12,6 +12,17 @@ import (
 	"github.com/google/uuid"
 )
 
+const deleteUserGroup = `-- name: DeleteUserGroup :exec
+DELETE FROM management.user_groups
+WHERE
+	id = $1
+`
+
+func (q *Queries) DeleteUserGroup(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.Exec(ctx, deleteUserGroup, id)
+	return err
+}
+
 const getUserGroupByIDForUpdate = `-- name: GetUserGroupByIDForUpdate :one
 SELECT
 	id,
@@ -374,17 +385,6 @@ func (q *Queries) NewUserGroup(ctx context.Context, arg NewUserGroupParams) (New
 		&i.CreatedAt,
 	)
 	return i, err
-}
-
-const removeUserGroup = `-- name: RemoveUserGroup :exec
-DELETE FROM management.user_groups
-WHERE
-	id = $1
-`
-
-func (q *Queries) RemoveUserGroup(ctx context.Context, id uuid.UUID) error {
-	_, err := q.db.Exec(ctx, removeUserGroup, id)
-	return err
 }
 
 const updateUserGroup = `-- name: UpdateUserGroup :one

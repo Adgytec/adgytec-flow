@@ -10,7 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (s *userManagementService) removeUserGroup(ctx context.Context, groupID uuid.UUID) error {
+func (s *userManagementService) deleteUserGroup(ctx context.Context, groupID uuid.UUID) error {
 	permissionErr := s.iam.CheckPermission(ctx,
 		iam.NewPermissionRequiredFromManagementPermission(
 			deleteUserGroupPermission,
@@ -27,7 +27,7 @@ func (s *userManagementService) removeUserGroup(ctx context.Context, groupID uui
 	}
 	defer tx.Rollback(context.Background())
 
-	dbErr := qtx.Queries().RemoveUserGroup(ctx, groupID)
+	dbErr := qtx.Queries().DeleteUserGroup(ctx, groupID)
 	if dbErr != nil {
 		return dbErr
 	}
@@ -35,14 +35,14 @@ func (s *userManagementService) removeUserGroup(ctx context.Context, groupID uui
 	return tx.Commit(ctx)
 }
 
-func (m *serviceMux) removeUserGroup(w http.ResponseWriter, r *http.Request) {
+func (m *serviceMux) deleteUserGroup(w http.ResponseWriter, r *http.Request) {
 	groupID, groupIDErr := reqparams.GetUserGroupIDFromRequest(r)
 	if groupIDErr != nil {
 		payload.EncodeError(w, groupIDErr)
 		return
 	}
 
-	removeErr := m.service.removeUserGroup(r.Context(), groupID)
+	removeErr := m.service.deleteUserGroup(r.Context(), groupID)
 	if removeErr != nil {
 		payload.EncodeError(w, removeErr)
 		return
