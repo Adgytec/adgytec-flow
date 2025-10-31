@@ -28,8 +28,12 @@ func (groupDetails updateUserGroupData) Validate() error {
 			validation.By(
 				func(val any) error {
 					name := val.(types.NullableString)
-					if name.Null() {
+					if name.Missing() {
 						return nil
+					}
+
+					if name.Null() {
+						return fmt.Errorf("Name can't be null")
 					}
 
 					nameLen := utf8.RuneCountInString(strings.TrimSpace(name.Value))
