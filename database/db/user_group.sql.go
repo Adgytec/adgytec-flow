@@ -44,6 +44,407 @@ func (q *Queries) GetUserGroupByIDForUpdate(ctx context.Context, id uuid.UUID) (
 	return i, err
 }
 
+const getUserGroupsByQuery = `-- name: GetUserGroupsByQuery :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+WHERE
+	lower(ug.name) LIKE lower(
+		$2::TEXT
+	) || '%'
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at DESC
+LIMIT
+	$1
+`
+
+type GetUserGroupsByQueryParams struct {
+	Limit int32  `json:"limit"`
+	Query string `json:"query"`
+}
+
+type GetUserGroupsByQueryRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsByQuery(ctx context.Context, arg GetUserGroupsByQueryParams) ([]GetUserGroupsByQueryRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsByQuery, arg.Limit, arg.Query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsByQueryRow
+	for rows.Next() {
+		var i GetUserGroupsByQueryRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupsLatestFirst = `-- name: GetUserGroupsLatestFirst :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at DESC
+LIMIT
+	$1
+`
+
+type GetUserGroupsLatestFirstRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsLatestFirst(ctx context.Context, limit int32) ([]GetUserGroupsLatestFirstRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsLatestFirst, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsLatestFirstRow
+	for rows.Next() {
+		var i GetUserGroupsLatestFirstRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupsLatestFirstGreaterThanCursor = `-- name: GetUserGroupsLatestFirstGreaterThanCursor :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+WHERE
+	ug.created_at > $2::TIMESTAMPTZ
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at DESC
+LIMIT
+	$1
+`
+
+type GetUserGroupsLatestFirstGreaterThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+type GetUserGroupsLatestFirstGreaterThanCursorRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsLatestFirstGreaterThanCursor(ctx context.Context, arg GetUserGroupsLatestFirstGreaterThanCursorParams) ([]GetUserGroupsLatestFirstGreaterThanCursorRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsLatestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsLatestFirstGreaterThanCursorRow
+	for rows.Next() {
+		var i GetUserGroupsLatestFirstGreaterThanCursorRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupsLatestFirstLesserThanCursor = `-- name: GetUserGroupsLatestFirstLesserThanCursor :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+WHERE
+	ug.created_at < $2::TIMESTAMPTZ
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at DESC
+LIMIT
+	$1
+`
+
+type GetUserGroupsLatestFirstLesserThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+type GetUserGroupsLatestFirstLesserThanCursorRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsLatestFirstLesserThanCursor(ctx context.Context, arg GetUserGroupsLatestFirstLesserThanCursorParams) ([]GetUserGroupsLatestFirstLesserThanCursorRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsLatestFirstLesserThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsLatestFirstLesserThanCursorRow
+	for rows.Next() {
+		var i GetUserGroupsLatestFirstLesserThanCursorRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupsOldestFirst = `-- name: GetUserGroupsOldestFirst :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at ASC
+LIMIT
+	$1
+`
+
+type GetUserGroupsOldestFirstRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsOldestFirst(ctx context.Context, limit int32) ([]GetUserGroupsOldestFirstRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsOldestFirst, limit)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsOldestFirstRow
+	for rows.Next() {
+		var i GetUserGroupsOldestFirstRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupsOldestFirstGreaterThanCursor = `-- name: GetUserGroupsOldestFirstGreaterThanCursor :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+WHERE
+	ug.created_at > $2::TIMESTAMPTZ
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at ASC
+LIMIT
+	$1
+`
+
+type GetUserGroupsOldestFirstGreaterThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+type GetUserGroupsOldestFirstGreaterThanCursorRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsOldestFirstGreaterThanCursor(ctx context.Context, arg GetUserGroupsOldestFirstGreaterThanCursorParams) ([]GetUserGroupsOldestFirstGreaterThanCursorRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsOldestFirstGreaterThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsOldestFirstGreaterThanCursorRow
+	for rows.Next() {
+		var i GetUserGroupsOldestFirstGreaterThanCursorRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getUserGroupsOldestFirstLesserThanCursor = `-- name: GetUserGroupsOldestFirstLesserThanCursor :many
+SELECT
+	ug.id,
+	ug.name,
+	ug.description,
+	ug.created_at,
+	count(ugu.user_id) AS user_count
+FROM
+	management.user_groups ug
+	LEFT JOIN management.user_group_users ugu ON ug.id = ugu.user_group_id
+WHERE
+	ug.created_at < $2::TIMESTAMPTZ
+GROUP BY
+	ug.id
+ORDER BY
+	ug.created_at ASC
+LIMIT
+	$1
+`
+
+type GetUserGroupsOldestFirstLesserThanCursorParams struct {
+	Limit  int32     `json:"limit"`
+	Cursor time.Time `json:"cursor"`
+}
+
+type GetUserGroupsOldestFirstLesserThanCursorRow struct {
+	ID          uuid.UUID `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	CreatedAt   time.Time `json:"createdAt"`
+	UserCount   int64     `json:"userCount"`
+}
+
+func (q *Queries) GetUserGroupsOldestFirstLesserThanCursor(ctx context.Context, arg GetUserGroupsOldestFirstLesserThanCursorParams) ([]GetUserGroupsOldestFirstLesserThanCursorRow, error) {
+	rows, err := q.db.Query(ctx, getUserGroupsOldestFirstLesserThanCursor, arg.Limit, arg.Cursor)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetUserGroupsOldestFirstLesserThanCursorRow
+	for rows.Next() {
+		var i GetUserGroupsOldestFirstLesserThanCursorRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.Name,
+			&i.Description,
+			&i.CreatedAt,
+			&i.UserCount,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const newUserGroup = `-- name: NewUserGroup :one
 INSERT INTO
 	management.user_groups (name, description)
