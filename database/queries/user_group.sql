@@ -120,3 +120,11 @@ LIMIT
 DELETE FROM management.user_groups
 WHERE
 	id = $1;
+
+-- name: GetUserGroupByID :one
+SELECT
+	*
+FROM
+	management.user_group_details
+WHERE
+	id = $1;

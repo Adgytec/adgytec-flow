@@ -23,6 +23,28 @@ func (q *Queries) DeleteUserGroup(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
+const getUserGroupByID = `-- name: GetUserGroupByID :one
+SELECT
+	id, name, description, created_at, user_count
+FROM
+	management.user_group_details
+WHERE
+	id = $1
+`
+
+func (q *Queries) GetUserGroupByID(ctx context.Context, id uuid.UUID) (ManagementUserGroupDetails, error) {
+	row := q.db.QueryRow(ctx, getUserGroupByID, id)
+	var i ManagementUserGroupDetails
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Description,
+		&i.CreatedAt,
+		&i.UserCount,
+	)
+	return i, err
+}
+
 const getUserGroupByIDForUpdate = `-- name: GetUserGroupByIDForUpdate :one
 SELECT
 	id,
