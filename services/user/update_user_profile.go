@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 	"path"
 	"unicode/utf8"
@@ -52,8 +53,12 @@ func (userProfile updateUserProfileData) Validate() error {
 			validation.By(
 				func(val any) error {
 					name := val.(types.NullableString)
-					if name.Null() {
+					if name.Missing() {
 						return nil
+					}
+
+					if name.Null() {
+						return fmt.Errorf("cannot be null")
 					}
 
 					nameLen := utf8.RuneCountInString(name.Value)
@@ -88,8 +93,12 @@ func (userProfile updateUserProfileData) Validate() error {
 			validation.By(
 				func(val any) error {
 					dob := val.(types.Nullable[pgtype.Date])
-					if dob.Null() {
+					if dob.Missing() {
 						return nil
+					}
+
+					if dob.Null() {
+						return fmt.Errorf("cannot be null")
 					}
 
 					if !dob.Value.Valid {
@@ -172,11 +181,7 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	// name check
 	updatedUser.Name = existingUser.Name
 	if userProfile.Name.Present() {
-		if userProfile.Name.Null() {
-			updatedUser.Name = nil
-		} else {
-			updatedUser.Name = &userProfile.Name.Value
-		}
+		updatedUser.Name = &userProfile.Name.Value
 	}
 
 	// about check
@@ -192,13 +197,8 @@ func (s *userService) updateUserProfile(ctx context.Context, userID uuid.UUID, u
 	// dob check
 	updatedUser.DateOfBirth = existingUser.DateOfBirth
 	if userProfile.DateOfBirth.Present() {
-		if userProfile.DateOfBirth.Null() {
-			updatedUser.DateOfBirth = pgtype.Date{
-				Valid: false,
-			}
-		} else {
-			updatedUser.DateOfBirth = userProfile.DateOfBirth.Value
-		}
+		updatedUser.DateOfBirth = userProfile.DateOfBirth.Value
+
 	}
 
 	// profile picture check
