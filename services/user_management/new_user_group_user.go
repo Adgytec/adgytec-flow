@@ -2,15 +2,64 @@ package usermanagement
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
+	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/services/iam"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
+	"github.com/jackc/pgerrcode"
+	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func (s *userManagementService) newUserGroupUser(ctx context.Context, groupID uuid.UUID, userData newUserData) (*uuid.UUID, error) {
-	return nil, nil
+	permissionErr := s.iam.CheckPermission(ctx,
+		iam.NewPermissionRequiredFromManagementPermission(
+			addUserInUserGroupPermission,
+			iam.PermissionRequiredResources{},
+		),
+	)
+	if permissionErr != nil {
+		return nil, permissionErr
+	}
+
+	qtx, tx, txErr := s.db.WithTransaction(ctx)
+	if txErr != nil {
+		return nil, txErr
+	}
+	defer tx.Rollback(context.Background())
+
+	userID := s.userService.GetUserIDFromEmail(userData.Email)
+
+	dbErr := qtx.Queries().NewUserGroupUser(ctx,
+		db.NewUserGroupUserParams{
+			UserGroupID: groupID,
+			UserID:      userID,
+		},
+	)
+	if dbErr != nil {
+		var pgErr *pgconn.PgError
+		if errors.As(dbErr, &pgErr) {
+			if pgErr.Code == pgerrcode.ForeignKeyViolation {
+				switch pgErr.ConstraintName {
+				case "user_group_users_user_group_id_fkey":
+					return nil, &UserGroupNotFoundError{}
+				case "user_group_users_user_id_fkey":
+					return nil, &UserNotExistsInManagementError{}
+				}
+			}
+		}
+		return nil, dbErr
+	}
+
+	commitErr := tx.Commit(ctx)
+	if commitErr != nil {
+		return nil, commitErr
+	}
+
+	return &userID, nil
 }
 
 func (m *serviceMux) newUserGroupUser(w http.ResponseWriter, r *http.Request) {
