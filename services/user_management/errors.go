@@ -11,6 +11,7 @@ import (
 var (
 	ErrUserNotExistsInManagement   = errors.New("user does not exist in management")
 	ErrUserGroupWithSameNameExists = errors.New("user group with same name exists")
+	ErrUserGroupNotFound           = errors.New("user group not found")
 )
 
 type UserNotExistsInManagementError struct{}
@@ -43,6 +44,23 @@ func (e *UserGroupWithSameNameExistsError) Is(target error) bool {
 func (e *UserGroupWithSameNameExistsError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusConflict,
+		Message:        pointer.New(e.Error()),
+	}
+}
+
+type UserGroupNotFoundError struct{}
+
+func (e *UserGroupNotFoundError) Error() string {
+	return ErrUserGroupNotFound.Error()
+}
+
+func (e *UserGroupNotFoundError) Is(target error) bool {
+	return target == ErrUserGroupNotFound
+}
+
+func (e *UserGroupNotFoundError) HTTPResponse() apires.ErrorDetails {
+	return apires.ErrorDetails{
+		HTTPStatusCode: http.StatusNotFound,
 		Message:        pointer.New(e.Error()),
 	}
 }
