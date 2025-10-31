@@ -115,3 +115,8 @@ ORDER BY
 	created_at DESC
 LIMIT
 	$1;
+
+-- name: DeleteUserGroup :exec
+DELETE FROM management.user_groups
+WHERE
+	id = $1;
