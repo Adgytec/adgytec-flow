@@ -15,7 +15,6 @@ type UserServicePC interface {
 	GetUserProfile(ctx context.Context, userID uuid.UUID) (*models.GlobalUser, error)
 	GetUserResponseModels(users []db.GlobalUserDetails) []models.GlobalUser
 	GetUserResponseModel(user db.GlobalUserDetails) models.GlobalUser
-	GetUserIDFromEmail(email string) uuid.UUID
 }
 
 type userServicePC struct {

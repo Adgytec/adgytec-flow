@@ -6,12 +6,13 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/config/auth"
 	"github.com/Adgytec/adgytec-flow/database/db"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/google/uuid"
 )
 
 func (s *userService) newUser(ctx context.Context, email string) (uuid.UUID, error) {
 	var zero uuid.UUID
-	userID := s.getUserIDFromEmail(email)
+	userID := core.GetUserIDFromUsername(email)
 
 	qtx, tx, txErr := s.db.WithTransaction(ctx)
 	if txErr != nil {

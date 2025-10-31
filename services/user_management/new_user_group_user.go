@@ -7,6 +7,7 @@ import (
 
 	"github.com/Adgytec/adgytec-flow/database/db"
 	"github.com/Adgytec/adgytec-flow/services/iam"
+	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/Adgytec/adgytec-flow/utils/payload"
 	reqparams "github.com/Adgytec/adgytec-flow/utils/req_params"
 	"github.com/google/uuid"
@@ -31,7 +32,7 @@ func (s *userManagementService) newUserGroupUser(ctx context.Context, groupID uu
 	}
 	defer tx.Rollback(context.Background())
 
-	userID := s.userService.GetUserIDFromEmail(userData.Email)
+	userID := core.GetUserIDFromUsername(userData.Email)
 
 	dbErr := qtx.Queries().NewUserGroupUser(ctx,
 		db.NewUserGroupUserParams{

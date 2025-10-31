@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"strings"
 
 	"github.com/Adgytec/adgytec-flow/utils/core"
 	"github.com/golang-jwt/jwt/v5"
@@ -47,6 +46,6 @@ func (a *authCognito) ValidateUserAccessToken(accessToken string) (uuid.UUID, er
 		return uuid.Nil, invalidTokenErr
 	}
 
-	userID := core.GetIDFromPayload([]byte(strings.ToLower(strings.TrimSpace(username))))
+	userID := core.GetUserIDFromUsername(username)
 	return userID, nil
 }

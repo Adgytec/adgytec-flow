@@ -2,6 +2,7 @@ package core
 
 import (
 	"os"
+	"strings"
 	"sync"
 
 	"github.com/google/uuid"
@@ -41,4 +42,8 @@ func getIDNamespace() uuid.UUID {
 func GetIDFromPayload(payload []byte) uuid.UUID {
 	namespace := getIDNamespace()
 	return uuid.NewSHA1(namespace, payload)
+}
+
+func GetUserIDFromUsername(username string) uuid.UUID {
+	return GetIDFromPayload([]byte(strings.ToLower(strings.TrimSpace(username))))
 }
