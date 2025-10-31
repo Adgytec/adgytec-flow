@@ -10,42 +10,25 @@ import (
 )
 
 var (
+	ErrInvalidID          = errors.New("invalid id")
 	ErrInvalidUserID      = errors.New("invalid user id")
 	ErrInvalidUserGroupID = errors.New("invalid user group id")
 )
 
-type InvalidUserIDError struct {
-	InvalidUserID string
+type InvalidIDError struct {
+	IDType    idType
+	InvalidID string
 }
 
-func (e *InvalidUserIDError) Error() string {
-	return fmt.Sprintf("User ID: '%s', is not a valid user id.", e.InvalidUserID)
+func (e *InvalidIDError) Error() string {
+	return fmt.Sprintf("%s: '%s', is not a valid id.", e.IDType, e.InvalidID)
 }
 
-func (e *InvalidUserIDError) Is(target error) bool {
-	return target == ErrInvalidUserID
+func (e *InvalidIDError) Is(target error) bool {
+	return target == ErrInvalidID
 }
 
-func (e *InvalidUserIDError) HTTPResponse() apires.ErrorDetails {
-	return apires.ErrorDetails{
-		HTTPStatusCode: http.StatusBadRequest,
-		Message:        pointer.New(e.Error()),
-	}
-}
-
-type InvalidUserGroupIDError struct {
-	InvalidUserGroupID string
-}
-
-func (e *InvalidUserGroupIDError) Error() string {
-	return fmt.Sprintf("User Group ID: '%s', is not a valid group id.", e.InvalidUserGroupID)
-}
-
-func (e *InvalidUserGroupIDError) Is(target error) bool {
-	return target == ErrInvalidUserGroupID
-}
-
-func (e *InvalidUserGroupIDError) HTTPResponse() apires.ErrorDetails {
+func (e *InvalidIDError) HTTPResponse() apires.ErrorDetails {
 	return apires.ErrorDetails{
 		HTTPStatusCode: http.StatusBadRequest,
 		Message:        pointer.New(e.Error()),
